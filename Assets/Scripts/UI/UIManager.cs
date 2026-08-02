@@ -12,6 +12,11 @@ public class UIManager : MonoBehaviour
 
     [Header("Referenties")]
     [SerializeField] private LevelManager levelManager;
+    [SerializeField] private GameManager gameManager;
+    [SerializeField] private AdsManager adsManager;
+
+    // Voorkomt dubbele Next Level-acties (dubbele klik / dubbele ad-callback).
+    private bool isHandlingNextLevel;
 
     private void Start()
     {
@@ -43,15 +48,54 @@ public class UIManager : MonoBehaviour
 
     /// <summary>
     /// Wordt aangeroepen door de "Next Level"-knop.
+    /// Toont eventueel een interstitial vóór het volgende level.
     /// </summary>
     public void OnNextLevelButton()
     {
+        if (isHandlingNextLevel)
+        {
+            return;
+        }
+
         HideWinPanel();
 
+        // Interstitial tonen als de teller ≥ 3 én de ad klaar is.
+        bool wantsInterstitial =
+            gameManager != null &&
+            gameManager.ShouldShowInterstitial();
+
+        bool adReady =
+            adsManager != null &&
+            adsManager.IsInterstitialReady();
+
+        if (wantsInterstitial && adReady)
+        {
+            isHandlingNextLevel = true;
+            gameManager.ResetInterstitialCounter();
+
+            adsManager.ShowInterstitialAd(() =>
+            {
+                LoadNextLevelOnce();
+            });
+
+            return;
+        }
+
+        // Geen ad nodig, of ad niet klaar: teller niet resetten, direct door.
+        LoadNextLevelOnce();
+    }
+
+    /// <summary>
+    /// Laadt het volgende level precies één keer.
+    /// </summary>
+    private void LoadNextLevelOnce()
+    {
         if (levelManager != null)
         {
             levelManager.LoadNextLevel();
         }
+
+        isHandlingNextLevel = false;
     }
 
     /// <summary>

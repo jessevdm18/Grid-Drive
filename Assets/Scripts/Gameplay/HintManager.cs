@@ -2,11 +2,13 @@ using System.Collections;
 using UnityEngine;
 
 /// <summary>
-/// Eenvoudige hint: kost coins en highlight een voertuig dat kan bewegen.
+/// Eenvoudige hint: kost coins of een rewarded ad, en highlight een voertuig dat kan bewegen.
 /// </summary>
 public class HintManager : MonoBehaviour
 {
     [SerializeField] private CoinManager coinManager;
+
+    [SerializeField] private AdsManager adsManager;
 
     [SerializeField] private int hintCost = 100;
 
@@ -20,7 +22,7 @@ public class HintManager : MonoBehaviour
     private bool isHighlighting;
 
     /// <summary>
-    /// Knop-callback: probeer een hint te kopen en te tonen.
+    /// Knop-callback: betaal met coins en toon een hint.
     /// </summary>
     public void UseHint()
     {
@@ -36,19 +38,47 @@ public class HintManager : MonoBehaviour
             return;
         }
 
-        // Probeer 100 coins af te trekken.
+        // Probeer coins af te trekken — hint alleen als betalen lukt.
         if (!coinManager.SpendCoins(hintCost))
         {
             Debug.Log("Not enough coins");
             return;
         }
 
+        GiveHint();
+    }
+
+    /// <summary>
+    /// Knop-callback: toon een rewarded ad. Hint alleen via de reward-callback.
+    /// </summary>
+    public void UseRewardedHint()
+    {
+        if (isHighlighting)
+        {
+            Debug.Log("HintManager: hint is al bezig.");
+            return;
+        }
+
+        if (adsManager == null)
+        {
+            Debug.LogError("HintManager: geen AdsManager gekoppeld.");
+            return;
+        }
+
+        // Geen coins — GiveHint alleen als de gebruiker de reward verdient.
+        adsManager.ShowRewardedAd(() => GiveHint());
+    }
+
+    /// <summary>
+    /// Zoekt een beweegbaar voertuig en start de highlight.
+    /// </summary>
+    private void GiveHint()
+    {
         VehicleController vehicle = FindMovableVehicle();
 
         if (vehicle == null)
         {
             Debug.Log("HintManager: geen voertuig gevonden dat kan bewegen.");
-            // Coins zijn al afgeschreven — bij een latere versie kun je refunden.
             return;
         }
 

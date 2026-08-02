@@ -22,8 +22,15 @@ public class LevelManager : MonoBehaviour
 
     [SerializeField] private SaveManager saveManager;
 
+    [SerializeField] private GameplayUI gameplayUI;
+
     [Tooltip("Onder dit Transform komen alle gespawnde voertuigen.")]
     [SerializeField] private Transform vehicleParent;
+
+    /// <summary>
+    /// Zero-based index van het actieve level (0 = LEVEL 1).
+    /// </summary>
+    public int CurrentLevelIndex => currentLevelIndex;
 
     private void Start()
     {
@@ -52,6 +59,7 @@ public class LevelManager : MonoBehaviour
 
     /// <summary>
     /// Laadt het level op currentLevelIndex opnieuw.
+    /// Wijzigt currentLevelIndex niet en raakt SaveManager niet aan.
     /// </summary>
     public void LoadCurrentLevel()
     {
@@ -60,6 +68,7 @@ public class LevelManager : MonoBehaviour
 
     /// <summary>
     /// Laadt het volgende level. Doet niets als je al op het laatste level bent.
+    /// Alleen hier mag de index omhoog en progressie worden opgeslagen.
     /// </summary>
     public void LoadNextLevel()
     {
@@ -78,6 +87,8 @@ public class LevelManager : MonoBehaviour
 
         currentLevelIndex++;
 
+        Debug.Log("Loading next level index: " + currentLevelIndex);
+
         // Progressie opslaan: huidige + unlocked level.
         if (saveManager != null)
         {
@@ -89,11 +100,17 @@ public class LevelManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Laadt het huidige level opnieuw (zelfde index).
+    /// Herlaadt hetzelfde level. Verhoogt de index NIET en leest/schrijft SaveManager NIET.
     /// </summary>
     public void RestartLevel()
     {
-        LoadLevel();
+        // Bewaar de index lokaal — Restart mag currentLevelIndex nooit wijzigen.
+        int indexToReload = currentLevelIndex;
+
+        Debug.Log("Restarting level index: " + indexToReload);
+
+        currentLevelIndex = indexToReload;
+        LoadCurrentLevel();
     }
 
     /// <summary>
@@ -148,6 +165,11 @@ public class LevelManager : MonoBehaviour
             " (index " + currentLevelIndex + ") geladen met " +
             levelData.vehicles.Count + " voertuigen."
         );
+
+        if (gameplayUI != null)
+        {
+            gameplayUI.UpdateLevelText();
+        }
     }
 
     /// <summary>

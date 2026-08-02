@@ -18,11 +18,20 @@ public class VehicleController : MonoBehaviour
     [Header("References")]
     [SerializeField] private GridManager gridManager;
 
+    [Header("Visual")]
+    [Tooltip("Child met de SpriteRenderer (bijv. \"Visual\"). Root blijft logica/collider.")]
+    [SerializeField] private Transform visualTransform;
+
     [Header("Vehicle Settings")]
     [SerializeField] private VehicleOrientation orientation
         = VehicleOrientation.Horizontal;
 
     [SerializeField] private int lengthInCells = 2;
+
+    [Header("Touch Feel")]
+    [Tooltip("Hoeveel van een cel je moet slepen voordat de auto één gridstap doet (lager = sneller).")]
+    [SerializeField, Range(0.1f, 0.5f)]
+    private float dragThreshold = 0.2f;
 
     [Header("Starting Grid Position")]
     [Tooltip("De onderste/linker gridcel die dit voertuig bezet.")]
@@ -45,6 +54,12 @@ public class VehicleController : MonoBehaviour
         // Bewaar de originele prefab-scale als 1x1-basis.
         // UpdateVisualSize gebruikt dit i.p.v. de huidige scale te vermenigvuldigen.
         baseScale = transform.localScale;
+
+        // Optioneel: zoek child "Visual" als er niets is gekoppeld.
+        if (visualTransform == null)
+        {
+            visualTransform = transform.Find("Visual");
+        }
     }
 
     /// <summary>
@@ -76,8 +91,29 @@ public class VehicleController : MonoBehaviour
 
         // Visuele grootte pas nadat orientation en length bekend zijn.
         UpdateVisualSize();
+        ApplyVisualRotation();
 
         Initialize();
+    }
+
+    /// <summary>
+    /// Draait alleen de Visual-child. Root blijft zonder rotatie (gameplay/collider).
+    /// </summary>
+    private void ApplyVisualRotation()
+    {
+        if (visualTransform == null)
+        {
+            return;
+        }
+
+        if (orientation == VehicleOrientation.Horizontal)
+        {
+            visualTransform.localRotation = Quaternion.identity;
+        }
+        else
+        {
+            visualTransform.localRotation = Quaternion.Euler(0f, 0f, 90f);
+        }
     }
 
     /// <summary>
@@ -230,25 +266,15 @@ private bool CanExitRight(Vector3 dragDifference)
 
         Vector2Int wantedPosition = dragStartGridPosition;
 
-        // De muis bepaalt alleen HOEVEEL HELE CELLEN
-        // we vanaf de startpositie willen bewegen.
+        // Threshold i.p.v. RoundToInt: sneller reageren op touch,
+        // maar nog steeds alleen hele gridstappen.
         if (orientation == VehicleOrientation.Horizontal)
         {
-            int cellMovement =
-                Mathf.RoundToInt(
-                    dragDifference.x / gridManager.CellSize
-                );
-
-            wantedPosition.x += cellMovement;
+            wantedPosition.x += GetDragCellSteps(dragDifference.x);
         }
         else
         {
-            int cellMovement =
-                Mathf.RoundToInt(
-                    dragDifference.y / gridManager.CellSize
-                );
-
-            wantedPosition.y += cellMovement;
+            wantedPosition.y += GetDragCellSteps(dragDifference.y);
         }
 
         // Zorg eerst dat de gewenste positie niet buiten het bord kan liggen.
@@ -278,6 +304,24 @@ private bool CanExitRight(Vector3 dragDifference)
         // de auto staat ALTIJD exact op een gridpositie.
         // Dus geen halve vakken tijdens het slepen.
         transform.position = GetWorldPosition(gridPosition);
+    }
+
+    /// <summary>
+    /// Zet sleepafstand om naar hele gridstappen.
+    /// Eerste stap na dragThreshold * cellSize; daarna elke volle cel extra.
+    /// </summary>
+    private int GetDragCellSteps(float axisDrag)
+    {
+        float distanceInCells = axisDrag / gridManager.CellSize;
+        float absoluteDistance = Mathf.Abs(distanceInCells);
+
+        if (absoluteDistance < dragThreshold)
+        {
+            return 0;
+        }
+
+        int steps = Mathf.FloorToInt(absoluteDistance - dragThreshold) + 1;
+        return (int)Mathf.Sign(distanceInCells) * steps;
     }
 
     private void OnMouseUp()
