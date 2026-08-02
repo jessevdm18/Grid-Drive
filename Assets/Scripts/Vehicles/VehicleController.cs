@@ -68,6 +68,12 @@ public class VehicleController : MonoBehaviour
         canExitRight = newCanExitRight;
         exitRow = newExitRow;
 
+        // Nieuw level / restart: win-vlag resetten zodat CompleteLevel opnieuw mag.
+        if (gameManager != null)
+        {
+            gameManager.ResetLevelCompleted();
+        }
+
         // Visuele grootte pas nadat orientation en length bekend zijn.
         UpdateVisualSize();
 
@@ -200,7 +206,7 @@ private bool CanExitRight(Vector3 dragDifference)
 
         if (gameManager != null)
         {
-            gameManager.CheckWinCondition();
+            gameManager.CompleteLevel();
         }
 
         return true;

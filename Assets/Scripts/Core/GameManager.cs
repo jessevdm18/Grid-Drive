@@ -2,21 +2,37 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    public void CheckWinCondition()
-    {
-        VehicleController[] vehicles =
-            FindObjectsByType<VehicleController>(
-                FindObjectsSortMode.None
-            );
+    [SerializeField] private UIManager uiManager;
 
-        if (vehicles.Length == 0)
+    // Voorkomt dat CompleteLevel meerdere keren voor hetzelfde level draait.
+    private bool levelCompleted;
+
+    /// <summary>
+    /// Wordt aangeroepen wanneer de doelauto succesvol via de exit ontsnapt.
+    /// </summary>
+    public void CompleteLevel()
+    {
+        if (levelCompleted)
         {
-            WinLevel();
+            return;
+        }
+
+        levelCompleted = true;
+
+        Debug.Log("LEVEL COMPLETED!");
+
+        if (uiManager != null)
+        {
+            uiManager.ShowWinPanel();
         }
     }
 
-    private void WinLevel()
+    /// <summary>
+    /// Reset de win-vlag zodat een nieuw/herstart level opnieuw gewonnen kan worden.
+    /// Roep dit aan vanuit LevelManager als je levels herlaadt (optioneel).
+    /// </summary>
+    public void ResetLevelCompleted()
     {
-        Debug.Log("LEVEL COMPLETED!");
+        levelCompleted = false;
     }
 }

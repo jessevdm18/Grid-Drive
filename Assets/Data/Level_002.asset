@@ -12,21 +12,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e98a2ca1400bdfc4896e8c352e3628b7, type: 3}
   m_Name: Level_002
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
-  levelNumber: 1
-  exitRow: 2
+  levelNumber: 2
+  exitRow: 3
   vehicles:
   - vehicleName: Car_A
     orientation: 0
     lengthInCells: 2
-    gridPosition: {x: 0, y: 2}
+    gridPosition: {x: 0, y: 3}
     canExitRight: 1
   - vehicleName: Car_B
     orientation: 1
     lengthInCells: 2
-    gridPosition: {x: 3, y: 0}
+    gridPosition: {x: 2, y: 1}
     canExitRight: 0
   - vehicleName: Car_C
-    orientation: 1
-    lengthInCells: 1
-    gridPosition: {x: 3, y: 5}
+    orientation: 0
+    lengthInCells: 3
+    gridPosition: {x: 1, y: 5}
     canExitRight: 0

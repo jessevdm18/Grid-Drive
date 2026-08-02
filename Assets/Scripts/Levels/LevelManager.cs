@@ -22,11 +22,29 @@ public class LevelManager : MonoBehaviour
 
     [SerializeField] private GameManager gameManager;
 
+    [SerializeField] private SaveManager saveManager;
+
     [Tooltip("Onder dit Transform komen alle gespawnde voertuigen.")]
     [SerializeField] private Transform vehicleParent;
 
     private void Start()
     {
+        // Laad voortgang uit save (default = 0).
+        if (saveManager != null)
+        {
+            currentLevelIndex = saveManager.GetCurrentLevel();
+        }
+
+        // Zorg dat de index altijd binnen de levels-lijst valt.
+        if (levels != null && levels.Count > 0)
+        {
+            currentLevelIndex = Mathf.Clamp(currentLevelIndex, 0, levels.Count - 1);
+        }
+        else
+        {
+            currentLevelIndex = 0;
+        }
+
         LoadCurrentLevel();
     }
 
@@ -57,6 +75,14 @@ public class LevelManager : MonoBehaviour
         }
 
         currentLevelIndex++;
+
+        // Progressie opslaan: huidige + unlocked level.
+        if (saveManager != null)
+        {
+            saveManager.SaveCurrentLevel(currentLevelIndex);
+            saveManager.SaveUnlockedLevel(currentLevelIndex);
+        }
+
         LoadLevel();
     }
 
