@@ -28,13 +28,100 @@ public class VehicleController : MonoBehaviour
     [Tooltip("De onderste/linker gridcel die dit voertuig bezet.")]
     [SerializeField] private Vector2Int gridPosition;
 
+    // Prefab-scale bij Awake = "1 cel" basis. Voorkomt dat we
+    // lengthInCells stapelen op een al opgeschaalde prefab.
+    private Vector3 baseScale = Vector3.one;
+
     private Vector2Int dragStartGridPosition;
     private Vector3 dragStartMouseWorld;
 
     private Camera mainCamera;
 
+    // Voorkomt dubbele snap + occupancy als Setup() al heeft geïnitialiseerd.
+    private bool isInitialized;
+
+    private void Awake()
+    {
+        // Bewaar de originele prefab-scale als 1x1-basis.
+        // UpdateVisualSize gebruikt dit i.p.v. de huidige scale te vermenigvuldigen.
+        baseScale = transform.localScale;
+    }
+
+    /// <summary>
+    /// Wordt aangeroepen door LevelManager na Instantiate.
+    /// Zet level-data en initialiseert precies één keer.
+    /// </summary>
+    public void Setup(
+        GridManager newGridManager,
+        GameManager newGameManager,
+        VehicleOrientation newOrientation,
+        int newLengthInCells,
+        Vector2Int newGridPosition,
+        bool newCanExitRight,
+        int newExitRow)
+    {
+        gridManager = newGridManager;
+        gameManager = newGameManager;
+        orientation = newOrientation;
+        lengthInCells = newLengthInCells;
+        gridPosition = newGridPosition;
+        canExitRight = newCanExitRight;
+        exitRow = newExitRow;
+
+        // Visuele grootte pas nadat orientation en length bekend zijn.
+        UpdateVisualSize();
+
+        Initialize();
+    }
+
+    /// <summary>
+    /// Past de sprite/collider-schaal aan op orientation + lengthInCells.
+    /// Prefab moet een 1x1-cel zijn (BoxCollider2D size ≈ 1x1).
+    /// Scale wordt ABSOLUUT gezet vanaf baseScale — nooit opnieuw vermenigvuldigd.
+    /// Daardoor schalen sprite én BoxCollider2D samen mee.
+    /// </summary>
+    private void UpdateVisualSize()
+    {
+        if (orientation == VehicleOrientation.Horizontal)
+        {
+            // Breedte = length, hoogte = 1 cel.
+            transform.localScale = new Vector3(
+                baseScale.x * lengthInCells,
+                baseScale.y * 1f,
+                baseScale.z * 1f
+            );
+        }
+        else
+        {
+            // Breedte = 1 cel, hoogte = length.
+            transform.localScale = new Vector3(
+                baseScale.x * 1f,
+                baseScale.y * lengthInCells,
+                baseScale.z * 1f
+            );
+        }
+    }
+
     private void Start()
     {
+        // Alleen initialiseren als Setup() dit nog niet heeft gedaan
+        // (bijv. handmatig geplaatste auto in de scene).
+        if (!isInitialized)
+        {
+            Initialize();
+        }
+    }
+
+    /// <summary>
+    /// Snapt naar grid en registreert occupancy — maximaal één keer.
+    /// </summary>
+    private void Initialize()
+    {
+        if (isInitialized)
+        {
+            return;
+        }
+
         mainCamera = Camera.main;
 
         // Zorg dat we meteen exact op de juiste gridpositie staan.
@@ -42,6 +129,8 @@ public class VehicleController : MonoBehaviour
 
         // Registreer onze bezette cellen.
         gridManager.RegisterVehicle(this, GetOccupiedCells(gridPosition));
+
+        isInitialized = true;
     }
 
     private void OnMouseDown()
