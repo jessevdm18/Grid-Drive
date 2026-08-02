@@ -4,8 +4,8 @@ using UnityEngine;
 /// <summary>
 /// Beheert het speelveld-grid voor Rush Out.
 /// Zet dit script op een leeg GameObject in je scene (bijv. "GridManager").
-/// Gridpositie (0, 0) is de centrale cel.
-/// De positie van dit GameObject is het exacte geometrische midden van het grid.
+/// Gridcoördinaten lopen van 0 t/m gridWidth-1 en 0 t/m gridHeight-1.
+/// Zet dit GameObject op het geometrische midden van het speelveld.
 /// </summary>
 public class GridManager : MonoBehaviour
 {
@@ -21,9 +21,6 @@ public class GridManager : MonoBehaviour
 
     [Tooltip("Grootte van één gridcel in wereld-eenheden.")]
     [SerializeField] private float cellSize = 1f;
-
-    // Welke gridcellen momenteel bezet zijn (bijv. door een voertuig).
-    private HashSet<Vector2Int> occupiedCells = new HashSet<Vector2Int>();
 
     private void Awake()
     {
@@ -44,37 +41,30 @@ public class GridManager : MonoBehaviour
     public float CellSize => cellSize;
 
     /// <summary>
-    /// Het exacte geometrische midden van het grid in wereldcoördinaten.
-    /// Zet dit GameObject op (0, 0) — geen handmatige 0.5-offset nodig.
+    /// De linksonderhoek van cel (0, 0) in wereldcoördinaten.
+    /// Berekend vanuit het midden van dit GameObject, zodat het grid gecentreerd uitlijnt.
     /// </summary>
-    public Vector2 GridOrigin => transform.position;
+    public Vector2 GridOrigin => (Vector2)transform.position - new Vector2(gridWidth * cellSize * 0.5f, gridHeight * cellSize * 0.5f);
 
     /// <summary>
-    /// Interne offset voor het centreren van een even-sized grid.
-    /// Bij 6x6 is dit -0.5, zodat het grid symmetrisch rond de oorsprong ligt.
+    /// Laagste grid-x-coördinaat (altijd 0).
     /// </summary>
-    private float GridCenterOffsetX => (MinGridX + MaxGridX) / 2f;
-    private float GridCenterOffsetY => (MinGridY + MaxGridY) / 2f;
+    public int MinGridX => 0;
 
     /// <summary>
-    /// Laagste grid-x-coördinaat. Bij een 6x6 grid is dit -3.
+    /// Hoogste grid-x-coördinaat. Bij 6x6 is dit 5.
     /// </summary>
-    public int MinGridX => -gridWidth / 2;
+    public int MaxGridX => gridWidth - 1;
 
     /// <summary>
-    /// Hoogste grid-x-coördinaat. Bij een 6x6 grid is dit 2.
+    /// Laagste grid-y-coördinaat (altijd 0).
     /// </summary>
-    public int MaxGridX => (gridWidth - 1) / 2;
-
-    /// <summary>
-    /// Laagste grid-y-coördinaat.
-    /// </summary>
-    public int MinGridY => -gridHeight / 2;
+    public int MinGridY => 0;
 
     /// <summary>
     /// Hoogste grid-y-coördinaat.
     /// </summary>
-    public int MaxGridY => (gridHeight - 1) / 2;
+    public int MaxGridY => gridHeight - 1;
 
     // --- Positie-omrekening ---
 
@@ -85,11 +75,8 @@ public class GridManager : MonoBehaviour
     {
         Vector2 localPosition = worldPosition - GridOrigin;
 
-        float gridX = localPosition.x / cellSize + GridCenterOffsetX;
-        float gridY = localPosition.y / cellSize + GridCenterOffsetY;
-
-        int x = Mathf.FloorToInt(gridX + 0.5f);
-        int y = Mathf.FloorToInt(gridY + 0.5f);
+        int x = Mathf.FloorToInt(localPosition.x / cellSize);
+        int y = Mathf.FloorToInt(localPosition.y / cellSize);
 
         return new Vector2Int(x, y);
     }
@@ -99,28 +86,27 @@ public class GridManager : MonoBehaviour
     /// </summary>
     public Vector2 GridToWorld(Vector2Int gridPosition)
     {
-        float worldX = GridOrigin.x + (gridPosition.x - GridCenterOffsetX) * cellSize;
-        float worldY = GridOrigin.y + (gridPosition.y - GridCenterOffsetY) * cellSize;
+        float worldX = GridOrigin.x + (gridPosition.x + 0.5f) * cellSize;
+        float worldY = GridOrigin.y + (gridPosition.y + 0.5f) * cellSize;
 
         return new Vector2(worldX, worldY);
     }
 
     /// <summary>
-    /// Zet een gridpositie om naar het linksonder-punt van die cel.
+    /// Zet een gridpositie om naar de linksonderhoek van die cel.
     /// </summary>
     public Vector2 GridToWorldCorner(Vector2Int gridPosition)
     {
-        float halfCell = cellSize * 0.5f;
-        Vector2 cellCenter = GridToWorld(gridPosition);
-
-        return new Vector2(cellCenter.x - halfCell, cellCenter.y - halfCell);
+        return new Vector2(
+            GridOrigin.x + gridPosition.x * cellSize,
+            GridOrigin.y + gridPosition.y * cellSize
+        );
     }
 
     // --- Grid-validatie ---
 
     /// <summary>
-    /// Controleert of een gridpositie binnen het speelveld valt.
-    /// Bij 6x6: x en y lopen van -3 t/m 2.
+    /// Controleert of een gridpositie binnen het speelveld valt (0 t/m breedte/hoogte - 1).
     /// </summary>
     public bool IsInsideGrid(Vector2Int gridPosition)
     {
@@ -131,39 +117,132 @@ public class GridManager : MonoBehaviour
     }
 
     // --- Bezetting ---
+    // Per cel staat welk voertuig die cel bezet. Puur grid-logica — geen physics.
+
+    // Snel opzoeken: welk voertuig bezet een cel?
+    private Dictionary<Vector2Int, VehicleController> cellOccupancy = new Dictionary<Vector2Int, VehicleController>();
+
+    // Snel vrijgeven: welke cellen hoorden bij een voertuig?
+    private Dictionary<VehicleController, List<Vector2Int>> cellsByVehicle = new Dictionary<VehicleController, List<Vector2Int>>();
 
     /// <summary>
-    /// Controleert of een gridcel bezet is.
-    /// Retourneert ook true als de positie buiten het grid valt.
+    /// Controleert of één gridcel vrij is voor het opgegeven voertuig.
+    /// Het voertuig mag zijn eigen cellen gebruiken zonder zichzelf te blokkeren.
     /// </summary>
-    public bool IsOccupied(Vector2Int gridPosition)
+    public bool IsCellFree(Vector2Int cell, VehicleController requestingVehicle)
     {
-        if (!IsInsideGrid(gridPosition))
+        if (!IsInsideGrid(cell))
+        {
+            return false;
+        }
+
+        if (!cellOccupancy.TryGetValue(cell, out VehicleController occupant))
         {
             return true;
         }
 
-        return occupiedCells.Contains(gridPosition);
+        return occupant == requestingVehicle;
     }
 
     /// <summary>
-    /// Markeert een cel als bezet of vrij.
+    /// Controleert of alle opgegeven cellen vrij zijn voor het opgegeven voertuig.
     /// </summary>
-    public void SetOccupied(Vector2Int gridPosition, bool occupied)
+    public bool AreCellsFree(List<Vector2Int> cells, VehicleController requestingVehicle)
     {
-        if (!IsInsideGrid(gridPosition))
+        foreach (Vector2Int cell in cells)
+        {
+            if (!IsCellFree(cell, requestingVehicle))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// Registreert welke cellen een voertuig bezet.
+    /// Geeft false terug als een cel al door een ander voertuig bezet is.
+    /// </summary>
+    public bool RegisterVehicle(VehicleController vehicle, List<Vector2Int> occupiedCells)
+    {
+        if (vehicle == null || occupiedCells == null)
+        {
+            return false;
+        }
+
+        if (!AreCellsFree(occupiedCells, vehicle))
+        {
+            return false;
+        }
+
+        // Verwijder oude registratie van dit voertuig (bij verplaatsen).
+        UnregisterVehicle(vehicle);
+
+        List<Vector2Int> registeredCells = new List<Vector2Int>();
+
+        foreach (Vector2Int cell in occupiedCells)
+        {
+            cellOccupancy[cell] = vehicle;
+            registeredCells.Add(cell);
+        }
+
+        cellsByVehicle[vehicle] = registeredCells;
+        return true;
+    }
+
+    /// <summary>
+    /// Geeft alle cellen vrij die door het opgegeven voertuig bezet waren.
+    /// </summary>
+    public void UnregisterVehicle(VehicleController vehicle)
+    {
+        if (vehicle == null || !cellsByVehicle.TryGetValue(vehicle, out List<Vector2Int> cells))
         {
             return;
         }
 
-        if (occupied)
+        foreach (Vector2Int cell in cells)
         {
-            occupiedCells.Add(gridPosition);
+            if (cellOccupancy.TryGetValue(cell, out VehicleController occupant) && occupant == vehicle)
+            {
+                cellOccupancy.Remove(cell);
+            }
         }
-        else
+
+        cellsByVehicle.Remove(vehicle);
+    }
+
+    /// <summary>
+    /// Geeft alle gridcellen terug die een voertuig bezet bij een ankerpositie en afmeting.
+    /// Anker = linksonder cel. Grootte bv. (2,1) voor 2x1 horizontaal, (1,3) voor 1x3 verticaal.
+    /// </summary>
+    public List<Vector2Int> GetCellsForArea(Vector2Int anchorPosition, Vector2Int sizeInCells)
+    {
+        List<Vector2Int> cells = new List<Vector2Int>();
+
+        for (int x = 0; x < sizeInCells.x; x++)
         {
-            occupiedCells.Remove(gridPosition);
+            for (int y = 0; y < sizeInCells.y; y++)
+            {
+                cells.Add(new Vector2Int(anchorPosition.x + x, anchorPosition.y + y));
+            }
         }
+
+        return cells;
+    }
+
+    /// <summary>
+    /// Geeft de ankerpositie (linksonder cel) terug op basis van een wereldpositie en voertuiggrootte.
+    /// </summary>
+    public Vector2Int GetAnchorFromWorldPosition(Vector2 worldPosition, Vector2Int sizeInCells)
+    {
+        Vector2 origin = GridOrigin;
+        Vector2 local = worldPosition - origin;
+
+        int anchorX = Mathf.RoundToInt(local.x / cellSize - sizeInCells.x * 0.5f);
+        int anchorY = Mathf.RoundToInt(local.y / cellSize - sizeInCells.y * 0.5f);
+
+        return new Vector2Int(anchorX, anchorY);
     }
 
     /// <summary>
@@ -171,7 +250,8 @@ public class GridManager : MonoBehaviour
     /// </summary>
     public void ClearOccupiedCells()
     {
-        occupiedCells.Clear();
+        cellOccupancy.Clear();
+        cellsByVehicle.Clear();
     }
 
     // --- Debug-visualisatie in de Scene-view ---
@@ -199,12 +279,5 @@ public class GridManager : MonoBehaviour
             float worldY = bottomLeft.y + i * cellSize;
             Gizmos.DrawLine(new Vector2(bottomLeft.x, worldY), new Vector2(topRight.x, worldY));
         }
-
-        // Markeer het geometrische middelpunt van het grid
-        Gizmos.color = Color.yellow;
-        Vector2 center = GridOrigin;
-        float crossSize = cellSize * 0.2f;
-        Gizmos.DrawLine(center - Vector2.right * crossSize, center + Vector2.right * crossSize);
-        Gizmos.DrawLine(center - Vector2.up * crossSize, center + Vector2.up * crossSize);
     }
 }
