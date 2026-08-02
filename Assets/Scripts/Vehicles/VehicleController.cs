@@ -2,396 +2,358 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-/// <summary>
-/// Bestuurt een voertuig in Rush Out met echte grid-based movement.
-/// De logische gridpositie (Vector2Int) is de bron van waarheid — niet transform.position.
-/// </summary>
-[RequireComponent(typeof(BoxCollider2D))]
 public class VehicleController : MonoBehaviour
 {
-    /// <summary>
-    /// Richting waarin het voertuig mag bewegen.
-    /// </summary>
-    public enum Orientation
+    public enum VehicleOrientation
     {
         Horizontal,
         Vertical
     }
 
-    [Header("Grid")]
-    [SerializeField] private float cellSize = 1f;
-    [SerializeField] private int gridWidth = 6;
-    [SerializeField] private int gridHeight = 6;
+    [Header("Exit Settings")]
+[SerializeField] private bool canExitRight = false;
+[SerializeField] private int exitRow = 2;
+[SerializeField] private GameManager gameManager;
+
+    [Header("References")]
     [SerializeField] private GridManager gridManager;
 
-    [Header("Voertuig")]
-    [Tooltip("Horizontaal = beweegt op X-as. Verticaal = beweegt op Y-as.")]
-    [SerializeField] private Orientation orientation = Orientation.Horizontal;
+    [Header("Vehicle Settings")]
+    [SerializeField] private VehicleOrientation orientation
+        = VehicleOrientation.Horizontal;
 
-    [Tooltip("Aantal cellen in beweegrichting (bijv. 2 of 3).")]
-    [SerializeField] private int lengthInCells = 1;
+    [SerializeField] private int lengthInCells = 2;
 
-    [Header("Beweging")]
-    [Tooltip("Snelheid van visuele animatie tussen gridcellen.")]
-    [SerializeField] private float smoothSpeed = 12f;
+    [Header("Starting Grid Position")]
+    [Tooltip("De onderste/linker gridcel die dit voertuig bezet.")]
+    [SerializeField] private Vector2Int gridPosition;
 
-    // --- Logische gridstate (bron van waarheid) ---
-
-    // Huidige gridpositie: linksonder cel van dit voertuig.
-    private Vector2Int gridPosition;
-
-    // Doelpositie tijdens slepen (altijd een geldige hele gridpositie).
-    private Vector2Int targetGridPosition;
-
-    // Gridpositie bij start van slepen.
     private Vector2Int dragStartGridPosition;
+    private Vector3 dragStartMouseWorld;
 
-    // --- Runtime ---
-
-    private bool isDragging;
     private Camera mainCamera;
-    private Vector3 moveVelocity;
-
-    private void Awake()
-    {
-        mainCamera = Camera.main;
-    }
 
     private void Start()
     {
-        // Eenmalig: lees startpositie uit scene en snap visueel naar grid.
-        gridPosition = WorldToGridAnchor(transform.position);
-        gridPosition = ClampToBounds(gridPosition);
-        targetGridPosition = gridPosition;
+        mainCamera = Camera.main;
 
-        SnapVisualToGrid();
-        RegisterOccupancy();
-    }
+        // Zorg dat we meteen exact op de juiste gridpositie staan.
+        transform.position = GetWorldPosition(gridPosition);
 
-    private void Update()
-    {
-        // Visueel soepel bewegen naar de doel-gridpositie.
-        AnimateToTarget();
+        // Registreer onze bezette cellen.
+        gridManager.RegisterVehicle(this, GetOccupiedCells(gridPosition));
     }
 
     private void OnMouseDown()
     {
-        isDragging = true;
-        dragStartGridPosition = gridPosition;
-        targetGridPosition = gridPosition;
-
-        // Geef eigen cellen vrij zodat dit voertuig zichzelf niet blokkeert.
-        if (gridManager != null)
+        if (gridManager == null)
         {
-            gridManager.UnregisterVehicle(this);
-        }
-    }
-
-    private void OnMouseDrag()
-    {
-        if (!isDragging)
-        {
+            Debug.LogError("Geen GridManager gekoppeld aan " + name);
             return;
         }
 
-        // Muis/touch bepaalt alleen de gewenste gridpositie — geen vrije wereldbeweging.
-        Vector2Int desiredGrid = GetTargetGridFromPointer(GetPointerWorldPosition());
-        desiredGrid = ClampToBounds(desiredGrid);
+        dragStartGridPosition = gridPosition;
+        dragStartMouseWorld = GetMouseWorldPosition();
+    }
 
-        // Cel voor cel controleren zodat het voertuig niet door andere auto's springt.
-        targetGridPosition = FindLastValidGridPosition(dragStartGridPosition, desiredGrid);
+private bool CanExitRight(Vector3 dragDifference)
+{
+    // Alleen auto's die expliciet toestemming hebben.
+    if (!canExitRight)
+        return false;
+
+    // Alleen horizontale voertuigen.
+    if (orientation != VehicleOrientation.Horizontal)
+        return false;
+
+    // Alleen op de rij waar de uitgang zit.
+    if (gridPosition.y != exitRow)
+        return false;
+
+    // De auto moet al helemaal rechts staan.
+    int rightMostValidX =
+        gridManager.GridWidth - lengthInCells;
+
+    if (gridPosition.x != rightMostValidX)
+        return false;
+
+    // De speler moet nog duidelijk verder naar rechts slepen.
+    // Eén halve cel extra voelt op mobiel vrij natuurlijk.
+    float requiredExtraDrag =
+        gridManager.CellSize * 0.5f;
+
+    return dragDifference.x > requiredExtraDrag;
+}
+
+    private void OnMouseDrag()
+    {
+        if (gridManager == null)
+            return;
+
+        Vector3 currentMouseWorld = GetMouseWorldPosition();
+
+        Vector3 dragDifference =
+            currentMouseWorld - dragStartMouseWorld;
+
+            // Controleer of deze auto via de rechteruitgang
+// van het bord mag rijden.
+if (CanExitRight(dragDifference))
+{
+    ExitBoard();
+
+    if (gameManager != null)
+    {
+        gameManager.CheckWinCondition();
+    }
+
+    return;
+}
+
+        Vector2Int wantedPosition = dragStartGridPosition;
+
+        // De muis bepaalt alleen HOEVEEL HELE CELLEN
+        // we vanaf de startpositie willen bewegen.
+        if (orientation == VehicleOrientation.Horizontal)
+        {
+            int cellMovement =
+                Mathf.RoundToInt(
+                    dragDifference.x / gridManager.CellSize
+                );
+
+            wantedPosition.x += cellMovement;
+        }
+        else
+        {
+            int cellMovement =
+                Mathf.RoundToInt(
+                    dragDifference.y / gridManager.CellSize
+                );
+
+            wantedPosition.y += cellMovement;
+        }
+
+        // Zorg eerst dat de gewenste positie niet buiten het bord kan liggen.
+        wantedPosition = ClampGridPosition(wantedPosition);
+
+        // Zoek vanuit de oorspronkelijke positie cel voor cel
+        // hoe ver we daadwerkelijk mogen bewegen.
+        Vector2Int validPosition =
+            FindFarthestValidPosition(
+                dragStartGridPosition,
+                wantedPosition
+            );
+
+        // Alleen als de logische positie verandert.
+        if (validPosition != gridPosition)
+        {
+            gridPosition = validPosition;
+
+            // NIEUWE occupancy registreren.
+            gridManager.RegisterVehicle(
+                this,
+                GetOccupiedCells(gridPosition)
+            );
+        }
+
+        // Belangrijk:
+        // de auto staat ALTIJD exact op een gridpositie.
+        // Dus geen halve vakken tijdens het slepen.
+        transform.position = GetWorldPosition(gridPosition);
     }
 
     private void OnMouseUp()
     {
-        isDragging = false;
+        // Voor de zekerheid exact snap naar het grid.
+        transform.position = GetWorldPosition(gridPosition);
 
-        // Logische positie bijwerken naar de laatste geldige gridpositie.
-        gridPosition = targetGridPosition;
-        RegisterOccupancy();
-    }
-
-    // --- Grid ↔ World ---
-
-    /// <summary>
-    /// Zet een grid-anker (linksonder cel) om naar de wereldpositie van het voertuigmiddelpunt.
-    /// </summary>
-    private Vector3 GridToWorld(Vector2Int gridPos)
-    {
-        Vector2 origin = GetGridWorldOrigin();
-        float worldX;
-        float worldY;
-
-        if (orientation == Orientation.Horizontal)
-        {
-            // Middelpunt over lengthInCells horizontale cellen.
-            worldX = origin.x + (gridPos.x + lengthInCells * 0.5f) * cellSize;
-            worldY = origin.y + (gridPos.y + 0.5f) * cellSize;
-        }
-        else
-        {
-            worldX = origin.x + (gridPos.x + 0.5f) * cellSize;
-            worldY = origin.y + (gridPos.y + lengthInCells * 0.5f) * cellSize;
-        }
-
-        return new Vector3(worldX, worldY, transform.position.z);
-    }
-
-    /// <summary>
-    /// Berekent het grid-anker (linksonder) vanuit een wereldpositie.
-    /// Alleen gebruikt bij Start om voertuigen in de scene te initialiseren.
-    /// </summary>
-    private Vector2Int WorldToGridAnchor(Vector2 worldPosition)
-    {
-        Vector2 origin = GetGridWorldOrigin();
-
-        if (orientation == Orientation.Horizontal)
-        {
-            int x = Mathf.RoundToInt((worldPosition.x - origin.x) / cellSize - lengthInCells * 0.5f);
-            int y = Mathf.RoundToInt((worldPosition.y - origin.y) / cellSize - 0.5f);
-            return new Vector2Int(x, y);
-        }
-
-        int anchorX = Mathf.RoundToInt((worldPosition.x - origin.x) / cellSize - 0.5f);
-        int anchorY = Mathf.RoundToInt((worldPosition.y - origin.y) / cellSize - lengthInCells * 0.5f);
-        return new Vector2Int(anchorX, anchorY);
-    }
-
-    /// <summary>
-    /// Bepaalt welke gridpositie de speler bedoelt op basis van muis/touch.
-    /// </summary>
-    private Vector2Int GetTargetGridFromPointer(Vector2 pointerWorld)
-    {
-        Vector2 origin = GetGridWorldOrigin();
-
-        if (orientation == Orientation.Horizontal)
-        {
-            int x = Mathf.RoundToInt((pointerWorld.x - origin.x) / cellSize - lengthInCells * 0.5f);
-            return new Vector2Int(x, dragStartGridPosition.y);
-        }
-
-        int y = Mathf.RoundToInt((pointerWorld.y - origin.y) / cellSize - lengthInCells * 0.5f);
-        return new Vector2Int(dragStartGridPosition.x, y);
-    }
-
-    /// <summary>
-    /// Wereldpositie van de linksonderhoek van cel (0, 0).
-    /// </summary>
-    private Vector2 GetGridWorldOrigin()
-    {
-        if (gridManager != null)
-        {
-            return gridManager.GridOrigin;
-        }
-
-        return Vector2.zero;
-    }
-
-    // --- Boundaries & validatie ---
-
-    /// <summary>
-    /// Houdt het grid-anker binnen de grenzen van het 6x6 speelveld.
-    /// </summary>
-    private Vector2Int ClampToBounds(Vector2Int anchor)
-    {
-        if (orientation == Orientation.Horizontal)
-        {
-            int maxX = gridWidth - lengthInCells;
-            int maxY = gridHeight - 1;
-            anchor.x = Mathf.Clamp(anchor.x, 0, maxX);
-            anchor.y = Mathf.Clamp(anchor.y, 0, maxY);
-        }
-        else
-        {
-            int maxX = gridWidth - 1;
-            int maxY = gridHeight - lengthInCells;
-            anchor.x = Mathf.Clamp(anchor.x, 0, maxX);
-            anchor.y = Mathf.Clamp(anchor.y, 0, maxY);
-        }
-
-        return anchor;
-    }
-
-    /// <summary>
-    /// Controleert of het voertuig op deze gridpositie past (grenzen + vrije cellen).
-    /// </summary>
-    private bool IsGridPositionValid(Vector2Int anchor)
-    {
-        if (!IsWithinBounds(anchor))
-        {
-            return false;
-        }
-
-        if (gridManager == null)
-        {
-            return true;
-        }
-
-        return gridManager.AreCellsFree(GetOccupiedCellsAt(anchor), this);
-    }
-
-    /// <summary>
-    /// Controleert gridgrenzen zonder collider — puur op celcoördinaten.
-    /// </summary>
-    private bool IsWithinBounds(Vector2Int anchor)
-    {
-        if (orientation == Orientation.Horizontal)
-        {
-            return anchor.x >= 0
-                && anchor.x + lengthInCells <= gridWidth
-                && anchor.y >= 0
-                && anchor.y + 1 <= gridHeight;
-        }
-
-        return anchor.x >= 0
-            && anchor.x + 1 <= gridWidth
-            && anchor.y >= 0
-            && anchor.y + lengthInCells <= gridHeight;
-    }
-
-    /// <summary>
-    /// Loopt cel voor cel van start naar doel en stopt bij het eerste obstakel.
-    /// </summary>
-    private Vector2Int FindLastValidGridPosition(Vector2Int start, Vector2Int target)
-    {
-        Vector2Int best = start;
-
-        if (orientation == Orientation.Horizontal)
-        {
-            int direction = Mathf.Clamp(target.x - start.x, -1, 1);
-
-            if (direction == 0)
-            {
-                return start;
-            }
-
-            for (int x = start.x; direction > 0 ? x <= target.x : x >= target.x; x += direction)
-            {
-                Vector2Int test = new Vector2Int(x, start.y);
-
-                if (IsGridPositionValid(test))
-                {
-                    best = test;
-                }
-                else
-                {
-                    break;
-                }
-            }
-        }
-        else
-        {
-            int direction = Mathf.Clamp(target.y - start.y, -1, 1);
-
-            if (direction == 0)
-            {
-                return start;
-            }
-
-            for (int y = start.y; direction > 0 ? y <= target.y : y >= target.y; y += direction)
-            {
-                Vector2Int test = new Vector2Int(start.x, y);
-
-                if (IsGridPositionValid(test))
-                {
-                    best = test;
-                }
-                else
-                {
-                    break;
-                }
-            }
-        }
-
-        return best;
-    }
-
-    // --- Occupancy ---
-
-    /// <summary>
-    /// Grootte in cellen voor GridManager (horizontaal: 2x1, verticaal: 1x2, etc.).
-    /// </summary>
-    private Vector2Int GetOccupancySize()
-    {
-        if (orientation == Orientation.Horizontal)
-        {
-            return new Vector2Int(lengthInCells, 1);
-        }
-
-        return new Vector2Int(1, lengthInCells);
-    }
-
-    /// <summary>
-    /// Geeft alle gridcellen die dit voertuig bezet op de opgegeven ankerpositie.
-    /// </summary>
-    private List<Vector2Int> GetOccupiedCellsAt(Vector2Int anchor)
-    {
-        return gridManager.GetCellsForArea(anchor, GetOccupancySize());
-    }
-
-    /// <summary>
-    /// Registreert de huidige gridcellen als bezet bij GridManager.
-    /// </summary>
-    private void RegisterOccupancy()
-    {
-        if (gridManager == null)
-        {
-            return;
-        }
-
-        List<Vector2Int> cells = GetOccupiedCellsAt(gridPosition);
-
-        if (!gridManager.RegisterVehicle(this, cells))
-        {
-            // Alleen terugvallen tijdens slepen als registratie mislukt.
-            if (isDragging)
-            {
-                gridPosition = dragStartGridPosition;
-                targetGridPosition = gridPosition;
-                SnapVisualToGrid();
-                gridManager.RegisterVehicle(this, GetOccupiedCellsAt(gridPosition));
-            }
-        }
-    }
-
-    // --- Visuele beweging ---
-
-    /// <summary>
-    /// Animeert transform.position soepel naar de doel-gridpositie.
-    /// </summary>
-    private void AnimateToTarget()
-    {
-        Vector3 targetWorld = GridToWorld(isDragging ? targetGridPosition : gridPosition);
-
-        transform.position = Vector3.SmoothDamp(
-            transform.position,
-            targetWorld,
-            ref moveVelocity,
-            1f / smoothSpeed
+        gridManager.RegisterVehicle(
+            this,
+            GetOccupiedCells(gridPosition)
         );
     }
 
-    /// <summary>
-    /// Zet het voertuig direct op de gridpositie (geen animatie).
-    /// </summary>
-    private void SnapVisualToGrid()
+   private Vector3 GetMouseWorldPosition()
+{
+    Vector2 screenPosition;
+
+    // Muis / editor
+    if (Mouse.current != null)
     {
-        transform.position = GridToWorld(gridPosition);
-        moveVelocity = Vector3.zero;
+        screenPosition = Mouse.current.position.ReadValue();
+    }
+    // Touchscreen / mobiel
+    else if (Touchscreen.current != null)
+    {
+        screenPosition =
+            Touchscreen.current.primaryTouch.position.ReadValue();
+    }
+    else
+    {
+        return transform.position;
     }
 
-    /// <summary>
-    /// Leest muis- of touchpositie en zet die om naar wereldcoördinaten.
-    /// </summary>
-    private Vector2 GetPointerWorldPosition()
+    Vector3 worldPosition =
+        mainCamera.ScreenToWorldPoint(
+            new Vector3(screenPosition.x, screenPosition.y, 0f)
+        );
+
+    worldPosition.z = 0f;
+
+    return worldPosition;
+}
+
+    // Geeft alle cellen terug die het voertuig bezet.
+    public List<Vector2Int> GetOccupiedCells(Vector2Int position)
     {
-        Vector2 screenPosition = Pointer.current != null
-            ? Pointer.current.position.ReadValue()
-            : Vector2.zero;
+        List<Vector2Int> cells = new List<Vector2Int>();
 
-        float depth = Mathf.Abs(transform.position.z - mainCamera.transform.position.z);
-        Vector3 worldPoint = mainCamera.ScreenToWorldPoint(new Vector3(screenPosition.x, screenPosition.y, depth));
+        for (int i = 0; i < lengthInCells; i++)
+        {
+            if (orientation == VehicleOrientation.Horizontal)
+            {
+                cells.Add(
+                    new Vector2Int(
+                        position.x + i,
+                        position.y
+                    )
+                );
+            }
+            else
+            {
+                cells.Add(
+                    new Vector2Int(
+                        position.x,
+                        position.y + i
+                    )
+                );
+            }
+        }
 
-        return new Vector2(worldPoint.x, worldPoint.y);
+        return cells;
     }
+
+    // Houdt de LOGISCHE gridpositie binnen het speelveld.
+    private Vector2Int ClampGridPosition(Vector2Int position)
+    {
+        if (orientation == VehicleOrientation.Horizontal)
+        {
+            position.x = Mathf.Clamp(
+                position.x,
+                0,
+                gridManager.GridWidth - lengthInCells
+            );
+
+            position.y = Mathf.Clamp(
+                position.y,
+                0,
+                gridManager.GridHeight - 1
+            );
+        }
+        else
+        {
+            position.x = Mathf.Clamp(
+                position.x,
+                0,
+                gridManager.GridWidth - 1
+            );
+
+            position.y = Mathf.Clamp(
+                position.y,
+                0,
+                gridManager.GridHeight - lengthInCells
+            );
+        }
+
+        return position;
+    }
+
+    // Controleert de route CEL VOOR CEL.
+    // Hierdoor kan een auto niet door een andere auto heen springen.
+    private Vector2Int FindFarthestValidPosition(
+        Vector2Int from,
+        Vector2Int target)
+    {
+        Vector2Int current = from;
+
+        Vector2Int direction = Vector2Int.zero;
+
+        if (orientation == VehicleOrientation.Horizontal)
+        {
+            if (target.x > from.x)
+                direction = Vector2Int.right;
+            else if (target.x < from.x)
+                direction = Vector2Int.left;
+        }
+        else
+        {
+            if (target.y > from.y)
+                direction = Vector2Int.up;
+            else if (target.y < from.y)
+                direction = Vector2Int.down;
+        }
+
+        if (direction == Vector2Int.zero)
+            return current;
+
+        while (current != target)
+        {
+            Vector2Int next = current + direction;
+
+            next = ClampGridPosition(next);
+
+            // Als clamp ons niet verder laat bewegen,
+            // hebben we de rand bereikt.
+            if (next == current)
+                break;
+
+            List<Vector2Int> nextCells =
+                GetOccupiedCells(next);
+
+            if (!gridManager.AreCellsFree(nextCells, this))
+            {
+                // Andere auto blokkeert.
+                break;
+            }
+
+            current = next;
+        }
+
+        return current;
+    }
+
+    // Zet de LOGISCHE gridpositie om naar de visuele
+    // middenpositie van de volledige auto.
+    private Vector3 GetWorldPosition(Vector2Int position)
+    {
+        Vector3 firstCellCenter =
+            gridManager.CellToWorld(position);
+
+        float centerOffset =
+            (lengthInCells - 1) *
+            gridManager.CellSize *
+            0.5f;
+
+        if (orientation == VehicleOrientation.Horizontal)
+        {
+            return firstCellCenter +
+                   new Vector3(centerOffset, 0f, -1f);
+        }
+        else
+        {
+            return firstCellCenter +
+                   new Vector3(0f, centerOffset, -1f);
+        }
+    }
+
+    public void ExitBoard()
+{
+    // Verwijder deze auto uit de bezette gridcellen.
+    if (gridManager != null)
+    {
+        gridManager.UnregisterVehicle(this);
+    }
+
+    // Verberg de auto nadat hij het speelveld heeft verlaten.
+    gameObject.SetActive(false);
+}
 }
