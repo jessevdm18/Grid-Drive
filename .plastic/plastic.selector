@@ -1,0 +1,4 @@
+repository "Rush Out/Rush Out@9072430048488@cloud"
+  path "/"
+    br "/main"
+    co "/main"
