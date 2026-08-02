@@ -1,2 +1,17 @@
 fileFormatVersion: 2
 guid: 68cdc0461f6d70f4581ef34e5504adef
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - levelDatabase: {fileID: 11400000, guid: 0d072e92c04ea424495d428e7d766e30, type: 2}
+  - vehiclePrefab: {fileID: 8600239801681678209, guid: 1787df7ee99f53b4586068c868d42c77, type: 3}
+  - gridManager: {instanceID: 0}
+  - gameManager: {instanceID: 0}
+  - saveManager: {instanceID: 0}
+  - vehicleParent: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

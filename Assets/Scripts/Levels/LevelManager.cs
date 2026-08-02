@@ -1,17 +1,15 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Laadt LevelData ScriptableObjects en spawnt alle voertuigen.
-/// Ondersteunt meerdere levels via een lijst.
+/// Laadt levels via LevelDatabase en spawnt alle voertuigen.
 /// </summary>
 public class LevelManager : MonoBehaviour
 {
     [Header("Levels")]
-    [Tooltip("Alle levels in volgorde (index 0 = eerste level).")]
-    [SerializeField] private List<LevelData> levels = new List<LevelData>();
+    [Tooltip("Centrale database met alle LevelData-assets.")]
+    [SerializeField] private LevelDatabase levelDatabase;
 
-    [Tooltip("Welk level nu actief is (index in de levels-lijst).")]
+    [Tooltip("Welk level nu actief is (index in de database).")]
     [SerializeField] private int currentLevelIndex = 0;
 
     [Header("Prefabs & Referenties")]
@@ -35,10 +33,14 @@ public class LevelManager : MonoBehaviour
             currentLevelIndex = saveManager.GetCurrentLevel();
         }
 
-        // Zorg dat de index altijd binnen de levels-lijst valt.
-        if (levels != null && levels.Count > 0)
+        // Zorg dat de index altijd binnen de database valt.
+        if (levelDatabase != null && levelDatabase.LevelCount > 0)
         {
-            currentLevelIndex = Mathf.Clamp(currentLevelIndex, 0, levels.Count - 1);
+            currentLevelIndex = Mathf.Clamp(
+                currentLevelIndex,
+                0,
+                levelDatabase.LevelCount - 1
+            );
         }
         else
         {
@@ -61,14 +63,14 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     public void LoadNextLevel()
     {
-        if (levels == null || levels.Count == 0)
+        if (levelDatabase == null || levelDatabase.LevelCount == 0)
         {
-            Debug.LogError("LevelManager: geen levels in de lijst.");
+            Debug.LogError("LevelManager: geen levels in LevelDatabase.");
             return;
         }
 
         // Stop bij het laatste level — voorkom index-out-of-range.
-        if (currentLevelIndex >= levels.Count - 1)
+        if (currentLevelIndex >= levelDatabase.LevelCount - 1)
         {
             Debug.Log("LevelManager: dit is het laatste level.");
             return;
@@ -95,23 +97,24 @@ public class LevelManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Laadt levels[currentLevelIndex]: ruimt oude auto's/occupancy op en spawnt opnieuw.
+    /// Laadt levelDatabase.GetLevel(currentLevelIndex):
+    /// ruimt oude auto's/occupancy op en spawnt opnieuw.
     /// </summary>
     public void LoadLevel()
     {
-        if (levels == null || levels.Count == 0)
+        if (levelDatabase == null || levelDatabase.LevelCount == 0)
         {
-            Debug.LogError("LevelManager: geen levels in de lijst.");
+            Debug.LogError("LevelManager: geen levels in LevelDatabase.");
             return;
         }
 
-        if (currentLevelIndex < 0 || currentLevelIndex >= levels.Count)
+        if (currentLevelIndex < 0 || currentLevelIndex >= levelDatabase.LevelCount)
         {
             Debug.LogError("LevelManager: currentLevelIndex buiten bereik: " + currentLevelIndex);
             return;
         }
 
-        LevelData levelData = levels[currentLevelIndex];
+        LevelData levelData = levelDatabase.GetLevel(currentLevelIndex);
 
         if (levelData == null)
         {

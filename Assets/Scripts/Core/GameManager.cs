@@ -3,6 +3,7 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     [SerializeField] private UIManager uiManager;
+    [SerializeField] private CoinManager coinManager;
 
     // Voorkomt dat CompleteLevel meerdere keren voor hetzelfde level draait.
     private bool levelCompleted;
@@ -20,6 +21,12 @@ public class GameManager : MonoBehaviour
         levelCompleted = true;
 
         Debug.Log("LEVEL COMPLETED!");
+
+        // Beloning: één keer per level (beschermd door levelCompleted).
+        if (coinManager != null)
+        {
+            coinManager.AddCoins(50);
+        }
 
         if (uiManager != null)
         {

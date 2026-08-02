@@ -351,6 +351,51 @@ private bool CanExitRight(Vector3 dragDifference)
         return cells;
     }
 
+    /// <summary>
+    /// Read-only: kan dit voertuig minstens één geldige gridstap maken?
+    /// Gebruikt bestaande occupancy-checks — verandert geen positie.
+    /// </summary>
+    public bool CanMakeAnyMove()
+    {
+        if (gridManager == null)
+        {
+            return false;
+        }
+
+        if (orientation == VehicleOrientation.Horizontal)
+        {
+            Vector2Int oneRight = ClampGridPosition(gridPosition + Vector2Int.right);
+            Vector2Int oneLeft = ClampGridPosition(gridPosition + Vector2Int.left);
+
+            if (FindFarthestValidPosition(gridPosition, oneRight) != gridPosition)
+            {
+                return true;
+            }
+
+            if (FindFarthestValidPosition(gridPosition, oneLeft) != gridPosition)
+            {
+                return true;
+            }
+        }
+        else
+        {
+            Vector2Int oneUp = ClampGridPosition(gridPosition + Vector2Int.up);
+            Vector2Int oneDown = ClampGridPosition(gridPosition + Vector2Int.down);
+
+            if (FindFarthestValidPosition(gridPosition, oneUp) != gridPosition)
+            {
+                return true;
+            }
+
+            if (FindFarthestValidPosition(gridPosition, oneDown) != gridPosition)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     // Houdt de LOGISCHE gridpositie binnen het speelveld.
     private Vector2Int ClampGridPosition(Vector2Int position)
     {
