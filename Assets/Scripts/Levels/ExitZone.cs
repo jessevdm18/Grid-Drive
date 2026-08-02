@@ -14,11 +14,7 @@ public class ExitZone : MonoBehaviour
         if (vehicle == null)
             return;
 
-        vehicle.ExitBoard();
-
-        if (gameManager != null)
-        {
-            gameManager.CheckWinCondition();
-        }
+        // Exit wordt uitsluitend afgehandeld via VehicleController.TryExitRight tijdens slepen.
+        // Triggers mogen ExitBoard niet rechtstreeks aanroepen.
     }
 }

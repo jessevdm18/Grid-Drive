@@ -60,30 +60,62 @@ private bool CanExitRight(Vector3 dragDifference)
 {
     // Alleen auto's die expliciet toestemming hebben.
     if (!canExitRight)
+    {
         return false;
+    }
 
     // Alleen horizontale voertuigen.
     if (orientation != VehicleOrientation.Horizontal)
+    {
         return false;
+    }
 
     // Alleen op de rij waar de uitgang zit.
     if (gridPosition.y != exitRow)
+    {
         return false;
+    }
 
     // De auto moet al helemaal rechts staan.
-    int rightMostValidX =
-        gridManager.GridWidth - lengthInCells;
+    int rightMostValidX = gridManager.GridWidth - lengthInCells;
 
     if (gridPosition.x != rightMostValidX)
+    {
         return false;
+    }
 
     // De speler moet nog duidelijk verder naar rechts slepen.
-    // Eén halve cel extra voelt op mobiel vrij natuurlijk.
-    float requiredExtraDrag =
-        gridManager.CellSize * 0.5f;
+    float requiredExtraDrag = gridManager.CellSize * 0.5f;
 
     return dragDifference.x > requiredExtraDrag;
 }
+
+    /// <summary>
+    /// Enig toegestane exit-pad. Roept ExitBoard() alleen aan als CanExitRight true is.
+    /// </summary>
+    private bool TryExitRight(Vector3 dragDifference)
+    {
+        if (!CanExitRight(dragDifference))
+        {
+            return false;
+        }
+
+        Debug.Log(
+            "ExitBoard: " + name +
+            ", canExitRight=" + canExitRight +
+            ", gridPosition=" + gridPosition +
+            ", exitRow=" + exitRow
+        );
+
+        ExitBoard();
+
+        if (gameManager != null)
+        {
+            gameManager.CheckWinCondition();
+        }
+
+        return true;
+    }
 
     private void OnMouseDrag()
     {
@@ -95,19 +127,11 @@ private bool CanExitRight(Vector3 dragDifference)
         Vector3 dragDifference =
             currentMouseWorld - dragStartMouseWorld;
 
-            // Controleer of deze auto via de rechteruitgang
-// van het bord mag rijden.
-if (CanExitRight(dragDifference))
-{
-    ExitBoard();
-
-    if (gameManager != null)
-    {
-        gameManager.CheckWinCondition();
-    }
-
-    return;
-}
+        // Enig toegestane exit-pad: via CanExitRight → TryExitRight → ExitBoard.
+        if (TryExitRight(dragDifference))
+        {
+            return;
+        }
 
         Vector2Int wantedPosition = dragStartGridPosition;
 
@@ -345,15 +369,15 @@ if (CanExitRight(dragDifference))
         }
     }
 
-    public void ExitBoard()
-{
-    // Verwijder deze auto uit de bezette gridcellen.
-    if (gridManager != null)
+    private void ExitBoard()
     {
-        gridManager.UnregisterVehicle(this);
-    }
+        // Verwijder deze auto uit de bezette gridcellen.
+        if (gridManager != null)
+        {
+            gridManager.UnregisterVehicle(this);
+        }
 
-    // Verberg de auto nadat hij het speelveld heeft verlaten.
-    gameObject.SetActive(false);
-}
+        // Verberg de auto nadat hij het speelveld heeft verlaten.
+        gameObject.SetActive(false);
+    }
 }
