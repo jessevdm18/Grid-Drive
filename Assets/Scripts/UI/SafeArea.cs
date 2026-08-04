@@ -1,18 +1,19 @@
 using UnityEngine;
 
 /// <summary>
-/// Past de RectTransform aan zodat UI binnen Screen.safeArea blijft
-/// (notch, statusbalk, home-indicator op Android/iOS).
-/// Zet dit script op een UI-panel met RectTransform (vaak een child van Canvas).
+/// Past de RectTransform aan zodat UI binnen Screen.safeArea blijft.
+/// Screen.safeArea is in PIXELS; anchors zijn genormaliseerd (0–1).
+/// Zet dit op een full-stretch UI-object onder de Canvas.
 /// </summary>
 [RequireComponent(typeof(RectTransform))]
 public class SafeArea : MonoBehaviour
 {
     private RectTransform rectTransform;
 
-    // Onthoud de laatste safe area om onnodige updates te vermijden.
+    // Onthoud vorige waarden om onnodige updates te vermijden.
     private Rect lastSafeArea;
-    private Vector2Int lastScreenSize;
+    private int lastScreenWidth;
+    private int lastScreenHeight;
 
     private void Awake()
     {
@@ -26,25 +27,24 @@ public class SafeArea : MonoBehaviour
 
     private void Update()
     {
-        // Alleen opnieuw toepassen als scherm of safe area echt veranderde.
-        if (HasSafeAreaChanged())
+        if (HasScreenOrSafeAreaChanged())
         {
             ApplySafeArea();
         }
     }
 
     /// <summary>
-    /// True als resolutie of safe area anders is dan de vorige keer.
+    /// True als breedte, hoogte of safe area is veranderd.
     /// </summary>
-    private bool HasSafeAreaChanged()
+    private bool HasScreenOrSafeAreaChanged()
     {
-        Vector2Int screenSize = new Vector2Int(Screen.width, Screen.height);
-
-        return screenSize != lastScreenSize || Screen.safeArea != lastSafeArea;
+        return Screen.width != lastScreenWidth
+            || Screen.height != lastScreenHeight
+            || Screen.safeArea != lastSafeArea;
     }
 
     /// <summary>
-    /// Zet anchors zodat dit UI-object exact binnen de safe area valt.
+    /// Zet anchors zodat dit object exact binnen de safe area valt.
     /// </summary>
     private void ApplySafeArea()
     {
@@ -53,12 +53,16 @@ public class SafeArea : MonoBehaviour
             return;
         }
 
+        // Nooit delen door 0 (kan kort voorkomen bij scene-start).
+        if (Screen.width <= 0 || Screen.height <= 0)
+        {
+            Debug.LogWarning("SafeArea: Screen.width/height is 0 — skip.");
+            return;
+        }
+
         Rect safeArea = Screen.safeArea;
 
-        lastSafeArea = safeArea;
-        lastScreenSize = new Vector2Int(Screen.width, Screen.height);
-
-        // Reken safe area (pixels) om naar genormaliseerde anchors (0–1).
+        // Pixels → genormaliseerde anchors (0–1).
         Vector2 anchorMin = safeArea.position;
         Vector2 anchorMax = safeArea.position + safeArea.size;
 
@@ -67,9 +71,24 @@ public class SafeArea : MonoBehaviour
         anchorMax.x /= Screen.width;
         anchorMax.y /= Screen.height;
 
+        // Tijdelijke debug — verwijder later.
+        Debug.Log(
+            "SafeArea apply\n" +
+            "Screen.width = " + Screen.width + "\n" +
+            "Screen.height = " + Screen.height + "\n" +
+            "Screen.safeArea = " + safeArea + "\n" +
+            "anchorMin = " + anchorMin + "\n" +
+            "anchorMax = " + anchorMax
+        );
+
         rectTransform.anchorMin = anchorMin;
         rectTransform.anchorMax = anchorMax;
         rectTransform.offsetMin = Vector2.zero;
         rectTransform.offsetMax = Vector2.zero;
+        rectTransform.localScale = Vector3.one;
+
+        lastSafeArea = safeArea;
+        lastScreenWidth = Screen.width;
+        lastScreenHeight = Screen.height;
     }
 }

@@ -185,10 +185,14 @@ MonoBehaviour:
   exitRow: 2
   gameManager: {fileID: 0}
   gridManager: {fileID: 0}
-  visualTransform: {fileID: 0}
+  visualTransform: {fileID: 4809194992319532519}
+  moveAnimationDuration: 0.06
+  blockedShakeDistance: 0.08
+  blockedShakeDuration: 0.12
+  blockedFeedbackCooldown: 0.15
   orientation: 0
   lengthInCells: 2
-  dragThreshold: 0.2
+  dragThreshold: 0.12
   gridPosition: {x: 0, y: 0}
 --- !u!1 &5901769756843944192
 GameObject:

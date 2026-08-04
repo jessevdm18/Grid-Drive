@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -22,6 +23,26 @@ public class VehicleController : MonoBehaviour
     [Tooltip("Child met de SpriteRenderer (bijv. \"Visual\"). Root blijft logica/collider.")]
     [SerializeField] private Transform visualTransform;
 
+    [Tooltip("Duur van de soepele visual-beweging tussen gridcellen (lager = sneller op mobiel).")]
+    [SerializeField] private float moveAnimationDuration = 0.06f;
+
+    [Header("Blocked Feedback")]
+    [Tooltip("Hoe ver de Visual kort 'tikt' bij een geblokkeerde stap (world units).")]
+    [SerializeField] private float blockedShakeDistance = 0.08f;
+
+    [Tooltip("Totale duur van de blocked-tik (heen + terug).")]
+    [SerializeField] private float blockedShakeDuration = 0.12f;
+
+    [Tooltip("Minimale tijd tussen twee blocked-feedbacks (voorkomt spam).")]
+    [SerializeField] private float blockedFeedbackCooldown = 0.15f;
+
+    [Header("Exit Animation")]
+    [Tooltip("Hoe lang de auto doet over wegrijden via de uitgang.")]
+    [SerializeField] private float exitAnimationDuration = 0.4f;
+
+    [Tooltip("Hoe ver naar rechts de auto rijdt tijdens de exit (world units).")]
+    [SerializeField] private float exitDistance = 4f;
+
     [Header("Vehicle Settings")]
     [SerializeField] private VehicleOrientation orientation
         = VehicleOrientation.Horizontal;
@@ -29,9 +50,9 @@ public class VehicleController : MonoBehaviour
     [SerializeField] private int lengthInCells = 2;
 
     [Header("Touch Feel")]
-    [Tooltip("Hoeveel van een cel je moet slepen voordat de auto één gridstap doet (lager = sneller).")]
-    [SerializeField, Range(0.1f, 0.5f)]
-    private float dragThreshold = 0.2f;
+    [Tooltip("Hoeveel van een cel je moet slepen vóór de eerste gridstap (lager = responsiever).")]
+    [SerializeField, Range(0.05f, 0.5f)]
+    private float dragThreshold = 0.12f;
 
     [Header("Starting Grid Position")]
     [Tooltip("De onderste/linker gridcel die dit voertuig bezet.")]
@@ -48,6 +69,20 @@ public class VehicleController : MonoBehaviour
 
     // Voorkomt dubbele snap + occupancy als Setup() al heeft geïnitialiseerd.
     private bool isInitialized;
+
+    // Lopende visual-animatie (gestopt bij een nieuwe gridstap).
+    private Coroutine visualMoveCoroutine;
+
+    // Korte 'tik' wanneer beweging geblokkeerd is.
+    private Coroutine blockedShakeCoroutine;
+
+    // Volgende moment waarop blocked-feedback mag starten.
+    private float nextBlockedFeedbackTime;
+
+    // True tijdens de exit-animatie — blokkeert verdere input/movement.
+    private bool isExiting;
+
+    private AudioManager audioManager;
 
     private void Awake()
     {
@@ -165,9 +200,15 @@ public class VehicleController : MonoBehaviour
         }
 
         mainCamera = Camera.main;
+        audioManager = FindFirstObjectByType<AudioManager>();
 
         // Zorg dat we meteen exact op de juiste gridpositie staan.
         transform.position = GetWorldPosition(gridPosition);
+
+        if (visualTransform != null)
+        {
+            visualTransform.localPosition = Vector3.zero;
+        }
 
         // Registreer onze bezette cellen.
         gridManager.RegisterVehicle(this, GetOccupiedCells(gridPosition));
@@ -177,6 +218,11 @@ public class VehicleController : MonoBehaviour
 
     private void OnMouseDown()
     {
+        if (isExiting)
+        {
+            return;
+        }
+
         if (gridManager == null)
         {
             Debug.LogError("Geen GridManager gekoppeld aan " + name);
@@ -222,10 +268,15 @@ private bool CanExitRight(Vector3 dragDifference)
 }
 
     /// <summary>
-    /// Enig toegestane exit-pad. Roept ExitBoard() alleen aan als CanExitRight true is.
+    /// Enig toegestane exit-pad. Start exit-animatie alleen als CanExitRight true is.
     /// </summary>
     private bool TryExitRight(Vector3 dragDifference)
     {
+        if (isExiting)
+        {
+            return true;
+        }
+
         if (!CanExitRight(dragDifference))
         {
             return false;
@@ -238,19 +289,63 @@ private bool CanExitRight(Vector3 dragDifference)
             ", exitRow=" + exitRow
         );
 
-        ExitBoard();
+        StartCoroutine(PlayExitAnimation());
+        return true;
+    }
 
+    /// <summary>
+    /// Rijdt soepel naar rechts uit het veld, daarna CompleteLevel + deactiveren.
+    /// </summary>
+    private IEnumerator PlayExitAnimation()
+    {
+        isExiting = true;
+
+        // Stop movement/blocked-animaties; Visual zit vast op de root.
+        StopAllVisualCoroutines();
+
+        if (visualTransform != null)
+        {
+            visualTransform.localPosition = Vector3.zero;
+        }
+
+        // Vacate gridcellen meteen, zodat occupancy klopt tijdens wegrijden.
+        if (gridManager != null)
+        {
+            gridManager.UnregisterVehicle(this);
+        }
+
+        Vector3 startPosition = transform.position;
+        Vector3 endPosition = startPosition + Vector3.right * exitDistance;
+        float duration = Mathf.Max(0.01f, exitAnimationDuration);
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / duration);
+
+            // Ease-in: start rustig, versnelt tijdens wegrijden.
+            float eased = t * t;
+
+            transform.position = Vector3.Lerp(startPosition, endPosition, eased);
+            yield return null;
+        }
+
+        transform.position = endPosition;
+
+        // Level pas voltooien als de auto zichtbaar is weggereden.
         if (gameManager != null)
         {
             gameManager.CompleteLevel();
         }
 
-        return true;
+        // Zelfde eindresultaat als voorheen: auto van het bord.
+        gameObject.SetActive(false);
     }
 
     private void OnMouseDrag()
     {
-        if (gridManager == null)
+        if (isExiting || gridManager == null)
             return;
 
         Vector3 currentMouseWorld = GetMouseWorldPosition();
@@ -268,14 +363,21 @@ private bool CanExitRight(Vector3 dragDifference)
 
         // Threshold i.p.v. RoundToInt: sneller reageren op touch,
         // maar nog steeds alleen hele gridstappen.
+        int cellSteps = 0;
+
         if (orientation == VehicleOrientation.Horizontal)
         {
-            wantedPosition.x += GetDragCellSteps(dragDifference.x);
+            cellSteps = GetDragCellSteps(dragDifference.x);
+            wantedPosition.x += cellSteps;
         }
         else
         {
-            wantedPosition.y += GetDragCellSteps(dragDifference.y);
+            cellSteps = GetDragCellSteps(dragDifference.y);
+            wantedPosition.y += cellSteps;
         }
+
+        // Ongeclampte wens — nodig om rand-blokkades te detecteren.
+        Vector2Int unclampedWanted = wantedPosition;
 
         // Zorg eerst dat de gewenste positie niet buiten het bord kan liggen.
         wantedPosition = ClampGridPosition(wantedPosition);
@@ -291,7 +393,9 @@ private bool CanExitRight(Vector3 dragDifference)
         // Alleen als de logische positie verandert.
         if (validPosition != gridPosition)
         {
-            gridPosition = validPosition;
+            // Root springt direct; Visual glijdt soepel mee.
+            MoveRootToGridPosition(validPosition, animateVisual: true);
+            audioManager?.PlayMove();
 
             // NIEUWE occupancy registreren.
             gridManager.RegisterVehicle(
@@ -299,11 +403,228 @@ private bool CanExitRight(Vector3 dragDifference)
                 GetOccupiedCells(gridPosition)
             );
         }
+        else
+        {
+            // Root blijft op de logische gridpositie.
+            transform.position = GetWorldPosition(gridPosition);
 
-        // Belangrijk:
-        // de auto staat ALTIJD exact op een gridpositie.
-        // Dus geen halve vakken tijdens het slepen.
+            // Speler wil verder, maar kan niet (obstakel of rand).
+            if (IsBlockedMoveAttempt(unclampedWanted))
+            {
+                TryPlayBlockedFeedback(unclampedWanted);
+            }
+        }
+    }
+
+    /// <summary>
+    /// True als de sleep verder wil dan de huidige gridpositie (geblokkeerde poging).
+    /// </summary>
+    private bool IsBlockedMoveAttempt(Vector2Int unclampedWanted)
+    {
+        if (orientation == VehicleOrientation.Horizontal)
+        {
+            return unclampedWanted.x != gridPosition.x;
+        }
+
+        return unclampedWanted.y != gridPosition.y;
+    }
+
+    /// <summary>
+    /// Speelt een korte Visual-tik in de geblokkeerde richting (met cooldown).
+    /// </summary>
+    private void TryPlayBlockedFeedback(Vector2Int unclampedWanted)
+    {
+        if (visualTransform == null)
+        {
+            return;
+        }
+
+        // Geen spam tijdens vasthouden van de vinger.
+        if (Time.time < nextBlockedFeedbackTime)
+        {
+            return;
+        }
+
+        // Niet storen tijdens een echte movement-animatie.
+        if (visualMoveCoroutine != null)
+        {
+            return;
+        }
+
+        // Al een blocked-shake bezig.
+        if (blockedShakeCoroutine != null)
+        {
+            return;
+        }
+
+        Vector3 localPeak = GetBlockedShakeLocalOffset(unclampedWanted);
+
+        if (localPeak.sqrMagnitude < 0.0001f)
+        {
+            return;
+        }
+
+        nextBlockedFeedbackTime = Time.time + blockedFeedbackCooldown;
+        audioManager?.PlayBlocked();
+#if UNITY_ANDROID || UNITY_IOS
+        Handheld.Vibrate();
+#endif
+        blockedShakeCoroutine = StartCoroutine(AnimateBlockedShake(localPeak));
+    }
+
+    /// <summary>
+    /// Local offset voor de Visual-tik, gecorrigeerd voor root-scale.
+    /// </summary>
+    private Vector3 GetBlockedShakeLocalOffset(Vector2Int unclampedWanted)
+    {
+        float dirX = 0f;
+        float dirY = 0f;
+
+        if (orientation == VehicleOrientation.Horizontal)
+        {
+            dirX = Mathf.Sign(unclampedWanted.x - gridPosition.x);
+        }
+        else
+        {
+            dirY = Mathf.Sign(unclampedWanted.y - gridPosition.y);
+        }
+
+        // World-afstand ≈ blockedShakeDistance, ondanks parent-scale.
+        float scaleX = Mathf.Abs(transform.localScale.x);
+        float scaleY = Mathf.Abs(transform.localScale.y);
+
+        if (scaleX < 0.0001f) scaleX = 1f;
+        if (scaleY < 0.0001f) scaleY = 1f;
+
+        return new Vector3(
+            dirX * blockedShakeDistance / scaleX,
+            dirY * blockedShakeDistance / scaleY,
+            0f
+        );
+    }
+
+    /// <summary>
+    /// Visual beweegt kort heen en weer; root blijft stilstaan.
+    /// </summary>
+    private IEnumerator AnimateBlockedShake(Vector3 localPeak)
+    {
+        Vector3 startLocal = visualTransform.localPosition;
+        float halfDuration = Mathf.Max(0.01f, blockedShakeDuration * 0.5f);
+
+        // Heen: huidige positie → peak.
+        float elapsed = 0f;
+        while (elapsed < halfDuration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / halfDuration);
+            float eased = Mathf.SmoothStep(0f, 1f, t);
+            visualTransform.localPosition = Vector3.Lerp(startLocal, localPeak, eased);
+            yield return null;
+        }
+
+        // Terug: peak → zero.
+        elapsed = 0f;
+        while (elapsed < halfDuration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / halfDuration);
+            float eased = Mathf.SmoothStep(0f, 1f, t);
+            visualTransform.localPosition = Vector3.Lerp(localPeak, Vector3.zero, eased);
+            yield return null;
+        }
+
+        visualTransform.localPosition = Vector3.zero;
+        blockedShakeCoroutine = null;
+    }
+
+    /// <summary>
+    /// Zet de root direct op de gridpositie. Visual krijgt een offset en animeert naar zero.
+    /// Logische stap wacht nooit op een vorige animatie.
+    /// </summary>
+    private void MoveRootToGridPosition(Vector2Int newGridPosition, bool animateVisual)
+    {
+        // Huidige world-positie van de visual (ook midden in een animatie).
+        Vector3 visualWorldBefore = visualTransform != null
+            ? visualTransform.position
+            : transform.position;
+
+        // Stop lopende visual-coroutines VOORDAT we opnieuw animeren
+        // (geen wachtrij — altijd vanaf de actuele visual-positie).
+        StopAllVisualCoroutines();
+
+        gridPosition = newGridPosition;
         transform.position = GetWorldPosition(gridPosition);
+
+        if (visualTransform == null)
+        {
+            return;
+        }
+
+        if (!animateVisual)
+        {
+            visualTransform.localPosition = Vector3.zero;
+            return;
+        }
+
+        // Visual blijft visueel op de oude plek → localOffset t.o.v. nieuwe root.
+        visualTransform.position = visualWorldBefore;
+        StartVisualMoveAnimation();
+    }
+
+    /// <summary>
+    /// Stopt movement- én blocked-animaties zonder Visual te teleporten.
+    /// </summary>
+    private void StopAllVisualCoroutines()
+    {
+        if (visualMoveCoroutine != null)
+        {
+            StopCoroutine(visualMoveCoroutine);
+            visualMoveCoroutine = null;
+        }
+
+        if (blockedShakeCoroutine != null)
+        {
+            StopCoroutine(blockedShakeCoroutine);
+            blockedShakeCoroutine = null;
+        }
+    }
+
+    /// <summary>
+    /// Start (of herstart) de SmoothStep-animatie van Visual naar localPosition zero.
+    /// </summary>
+    private void StartVisualMoveAnimation()
+    {
+        if (visualTransform == null)
+        {
+            return;
+        }
+
+        // Zekerheid: geen parallelle coroutines.
+        StopAllVisualCoroutines();
+
+        visualMoveCoroutine = StartCoroutine(AnimateVisualToZero());
+    }
+
+    /// <summary>
+    /// Animeert Visual.localPosition van de huidige offset naar Vector3.zero.
+    /// </summary>
+    private IEnumerator AnimateVisualToZero()
+    {
+        Vector3 startLocal = visualTransform.localPosition;
+        float elapsed = 0f;
+        float duration = Mathf.Max(0.01f, moveAnimationDuration);
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / duration);
+            float eased = Mathf.SmoothStep(0f, 1f, t);
+            visualTransform.localPosition = Vector3.Lerp(startLocal, Vector3.zero, eased);
+            yield return null;
+        }
+
+        visualTransform.localPosition = Vector3.zero;
+        visualMoveCoroutine = null;
     }
 
     /// <summary>
@@ -326,6 +647,11 @@ private bool CanExitRight(Vector3 dragDifference)
 
     private void OnMouseUp()
     {
+        if (isExiting)
+        {
+            return;
+        }
+
         // Voor de zekerheid exact snap naar het grid.
         transform.position = GetWorldPosition(gridPosition);
 
@@ -551,17 +877,5 @@ private bool CanExitRight(Vector3 dragDifference)
             return firstCellCenter +
                    new Vector3(0f, centerOffset, -1f);
         }
-    }
-
-    private void ExitBoard()
-    {
-        // Verwijder deze auto uit de bezette gridcellen.
-        if (gridManager != null)
-        {
-            gridManager.UnregisterVehicle(this);
-        }
-
-        // Verberg de auto nadat hij het speelveld heeft verlaten.
-        gameObject.SetActive(false);
     }
 }
