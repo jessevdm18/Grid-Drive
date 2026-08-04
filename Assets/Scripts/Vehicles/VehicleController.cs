@@ -23,6 +23,12 @@ public class VehicleController : MonoBehaviour
     [Tooltip("Child met de SpriteRenderer (bijv. \"Visual\"). Root blijft logica/collider.")]
     [SerializeField] private Transform visualTransform;
 
+    [Tooltip("Optioneel. SpriteRenderer op Visual; anders automatisch gezocht.")]
+    [SerializeField] private SpriteRenderer visualSpriteRenderer;
+
+    [Tooltip("Alleen zichtbaar voor de doelauto (canExitRight).")]
+    [SerializeField] private GameObject targetIndicator;
+
     [Tooltip("Duur van de soepele visual-beweging tussen gridcellen (lager = sneller op mobiel).")]
     [SerializeField] private float moveAnimationDuration = 0.06f;
 
@@ -84,6 +90,10 @@ public class VehicleController : MonoBehaviour
 
     private AudioManager audioManager;
 
+    // Originele spritekleur — brighten overschrijft dit nooit permanent.
+    private Color originalSpriteColor = Color.white;
+    private bool hasCachedOriginalSpriteColor;
+
     private void Awake()
     {
         // Bewaar de originele prefab-scale als 1x1-basis.
@@ -94,6 +104,32 @@ public class VehicleController : MonoBehaviour
         if (visualTransform == null)
         {
             visualTransform = transform.Find("Visual");
+        }
+
+        if (visualSpriteRenderer == null && visualTransform != null)
+        {
+            visualSpriteRenderer = visualTransform.GetComponent<SpriteRenderer>();
+        }
+
+        if (targetIndicator == null && visualTransform != null)
+        {
+            Transform indicator = visualTransform.Find("TargetIndicator");
+            if (indicator != null)
+            {
+                targetIndicator = indicator.gameObject;
+            }
+        }
+
+        // Standaard uit; Setup zet hem aan voor de doelauto.
+        if (targetIndicator != null)
+        {
+            targetIndicator.SetActive(false);
+        }
+
+        if (visualSpriteRenderer != null)
+        {
+            originalSpriteColor = visualSpriteRenderer.color;
+            hasCachedOriginalSpriteColor = true;
         }
     }
 
@@ -118,6 +154,14 @@ public class VehicleController : MonoBehaviour
         canExitRight = newCanExitRight;
         exitRow = newExitRow;
 
+        // Alleen de doelauto toont de target-indicator.
+        if (targetIndicator != null)
+        {
+            targetIndicator.SetActive(canExitRight);
+        }
+
+        ApplyTargetSpriteHighlight(canExitRight);
+
         // Nieuw level / restart: win-vlag resetten zodat CompleteLevel opnieuw mag.
         if (gameManager != null)
         {
@@ -129,6 +173,38 @@ public class VehicleController : MonoBehaviour
         ApplyVisualRotation();
 
         Initialize();
+    }
+
+    /// <summary>
+    /// Subtiele helderheid voor de target car; niet-target krijgt de originele kleur terug.
+    /// </summary>
+    private void ApplyTargetSpriteHighlight(bool isTarget)
+    {
+        if (visualSpriteRenderer == null)
+        {
+            return;
+        }
+
+        if (!hasCachedOriginalSpriteColor)
+        {
+            originalSpriteColor = visualSpriteRenderer.color;
+            hasCachedOriginalSpriteColor = true;
+        }
+
+        if (isTarget)
+        {
+            // Subtiel helderder (max 1) zonder de gecachte originele kleur te wijzigen.
+            visualSpriteRenderer.color = new Color(
+                Mathf.Min(1f, originalSpriteColor.r * 1.15f),
+                Mathf.Min(1f, originalSpriteColor.g * 1.15f),
+                Mathf.Min(1f, originalSpriteColor.b * 1.15f),
+                originalSpriteColor.a
+            );
+        }
+        else
+        {
+            visualSpriteRenderer.color = originalSpriteColor;
+        }
     }
 
     /// <summary>

@@ -15,6 +15,11 @@ public class LevelData : ScriptableObject
 
     [Header("Vehicles")]
     public List<VehicleData> vehicles = new List<VehicleData>();
+
+    [Header("Solver Stats")]
+    public int minimumMoves;
+    public int statesExplored;
+    public int difficultyScore;
 }
 
 [System.Serializable]
@@ -29,4 +34,7 @@ public class VehicleData
     public Vector2Int gridPosition;
 
     public bool canExitRight = false;
+
+    [Tooltip("Optioneel. Leeg = behoud de standaard sprite van de Car_Player prefab.")]
+    public Sprite vehicleSprite;
 }

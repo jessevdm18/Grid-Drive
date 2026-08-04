@@ -1,0 +1,167 @@
+[
+  {
+    "level": 1,
+    "exitRow": 2,
+    "vehicles": [
+      { "name": "Target", "orientation": "Horizontal", "lengthInCells": 2, "gridPosition": { "X": 0, "Y": 2 }, "canExitRight": true },
+      { "name": "A", "orientation": "Vertical", "lengthInCells": 2, "gridPosition": { "X": 1, "Y": 3 }, "canExitRight": false },
+      { "name": "B", "orientation": "Vertical", "lengthInCells": 2, "gridPosition": { "X": 3, "Y": 1 }, "canExitRight": false },
+      { "name": "C", "orientation": "Horizontal", "lengthInCells": 3, "gridPosition": { "X": 2, "Y": 4 }, "canExitRight": false }
+    ],
+    "estimatedMinimumMoves": 2,
+    "difficultyNote": "Tutorial: slechts één voertuig blokkeert de exit-route. Verplaats B en rijd vervolgens met Target naar buiten."
+  },
+  {
+    "level": 2,
+    "exitRow": 2,
+    "vehicles": [
+      { "name": "Target", "orientation": "Horizontal", "lengthInCells": 2, "gridPosition": { "X": 0, "Y": 2 }, "canExitRight": true },
+      { "name": "A", "orientation": "Horizontal", "lengthInCells": 2, "gridPosition": { "X": 4, "Y": 0 }, "canExitRight": false },
+      { "name": "B", "orientation": "Vertical", "lengthInCells": 3, "gridPosition": { "X": 3, "Y": 0 }, "canExitRight": false },
+      { "name": "C", "orientation": "Horizontal", "lengthInCells": 2, "gridPosition": { "X": 1, "Y": 5 }, "canExitRight": false },
+      { "name": "D", "orientation": "Horizontal", "lengthInCells": 2, "gridPosition": { "X": 3, "Y": 5 }, "canExitRight": false }
+    ],
+    "estimatedMinimumMoves": 3,
+    "difficultyNote": "Introduceert een indirecte blokkade: B blokkeert Target, maar kan niet meteen ver genoeg opzij."
+  },
+  {
+    "level": 3,
+    "exitRow": 2,
+    "vehicles": [
+      { "name": "Target", "orientation": "Horizontal", "lengthInCells": 2, "gridPosition": { "X": 0, "Y": 2 }, "canExitRight": true },
+      { "name": "A", "orientation": "Horizontal", "lengthInCells": 2, "gridPosition": { "X": 2, "Y": 5 }, "canExitRight": false },
+      { "name": "B", "orientation": "Vertical", "lengthInCells": 3, "gridPosition": { "X": 3, "Y": 1 }, "canExitRight": false },
+      { "name": "C", "orientation": "Vertical", "lengthInCells": 2, "gridPosition": { "X": 2, "Y": 2 }, "canExitRight": false },
+      { "name": "D", "orientation": "Horizontal", "lengthInCells": 2, "gridPosition": { "X": 0, "Y": 4 }, "canExitRight": false },
+      { "name": "E", "orientation": "Horizontal", "lengthInCells": 2, "gridPosition": { "X": 0, "Y": 0 }, "canExitRight": false }
+    ],
+    "estimatedMinimumMoves": 4,
+    "difficultyNote": "Target wordt nu door meerdere verticale voertuigen beïnvloed. De speler moet de juiste volgorde van vrijmaken herkennen."
+  },
+  {
+    "level": 4,
+    "exitRow": 2,
+    "vehicles": [
+      { "name": "Target", "orientation": "Horizontal", "lengthInCells": 2, "gridPosition": { "X": 0, "Y": 2 }, "canExitRight": true },
+      { "name": "A", "orientation": "Vertical", "lengthInCells": 3, "gridPosition": { "X": 4, "Y": 0 }, "canExitRight": false },
+      { "name": "B", "orientation": "Horizontal", "lengthInCells": 2, "gridPosition": { "X": 3, "Y": 4 }, "canExitRight": false },
+      { "name": "C", "orientation": "Horizontal", "lengthInCells": 2, "gridPosition": { "X": 2, "Y": 0 }, "canExitRight": false },
+      { "name": "D", "orientation": "Vertical", "lengthInCells": 2, "gridPosition": { "X": 0, "Y": 3 }, "canExitRight": false },
+      { "name": "E", "orientation": "Vertical", "lengthInCells": 2, "gridPosition": { "X": 5, "Y": 1 }, "canExitRight": false },
+      { "name": "F", "orientation": "Horizontal", "lengthInCells": 2, "gridPosition": { "X": 4, "Y": 3 }, "canExitRight": false }
+    ],
+    "estimatedMinimumMoves": 5,
+    "difficultyNote": "Meer interactie rond de rechterkant van het bord. Ruimte bij de exit moet eerst worden gecreëerd voordat de blokkades kunnen verdwijnen."
+  },
+  {
+    "level": 5,
+    "exitRow": 2,
+    "vehicles": [
+      { "name": "Target", "orientation": "Horizontal", "lengthInCells": 2, "gridPosition": { "X": 0, "Y": 2 }, "canExitRight": true },
+      { "name": "A", "orientation": "Vertical", "lengthInCells": 2, "gridPosition": { "X": 3, "Y": 2 }, "canExitRight": false },
+      { "name": "B", "orientation": "Vertical", "lengthInCells": 2, "gridPosition": { "X": 2, "Y": 0 }, "canExitRight": false },
+      { "name": "C", "orientation": "Horizontal", "lengthInCells": 3, "gridPosition": { "X": 2, "Y": 5 }, "canExitRight": false },
+      { "name": "D", "orientation": "Vertical", "lengthInCells": 3, "gridPosition": { "X": 0, "Y": 3 }, "canExitRight": false },
+      { "name": "E", "orientation": "Horizontal", "lengthInCells": 2, "gridPosition": { "X": 3, "Y": 1 }, "canExitRight": false },
+      { "name": "F", "orientation": "Vertical", "lengthInCells": 3, "gridPosition": { "X": 1, "Y": 3 }, "canExitRight": false },
+      { "name": "G", "orientation": "Vertical", "lengthInCells": 3, "gridPosition": { "X": 4, "Y": 2 }, "canExitRight": false }
+    ],
+    "estimatedMinimumMoves": 6,
+    "difficultyNote": "Eerste drukke level. Lange voertuigen beperken de beschikbare manoeuvreerruimte en maken vooruit plannen belangrijker."
+  },
+  {
+    "level": 6,
+    "exitRow": 2,
+    "vehicles": [
+      { "name": "Target", "orientation": "Horizontal", "lengthInCells": 2, "gridPosition": { "X": 0, "Y": 2 }, "canExitRight": true },
+      { "name": "A", "orientation": "Horizontal", "lengthInCells": 2, "gridPosition": { "X": 3, "Y": 1 }, "canExitRight": false },
+      { "name": "B", "orientation": "Horizontal", "lengthInCells": 3, "gridPosition": { "X": 2, "Y": 4 }, "canExitRight": false },
+      { "name": "C", "orientation": "Vertical", "lengthInCells": 2, "gridPosition": { "X": 5, "Y": 2 }, "canExitRight": false },
+      { "name": "D", "orientation": "Vertical", "lengthInCells": 3, "gridPosition": { "X": 2, "Y": 1 }, "canExitRight": false },
+      { "name": "E", "orientation": "Vertical", "lengthInCells": 2, "gridPosition": { "X": 5, "Y": 0 }, "canExitRight": false },
+      { "name": "F", "orientation": "Vertical", "lengthInCells": 3, "gridPosition": { "X": 1, "Y": 3 }, "canExitRight": false },
+      { "name": "G", "orientation": "Horizontal", "lengthInCells": 3, "gridPosition": { "X": 2, "Y": 0 }, "canExitRight": false },
+      { "name": "H", "orientation": "Horizontal", "lengthInCells": 2, "gridPosition": { "X": 3, "Y": 5 }, "canExitRight": false }
+    ],
+    "estimatedMinimumMoves": 7,
+    "difficultyNote": "De blokkades vormen nu een keten: een voertuig vrijmaken vereist eerst ruimte voor een ander voertuig."
+  },
+  {
+    "level": 7,
+    "exitRow": 2,
+    "vehicles": [
+      { "name": "Target", "orientation": "Horizontal", "lengthInCells": 2, "gridPosition": { "X": 0, "Y": 2 }, "canExitRight": true },
+      { "name": "A", "orientation": "Vertical", "lengthInCells": 2, "gridPosition": { "X": 5, "Y": 2 }, "canExitRight": false },
+      { "name": "B", "orientation": "Vertical", "lengthInCells": 3, "gridPosition": { "X": 3, "Y": 2 }, "canExitRight": false },
+      { "name": "C", "orientation": "Vertical", "lengthInCells": 2, "gridPosition": { "X": 2, "Y": 1 }, "canExitRight": false },
+      { "name": "D", "orientation": "Horizontal", "lengthInCells": 2, "gridPosition": { "X": 1, "Y": 4 }, "canExitRight": false },
+      { "name": "E", "orientation": "Horizontal", "lengthInCells": 2, "gridPosition": { "X": 4, "Y": 4 }, "canExitRight": false },
+      { "name": "F", "orientation": "Horizontal", "lengthInCells": 3, "gridPosition": { "X": 1, "Y": 5 }, "canExitRight": false },
+      { "name": "G", "orientation": "Horizontal", "lengthInCells": 2, "gridPosition": { "X": 0, "Y": 1 }, "canExitRight": false },
+      { "name": "H", "orientation": "Vertical", "lengthInCells": 2, "gridPosition": { "X": 0, "Y": 3 }, "canExitRight": false },
+      { "name": "I", "orientation": "Horizontal", "lengthInCells": 3, "gridPosition": { "X": 3, "Y": 0 }, "canExitRight": false }
+    ],
+    "estimatedMinimumMoves": 8,
+    "difficultyNote": "Meerdere blockers staan rechtstreeks op de exitRow. De speler moet onderscheid maken tussen echte blockers en voertuigen die alleen ruimte voor blockers creëren."
+  },
+  {
+    "level": 8,
+    "exitRow": 2,
+    "vehicles": [
+      { "name": "Target", "orientation": "Horizontal", "lengthInCells": 2, "gridPosition": { "X": 0, "Y": 2 }, "canExitRight": true },
+      { "name": "A", "orientation": "Horizontal", "lengthInCells": 3, "gridPosition": { "X": 0, "Y": 0 }, "canExitRight": false },
+      { "name": "B", "orientation": "Vertical", "lengthInCells": 2, "gridPosition": { "X": 3, "Y": 2 }, "canExitRight": false },
+      { "name": "C", "orientation": "Vertical", "lengthInCells": 2, "gridPosition": { "X": 0, "Y": 4 }, "canExitRight": false },
+      { "name": "D", "orientation": "Vertical", "lengthInCells": 2, "gridPosition": { "X": 5, "Y": 2 }, "canExitRight": false },
+      { "name": "E", "orientation": "Horizontal", "lengthInCells": 3, "gridPosition": { "X": 3, "Y": 1 }, "canExitRight": false },
+      { "name": "F", "orientation": "Horizontal", "lengthInCells": 2, "gridPosition": { "X": 4, "Y": 0 }, "canExitRight": false },
+      { "name": "G", "orientation": "Vertical", "lengthInCells": 2, "gridPosition": { "X": 2, "Y": 1 }, "canExitRight": false },
+      { "name": "H", "orientation": "Horizontal", "lengthInCells": 3, "gridPosition": { "X": 2, "Y": 4 }, "canExitRight": false },
+      { "name": "I", "orientation": "Horizontal", "lengthInCells": 2, "gridPosition": { "X": 3, "Y": 5 }, "canExitRight": false },
+      { "name": "J", "orientation": "Horizontal", "lengthInCells": 2, "gridPosition": { "X": 1, "Y": 5 }, "canExitRight": false }
+    ],
+    "estimatedMinimumMoves": 9,
+    "difficultyNote": "Het bord oogt voller en bevat twee duidelijke exit-blockers. De benodigde vrije ruimte ligt verspreid over meerdere rijen."
+  },
+  {
+    "level": 9,
+    "exitRow": 2,
+    "vehicles": [
+      { "name": "Target", "orientation": "Horizontal", "lengthInCells": 2, "gridPosition": { "X": 0, "Y": 2 }, "canExitRight": true },
+      { "name": "A", "orientation": "Horizontal", "lengthInCells": 2, "gridPosition": { "X": 2, "Y": 4 }, "canExitRight": false },
+      { "name": "B", "orientation": "Vertical", "lengthInCells": 2, "gridPosition": { "X": 2, "Y": 2 }, "canExitRight": false },
+      { "name": "C", "orientation": "Vertical", "lengthInCells": 2, "gridPosition": { "X": 4, "Y": 3 }, "canExitRight": false },
+      { "name": "D", "orientation": "Horizontal", "lengthInCells": 2, "gridPosition": { "X": 4, "Y": 5 }, "canExitRight": false },
+      { "name": "E", "orientation": "Horizontal", "lengthInCells": 2, "gridPosition": { "X": 4, "Y": 1 }, "canExitRight": false },
+      { "name": "F", "orientation": "Horizontal", "lengthInCells": 2, "gridPosition": { "X": 1, "Y": 1 }, "canExitRight": false },
+      { "name": "G", "orientation": "Horizontal", "lengthInCells": 3, "gridPosition": { "X": 3, "Y": 0 }, "canExitRight": false },
+      { "name": "H", "orientation": "Vertical", "lengthInCells": 2, "gridPosition": { "X": 1, "Y": 3 }, "canExitRight": false },
+      { "name": "I", "orientation": "Horizontal", "lengthInCells": 2, "gridPosition": { "X": 0, "Y": 5 }, "canExitRight": false },
+      { "name": "J", "orientation": "Vertical", "lengthInCells": 3, "gridPosition": { "X": 3, "Y": 1 }, "canExitRight": false },
+      { "name": "K", "orientation": "Vertical", "lengthInCells": 2, "gridPosition": { "X": 5, "Y": 2 }, "canExitRight": false }
+    ],
+    "estimatedMinimumMoves": 10,
+    "difficultyNote": "Een compacte kettingpuzzel: de directe blockers hebben zelf blockers. Verkeerde verplaatsingen kosten snel extra zetten."
+  },
+  {
+    "level": 10,
+    "exitRow": 2,
+    "vehicles": [
+      { "name": "Target", "orientation": "Horizontal", "lengthInCells": 2, "gridPosition": { "X": 0, "Y": 2 }, "canExitRight": true },
+      { "name": "A", "orientation": "Horizontal", "lengthInCells": 2, "gridPosition": { "X": 3, "Y": 1 }, "canExitRight": false },
+      { "name": "B", "orientation": "Vertical", "lengthInCells": 2, "gridPosition": { "X": 1, "Y": 4 }, "canExitRight": false },
+      { "name": "C", "orientation": "Vertical", "lengthInCells": 2, "gridPosition": { "X": 1, "Y": 0 }, "canExitRight": false },
+      { "name": "D", "orientation": "Vertical", "lengthInCells": 2, "gridPosition": { "X": 2, "Y": 1 }, "canExitRight": false },
+      { "name": "E", "orientation": "Horizontal", "lengthInCells": 2, "gridPosition": { "X": 4, "Y": 5 }, "canExitRight": false },
+      { "name": "F", "orientation": "Horizontal", "lengthInCells": 3, "gridPosition": { "X": 2, "Y": 4 }, "canExitRight": false },
+      { "name": "G", "orientation": "Horizontal", "lengthInCells": 2, "gridPosition": { "X": 4, "Y": 0 }, "canExitRight": false },
+      { "name": "H", "orientation": "Horizontal", "lengthInCells": 2, "gridPosition": { "X": 1, "Y": 3 }, "canExitRight": false },
+      { "name": "I", "orientation": "Vertical", "lengthInCells": 2, "gridPosition": { "X": 4, "Y": 2 }, "canExitRight": false },
+      { "name": "J", "orientation": "Vertical", "lengthInCells": 3, "gridPosition": { "X": 5, "Y": 1 }, "canExitRight": false },
+      { "name": "K", "orientation": "Vertical", "lengthInCells": 2, "gridPosition": { "X": 3, "Y": 2 }, "canExitRight": false },
+      { "name": "L", "orientation": "Vertical", "lengthInCells": 2, "gridPosition": { "X": 0, "Y": 4 }, "canExitRight": false }
+    ],
+    "estimatedMinimumMoves": 11,
+    "difficultyNote": "Medium-finale: drie verticale voertuigen beïnvloeden de ontsnappingsroute en de onderste helft is dicht bezet. Vereist een langere reeks voorbereidende zetten."
+  }
+]

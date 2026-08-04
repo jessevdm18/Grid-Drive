@@ -66,7 +66,11 @@
           },
           {
             "name": "AudioClip",
-            "scenes": [],
+            "scenes": [
+              "Assets/Scenes/Gameplay.unity",
+              "Assets/Scenes/LevelSelect.unity",
+              "Assets/Scenes/MainMenu.unity"
+            ],
             "dependencyType": 0,
             "icon": null
           },
@@ -88,8 +92,22 @@
           },
           {
             "name": "AudioResource",
-            "scenes": [],
-            "dependencyType": 1,
+            "scenes": [
+              "Assets/Scenes/Gameplay.unity",
+              "Assets/Scenes/LevelSelect.unity",
+              "Assets/Scenes/MainMenu.unity"
+            ],
+            "dependencyType": 0,
+            "icon": null
+          },
+          {
+            "name": "AudioSource",
+            "scenes": [
+              "Assets/Scenes/Gameplay.unity",
+              "Assets/Scenes/LevelSelect.unity",
+              "Assets/Scenes/MainMenu.unity"
+            ],
+            "dependencyType": 0,
             "icon": null
           },
           {
@@ -400,10 +418,8 @@
           },
           {
             "name": "Renderer",
-            "scenes": [
-              "Assets/Scenes/Gameplay.unity"
-            ],
-            "dependencyType": 0,
+            "scenes": [],
+            "dependencyType": 1,
             "icon": null
           },
           {
@@ -625,6 +641,12 @@
             "scenes": [],
             "dependencyType": 2,
             "icon": "package/com.unity.modules.jsonserialize"
+          },
+          {
+            "name": "Required by ParticleSystem Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.particlesystem"
           },
           {
             "name": "Required by Physics Module",
@@ -1038,6 +1060,12 @@
             "icon": "package/com.unity.modules.core"
           },
           {
+            "name": "Required by ParticleSystem Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.particlesystem"
+          },
+          {
             "name": "Required by UIElements Module",
             "scenes": [],
             "dependencyType": 2,
@@ -1048,6 +1076,27 @@
             "scenes": [],
             "dependencyType": 2,
             "icon": "package/com.unity.modules.vfx"
+          }
+        ]
+      },
+      {
+        "name": "ParticleSystem",
+        "dependencies": [
+          {
+            "name": "ParticleSystem",
+            "scenes": [
+              "Assets/Scenes/Gameplay.unity"
+            ],
+            "dependencyType": 0,
+            "icon": null
+          },
+          {
+            "name": "ParticleSystemRenderer",
+            "scenes": [
+              "Assets/Scenes/Gameplay.unity"
+            ],
+            "dependencyType": 0,
+            "icon": null
           }
         ]
       },
@@ -1319,6 +1368,12 @@
             "scenes": [],
             "dependencyType": 2,
             "icon": "package/com.unity.modules.mathematics"
+          },
+          {
+            "name": "Required by ParticleSystem Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.particlesystem"
           },
           {
             "name": "Required by Physics2D Module",
@@ -1594,6 +1649,12 @@
             "scenes": [],
             "dependencyType": 2,
             "icon": "package/com.unity.modules.mathematics"
+          },
+          {
+            "name": "Required by ParticleSystem Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.particlesystem"
           },
           {
             "name": "Required by Physics Module",

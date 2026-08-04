@@ -20,13 +20,16 @@ MonoBehaviour:
     lengthInCells: 2
     gridPosition: {x: 0, y: 3}
     canExitRight: 1
+    vehicleSprite: {fileID: 21300000, guid: d11c7a16a92270342b5854e18dd6512a, type: 3}
   - vehicleName: Car_B
     orientation: 1
     lengthInCells: 2
     gridPosition: {x: 2, y: 1}
     canExitRight: 0
+    vehicleSprite: {fileID: 21300000, guid: 75f93fbf83167cf4d9e0586fa98d5e22, type: 3}
   - vehicleName: Car_C
     orientation: 0
     lengthInCells: 3
     gridPosition: {x: 1, y: 5}
     canExitRight: 0
+    vehicleSprite: {fileID: 21300000, guid: 48cdc45f9e9308446b235fc4f5225a6f, type: 3}

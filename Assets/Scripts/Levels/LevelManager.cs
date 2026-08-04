@@ -27,6 +27,9 @@ public class LevelManager : MonoBehaviour
     [Tooltip("Onder dit Transform komen alle gespawnde voertuigen.")]
     [SerializeField] private Transform vehicleParent;
 
+    [Tooltip("Visuele Exit in de scene (alleen Y volgt exitRow).")]
+    [SerializeField] private Transform exitVisual;
+
     /// <summary>
     /// Zero-based index van het actieve level (0 = LEVEL 1).
     /// </summary>
@@ -154,6 +157,9 @@ public class LevelManager : MonoBehaviour
         // Eerst oude gespawnde voertuigen + occupancy opruimen.
         ClearExistingVehicles();
 
+        // Visuele exit op de juiste rij zetten (next level + restart).
+        UpdateExitVisualPosition(levelData.exitRow);
+
         // Maak voor elk item in LevelData één voertuig.
         foreach (VehicleData data in levelData.vehicles)
         {
@@ -207,6 +213,31 @@ public class LevelManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Zet alleen de Y van exitVisual op de wereld-Y van exitRow.
+    /// X en Z blijven zoals in de scene (rechts buiten het grid).
+    /// </summary>
+    private void UpdateExitVisualPosition(int exitRow)
+    {
+        if (exitVisual == null || gridManager == null)
+        {
+            return;
+        }
+
+        Vector3 cellWorld = gridManager.CellToWorld(
+            new Vector2Int(gridManager.GridWidth - 1, exitRow)
+        );
+
+        Vector3 position = exitVisual.position;
+        position.y = cellWorld.y;
+        exitVisual.position = position;
+
+        Debug.Log(
+            "Exit visual moved to row " + exitRow +
+            " at world Y " + cellWorld.y
+        );
+    }
+
+    /// <summary>
     /// Instantieert één voertuig en vult alle data via Setup(...).
     /// </summary>
     private void SpawnVehicle(VehicleData data, LevelData levelData)
@@ -231,5 +262,33 @@ public class LevelManager : MonoBehaviour
             data.canExitRight,
             levelData.exitRow
         );
+
+        ApplyVehicleSprite(vehicle, data.vehicleSprite);
+    }
+
+    /// <summary>
+    /// Zet optioneel een custom sprite op het Visual-child.
+    /// Null = laat de prefab-sprite zoals die is.
+    /// </summary>
+    private void ApplyVehicleSprite(VehicleController vehicle, Sprite vehicleSprite)
+    {
+        if (vehicleSprite == null)
+        {
+            return;
+        }
+
+        Transform visual = vehicle.transform.Find("Visual");
+        if (visual == null)
+        {
+            return;
+        }
+
+        SpriteRenderer spriteRenderer = visual.GetComponent<SpriteRenderer>();
+        if (spriteRenderer == null)
+        {
+            return;
+        }
+
+        spriteRenderer.sprite = vehicleSprite;
     }
 }
