@@ -1,6 +1,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Difficulty-tier voor level-progressie / metadata (niet de solver-score).
+/// </summary>
+public enum LevelDifficulty
+{
+    Easy,
+    Medium,
+    Hard
+}
+
 [CreateAssetMenu(
     fileName = "LevelData",
     menuName = "RushOut/Level Data"
@@ -9,6 +19,9 @@ public class LevelData : ScriptableObject
 {
     [Header("Level Info")]
     public int levelNumber = 1;
+
+    [Tooltip("Handmatige / generator difficulty-tier (Easy / Medium / Hard).")]
+    public LevelDifficulty difficulty = LevelDifficulty.Medium;
 
     [Header("Exit")]
     public int exitRow = 2;

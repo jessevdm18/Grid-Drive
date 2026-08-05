@@ -3,17 +3,22 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
 
+
 /// <summary>
 /// Bouwt automatisch levelknoppen in het LevelSelect-scherm.
 /// </summary>
 public class LevelSelectUI : MonoBehaviour
 {
     [Header("UI")]
-    [Tooltip("Prefab van één levelknop (met Button + TextMeshProUGUI).")]
+    [Tooltip("Prefab van één levelknop (Button + LevelNumberText + Stars/Star1-3).")]
     [SerializeField] private GameObject levelButtonPrefab;
 
     [Tooltip("Parent waar de knoppen onder komen (bijv. een Grid Layout Group).")]
     [SerializeField] private Transform levelGrid;
+
+    [Header("Star Sprites")]
+    [SerializeField] private Sprite filledStarSprite;
+    [SerializeField] private Sprite emptyStarSprite;
 
     [Header("Referenties")]
     [SerializeField] private SaveManager saveManager;
@@ -35,6 +40,12 @@ public class LevelSelectUI : MonoBehaviour
 
         if (saveManager != null)
         {
+            // Herstel unlocked progress t.o.v. bestaande sterren (geen data wissen).
+            if (levelDatabase != null)
+            {
+                saveManager.RepairUnlockedProgress(levelDatabase.LevelCount);
+            }
+
             unlockedLevel = saveManager.GetUnlockedLevel();
         }
 
@@ -68,14 +79,6 @@ public class LevelSelectUI : MonoBehaviour
             GameObject buttonObject = Instantiate(levelButtonPrefab, levelGrid);
             Debug.Log("LevelSelectUI: levelbutton geïnstantieerd voor levelIndex = " + index);
 
-            // Tekst: levelnummer vanaf 1 (index 0 → "1").
-            TextMeshProUGUI label = buttonObject.GetComponentInChildren<TextMeshProUGUI>();
-
-            if (label != null)
-            {
-                label.text = (index + 1).ToString();
-            }
-
             Button button = buttonObject.GetComponent<Button>();
 
             if (button == null)
@@ -88,11 +91,90 @@ public class LevelSelectUI : MonoBehaviour
             bool isUnlocked = index <= unlockedLevel;
             button.interactable = isUnlocked;
 
+            // Levelnummer (TMP) blijven zetten.
+            SetLevelNumberText(buttonObject.transform, index + 1);
+
+            // Sterren via Image-sprites onder Stars/Star1-3.
+            int stars = 0;
+            if (saveManager != null)
+            {
+                stars = saveManager.GetStarsForLevel(index);
+            }
+
+            ApplyStarImages(buttonObject.transform, stars);
+
             if (isUnlocked)
             {
                 button.onClick.AddListener(() => OnLevelButtonClicked(index));
             }
         }
+    }
+
+    /// <summary>
+    /// Zet LevelNumberText op het zichtbare levelnummer (1-based).
+    /// </summary>
+    private static void SetLevelNumberText(Transform buttonRoot, int displayNumber)
+    {
+        Transform numberTransform = buttonRoot.Find("LevelNumberText");
+        if (numberTransform == null)
+        {
+            // Fallback: LevelButtonUI of eerste TMP.
+            LevelButtonUI buttonUI = buttonRoot.GetComponent<LevelButtonUI>();
+            if (buttonUI != null)
+            {
+                buttonUI.SetLevelNumber(displayNumber);
+                return;
+            }
+
+            TextMeshProUGUI label = buttonRoot.GetComponentInChildren<TextMeshProUGUI>();
+            if (label != null)
+            {
+                label.text = displayNumber.ToString();
+            }
+
+            return;
+        }
+
+        TMP_Text numberText = numberTransform.GetComponent<TMP_Text>();
+        if (numberText != null)
+        {
+            numberText.text = displayNumber.ToString();
+        }
+    }
+
+    /// <summary>
+    /// Zet Star1/Star2/Star3 Images op filled/empty sprites.
+    /// </summary>
+    private void ApplyStarImages(Transform buttonRoot, int stars)
+    {
+        stars = Mathf.Clamp(stars, 0, 3);
+
+        Transform starsRoot = buttonRoot.Find("Stars");
+        if (starsRoot == null)
+        {
+            Debug.LogWarning("LevelSelectUI: Stars-child ontbreekt op levelbutton.");
+            return;
+        }
+
+        SetStarImage(starsRoot.Find("Star1"), stars >= 1);
+        SetStarImage(starsRoot.Find("Star2"), stars >= 2);
+        SetStarImage(starsRoot.Find("Star3"), stars >= 3);
+    }
+
+    private void SetStarImage(Transform starTransform, bool filled)
+    {
+        if (starTransform == null)
+        {
+            return;
+        }
+
+        Image image = starTransform.GetComponent<Image>();
+        if (image == null)
+        {
+            return;
+        }
+
+        image.sprite = filled ? filledStarSprite : emptyStarSprite;
     }
 
     /// <summary>
@@ -107,4 +189,9 @@ public class LevelSelectUI : MonoBehaviour
 
         SceneManager.LoadScene("Gameplay");
     }
+
+    public void OnBackButton()
+{
+    SceneManager.LoadScene("MainMenu");
+}
 }

@@ -12,29 +12,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e98a2ca1400bdfc4896e8c352e3628b7, type: 3}
   m_Name: Level_004
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
-  levelNumber: 26
+  levelNumber: 4
+  difficulty: 0
   exitRow: 2
   vehicles:
   - vehicleName: Target
     orientation: 0
     lengthInCells: 2
-    gridPosition: {x: 0, y: 2}
+    gridPosition: {x: 1, y: 2}
     canExitRight: 1
     vehicleSprite: {fileID: 0}
   - vehicleName: A
-    orientation: 1
+    orientation: 0
     lengthInCells: 3
-    gridPosition: {x: 4, y: 0}
+    gridPosition: {x: 0, y: 5}
     canExitRight: 0
     vehicleSprite: {fileID: 0}
   - vehicleName: B
     orientation: 0
     lengthInCells: 2
-    gridPosition: {x: 3, y: 4}
+    gridPosition: {x: 0, y: 4}
     canExitRight: 0
     vehicleSprite: {fileID: 0}
   - vehicleName: C
-    orientation: 0
+    orientation: 1
     lengthInCells: 2
     gridPosition: {x: 2, y: 0}
     canExitRight: 0
@@ -42,21 +43,9 @@ MonoBehaviour:
   - vehicleName: D
     orientation: 1
     lengthInCells: 2
-    gridPosition: {x: 0, y: 3}
+    gridPosition: {x: 5, y: 2}
     canExitRight: 0
     vehicleSprite: {fileID: 0}
-  - vehicleName: E
-    orientation: 1
-    lengthInCells: 2
-    gridPosition: {x: 5, y: 1}
-    canExitRight: 0
-    vehicleSprite: {fileID: 0}
-  - vehicleName: F
-    orientation: 0
-    lengthInCells: 2
-    gridPosition: {x: 4, y: 3}
-    canExitRight: 0
-    vehicleSprite: {fileID: 0}
-  minimumMoves: 5
-  statesExplored: 1115
-  difficultyScore: 722
+  minimumMoves: 2
+  statesExplored: 13
+  difficultyScore: 307

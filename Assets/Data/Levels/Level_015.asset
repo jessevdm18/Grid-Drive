@@ -12,63 +12,76 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e98a2ca1400bdfc4896e8c352e3628b7, type: 3}
   m_Name: Level_015
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
-  levelNumber: 28
+  levelNumber: 15
+  difficulty: 2
   exitRow: 2
   vehicles:
   - vehicleName: Target
     orientation: 0
     lengthInCells: 2
-    gridPosition: {x: 0, y: 2}
+    gridPosition: {x: 2, y: 2}
     canExitRight: 1
     vehicleSprite: {fileID: 0}
   - vehicleName: A
     orientation: 1
-    lengthInCells: 2
-    gridPosition: {x: 3, y: 2}
+    lengthInCells: 3
+    gridPosition: {x: 4, y: 2}
     canExitRight: 0
     vehicleSprite: {fileID: 0}
   - vehicleName: B
-    orientation: 0
+    orientation: 1
     lengthInCells: 2
-    gridPosition: {x: 4, y: 0}
+    gridPosition: {x: 3, y: 0}
     canExitRight: 0
     vehicleSprite: {fileID: 0}
   - vehicleName: C
-    orientation: 0
+    orientation: 1
     lengthInCells: 2
-    gridPosition: {x: 1, y: 5}
+    gridPosition: {x: 5, y: 3}
     canExitRight: 0
     vehicleSprite: {fileID: 0}
   - vehicleName: D
     orientation: 0
-    lengthInCells: 3
-    gridPosition: {x: 1, y: 1}
+    lengthInCells: 2
+    gridPosition: {x: 0, y: 1}
     canExitRight: 0
     vehicleSprite: {fileID: 0}
   - vehicleName: E
     orientation: 0
     lengthInCells: 2
-    gridPosition: {x: 3, y: 5}
+    gridPosition: {x: 0, y: 3}
     canExitRight: 0
     vehicleSprite: {fileID: 0}
   - vehicleName: F
     orientation: 0
     lengthInCells: 2
-    gridPosition: {x: 4, y: 3}
+    gridPosition: {x: 4, y: 0}
     canExitRight: 0
     vehicleSprite: {fileID: 0}
   - vehicleName: G
-    orientation: 0
+    orientation: 1
     lengthInCells: 3
-    gridPosition: {x: 1, y: 4}
+    gridPosition: {x: 2, y: 3}
     canExitRight: 0
     vehicleSprite: {fileID: 0}
   - vehicleName: H
     orientation: 1
-    lengthInCells: 2
-    gridPosition: {x: 2, y: 2}
+    lengthInCells: 3
+    gridPosition: {x: 3, y: 3}
     canExitRight: 0
     vehicleSprite: {fileID: 0}
-  minimumMoves: 5
-  statesExplored: 603
-  difficultyScore: 729
+  - vehicleName: I
+    orientation: 0
+    lengthInCells: 2
+    gridPosition: {x: 4, y: 5}
+    canExitRight: 0
+    vehicleSprite: {fileID: 0}
+  - vehicleName: J
+    orientation: 1
+    lengthInCells: 2
+    gridPosition: {x: 5, y: 1}
+    canExitRight: 0
+    vehicleSprite: {fileID: 0}
+  minimumMoves: 12
+  statesExplored: 3169
+  difficultyScore: 1485

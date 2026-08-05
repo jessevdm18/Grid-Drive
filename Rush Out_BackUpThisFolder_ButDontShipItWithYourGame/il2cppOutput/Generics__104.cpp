@@ -21047,7 +21047,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void RasterRenderGraphPass_1__cctor_mC61E0D12
 #pragma clang diagnostic ignored "-Winvalid-offsetof"
 #pragma clang diagnostic ignored "-Wunused-variable"
 #endif
-// Method Definition Index: 61332
+// Method Definition Index: 61349
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void RcsClient_1__ctor_m8F00328B7349C619E45A311A87B0B22898DCCEEE_gshared (RcsClient_1_t433946C05E5F5F5313641198B5C954F7CA854727* __this, const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>
@@ -21056,7 +21056,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void RcsClient_1__ctor_m8F00328B7349C619E45A3
 		return;
 	}
 }
-// Method Definition Index: 61333
+// Method Definition Index: 61350
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t RcsClient_1_get_CountThreshold_m4EEC7C2326B3A4181AC823C4B578A6E09C4827DF_gshared (RcsClient_1_t433946C05E5F5F5313641198B5C954F7CA854727* __this, const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>
@@ -21064,7 +21064,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t RcsClient_1_get_CountThreshold_m4EEC7
 		return ((int32_t)20);
 	}
 }
-// Method Definition Index: 61334
+// Method Definition Index: 61351
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR float RcsClient_1_get_TimeThresholdInSeconds_m12CB09D4DAACA7C4C8FC4BD17FE690E6A2DAC222_gshared (RcsClient_1_t433946C05E5F5F5313641198B5C954F7CA854727* __this, const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>
@@ -21072,7 +21072,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR float RcsClient_1_get_TimeThresholdInSeconds_
 		return (120.0f);
 	}
 }
-// Method Definition Index: 61335
+// Method Definition Index: 61352
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void RcsClient_1_Start_mA7D14257505E7DDA3FA6AA262F626066D08E45E5_gshared (RcsClient_1_t433946C05E5F5F5313641198B5C954F7CA854727* __this, const RuntimeMethod* method) 
 {
 	static bool s_Il2CppMethodInitialized;
@@ -21089,7 +21089,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void RcsClient_1_Start_mA7D14257505E7DDA3FA6A
 		return;
 	}
 }
-// Method Definition Index: 61336
+// Method Definition Index: 61353
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void RcsClient_1_Update_m1381FE695BA44DE5C38A7F86CF10CA80B1AAE72F_gshared (RcsClient_1_t433946C05E5F5F5313641198B5C954F7CA854727* __this, const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>
@@ -21184,7 +21184,7 @@ IL_005c:
 		return;
 	}
 }
-// Method Definition Index: 61337
+// Method Definition Index: 61354
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void RcsClient_1_OnApplicationQuit_m52DFB36C62067CE7C8E35E41DCBDD34AD68B43D8_gshared (RcsClient_1_t433946C05E5F5F5313641198B5C954F7CA854727* __this, const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>
@@ -21193,7 +21193,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void RcsClient_1_OnApplicationQuit_m52DFB36C6
 		return;
 	}
 }
-// Method Definition Index: 61338
+// Method Definition Index: 61355
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void RcsClient_1_Enqueue_mB0C1E198988D6A70CC02F01B41B6D093BF7CFC00_gshared (RcsClient_1_t433946C05E5F5F5313641198B5C954F7CA854727* __this, Il2CppSharedGenericObject* ___0_item, const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>
@@ -21267,7 +21267,7 @@ IL_0036:
 		return;
 	}
 }
-// Method Definition Index: 61339
+// Method Definition Index: 61356
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR String_t* RcsClient_1_GetEpochMillis_mEBA5557C6587A1CAA61D42FAC9D35F08C3EC8422_gshared (RcsClient_1_t433946C05E5F5F5313641198B5C954F7CA854727* __this, const RuntimeMethod* method) 
 {
 	static bool s_Il2CppMethodInitialized;
@@ -21304,7 +21304,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR String_t* RcsClient_1_GetEpochMillis_mEBA5557
 		return L_5;
 	}
 }
-// Method Definition Index: 61340
+// Method Definition Index: 61357
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void RcsClient_1_SendToRcs_mFA26FFCBE06E74372B376B56F995CECA2ADCD05D_gshared (RcsClient_1_t433946C05E5F5F5313641198B5C954F7CA854727* __this, String_t* ___0_jspbPayload, const RuntimeMethod* method) 
 {
 	static bool s_Il2CppMethodInitialized;
@@ -21344,7 +21344,7 @@ IL_001a:
 		return;
 	}
 }
-// Method Definition Index: 61341
+// Method Definition Index: 61358
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void RcsClient_1_ProcessAndSendBatch_m994C72AF1F7F5C01B89E00B74E86A96254854566_gshared (RcsClient_1_t433946C05E5F5F5313641198B5C954F7CA854727* __this, const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>
@@ -21468,7 +21468,7 @@ IL_0077:
 		return;
 	}
 }
-// Method Definition Index: 61342
+// Method Definition Index: 61359
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void RcsClient_1_ResetBatchTimer_mC3FB8445ED41B01E9ABB3BC7FF1DE30451113BD9_gshared (RcsClient_1_t433946C05E5F5F5313641198B5C954F7CA854727* __this, const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>
@@ -21481,7 +21481,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void RcsClient_1_ResetBatchTimer_mC3FB8445ED4
 		return;
 	}
 }
-// Method Definition Index: 61343
+// Method Definition Index: 61360
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR RuntimeObject* RcsClient_1_PostRequest_m9E4E297D552B929057BA62C11A2E0BAF6622561B_gshared (RcsClient_1_t433946C05E5F5F5313641198B5C954F7CA854727* __this, String_t* ___0_url, String_t* ___1_jspbPayload, const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>
@@ -21504,7 +21504,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR RuntimeObject* RcsClient_1_PostRequest_m9E4E2
 		return (RuntimeObject*)L_5;
 	}
 }
-// Method Definition Index: 61345
+// Method Definition Index: 61362
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void RcsClient_1__cctor_mBBF886BB46F08AC7CFDCA6601EF95C0DEE96CFD2_gshared (const RuntimeMethod* method) 
 {
 	static bool s_Il2CppMethodInitialized;
@@ -50057,7 +50057,7 @@ IL2CPP_EXTERN_C  ReadOnlySpan_1_t6661B8EC8167F5F6DC57AEB0633C8639D20BAB06 ReadOn
 #ifdef __clang__
 #pragma clang diagnostic pop
 #endif
-// Method Definition Index: 60210
+// Method Definition Index: 60403
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR int32_t math_min_m0D183243301588F5000801E35B451374CD10DFC1_inline (int32_t ___0_x, int32_t ___1_y, const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>

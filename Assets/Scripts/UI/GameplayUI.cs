@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using TMPro;
 
 /// <summary>
@@ -12,10 +13,13 @@ public class GameplayUI : MonoBehaviour
     [SerializeField] private LevelManager levelManager;
     [SerializeField] private TextMeshProUGUI levelText;
 
+    [SerializeField] private TextMeshProUGUI movesText;
+
     private void Start()
     {
         UpdateCoinText(coinManager != null ? coinManager.GetCoins() : 0);
         UpdateLevelText();
+        UpdateMovesText(0);
     }
 
     private void OnEnable()
@@ -32,6 +36,14 @@ public class GameplayUI : MonoBehaviour
         {
             coinManager.OnCoinsChanged -= UpdateCoinText;
         }
+    }
+
+    /// <summary>
+    /// Gaat terug naar het hoofdmenu zonder progressie te wijzigen.
+    /// </summary>
+    public void OnBackToMenuButton()
+    {
+        SceneManager.LoadScene("MainMenu");
     }
 
     /// <summary>
@@ -57,5 +69,18 @@ public class GameplayUI : MonoBehaviour
 
         int displayNumber = levelManager.CurrentLevelIndex + 1;
         levelText.text = "LEVEL " + displayNumber;
+    }
+
+    /// <summary>
+    /// Zet de move-teller tekst, bijv. "Moves: 3".
+    /// </summary>
+    public void UpdateMovesText(int moves)
+    {
+        if (movesText == null)
+        {
+            return;
+        }
+
+        movesText.text = "Moves: " + moves;
     }
 }

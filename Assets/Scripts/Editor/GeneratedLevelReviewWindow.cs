@@ -65,7 +65,8 @@ public class GeneratedLevelReviewWindow : EditorWindow
         {
             EditorGUILayout.HelpBox(
                 "Geen generated levels gevonden in:\n" + GeneratedFolder +
-                "\n\nGenereer eerst levels via RushOut → Generate Levels.",
+                "\n(inclusief subfolders Easy / Medium / Hard / Custom)\n\n" +
+                "Genereer eerst levels via RushOut → Generate Levels.",
                 MessageType.Info
             );
             return;
@@ -140,6 +141,7 @@ public class GeneratedLevelReviewWindow : EditorWindow
             EditorStyles.boldLabel
         );
         EditorGUILayout.LabelField("Asset", assetName);
+        EditorGUILayout.LabelField("Difficulty Tier", level.difficulty.ToString());
         EditorGUILayout.LabelField("minimumMoves", level.minimumMoves.ToString());
         EditorGUILayout.LabelField("statesExplored", level.statesExplored.ToString());
         EditorGUILayout.LabelField("difficultyScore", level.difficultyScore.ToString());
@@ -391,6 +393,7 @@ public class GeneratedLevelReviewWindow : EditorWindow
             return;
         }
 
+        // FindAssets met map zoekt recursief in subfolders (Easy/Medium/Hard/...).
         string[] guids = AssetDatabase.FindAssets("t:LevelData", new[] { GeneratedFolder });
         foreach (string guid in guids)
         {
@@ -402,7 +405,17 @@ public class GeneratedLevelReviewWindow : EditorWindow
             }
         }
 
-        reviewList.Sort(CompareByDifficulty);
+        // Eerst op difficulty-tier, daarna op difficultyScore.
+        reviewList.Sort((a, b) =>
+        {
+            int tier = a.difficulty.CompareTo(b.difficulty);
+            if (tier != 0)
+            {
+                return tier;
+            }
+
+            return CompareByDifficulty(a, b);
+        });
         Repaint();
     }
 

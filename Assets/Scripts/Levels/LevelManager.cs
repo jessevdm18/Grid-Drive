@@ -35,6 +35,27 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     public int CurrentLevelIndex => currentLevelIndex;
 
+    /// <summary>
+    /// Aantal levels in de database.
+    /// </summary>
+    public int LevelCount => levelDatabase != null ? levelDatabase.LevelCount : 0;
+
+    /// <summary>
+    /// LevelData van het actieve level, of null.
+    /// </summary>
+    public LevelData CurrentLevelData
+    {
+        get
+        {
+            if (levelDatabase == null)
+            {
+                return null;
+            }
+
+            return levelDatabase.GetLevel(currentLevelIndex);
+        }
+    }
+
     private void Start()
     {
         // Laad voortgang uit save (default = 0).
@@ -92,7 +113,7 @@ public class LevelManager : MonoBehaviour
 
         Debug.Log("Loading next level index: " + currentLevelIndex);
 
-        // Progressie opslaan: huidige + unlocked level.
+        // Huidig level opslaan. Unlock gebeurt al in GameManager.CompleteLevel().
         if (saveManager != null)
         {
             saveManager.SaveCurrentLevel(currentLevelIndex);
@@ -156,6 +177,12 @@ public class LevelManager : MonoBehaviour
 
         // Eerst oude gespawnde voertuigen + occupancy opruimen.
         ClearExistingVehicles();
+
+        // Move-teller resetten bij restart én nieuw level.
+        if (gameManager != null)
+        {
+            gameManager.ResetMoves();
+        }
 
         // Visuele exit op de juiste rij zetten (next level + restart).
         UpdateExitVisualPosition(levelData.exitRow);

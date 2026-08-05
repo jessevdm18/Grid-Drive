@@ -6,6 +6,7 @@ using UnityEngine;
 
 /// <summary>
 /// Editor-only Rush Hour-achtige level solver + validator.
+/// BFS-zoekwerk delegeert naar de gedeelde runtime RushOutSolver.
 /// Menu:
 ///   RushOut → Validate Selected Level
 ///   RushOut → Validate All Levels In Database
@@ -664,7 +665,7 @@ public static class LevelSolver
     }
 
     // -------------------------------------------------------------------------
-    // Publieke solve-entry
+    // Publieke solve-entry (delegeert BFS naar RushOutSolver)
     // -------------------------------------------------------------------------
 
     public static SolverResult Solve(LevelData levelData)
@@ -680,19 +681,38 @@ public static class LevelSolver
             return result;
         }
 
-        // Bouw vaste voertuig-definities (veranderen niet tijdens search).
-        SolverVehicle[] vehicles = BuildVehicles(levelData);
-        int exitRow = levelData.exitRow;
-        int targetIndex = FindTargetIndex(vehicles);
+        RushOutSolver.SolverResult core = RushOutSolver.SolveLevelData(levelData, MaxStates);
+        return MapCoreResult(core, result);
+    }
 
-        // Startstate = alle startposities.
-        PuzzleState start = new PuzzleState(ExtractPositions(levelData));
+    private static SolverResult MapCoreResult(
+        RushOutSolver.SolverResult core,
+        SolverResult result)
+    {
+        result.solvable = core.solvable;
+        result.searchLimitReached = core.searchLimitReached;
+        result.minimumMoves = core.minimumMoves;
+        result.statesExplored = core.statesExplored;
+        result.solution = new List<Move>();
 
-        return RunBfs(vehicles, exitRow, targetIndex, start, result);
+        if (core.solution != null)
+        {
+            foreach (RushOutSolver.SolverMove move in core.solution)
+            {
+                result.solution.Add(new Move(
+                    move.vehicleName,
+                    move.fromPosition,
+                    move.toPosition,
+                    move.exitsBoard
+                ));
+            }
+        }
+
+        return result;
     }
 
     // -------------------------------------------------------------------------
-    // Validatie (basisregels, geen GameObjects)
+    // Validatie (basisregels — Editor wrapper; BFS zit in RushOutSolver)
     // -------------------------------------------------------------------------
 
     public static string ValidateLevelData(LevelData levelData)
@@ -730,7 +750,12 @@ public static class LevelSolver
             bool horizontal =
                 v.orientation == VehicleController.VehicleOrientation.Horizontal;
 
-            List<Vector2Int> cells = GetCells(v.gridPosition, horizontal, v.lengthInCells);
+            List<Vector2Int> cells = RushOutSolver.GetCells(
+                v.gridPosition,
+                horizontal,
+                v.lengthInCells
+            );
+
             foreach (Vector2Int cell in cells)
             {
                 if (cell.x < 0 || cell.x >= GridSize || cell.y < 0 || cell.y >= GridSize)
@@ -767,344 +792,6 @@ public static class LevelSolver
         }
 
         return null;
-    }
-
-    // -------------------------------------------------------------------------
-    // BFS
-    // -------------------------------------------------------------------------
-
-    private static SolverResult RunBfs(
-        SolverVehicle[] vehicles,
-        int exitRow,
-        int targetIndex,
-        PuzzleState start,
-        SolverResult result)
-    {
-        // Queue van states om te verkennen.
-        Queue<PuzzleState> queue = new Queue<PuzzleState>();
-
-        // Bezochte states (hashbaar via PuzzleState).
-        HashSet<PuzzleState> visited = new HashSet<PuzzleState>();
-
-        // Padreconstructie: state → (ouder-state, move die hierheen leidde).
-        Dictionary<PuzzleState, BfsNode> cameFrom =
-            new Dictionary<PuzzleState, BfsNode>();
-
-        queue.Enqueue(start);
-        visited.Add(start);
-        cameFrom[start] = new BfsNode(null, null);
-
-        int explored = 0;
-
-        while (queue.Count > 0)
-        {
-            if (explored >= MaxStates)
-            {
-                result.searchLimitReached = true;
-                result.statesExplored = explored;
-                result.solvable = false;
-                return result;
-            }
-
-            PuzzleState current = queue.Dequeue();
-            explored++;
-
-            // Genereer eerst de exit-move als die mogelijk is (winnende zet).
-            Move exitMove = TryCreateExitMove(vehicles, exitRow, targetIndex, current);
-            if (exitMove != null)
-            {
-                result.solvable = true;
-                result.statesExplored = explored;
-                result.solution = ReconstructPath(cameFrom, current, exitMove);
-                result.minimumMoves = result.solution.Count;
-                return result;
-            }
-
-            // Alle normale schuif-moves.
-            List<MoveCandidate> candidates = GenerateMoveCandidates(vehicles, current);
-            foreach (MoveCandidate candidate in candidates)
-            {
-                if (visited.Contains(candidate.nextState))
-                {
-                    continue;
-                }
-
-                visited.Add(candidate.nextState);
-                cameFrom[candidate.nextState] = new BfsNode(current, candidate.move);
-                queue.Enqueue(candidate.nextState);
-            }
-        }
-
-        // Geen oplossing gevonden (volledig doorzocht).
-        result.solvable = false;
-        result.statesExplored = explored;
-        return result;
-    }
-
-    private static List<Move> ReconstructPath(
-        Dictionary<PuzzleState, BfsNode> cameFrom,
-        PuzzleState endState,
-        Move finalExitMove)
-    {
-        List<Move> path = new List<Move>();
-        PuzzleState cursor = endState;
-
-        while (cameFrom.TryGetValue(cursor, out BfsNode node) && node.parent != null)
-        {
-            path.Add(node.move);
-            cursor = node.parent;
-        }
-
-        path.Reverse();
-        path.Add(finalExitMove);
-        return path;
-    }
-
-    // -------------------------------------------------------------------------
-    // Move-generatie
-    // -------------------------------------------------------------------------
-
-    private static Move TryCreateExitMove(
-        SolverVehicle[] vehicles,
-        int exitRow,
-        int targetIndex,
-        PuzzleState state)
-    {
-        SolverVehicle target = vehicles[targetIndex];
-        Vector2Int pos = state.positions[targetIndex];
-
-        // Target moet op de exit-rij staan.
-        if (pos.y != exitRow)
-        {
-            return null;
-        }
-
-        // Alle cellen rechts van de target tot de rand moeten vrij zijn.
-        // Rightmost cel van de target = pos.x + length - 1.
-        int rightMost = pos.x + target.length - 1;
-
-        bool[,] occupied = BuildOccupancy(vehicles, state, ignoreIndex: targetIndex);
-
-        for (int x = rightMost + 1; x < GridSize; x++)
-        {
-            if (occupied[x, pos.y])
-            {
-                return null;
-            }
-        }
-
-        // Finale exit-move (positie blijft conceptueel de start; exitsBoard markeert win).
-        return new Move(target.name, pos, pos, exitsBoard: true);
-    }
-
-    private static List<MoveCandidate> GenerateMoveCandidates(
-        SolverVehicle[] vehicles,
-        PuzzleState state)
-    {
-        List<MoveCandidate> candidates = new List<MoveCandidate>();
-
-        for (int i = 0; i < vehicles.Length; i++)
-        {
-            SolverVehicle vehicle = vehicles[i];
-            Vector2Int from = state.positions[i];
-            bool[,] occupied = BuildOccupancy(vehicles, state, ignoreIndex: i);
-
-            if (vehicle.horizontal)
-            {
-                // Links schuiven: elke bereikbare x is één aparte move.
-                for (int steps = 1; ; steps++)
-                {
-                    int newX = from.x - steps;
-                    if (newX < 0)
-                    {
-                        break;
-                    }
-
-                    // Nieuwe linker cel moet vrij zijn (stap voor stap).
-                    int checkX = from.x - steps;
-                    if (occupied[checkX, from.y])
-                    {
-                        break;
-                    }
-
-                    Vector2Int to = new Vector2Int(newX, from.y);
-                    candidates.Add(CreateCandidate(vehicles, state, i, from, to, vehicle.name));
-                }
-
-                // Rechts schuiven.
-                for (int steps = 1; ; steps++)
-                {
-                    int newX = from.x + steps;
-                    int rightMost = newX + vehicle.length - 1;
-                    if (rightMost >= GridSize)
-                    {
-                        break;
-                    }
-
-                    // Nieuwe rechter cel moet vrij zijn.
-                    if (occupied[rightMost, from.y])
-                    {
-                        break;
-                    }
-
-                    Vector2Int to = new Vector2Int(newX, from.y);
-                    candidates.Add(CreateCandidate(vehicles, state, i, from, to, vehicle.name));
-                }
-            }
-            else
-            {
-                // Omlaag (y kleiner als bottom-left origin — hier y+ = omhoog in grid).
-                // Vertical: gridPosition is onderste/linker cel; length gaat omhoog in y.
-                for (int steps = 1; ; steps++)
-                {
-                    int newY = from.y - steps;
-                    if (newY < 0)
-                    {
-                        break;
-                    }
-
-                    if (occupied[from.x, newY])
-                    {
-                        break;
-                    }
-
-                    Vector2Int to = new Vector2Int(from.x, newY);
-                    candidates.Add(CreateCandidate(vehicles, state, i, from, to, vehicle.name));
-                }
-
-                for (int steps = 1; ; steps++)
-                {
-                    int newY = from.y + steps;
-                    int topMost = newY + vehicle.length - 1;
-                    if (topMost >= GridSize)
-                    {
-                        break;
-                    }
-
-                    if (occupied[from.x, topMost])
-                    {
-                        break;
-                    }
-
-                    Vector2Int to = new Vector2Int(from.x, newY);
-                    candidates.Add(CreateCandidate(vehicles, state, i, from, to, vehicle.name));
-                }
-            }
-        }
-
-        return candidates;
-    }
-
-    private static MoveCandidate CreateCandidate(
-        SolverVehicle[] vehicles,
-        PuzzleState state,
-        int vehicleIndex,
-        Vector2Int from,
-        Vector2Int to,
-        string vehicleName)
-    {
-        PuzzleState next = state.WithMovedVehicle(vehicleIndex, to);
-        Move move = new Move(vehicleName, from, to, exitsBoard: false);
-        return new MoveCandidate(next, move);
-    }
-
-    // -------------------------------------------------------------------------
-    // Occupancy helpers
-    // -------------------------------------------------------------------------
-
-    private static bool[,] BuildOccupancy(
-        SolverVehicle[] vehicles,
-        PuzzleState state,
-        int ignoreIndex)
-    {
-        bool[,] occupied = new bool[GridSize, GridSize];
-
-        for (int i = 0; i < vehicles.Length; i++)
-        {
-            if (i == ignoreIndex)
-            {
-                continue;
-            }
-
-            SolverVehicle v = vehicles[i];
-            Vector2Int pos = state.positions[i];
-            List<Vector2Int> cells = GetCells(pos, v.horizontal, v.length);
-
-            foreach (Vector2Int cell in cells)
-            {
-                if (cell.x >= 0 && cell.x < GridSize && cell.y >= 0 && cell.y < GridSize)
-                {
-                    occupied[cell.x, cell.y] = true;
-                }
-            }
-        }
-
-        return occupied;
-    }
-
-    private static List<Vector2Int> GetCells(Vector2Int start, bool horizontal, int length)
-    {
-        List<Vector2Int> cells = new List<Vector2Int>(length);
-        for (int i = 0; i < length; i++)
-        {
-            if (horizontal)
-            {
-                cells.Add(new Vector2Int(start.x + i, start.y));
-            }
-            else
-            {
-                cells.Add(new Vector2Int(start.x, start.y + i));
-            }
-        }
-
-        return cells;
-    }
-
-    // -------------------------------------------------------------------------
-    // LevelData → solver data
-    // -------------------------------------------------------------------------
-
-    private static SolverVehicle[] BuildVehicles(LevelData levelData)
-    {
-        SolverVehicle[] vehicles = new SolverVehicle[levelData.vehicles.Count];
-
-        for (int i = 0; i < levelData.vehicles.Count; i++)
-        {
-            VehicleData v = levelData.vehicles[i];
-            vehicles[i] = new SolverVehicle
-            {
-                name = string.IsNullOrEmpty(v.vehicleName) ? ("Vehicle_" + i) : v.vehicleName,
-                horizontal = v.orientation == VehicleController.VehicleOrientation.Horizontal,
-                length = v.lengthInCells,
-                canExitRight = v.canExitRight
-            };
-        }
-
-        return vehicles;
-    }
-
-    private static Vector2Int[] ExtractPositions(LevelData levelData)
-    {
-        Vector2Int[] positions = new Vector2Int[levelData.vehicles.Count];
-        for (int i = 0; i < levelData.vehicles.Count; i++)
-        {
-            positions[i] = levelData.vehicles[i].gridPosition;
-        }
-
-        return positions;
-    }
-
-    private static int FindTargetIndex(SolverVehicle[] vehicles)
-    {
-        for (int i = 0; i < vehicles.Length; i++)
-        {
-            if (vehicles[i].canExitRight)
-            {
-                return i;
-            }
-        }
-
-        return -1;
     }
 
     // -------------------------------------------------------------------------
@@ -1170,109 +857,5 @@ public static class LevelSolver
         }
 
         Debug.Log(sb.ToString());
-    }
-
-    // -------------------------------------------------------------------------
-    // Interne types
-    // -------------------------------------------------------------------------
-
-    private struct SolverVehicle
-    {
-        public string name;
-        public bool horizontal;
-        public int length;
-        public bool canExitRight;
-    }
-
-    /// <summary>
-    /// Immutable snapshot van alle voertuigposities.
-    /// Hashable voor HashSet/Dictionary.
-    /// </summary>
-    private sealed class PuzzleState : IEquatable<PuzzleState>
-    {
-        public readonly Vector2Int[] positions;
-        private readonly int cachedHash;
-
-        public PuzzleState(Vector2Int[] positions)
-        {
-            this.positions = new Vector2Int[positions.Length];
-            Array.Copy(positions, this.positions, positions.Length);
-            cachedHash = ComputeHash(this.positions);
-        }
-
-        public PuzzleState WithMovedVehicle(int index, Vector2Int newPos)
-        {
-            Vector2Int[] copy = new Vector2Int[positions.Length];
-            Array.Copy(positions, copy, positions.Length);
-            copy[index] = newPos;
-            return new PuzzleState(copy);
-        }
-
-        public bool Equals(PuzzleState other)
-        {
-            if (other == null || other.positions.Length != positions.Length)
-            {
-                return false;
-            }
-
-            for (int i = 0; i < positions.Length; i++)
-            {
-                if (positions[i] != other.positions[i])
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        public override bool Equals(object obj)
-        {
-            return Equals(obj as PuzzleState);
-        }
-
-        public override int GetHashCode()
-        {
-            return cachedHash;
-        }
-
-        private static int ComputeHash(Vector2Int[] positions)
-        {
-            unchecked
-            {
-                int hash = 17;
-                for (int i = 0; i < positions.Length; i++)
-                {
-                    hash = hash * 31 + positions[i].x;
-                    hash = hash * 31 + positions[i].y;
-                }
-
-                return hash;
-            }
-        }
-    }
-
-    private sealed class BfsNode
-    {
-        public readonly PuzzleState parent;
-        public readonly Move move;
-
-        public BfsNode(PuzzleState parent, Move move)
-        {
-            this.parent = parent;
-            this.move = move;
-        }
-    }
-
-    private sealed class MoveCandidate
-    {
-        public readonly PuzzleState nextState;
-        public readonly Move move;
-
-        public MoveCandidate(PuzzleState nextState, Move move)
-        {
-            this.nextState = nextState;
-            this.move = move;
-        }
     }
 }

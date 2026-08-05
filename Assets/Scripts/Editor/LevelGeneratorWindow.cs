@@ -10,12 +10,25 @@ using UnityEngine;
 /// Menu: RushOut → Generate Levels
 ///
 /// Werkt puur met data (geen GameObjects). Gebruikt LevelSolver voor validatie.
-/// Inclusief quality filters voor speelbaarheid / interessantheid.
+/// Inclusief quality filters en Easy/Medium/Hard presets.
 /// </summary>
 public class LevelGeneratorWindow : EditorWindow
 {
+    public enum DifficultyPreset
+    {
+        Custom,
+        Easy,
+        Medium,
+        Hard
+    }
+
     private const int GridSize = 6;
     private const int TotalCells = GridSize * GridSize;
+    private const string GeneratedRoot = "Assets/Data/GeneratedLevels";
+
+    // --- Preset / batch ---
+    private DifficultyPreset difficultyPreset = DifficultyPreset.Custom;
+    private string batchName = "Custom_Batch_01";
 
     // --- Basisinstellingen ---
     private int numberOfLevels = 10;
@@ -25,7 +38,7 @@ public class LevelGeneratorWindow : EditorWindow
     private int maxMinimumMoves = 12;
     private int maxAttemptsPerLevel = 500;
     private int randomSeed = 12345;
-    private string outputFolder = "Assets/Data/GeneratedLevels";
+    private string outputFolder = "Assets/Data/GeneratedLevels/Custom";
 
     // --- Quality filters ---
     private int minVehiclesUsedInSolution = 3;
@@ -43,7 +56,7 @@ public class LevelGeneratorWindow : EditorWindow
     public static void OpenWindow()
     {
         LevelGeneratorWindow window = GetWindow<LevelGeneratorWindow>("Generate Levels");
-        window.minSize = new Vector2(440f, 520f);
+        window.minSize = new Vector2(440f, 560f);
         window.Show();
     }
 
@@ -54,6 +67,21 @@ public class LevelGeneratorWindow : EditorWindow
         EditorGUILayout.LabelField("Rush Out — Level Generator", EditorStyles.boldLabel);
         EditorGUILayout.Space(6f);
 
+        // Preset bovenaan: vult waarden in, daarna nog steeds handmatig aanpasbaar.
+        DifficultyPreset newPreset = (DifficultyPreset)EditorGUILayout.EnumPopup(
+            "Difficulty Preset",
+            difficultyPreset
+        );
+        if (newPreset != difficultyPreset)
+        {
+            difficultyPreset = newPreset;
+            ApplyDifficultyPreset(difficultyPreset);
+        }
+
+        batchName = EditorGUILayout.TextField("Batch Name", batchName);
+        outputFolder = EditorGUILayout.TextField("Output Folder", outputFolder);
+
+        EditorGUILayout.Space(8f);
         EditorGUILayout.LabelField("Basics", EditorStyles.boldLabel);
         numberOfLevels = EditorGUILayout.IntField("Number Of Levels To Generate", numberOfLevels);
         minVehicles = EditorGUILayout.IntField("Min Vehicles", minVehicles);
@@ -62,7 +90,6 @@ public class LevelGeneratorWindow : EditorWindow
         maxMinimumMoves = EditorGUILayout.IntField("Max Minimum Moves", maxMinimumMoves);
         maxAttemptsPerLevel = EditorGUILayout.IntField("Max Attempts Per Level", maxAttemptsPerLevel);
         randomSeed = EditorGUILayout.IntField("Random Seed", randomSeed);
-        outputFolder = EditorGUILayout.TextField("Output Folder", outputFolder);
 
         EditorGUILayout.Space(10f);
         EditorGUILayout.LabelField("Quality Filters", EditorStyles.boldLabel);
@@ -79,14 +106,15 @@ public class LevelGeneratorWindow : EditorWindow
         EditorGUILayout.Space(4f);
         EditorGUILayout.HelpBox(
             "Strengere 'almost solved'-check geldt alleen als Min Minimum Moves >= 4 " +
-            "(tutorials met lagere min-moves blijven mogelijk).",
+            "(tutorials met lagere min-moves blijven mogelijk).\n" +
+            "Handmatige wijzigingen na een preset worden gewoon gebruikt.",
             MessageType.None
         );
 
         EditorGUILayout.Space(12f);
         EditorGUILayout.HelpBox(
             "Gegenereerde levels worden NIET aan MainLevelDatabase toegevoegd. " +
-            "Review ze eerst in de output-map.",
+            "Review ze eerst in de output-map (inclusief Easy/Medium/Hard subfolders).",
             MessageType.Info
         );
 
@@ -97,6 +125,108 @@ public class LevelGeneratorWindow : EditorWindow
         }
 
         EditorGUILayout.EndScrollView();
+    }
+
+    /// <summary>
+    /// Vult generator-instellingen + output folder + batch name voor een preset.
+    /// </summary>
+    private void ApplyDifficultyPreset(DifficultyPreset preset)
+    {
+        switch (preset)
+        {
+            case DifficultyPreset.Easy:
+                minVehicles = 3;
+                maxVehicles = 6;
+                minMinimumMoves = 2;
+                maxMinimumMoves = 5;
+                minVehiclesUsedInSolution = 2;
+                minDirectBlockers = 1;
+                minBoardOccupancy = 0.20f;
+                maxBoardOccupancy = 0.50f;
+                minMovableRatio = 0.30f;
+                maxMovableRatio = 0.90f;
+                maxAttemptsPerLevel = 1000;
+                batchName = "Easy_Batch_01";
+                outputFolder = GeneratedRoot + "/Easy";
+                break;
+
+            case DifficultyPreset.Medium:
+                minVehicles = 5;
+                maxVehicles = 9;
+                minMinimumMoves = 5;
+                maxMinimumMoves = 9;
+                minVehiclesUsedInSolution = 3;
+                minDirectBlockers = 1;
+                minBoardOccupancy = 0.30f;
+                maxBoardOccupancy = 0.65f;
+                minMovableRatio = 0.25f;
+                maxMovableRatio = 0.80f;
+                maxAttemptsPerLevel = 2000;
+                batchName = "Medium_Batch_01";
+                outputFolder = GeneratedRoot + "/Medium";
+                break;
+
+            case DifficultyPreset.Hard:
+                minVehicles = 7;
+                maxVehicles = 11;
+                minMinimumMoves = 8;
+                maxMinimumMoves = 14;
+                minVehiclesUsedInSolution = 4;
+                minDirectBlockers = 2;
+                minBoardOccupancy = 0.40f;
+                maxBoardOccupancy = 0.75f;
+                minMovableRatio = 0.20f;
+                maxMovableRatio = 0.70f;
+                maxAttemptsPerLevel = 5000;
+                batchName = "Hard_Batch_01";
+                outputFolder = GeneratedRoot + "/Hard";
+                break;
+
+            case DifficultyPreset.Custom:
+            default:
+                batchName = "Custom_Batch_01";
+                outputFolder = GeneratedRoot + "/Custom";
+                break;
+        }
+    }
+
+    /// <summary>
+    /// LevelDifficulty-tier die op gegenereerde assets wordt gezet.
+    /// Custom → Medium als neutrale default.
+    /// </summary>
+    private LevelDifficulty GetLevelDifficultyTier()
+    {
+        switch (difficultyPreset)
+        {
+            case DifficultyPreset.Easy:
+                return LevelDifficulty.Easy;
+            case DifficultyPreset.Hard:
+                return LevelDifficulty.Hard;
+            case DifficultyPreset.Medium:
+            case DifficultyPreset.Custom:
+            default:
+                return LevelDifficulty.Medium;
+        }
+    }
+
+    private static string SanitizeBatchName(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            return "Batch";
+        }
+
+        char[] chars = name.Trim().ToCharArray();
+        for (int i = 0; i < chars.Length; i++)
+        {
+            char c = chars[i];
+            if (!(char.IsLetterOrDigit(c) || c == '_' || c == '-'))
+            {
+                chars[i] = '_';
+            }
+        }
+
+        return new string(chars);
     }
 
     // -------------------------------------------------------------------------
@@ -132,6 +262,9 @@ public class LevelGeneratorWindow : EditorWindow
 
         EnsureFolderExists(outputFolder);
 
+        string safeBatchName = SanitizeBatchName(batchName);
+        LevelDifficulty tier = GetLevelDifficultyTier();
+
         System.Random rng = new System.Random(randomSeed);
         HashSet<string> usedHashes = new HashSet<string>();
 
@@ -153,7 +286,7 @@ public class LevelGeneratorWindow : EditorWindow
         int rejectedBlockers = 0;
         int rejectedAlmostSolved = 0;
 
-        int nextFileIndex = FindNextFileIndex(outputFolder);
+        int nextFileIndex = FindNextFileIndex(outputFolder, safeBatchName);
 
         for (int levelIndex = 0; levelIndex < numberOfLevels; levelIndex++)
         {
@@ -287,9 +420,10 @@ public class LevelGeneratorWindow : EditorWindow
                 // Geaccepteerd → opslaan.
                 int batchNumber = accepted + 1;
                 tempLevel.levelNumber = batchNumber;
+                tempLevel.difficulty = tier;
                 LevelSolver.ApplyMetadata(tempLevel, result);
 
-                string fileName = "Generated_Level_" + nextFileIndex.ToString("000") + ".asset";
+                string fileName = safeBatchName + "_" + nextFileIndex.ToString("000") + ".asset";
                 string assetPath = outputFolder.TrimEnd('/', '\\') + "/" + fileName;
 
                 AssetDatabase.CreateAsset(tempLevel, assetPath);
@@ -300,7 +434,8 @@ public class LevelGeneratorWindow : EditorWindow
                 found = true;
 
                 Debug.Log(
-                    "Accepted | moves=" + tempLevel.minimumMoves +
+                    "Accepted | tier=" + tier +
+                    " | moves=" + tempLevel.minimumMoves +
                     " | uniqueVehicles=" + uniqueVehiclesMoved +
                     " | occupancy=" + occupancy.ToString("0.00") +
                     " | movableRatio=" + movableRatio.ToString("0.00") +
@@ -342,6 +477,9 @@ public class LevelGeneratorWindow : EditorWindow
         summary.AppendLine("rejected invalid: " + rejectedInvalid);
         summary.AppendLine("rejected search limit: " + rejectedSearchLimit);
         summary.AppendLine("rejected placement failed: " + rejectedPlacementFailed);
+        summary.AppendLine("preset: " + difficultyPreset);
+        summary.AppendLine("batch: " + safeBatchName);
+        summary.AppendLine("tier: " + tier);
         summary.AppendLine("output: " + outputFolder);
         summary.AppendLine("(niet toegevoegd aan MainLevelDatabase)");
 
@@ -813,23 +951,29 @@ public class LevelGeneratorWindow : EditorWindow
         }
     }
 
-    private static int FindNextFileIndex(string folder)
+    private static int FindNextFileIndex(string folder, string batchName)
     {
         folder = folder.Replace('\\', '/').TrimEnd('/');
         int maxIndex = 0;
+        string prefix = batchName + "_";
 
-        string[] guids = AssetDatabase.FindAssets("Generated_Level_ t:LevelData", new[] { folder });
+        if (!AssetDatabase.IsValidFolder(folder))
+        {
+            return 1;
+        }
+
+        string[] guids = AssetDatabase.FindAssets("t:LevelData", new[] { folder });
         foreach (string guid in guids)
         {
             string path = AssetDatabase.GUIDToAssetPath(guid);
             string name = Path.GetFileNameWithoutExtension(path);
-            const string prefix = "Generated_Level_";
             if (!name.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
             {
                 continue;
             }
 
-            if (int.TryParse(name.Substring(prefix.Length), out int index))
+            string numberPart = name.Substring(prefix.Length);
+            if (int.TryParse(numberPart, out int index))
             {
                 maxIndex = Mathf.Max(maxIndex, index);
             }

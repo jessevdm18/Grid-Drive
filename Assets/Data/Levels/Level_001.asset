@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Level_001
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   levelNumber: 1
+  difficulty: 0
   exitRow: 2
   vehicles:
   - vehicleName: Target
@@ -23,22 +24,28 @@ MonoBehaviour:
     vehicleSprite: {fileID: 0}
   - vehicleName: A
     orientation: 1
-    lengthInCells: 2
-    gridPosition: {x: 1, y: 3}
+    lengthInCells: 3
+    gridPosition: {x: 2, y: 1}
     canExitRight: 0
     vehicleSprite: {fileID: 0}
   - vehicleName: B
-    orientation: 1
+    orientation: 0
     lengthInCells: 2
-    gridPosition: {x: 3, y: 1}
+    gridPosition: {x: 3, y: 0}
     canExitRight: 0
     vehicleSprite: {fileID: 0}
   - vehicleName: C
-    orientation: 0
-    lengthInCells: 3
-    gridPosition: {x: 2, y: 4}
+    orientation: 1
+    lengthInCells: 2
+    gridPosition: {x: 4, y: 3}
+    canExitRight: 0
+    vehicleSprite: {fileID: 0}
+  - vehicleName: D
+    orientation: 1
+    lengthInCells: 2
+    gridPosition: {x: 1, y: 0}
     canExitRight: 0
     vehicleSprite: {fileID: 0}
   minimumMoves: 2
   statesExplored: 4
-  difficultyScore: 275
+  difficultyScore: 285

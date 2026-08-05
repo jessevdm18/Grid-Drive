@@ -64,6 +64,12 @@ public class VehicleController : MonoBehaviour
     [Tooltip("De onderste/linker gridcel die dit voertuig bezet.")]
     [SerializeField] private Vector2Int gridPosition;
 
+    // Read-only voor HintManager / RushOutSolver (actuele state).
+    public Vector2Int GridPosition => gridPosition;
+    public VehicleOrientation Orientation => orientation;
+    public int LengthInCells => lengthInCells;
+    public bool CanExitRight => canExitRight;
+
     // Prefab-scale bij Awake = "1 cel" basis. Voorkomt dat we
     // lengthInCells stapelen op een al opgeschaalde prefab.
     private Vector3 baseScale = Vector3.one;
@@ -309,7 +315,7 @@ public class VehicleController : MonoBehaviour
         dragStartMouseWorld = GetMouseWorldPosition();
     }
 
-private bool CanExitRight(Vector3 dragDifference)
+private bool CanPerformExitRight(Vector3 dragDifference)
 {
     // Alleen auto's die expliciet toestemming hebben.
     if (!canExitRight)
@@ -344,7 +350,7 @@ private bool CanExitRight(Vector3 dragDifference)
 }
 
     /// <summary>
-    /// Enig toegestane exit-pad. Start exit-animatie alleen als CanExitRight true is.
+    /// Enig toegestane exit-pad. Start exit-animatie alleen als CanPerformExitRight true is.
     /// </summary>
     private bool TryExitRight(Vector3 dragDifference)
     {
@@ -353,7 +359,7 @@ private bool CanExitRight(Vector3 dragDifference)
             return true;
         }
 
-        if (!CanExitRight(dragDifference))
+        if (!CanPerformExitRight(dragDifference))
         {
             return false;
         }
@@ -364,6 +370,12 @@ private bool CanExitRight(Vector3 dragDifference)
             ", gridPosition=" + gridPosition +
             ", exitRow=" + exitRow
         );
+
+        // Exit telt als één move (ongeacht eerdere cellen in dezelfde drag).
+        if (gameManager != null)
+        {
+            gameManager.RegisterMove();
+        }
 
         StartCoroutine(PlayExitAnimation());
         return true;
@@ -429,7 +441,7 @@ private bool CanExitRight(Vector3 dragDifference)
         Vector3 dragDifference =
             currentMouseWorld - dragStartMouseWorld;
 
-        // Enig toegestane exit-pad: via CanExitRight → TryExitRight → ExitBoard.
+        // Enig toegestane exit-pad: via CanPerformExitRight → TryExitRight → ExitBoard.
         if (TryExitRight(dragDifference))
         {
             return;
@@ -735,6 +747,12 @@ private bool CanExitRight(Vector3 dragDifference)
             this,
             GetOccupiedCells(gridPosition)
         );
+
+        // Eén move per drag, alleen als de gridpositie echt veranderde.
+        if (gridPosition != dragStartGridPosition && gameManager != null)
+        {
+            gameManager.RegisterMove();
+        }
     }
 
    private Vector3 GetMouseWorldPosition()
