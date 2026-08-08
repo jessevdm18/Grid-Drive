@@ -30,6 +30,9 @@ public class LevelManager : MonoBehaviour
     [Tooltip("Visuele Exit in de scene (alleen Y volgt exitRow).")]
     [SerializeField] private Transform exitVisual;
 
+    [Tooltip("Optionele visuele parkeerplaats (tiles + borders).")]
+    [SerializeField] private ParkingGridVisual parkingGridVisual;
+
     [Tooltip("Optionele sprite-library voor automatische voertuig-visuals.")]
     [SerializeField] private VehicleSpriteLibrary vehicleSpriteLibrary;
 
@@ -190,6 +193,17 @@ public class LevelManager : MonoBehaviour
         int height = levelData.ResolvedGridHeight;
         gridManager.Configure(width, height);
         Debug.Log("Loaded grid " + width + "x" + height);
+
+        // Visuele parking (vervangt vaste ParkingLotVisual-sprite).
+        if (parkingGridVisual != null)
+        {
+            Debug.Log("Building parking visual: " + width + "x" + height);
+            parkingGridVisual.BuildGrid(width, height);
+        }
+        else
+        {
+            Debug.LogWarning("ParkingGridVisual is not assigned");
+        }
 
         // Move-teller resetten bij restart én nieuw level.
         if (gameManager != null)
