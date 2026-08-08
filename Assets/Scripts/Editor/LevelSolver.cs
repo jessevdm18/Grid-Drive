@@ -17,7 +17,6 @@ using UnityEngine;
 /// </summary>
 public static class LevelSolver
 {
-    private const int GridSize = 6;
     private const int MaxStates = 100000;
     private const string GeneratedLevelsFolder = "Assets/Data/GeneratedLevels";
 
@@ -722,9 +721,27 @@ public static class LevelSolver
             return "LevelData is null.";
         }
 
-        if (levelData.exitRow < 0 || levelData.exitRow > 5)
+        int gridWidth = levelData.ResolvedGridWidth;
+        int gridHeight = levelData.ResolvedGridHeight;
+
+        if (gridWidth < LevelData.MinGridSize || gridWidth > LevelData.MaxGridSize)
         {
-            return "exitRow moet tussen 0 en 5 liggen (nu: " + levelData.exitRow + ").";
+            return "gridWidth moet tussen " + LevelData.MinGridSize +
+                   " en " + LevelData.MaxGridSize +
+                   " liggen (nu: " + gridWidth + ").";
+        }
+
+        if (gridHeight < LevelData.MinGridSize || gridHeight > LevelData.MaxGridSize)
+        {
+            return "gridHeight moet tussen " + LevelData.MinGridSize +
+                   " en " + LevelData.MaxGridSize +
+                   " liggen (nu: " + gridHeight + ").";
+        }
+
+        if (levelData.exitRow < 0 || levelData.exitRow >= gridHeight)
+        {
+            return "exitRow moet tussen 0 en " + (gridHeight - 1) +
+                   " liggen (nu: " + levelData.exitRow + ").";
         }
 
         if (levelData.vehicles == null || levelData.vehicles.Count == 0)
@@ -758,9 +775,10 @@ public static class LevelSolver
 
             foreach (Vector2Int cell in cells)
             {
-                if (cell.x < 0 || cell.x >= GridSize || cell.y < 0 || cell.y >= GridSize)
+                if (cell.x < 0 || cell.x >= gridWidth || cell.y < 0 || cell.y >= gridHeight)
                 {
-                    return label + ": staat (deels) buiten het 6x6 grid.";
+                    return label + ": staat (deels) buiten het " +
+                           gridWidth + "x" + gridHeight + " grid.";
                 }
 
                 if (!occupied.Add(cell))

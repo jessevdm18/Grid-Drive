@@ -22,13 +22,15 @@ public class LevelGeneratorWindow : EditorWindow
         Hard
     }
 
-    private const int GridSize = 6;
-    private const int TotalCells = GridSize * GridSize;
     private const string GeneratedRoot = "Assets/Data/GeneratedLevels";
 
     // --- Preset / batch ---
     private DifficultyPreset difficultyPreset = DifficultyPreset.Custom;
     private string batchName = "Custom_Batch_01";
+
+    // --- Grid (default blijft 6x6) ---
+    private int gridWidth = LevelData.DefaultGridSize;
+    private int gridHeight = LevelData.DefaultGridSize;
 
     // --- Basisinstellingen ---
     private int numberOfLevels = 10;
@@ -50,7 +52,22 @@ public class LevelGeneratorWindow : EditorWindow
     private float maxLongVehicleRatio = 0.40f;
     private float minSolutionVehicleRatio = 0.35f;
 
+    // Placement-diagnostics (tijdelijk, gereset per GenerateLevels).
+    private int failTargetPlacement;
+    private int failDirectBlockerPlacement;
+    private int failOrdinaryVehiclePlacement;
+    private int failCouldNotReachVehicleCount;
+    private int failInvalidBounds;
+    private int failOverlap;
+
+    private const int BaselineBoardArea = 36; // 6x6
+    private const int PlacementAttemptsPerVehicle = 40;
+
     private Vector2 scroll;
+
+    private int BoardArea => gridWidth * gridHeight;
+
+    private float AreaScale => BoardArea / (float)BaselineBoardArea;
 
     [MenuItem("RushOut/Generate Levels")]
     public static void OpenWindow()
@@ -83,6 +100,30 @@ public class LevelGeneratorWindow : EditorWindow
 
         EditorGUILayout.Space(8f);
         EditorGUILayout.LabelField("Basics", EditorStyles.boldLabel);
+
+        int prevW = gridWidth;
+        int prevH = gridHeight;
+        gridWidth = EditorGUILayout.IntSlider(
+            "Grid Width",
+            gridWidth,
+            LevelData.MinGridSize,
+            LevelData.MaxGridSize
+        );
+        gridHeight = EditorGUILayout.IntSlider(
+            "Grid Height",
+            gridHeight,
+            LevelData.MinGridSize,
+            LevelData.MaxGridSize
+        );
+
+        if ((gridWidth != prevW || gridHeight != prevH) &&
+            difficultyPreset != DifficultyPreset.Custom)
+        {
+            ApplyDifficultyPreset(difficultyPreset);
+        }
+
+        DrawEffectiveGridSummary();
+
         numberOfLevels = EditorGUILayout.IntField("Number Of Levels To Generate", numberOfLevels);
         minVehicles = EditorGUILayout.IntField("Min Vehicles", minVehicles);
         maxVehicles = EditorGUILayout.IntField("Max Vehicles", maxVehicles);
@@ -128,56 +169,83 @@ public class LevelGeneratorWindow : EditorWindow
     }
 
     /// <summary>
-    /// Vult generator-instellingen + output folder + batch name voor een preset.
+    /// Toont de actuele (geschaalde) generator-waarden voor dit board.
+    /// </summary>
+    private void DrawEffectiveGridSummary()
+    {
+        EditorGUILayout.HelpBox(
+            "Grid: " + gridWidth + "x" + gridHeight +
+            "\nEffective Vehicles: " + minVehicles + "-" + maxVehicles +
+            "\nOccupancy: " + minBoardOccupancy.ToString("0.00") +
+            "-" + maxBoardOccupancy.ToString("0.00") +
+            "\nArea scale: " + AreaScale.ToString("0.00") +
+            " (baseline 6x6 = 1.00)",
+            MessageType.Info
+        );
+    }
+
+    /// <summary>
+    /// Vult generator-instellingen vanuit 6x6-baseline, daarna schalen op board area.
     /// </summary>
     private void ApplyDifficultyPreset(DifficultyPreset preset)
     {
+        // Baseline = gevoel op 6x6; ScalePresetToCurrentGrid past aan op gridWidth/Height.
+        int baseMinV;
+        int baseMaxV;
+        float baseMinOcc;
+        float baseMaxOcc;
+        int baseMinUsed;
+        int baseMinBlockers;
+        float baseMinMovable;
+        float baseMaxMovable;
+        int baseAttempts;
+
         switch (preset)
         {
             case DifficultyPreset.Easy:
-                minVehicles = 3;
-                maxVehicles = 6;
+                baseMinV = 3;
+                baseMaxV = 6;
                 minMinimumMoves = 2;
                 maxMinimumMoves = 5;
-                minVehiclesUsedInSolution = 2;
-                minDirectBlockers = 1;
-                minBoardOccupancy = 0.20f;
-                maxBoardOccupancy = 0.50f;
-                minMovableRatio = 0.30f;
-                maxMovableRatio = 0.90f;
-                maxAttemptsPerLevel = 1000;
+                baseMinUsed = 2;
+                baseMinBlockers = 1;
+                baseMinOcc = 0.20f;
+                baseMaxOcc = 0.50f;
+                baseMinMovable = 0.30f;
+                baseMaxMovable = 0.90f;
+                baseAttempts = 1000;
                 batchName = "Easy_Batch_01";
                 outputFolder = GeneratedRoot + "/Easy";
                 break;
 
             case DifficultyPreset.Medium:
-                minVehicles = 5;
-                maxVehicles = 9;
+                baseMinV = 5;
+                baseMaxV = 9;
                 minMinimumMoves = 5;
                 maxMinimumMoves = 9;
-                minVehiclesUsedInSolution = 3;
-                minDirectBlockers = 1;
-                minBoardOccupancy = 0.30f;
-                maxBoardOccupancy = 0.65f;
-                minMovableRatio = 0.25f;
-                maxMovableRatio = 0.80f;
-                maxAttemptsPerLevel = 2000;
+                baseMinUsed = 3;
+                baseMinBlockers = 1;
+                baseMinOcc = 0.30f;
+                baseMaxOcc = 0.65f;
+                baseMinMovable = 0.25f;
+                baseMaxMovable = 0.80f;
+                baseAttempts = 2000;
                 batchName = "Medium_Batch_01";
                 outputFolder = GeneratedRoot + "/Medium";
                 break;
 
             case DifficultyPreset.Hard:
-                minVehicles = 7;
-                maxVehicles = 11;
+                baseMinV = 7;
+                baseMaxV = 11;
                 minMinimumMoves = 8;
                 maxMinimumMoves = 14;
-                minVehiclesUsedInSolution = 4;
-                minDirectBlockers = 2;
-                minBoardOccupancy = 0.40f;
-                maxBoardOccupancy = 0.75f;
-                minMovableRatio = 0.20f;
-                maxMovableRatio = 0.70f;
-                maxAttemptsPerLevel = 5000;
+                baseMinUsed = 4;
+                baseMinBlockers = 2;
+                baseMinOcc = 0.40f;
+                baseMaxOcc = 0.75f;
+                baseMinMovable = 0.20f;
+                baseMaxMovable = 0.70f;
+                baseAttempts = 5000;
                 batchName = "Hard_Batch_01";
                 outputFolder = GeneratedRoot + "/Hard";
                 break;
@@ -186,8 +254,96 @@ public class LevelGeneratorWindow : EditorWindow
             default:
                 batchName = "Custom_Batch_01";
                 outputFolder = GeneratedRoot + "/Custom";
-                break;
+                return;
         }
+
+        ScalePresetToCurrentGrid(
+            baseMinV,
+            baseMaxV,
+            baseMinOcc,
+            baseMaxOcc,
+            baseMinUsed,
+            baseMinBlockers,
+            baseMinMovable,
+            baseMaxMovable,
+            baseAttempts
+        );
+    }
+
+    /// <summary>
+    /// Schaalt 6x6-baseline naar huidige board area (boardArea / 36).
+    /// 6x6 blijft ~onveranderd; 10x10 Hard ≈ 14-22 vehicles, occupancy ~0.25-0.50.
+    /// </summary>
+    private void ScalePresetToCurrentGrid(
+        int baseMinVehicles,
+        int baseMaxVehicles,
+        float baseMinOccupancy,
+        float baseMaxOccupancy,
+        int baseMinVehiclesUsed,
+        int baseMinDirectBlockers,
+        float baseMinMovable,
+        float baseMaxMovable,
+        int baseAttempts)
+    {
+        float areaScale = Mathf.Max(0.25f, AreaScale);
+
+        // Voertuigen: gedeeltelijk meegroeien met area (niet 1:1, anders te zwaar).
+        float vehicleScale = Mathf.Lerp(1f, areaScale, 0.6f);
+        minVehicles = Mathf.Clamp(Mathf.RoundToInt(baseMinVehicles * vehicleScale), 2, 40);
+        maxVehicles = Mathf.Clamp(
+            Mathf.RoundToInt(baseMaxVehicles * vehicleScale),
+            minVehicles,
+            40
+        );
+
+        // Density: grotere boards → lagere occupancy-targets (zelfde "volheid").
+        float occupancyScale = Mathf.Lerp(1f, 1f / Mathf.Sqrt(areaScale), 0.85f);
+        minBoardOccupancy = Mathf.Clamp(baseMinOccupancy * occupancyScale, 0.12f, 0.55f);
+        maxBoardOccupancy = Mathf.Clamp(
+            baseMaxOccupancy * occupancyScale,
+            minBoardOccupancy + 0.08f,
+            0.85f
+        );
+
+        // Oplossing-kwaliteit: licht meeschalen; op grote boards genoeg met 1 blocker.
+        minVehiclesUsedInSolution = Mathf.Clamp(
+            Mathf.RoundToInt(baseMinVehiclesUsed * Mathf.Lerp(1f, areaScale, 0.25f)),
+            1,
+            8
+        );
+        if (areaScale >= 2f && baseMinDirectBlockers > 1)
+        {
+            minDirectBlockers = 1;
+        }
+        else
+        {
+            minDirectBlockers = Mathf.Clamp(baseMinDirectBlockers, 0, 3);
+        }
+
+        minMovableRatio = Mathf.Clamp01(baseMinMovable);
+        maxMovableRatio = Mathf.Clamp(baseMaxMovable, minMovableRatio, 1f);
+
+        // Meer attempts op grotere boards (state space / placement).
+        maxAttemptsPerLevel = Mathf.Clamp(
+            Mathf.RoundToInt(baseAttempts * Mathf.Lerp(1f, areaScale, 0.5f)),
+            baseAttempts,
+            25000
+        );
+    }
+
+    /// <summary>
+    /// Aanbevolen vehicle-count range (zelfde schaalformule als presets).
+    /// </summary>
+    private static void GetScaledVehicleRange(
+        float areaScale,
+        int baseMin,
+        int baseMax,
+        out int scaledMin,
+        out int scaledMax)
+    {
+        float vehicleScale = Mathf.Lerp(1f, Mathf.Max(0.25f, areaScale), 0.6f);
+        scaledMin = Mathf.Clamp(Mathf.RoundToInt(baseMin * vehicleScale), 2, 40);
+        scaledMax = Mathf.Clamp(Mathf.RoundToInt(baseMax * vehicleScale), scaledMin, 40);
     }
 
     /// <summary>
@@ -235,10 +391,13 @@ public class LevelGeneratorWindow : EditorWindow
 
     private void GenerateLevels()
     {
-        // Clamp basisinstellingen.
+        // Clamp basisinstellingen (vehicle-cap schaalt met board, niet vast op 16).
         numberOfLevels = Mathf.Max(1, numberOfLevels);
-        minVehicles = Mathf.Clamp(minVehicles, 2, 16);
-        maxVehicles = Mathf.Clamp(maxVehicles, minVehicles, 16);
+        gridWidth = Mathf.Clamp(gridWidth, LevelData.MinGridSize, LevelData.MaxGridSize);
+        gridHeight = Mathf.Clamp(gridHeight, LevelData.MinGridSize, LevelData.MaxGridSize);
+        int vehicleCap = Mathf.Clamp(Mathf.RoundToInt(16f * Mathf.Max(1f, AreaScale)), 16, 40);
+        minVehicles = Mathf.Clamp(minVehicles, 2, vehicleCap);
+        maxVehicles = Mathf.Clamp(maxVehicles, minVehicles, vehicleCap);
         minMinimumMoves = Mathf.Max(1, minMinimumMoves);
         maxMinimumMoves = Mathf.Max(minMinimumMoves, maxMinimumMoves);
         maxAttemptsPerLevel = Mathf.Max(1, maxAttemptsPerLevel);
@@ -253,6 +412,8 @@ public class LevelGeneratorWindow : EditorWindow
         {
             maxMovableRatio = minMovableRatio;
         }
+
+        ResetPlacementDiagnostics();
 
         if (string.IsNullOrWhiteSpace(outputFolder))
         {
@@ -296,10 +457,11 @@ public class LevelGeneratorWindow : EditorWindow
             {
                 totalAttempts++;
 
-                CandidateLevel candidate = TryBuildCandidate(rng);
+                CandidateLevel candidate = TryBuildCandidate(rng, out PlacementFailReason failReason);
                 if (candidate == null)
                 {
                     rejectedPlacementFailed++;
+                    RecordPlacementFailure(failReason);
                     continue;
                 }
 
@@ -477,6 +639,19 @@ public class LevelGeneratorWindow : EditorWindow
         summary.AppendLine("rejected invalid: " + rejectedInvalid);
         summary.AppendLine("rejected search limit: " + rejectedSearchLimit);
         summary.AppendLine("rejected placement failed: " + rejectedPlacementFailed);
+        summary.AppendLine("  · target placement failed: " + failTargetPlacement);
+        summary.AppendLine("  · direct blocker placement failed: " + failDirectBlockerPlacement);
+        summary.AppendLine("  · ordinary vehicle placement failed: " + failOrdinaryVehiclePlacement);
+        summary.AppendLine("  · could not reach vehicle count: " + failCouldNotReachVehicleCount);
+        summary.AppendLine("  · invalid bounds: " + failInvalidBounds);
+        summary.AppendLine("  · overlap: " + failOverlap);
+        summary.AppendLine("grid: " + gridWidth + "x" + gridHeight);
+        summary.AppendLine("vehicles: " + minVehicles + "-" + maxVehicles);
+        summary.AppendLine(
+            "occupancy targets: " +
+            minBoardOccupancy.ToString("0.00") + "-" + maxBoardOccupancy.ToString("0.00")
+        );
+        summary.AppendLine("area scale: " + AreaScale.ToString("0.00"));
         summary.AppendLine("preset: " + difficultyPreset);
         summary.AppendLine("batch: " + safeBatchName);
         summary.AppendLine("tier: " + tier);
@@ -487,86 +662,472 @@ public class LevelGeneratorWindow : EditorWindow
     }
 
     // -------------------------------------------------------------------------
-    // Kandidaat bouwen
+    // Kandidaat bouwen (grid-size-aware)
     // -------------------------------------------------------------------------
 
-    private CandidateLevel TryBuildCandidate(System.Random rng)
+    private enum PlacementFailReason
     {
+        None,
+        TargetPlacementFailed,
+        DirectBlockerPlacementFailed,
+        OrdinaryVehiclePlacementFailed,
+        CouldNotReachVehicleCount,
+        InvalidBounds,
+        Overlap
+    }
+
+    private void ResetPlacementDiagnostics()
+    {
+        failTargetPlacement = 0;
+        failDirectBlockerPlacement = 0;
+        failOrdinaryVehiclePlacement = 0;
+        failCouldNotReachVehicleCount = 0;
+        failInvalidBounds = 0;
+        failOverlap = 0;
+    }
+
+    private void RecordPlacementFailure(PlacementFailReason reason)
+    {
+        switch (reason)
+        {
+            case PlacementFailReason.TargetPlacementFailed:
+                failTargetPlacement++;
+                break;
+            case PlacementFailReason.DirectBlockerPlacementFailed:
+                failDirectBlockerPlacement++;
+                break;
+            case PlacementFailReason.OrdinaryVehiclePlacementFailed:
+                failOrdinaryVehiclePlacement++;
+                break;
+            case PlacementFailReason.CouldNotReachVehicleCount:
+                failCouldNotReachVehicleCount++;
+                break;
+            case PlacementFailReason.InvalidBounds:
+                failInvalidBounds++;
+                break;
+            case PlacementFailReason.Overlap:
+                failOverlap++;
+                break;
+        }
+    }
+
+    private CandidateLevel TryBuildCandidate(
+        System.Random rng,
+        out PlacementFailReason failReason)
+    {
+        failReason = PlacementFailReason.None;
         int vehicleCount = rng.Next(minVehicles, maxVehicles + 1);
 
-        CandidateLevel candidate = new CandidateLevel();
-
-        // 1) Target car eerst (altijd Horizontal length 2).
-        int exitRow = rng.Next(1, 5);
-        int targetX = rng.Next(0, 3);
-
-        CandidateVehicle target = new CandidateVehicle
+        CandidateLevel candidate = new CandidateLevel
         {
-            name = "Target",
-            horizontal = true,
-            length = 2,
-            position = new Vector2Int(targetX, exitRow),
-            canExitRight = true
+            gridWidth = gridWidth,
+            gridHeight = gridHeight
         };
 
-        candidate.exitRow = exitRow;
-        candidate.vehicles.Add(target);
-
         HashSet<Vector2Int> occupied = new HashSet<Vector2Int>();
-        Occupy(occupied, target);
 
-        int nonTargetCount = vehicleCount - 1;
-        int maxLength3 = Mathf.FloorToInt(nonTargetCount * maxLongVehicleRatio);
+        // 1) Target eerst (Horizontal length 2).
+        if (!TryPlaceTarget(rng, candidate, occupied, out failReason))
+        {
+            return null;
+        }
+
+        int nonTargetBudget = vehicleCount - 1;
+        int maxLength3 = Mathf.FloorToInt(nonTargetBudget * maxLongVehicleRatio);
         int length3Placed = 0;
 
-        int placeAttempts = 0;
-        int maxPlaceAttempts = nonTargetCount * 50;
-
-        while (candidate.vehicles.Count < vehicleCount && placeAttempts < maxPlaceAttempts)
+        // 2) Vereiste direct blockers op exit-pad (niet aan kans overlaten).
+        for (int b = 0; b < minDirectBlockers; b++)
         {
-            placeAttempts++;
+            if (!TryPlaceDirectBlocker(
+                    rng,
+                    candidate,
+                    occupied,
+                    ref length3Placed,
+                    maxLength3,
+                    out failReason))
+            {
+                if (failReason == PlacementFailReason.None)
+                {
+                    failReason = PlacementFailReason.DirectBlockerPlacementFailed;
+                }
 
-            bool horizontal = rng.Next(0, 2) == 0;
+                return null;
+            }
+        }
+
+        // 3) Overige voertuigen — meerdere attempts per slot (oriëntatie + length).
+        while (candidate.vehicles.Count < vehicleCount)
+        {
+            if (!TryPlaceOrdinaryVehicle(
+                    rng,
+                    candidate,
+                    occupied,
+                    ref length3Placed,
+                    maxLength3,
+                    out PlacementFailReason ordinaryFail))
+            {
+                // Geen enkele vrije configuratie meer → stop met duidelijke reden.
+                failReason = candidate.vehicles.Count < vehicleCount
+                    ? PlacementFailReason.CouldNotReachVehicleCount
+                    : ordinaryFail;
+
+                if (ordinaryFail == PlacementFailReason.OrdinaryVehiclePlacementFailed ||
+                    ordinaryFail == PlacementFailReason.None)
+                {
+                    failReason = PlacementFailReason.CouldNotReachVehicleCount;
+                }
+
+                return null;
+            }
+        }
+
+        if (candidate.vehicles.Count < vehicleCount)
+        {
+            failReason = PlacementFailReason.CouldNotReachVehicleCount;
+            return null;
+        }
+
+        // Safety: blockers zouden er nu moeten zijn.
+        if (CountDirectBlockers(candidate) < minDirectBlockers)
+        {
+            failReason = PlacementFailReason.DirectBlockerPlacementFailed;
+            return null;
+        }
+
+        failReason = PlacementFailReason.None;
+        return candidate;
+    }
+
+    private bool TryPlaceTarget(
+        System.Random rng,
+        CandidateLevel candidate,
+        HashSet<Vector2Int> occupied,
+        out PlacementFailReason failReason)
+    {
+        failReason = PlacementFailReason.None;
+
+        if (gridWidth < 2 || gridHeight < 1)
+        {
+            failReason = PlacementFailReason.InvalidBounds;
+            return false;
+        }
+
+        for (int attempt = 0; attempt < PlacementAttemptsPerVehicle; attempt++)
+        {
+            int exitRow = rng.Next(0, gridHeight);
+
+            // Ruimte rechts houden zodat direct blockers op het exit-pad passen.
+            int minPathCells = Mathf.Max(2, minDirectBlockers);
+            int maxTargetX = Mathf.Max(0, gridWidth - 2 - minPathCells);
+            int targetX = rng.Next(0, maxTargetX + 1);
+            Vector2Int pos = new Vector2Int(targetX, exitRow);
+
+            if (!AreCellsFree(occupied, pos, horizontal: true, length: 2))
+            {
+                failReason = PlacementFailReason.Overlap;
+                continue;
+            }
+
+            if (!IsPlacementInsideGrid(pos, horizontal: true, length: 2, gridWidth, gridHeight))
+            {
+                failReason = PlacementFailReason.InvalidBounds;
+                continue;
+            }
+
+            CandidateVehicle target = new CandidateVehicle
+            {
+                name = "Target",
+                horizontal = true,
+                length = 2,
+                position = pos,
+                canExitRight = true
+            };
+
+            candidate.exitRow = exitRow;
+            candidate.vehicles.Add(target);
+            Occupy(occupied, target);
+            failReason = PlacementFailReason.None;
+            return true;
+        }
+
+        failReason = PlacementFailReason.TargetPlacementFailed;
+        return false;
+    }
+
+    /// <summary>
+    /// Plaatst een voertuig dat minstens één cel op het exit-pad van de target bezet.
+    /// </summary>
+    private bool TryPlaceDirectBlocker(
+        System.Random rng,
+        CandidateLevel candidate,
+        HashSet<Vector2Int> occupied,
+        ref int length3Placed,
+        int maxLength3,
+        out PlacementFailReason failReason)
+    {
+        failReason = PlacementFailReason.None;
+        CandidateVehicle target = FindTarget(candidate);
+        if (target == null)
+        {
+            failReason = PlacementFailReason.TargetPlacementFailed;
+            return false;
+        }
+
+        List<PlacementOption> options = CollectDirectBlockerOptions(
+            occupied,
+            target,
+            length3Placed,
+            maxLength3
+        );
+
+        if (options.Count == 0)
+        {
+            failReason = PlacementFailReason.DirectBlockerPlacementFailed;
+            return false;
+        }
+
+        // Shuffle-achtig: kies random optie.
+        PlacementOption chosen = options[rng.Next(0, options.Count)];
+        if (!AreCellsFree(occupied, chosen.position, chosen.horizontal, chosen.length))
+        {
+            failReason = PlacementFailReason.Overlap;
+            return false;
+        }
+
+        CandidateVehicle vehicle = new CandidateVehicle
+        {
+            name = GetVehicleName(candidate.vehicles.Count - 1),
+            horizontal = chosen.horizontal,
+            length = chosen.length,
+            position = chosen.position,
+            canExitRight = false
+        };
+
+        candidate.vehicles.Add(vehicle);
+        Occupy(occupied, vehicle);
+        if (chosen.length == 3)
+        {
+            length3Placed++;
+        }
+
+        return true;
+    }
+
+    private List<PlacementOption> CollectDirectBlockerOptions(
+        HashSet<Vector2Int> occupied,
+        CandidateVehicle target,
+        int length3Placed,
+        int maxLength3)
+    {
+        List<PlacementOption> options = new List<PlacementOption>();
+        int rightMost = target.position.x + target.length - 1;
+        int exitRow = target.position.y;
+
+        bool allowLength3 = length3Placed < maxLength3;
+        int[] lengths = allowLength3 ? new[] { 2, 3 } : new[] { 2 };
+
+        foreach (int length in lengths)
+        {
+            // Horizontaal op exit-row, rechts van target.
+            int maxX = gridWidth - length;
+            for (int x = 0; x <= maxX; x++)
+            {
+                Vector2Int pos = new Vector2Int(x, exitRow);
+                if (!AreCellsFree(occupied, pos, true, length))
+                {
+                    continue;
+                }
+
+                if (!PlacementBlocksExitPath(pos, true, length, rightMost, exitRow))
+                {
+                    continue;
+                }
+
+                options.Add(new PlacementOption(true, length, pos));
+            }
+
+            // Verticaal: kolom op exit-pad, overlapt exitRow.
+            int maxY = gridHeight - length;
+            for (int x = rightMost + 1; x < gridWidth; x++)
+            {
+                for (int y = 0; y <= maxY; y++)
+                {
+                    Vector2Int pos = new Vector2Int(x, y);
+                    if (!AreCellsFree(occupied, pos, false, length))
+                    {
+                        continue;
+                    }
+
+                    if (!PlacementBlocksExitPath(pos, false, length, rightMost, exitRow))
+                    {
+                        continue;
+                    }
+
+                    options.Add(new PlacementOption(false, length, pos));
+                }
+            }
+        }
+
+        return options;
+    }
+
+    private static bool PlacementBlocksExitPath(
+        Vector2Int pos,
+        bool horizontal,
+        int length,
+        int targetRightMost,
+        int exitRow)
+    {
+        foreach (Vector2Int cell in GetCells(pos, horizontal, length))
+        {
+            if (cell.y == exitRow && cell.x > targetRightMost)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private bool TryPlaceOrdinaryVehicle(
+        System.Random rng,
+        CandidateLevel candidate,
+        HashSet<Vector2Int> occupied,
+        ref int length3Placed,
+        int maxLength3,
+        out PlacementFailReason failReason)
+    {
+        failReason = PlacementFailReason.None;
+
+        for (int attempt = 0; attempt < PlacementAttemptsPerVehicle; attempt++)
+        {
+            bool preferHorizontal = rng.Next(0, 2) == 0;
             int length = 2;
             if (length3Placed < maxLength3 && rng.NextDouble() < 0.45)
             {
                 length = 3;
             }
 
-            if (!TryFindRandomFreePosition(rng, occupied, horizontal, length, out Vector2Int pos))
+            // Probeer gekozen oriëntatie, daarna de andere.
+            bool[] orientations = preferHorizontal
+                ? new[] { true, false }
+                : new[] { false, true };
+
+            foreach (bool horizontal in orientations)
             {
-                continue;
+                if (!TryFindRandomFreePosition(
+                        rng,
+                        occupied,
+                        horizontal,
+                        length,
+                        gridWidth,
+                        gridHeight,
+                        out Vector2Int pos))
+                {
+                    continue;
+                }
+
+                if (!IsPlacementInsideGrid(pos, horizontal, length, gridWidth, gridHeight))
+                {
+                    failReason = PlacementFailReason.InvalidBounds;
+                    continue;
+                }
+
+                if (!AreCellsFree(occupied, pos, horizontal, length))
+                {
+                    failReason = PlacementFailReason.Overlap;
+                    continue;
+                }
+
+                CandidateVehicle vehicle = new CandidateVehicle
+                {
+                    name = GetVehicleName(candidate.vehicles.Count - 1),
+                    horizontal = horizontal,
+                    length = length,
+                    position = pos,
+                    canExitRight = false
+                };
+
+                candidate.vehicles.Add(vehicle);
+                Occupy(occupied, vehicle);
+                if (length == 3)
+                {
+                    length3Placed++;
+                }
+
+                failReason = PlacementFailReason.None;
+                return true;
             }
 
-            CandidateVehicle vehicle = new CandidateVehicle
-            {
-                name = GetVehicleName(candidate.vehicles.Count - 1),
-                horizontal = horizontal,
-                length = length,
-                position = pos,
-                canExitRight = false
-            };
-
-            candidate.vehicles.Add(vehicle);
-            Occupy(occupied, vehicle);
-
+            // Length-2 fallback als length-3 geen plek had.
             if (length == 3)
             {
-                length3Placed++;
+                foreach (bool horizontal in orientations)
+                {
+                    if (!TryFindRandomFreePosition(
+                            rng,
+                            occupied,
+                            horizontal,
+                            2,
+                            gridWidth,
+                            gridHeight,
+                            out Vector2Int pos))
+                    {
+                        continue;
+                    }
+
+                    CandidateVehicle vehicle = new CandidateVehicle
+                    {
+                        name = GetVehicleName(candidate.vehicles.Count - 1),
+                        horizontal = horizontal,
+                        length = 2,
+                        position = pos,
+                        canExitRight = false
+                    };
+
+                    candidate.vehicles.Add(vehicle);
+                    Occupy(occupied, vehicle);
+                    failReason = PlacementFailReason.None;
+                    return true;
+                }
             }
         }
 
-        if (candidate.vehicles.Count < vehicleCount)
+        failReason = PlacementFailReason.OrdinaryVehiclePlacementFailed;
+        return false;
+    }
+
+    private static bool IsPlacementInsideGrid(
+        Vector2Int start,
+        bool horizontal,
+        int length,
+        int width,
+        int height)
+    {
+        foreach (Vector2Int cell in GetCells(start, horizontal, length))
         {
-            return null;
+            if (cell.x < 0 || cell.x >= width || cell.y < 0 || cell.y >= height)
+            {
+                return false;
+            }
         }
 
-        if (CountDirectBlockers(candidate) < minDirectBlockers)
-        {
-            return null;
-        }
+        return true;
+    }
 
-        return candidate;
+    private readonly struct PlacementOption
+    {
+        public readonly bool horizontal;
+        public readonly int length;
+        public readonly Vector2Int position;
+
+        public PlacementOption(bool horizontal, int length, Vector2Int position)
+        {
+            this.horizontal = horizontal;
+            this.length = length;
+            this.position = position;
+        }
     }
 
     private static bool TryFindRandomFreePosition(
@@ -574,6 +1135,8 @@ public class LevelGeneratorWindow : EditorWindow
         HashSet<Vector2Int> occupied,
         bool horizontal,
         int length,
+        int gridWidth,
+        int gridHeight,
         out Vector2Int position)
     {
         position = Vector2Int.zero;
@@ -581,10 +1144,15 @@ public class LevelGeneratorWindow : EditorWindow
 
         if (horizontal)
         {
-            int maxX = GridSize - length;
+            int maxX = gridWidth - length;
+            if (maxX < 0)
+            {
+                return false;
+            }
+
             for (int x = 0; x <= maxX; x++)
             {
-                for (int y = 0; y < GridSize; y++)
+                for (int y = 0; y < gridHeight; y++)
                 {
                     Vector2Int pos = new Vector2Int(x, y);
                     if (AreCellsFree(occupied, pos, true, length))
@@ -596,8 +1164,13 @@ public class LevelGeneratorWindow : EditorWindow
         }
         else
         {
-            int maxY = GridSize - length;
-            for (int x = 0; x < GridSize; x++)
+            int maxY = gridHeight - length;
+            if (maxY < 0)
+            {
+                return false;
+            }
+
+            for (int x = 0; x < gridWidth; x++)
             {
                 for (int y = 0; y <= maxY; y++)
                 {
@@ -669,7 +1242,7 @@ public class LevelGeneratorWindow : EditorWindow
 
             foreach (Vector2Int cell in GetCells(v.position, v.horizontal, v.length))
             {
-                if (cell.y == target.position.y && cell.x > rightMost && cell.x < GridSize)
+                if (cell.y == target.position.y && cell.x > rightMost && cell.x < candidate.gridWidth)
                 {
                     blockers.Add(v.name);
                     break;
@@ -688,7 +1261,7 @@ public class LevelGeneratorWindow : EditorWindow
             occupiedCells += v.length;
         }
 
-        return occupiedCells / (float)TotalCells;
+        return occupiedCells / (float)(candidate.gridWidth * candidate.gridHeight);
     }
 
     /// <summary>
@@ -741,7 +1314,7 @@ public class LevelGeneratorWindow : EditorWindow
 
             // Rechts 1 cel.
             int rightMost = v.position.x + v.length;
-            if (rightMost < GridSize && !occupied[rightMost, v.position.y])
+            if (rightMost < candidate.gridWidth && !occupied[rightMost, v.position.y])
             {
                 return true;
             }
@@ -756,7 +1329,7 @@ public class LevelGeneratorWindow : EditorWindow
 
             // Omhoog 1 cel (y+).
             int topMost = v.position.y + v.length;
-            if (topMost < GridSize && !occupied[v.position.x, topMost])
+            if (topMost < candidate.gridHeight && !occupied[v.position.x, topMost])
             {
                 return true;
             }
@@ -767,7 +1340,7 @@ public class LevelGeneratorWindow : EditorWindow
 
     private static bool[,] BuildOccupancy(CandidateLevel candidate, int ignoreIndex)
     {
-        bool[,] occupied = new bool[GridSize, GridSize];
+        bool[,] occupied = new bool[candidate.gridWidth, candidate.gridHeight];
         for (int i = 0; i < candidate.vehicles.Count; i++)
         {
             if (i == ignoreIndex)
@@ -778,7 +1351,7 @@ public class LevelGeneratorWindow : EditorWindow
             CandidateVehicle v = candidate.vehicles[i];
             foreach (Vector2Int cell in GetCells(v.position, v.horizontal, v.length))
             {
-                if (cell.x >= 0 && cell.x < GridSize && cell.y >= 0 && cell.y < GridSize)
+                if (cell.x >= 0 && cell.x < candidate.gridWidth && cell.y >= 0 && cell.y < candidate.gridHeight)
                 {
                     occupied[cell.x, cell.y] = true;
                 }
@@ -789,9 +1362,10 @@ public class LevelGeneratorWindow : EditorWindow
     }
 
     /// <summary>
-    /// Lengtebalans (max ~40% length-3 bij non-target) + oriëntatiebalans bij 6+ voertuigen.
+    /// Lengtebalans (max ~40% length-3 bij non-target) + oriëntatiebalans
+    /// wanneer er genoeg voertuigen zijn (schaalt licht met board area).
     /// </summary>
-    private static bool PassesOrientationLengthBalance(CandidateLevel candidate)
+    private bool PassesOrientationLengthBalance(CandidateLevel candidate)
     {
         int nonTarget = 0;
         int length3 = 0;
@@ -831,13 +1405,17 @@ public class LevelGeneratorWindow : EditorWindow
         if (nonTarget > 0)
         {
             float longRatio = length3 / (float)nonTarget;
-            if (longRatio > 0.40f + 0.0001f)
+            // Blijft ~40%; iets soepeler op hele grote boards zodat density haalbaar blijft.
+            float maxLong = Mathf.Lerp(0.40f, 0.45f, Mathf.Clamp01(AreaScale - 1f));
+            if (longRatio > maxLong + 0.0001f)
             {
                 return false;
             }
         }
 
-        if (candidate.vehicles.Count >= 6)
+        // Oriëntatiebalans: baseline bij 6 voertuigen op 6x6; schaal mee.
+        int orientationGate = Mathf.Max(6, Mathf.RoundToInt(6f * Mathf.Lerp(1f, AreaScale, 0.35f)));
+        if (candidate.vehicles.Count >= orientationGate)
         {
             if (horizontal < 2 || vertical < 2)
             {
@@ -900,6 +1478,8 @@ public class LevelGeneratorWindow : EditorWindow
     private static void FillLevelData(LevelData levelData, CandidateLevel candidate, int levelNumber)
     {
         levelData.levelNumber = levelNumber;
+        levelData.gridWidth = candidate.gridWidth;
+        levelData.gridHeight = candidate.gridHeight;
         levelData.exitRow = candidate.exitRow;
         levelData.vehicles = new List<VehicleData>();
 
@@ -1002,11 +1582,6 @@ public class LevelGeneratorWindow : EditorWindow
     {
         foreach (Vector2Int cell in GetCells(start, horizontal, length))
         {
-            if (cell.x < 0 || cell.x >= GridSize || cell.y < 0 || cell.y >= GridSize)
-            {
-                return false;
-            }
-
             if (occupied.Contains(cell))
             {
                 return false;
@@ -1035,6 +1610,8 @@ public class LevelGeneratorWindow : EditorWindow
 
     private class CandidateLevel
     {
+        public int gridWidth = LevelData.DefaultGridSize;
+        public int gridHeight = LevelData.DefaultGridSize;
         public int exitRow;
         public List<CandidateVehicle> vehicles = new List<CandidateVehicle>();
     }

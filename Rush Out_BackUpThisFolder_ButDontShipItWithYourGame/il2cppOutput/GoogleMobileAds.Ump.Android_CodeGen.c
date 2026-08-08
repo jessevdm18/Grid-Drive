@@ -89,13 +89,13 @@ static Il2CppMethodPointer s_methodPointers[38] =
 static const int32_t s_InvokerIndices[38] = 
 {
 	10936,
-	16592,
+	16590,
 	3377,
 	7970,
 	7970,
 	7970,
 	7970,
-	16772,
+	16770,
 	10936,
 	10936,
 	10936,
@@ -103,14 +103,14 @@ static const int32_t s_InvokerIndices[38] =
 	7970,
 	10936,
 	10936,
-	16592,
+	16590,
 	1985,
 	10936,
 	10615,
 	10615,
 	10473,
 	10473,
-	16772,
+	16770,
 	7970,
 	7970,
 	7970,
@@ -125,7 +125,7 @@ static const int32_t s_InvokerIndices[38] =
 	10443,
 	10443,
 	10936,
-	14378,
+	14376,
 };
 IL2CPP_EXTERN_C const Il2CppCodeGenModule g_GoogleMobileAds_Ump_Android_CodeGenModule;
 const Il2CppCodeGenModule g_GoogleMobileAds_Ump_Android_CodeGenModule = 

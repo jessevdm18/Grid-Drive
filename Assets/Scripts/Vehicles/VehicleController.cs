@@ -20,14 +20,27 @@ public class VehicleController : MonoBehaviour
     [SerializeField] private GridManager gridManager;
 
     [Header("Visual")]
-    [Tooltip("Child met de SpriteRenderer (bijv. \"Visual\"). Root blijft logica/collider.")]
+    [Tooltip("Bewegings-container (bijv. \"Visual\"). Root blijft logica/collider.")]
     [SerializeField] private Transform visualTransform;
 
-    [Tooltip("Optioneel. SpriteRenderer op Visual; anders automatisch gezocht.")]
+    [Tooltip("Alleen de auto-sprite (bijv. \"CarSprite\"). Hierop zitten facing-rotatie + uniforme scale.")]
+    [SerializeField] private Transform carSpriteTransform;
+
+    [Tooltip("Optioneel. SpriteRenderer op CarSprite; anders automatisch gezocht.")]
     [SerializeField] private SpriteRenderer visualSpriteRenderer;
 
     [Tooltip("Alleen zichtbaar voor de doelauto (canExitRight).")]
     [SerializeField] private GameObject targetIndicator;
+
+    [Tooltip("Hint-pijl child (standaard inactive). Transform.Find vindt dit NIET als inactive.")]
+    [SerializeField] private GameObject hintDirection;
+
+    [Tooltip("SpriteRenderer op HintDirection.")]
+    [SerializeField] private SpriteRenderer hintDirectionRenderer;
+
+    [Tooltip("Hoeveel van de grid-footprint de sprite mag vullen (1 = rand tot rand).")]
+    [SerializeField, Range(0.5f, 1f)]
+    private float visualFill = 0.88f;
 
     [Tooltip("Duur van de soepele visual-beweging tussen gridcellen (lager = sneller op mobiel).")]
     [SerializeField] private float moveAnimationDuration = 0.06f;
@@ -70,14 +83,19 @@ public class VehicleController : MonoBehaviour
     public int LengthInCells => lengthInCells;
     public bool CanExitRight => canExitRight;
 
-    // Prefab-scale bij Awake = "1 cel" basis. Voorkomt dat we
-    // lengthInCells stapelen op een al opgeschaalde prefab.
-    private Vector3 baseScale = Vector3.one;
+    // CarSprite-renderer voor hint-highlight (niet de disabled root-SpriteRenderer).
+    public SpriteRenderer VisualSpriteRenderer => visualSpriteRenderer;
+
+    // Prefab HintDirection — HintManager mag deze niet via Transform.Find zoeken (inactive).
+    public GameObject HintDirection => hintDirection;
+    public SpriteRenderer HintDirectionRenderer => hintDirectionRenderer;
+    public Vector3 HintDirectionBaseScale => hintDirectionBaseScale;
 
     private Vector2Int dragStartGridPosition;
     private Vector3 dragStartMouseWorld;
 
     private Camera mainCamera;
+    private BoxCollider2D boxCollider;
 
     // Voorkomt dubbele snap + occupancy als Setup() al heeft geïnitialiseerd.
     private bool isInitialized;
@@ -100,31 +118,20 @@ public class VehicleController : MonoBehaviour
     private Color originalSpriteColor = Color.white;
     private bool hasCachedOriginalSpriteColor;
 
+    // Purely visual facing: false = rechts/omhoog, true = links/omlaag (via flipX).
+    // Wordt één keer in Setup() gezet — niet opnieuw tijdens drag/move/hint.
+    private bool visualFlipped;
+
+    // Prefab-scale van HintDirection (niet wijzigen tijdens show/hide).
+    private Vector3 hintDirectionBaseScale = Vector3.one;
+
     private void Awake()
     {
-        // Bewaar de originele prefab-scale als 1x1-basis.
-        // UpdateVisualSize gebruikt dit i.p.v. de huidige scale te vermenigvuldigen.
-        baseScale = transform.localScale;
+        // Root mag NOOIT length-scaling krijgen — footprint zit in de collider.
+        transform.localScale = Vector3.one;
+        boxCollider = GetComponent<BoxCollider2D>();
 
-        // Optioneel: zoek child "Visual" als er niets is gekoppeld.
-        if (visualTransform == null)
-        {
-            visualTransform = transform.Find("Visual");
-        }
-
-        if (visualSpriteRenderer == null && visualTransform != null)
-        {
-            visualSpriteRenderer = visualTransform.GetComponent<SpriteRenderer>();
-        }
-
-        if (targetIndicator == null && visualTransform != null)
-        {
-            Transform indicator = visualTransform.Find("TargetIndicator");
-            if (indicator != null)
-            {
-                targetIndicator = indicator.gameObject;
-            }
-        }
+        ResolveVisualReferences();
 
         // Standaard uit; Setup zet hem aan voor de doelauto.
         if (targetIndicator != null)
@@ -132,11 +139,104 @@ public class VehicleController : MonoBehaviour
             targetIndicator.SetActive(false);
         }
 
+        // Hint-pijl start altijd uit (HintManager zet aan bij hint).
+        if (hintDirection != null)
+        {
+            hintDirectionBaseScale = hintDirection.transform.localScale;
+            hintDirection.SetActive(false);
+        }
+
         if (visualSpriteRenderer != null)
         {
             originalSpriteColor = visualSpriteRenderer.color;
             hasCachedOriginalSpriteColor = true;
         }
+    }
+
+    /// <summary>
+    /// Zoekt Visual / CarSprite / SpriteRenderer / TargetIndicator / HintDirection
+    /// als ze niet gekoppeld zijn.
+    /// Let op: Transform.Find vindt GEEN inactive children — HintDirection zoeken we handmatig.
+    /// </summary>
+    private void ResolveVisualReferences()
+    {
+        // VisualRoot of Visual — container voor move/shake (niet voor facing).
+        if (visualTransform == null)
+        {
+            visualTransform = transform.Find("VisualRoot");
+            if (visualTransform == null)
+            {
+                visualTransform = transform.Find("Visual");
+            }
+        }
+
+        // CarSprite: alleen deze transform krijgt facing-rotatie + uniforme scale.
+        if (carSpriteTransform == null && visualTransform != null)
+        {
+            carSpriteTransform = visualTransform.Find("CarSprite");
+        }
+
+        // Fallback: oude prefab zonder CarSprite → Visual zelf is de sprite-host.
+        if (carSpriteTransform == null)
+        {
+            carSpriteTransform = visualTransform;
+        }
+
+        if (visualSpriteRenderer == null && carSpriteTransform != null)
+        {
+            visualSpriteRenderer = carSpriteTransform.GetComponent<SpriteRenderer>();
+        }
+
+        if (visualSpriteRenderer == null && carSpriteTransform != null)
+        {
+            visualSpriteRenderer = carSpriteTransform.GetComponentInChildren<SpriteRenderer>();
+        }
+
+        if (targetIndicator == null && visualTransform != null)
+        {
+            // TargetIndicator is vaak inactive — niet via Transform.Find.
+            Transform indicator = FindChildIncludingInactive(visualTransform, "TargetIndicator");
+            if (indicator != null)
+            {
+                targetIndicator = indicator.gameObject;
+            }
+        }
+
+        if (hintDirection == null && visualTransform != null)
+        {
+            Transform hint = FindChildIncludingInactive(visualTransform, "HintDirection");
+            if (hint != null)
+            {
+                hintDirection = hint.gameObject;
+            }
+        }
+
+        if (hintDirectionRenderer == null && hintDirection != null)
+        {
+            hintDirectionRenderer = hintDirection.GetComponent<SpriteRenderer>();
+        }
+    }
+
+    /// <summary>
+    /// Transform.Find negeert inactive children; deze helper niet.
+    /// </summary>
+    private static Transform FindChildIncludingInactive(Transform parent, string childName)
+    {
+        if (parent == null)
+        {
+            return null;
+        }
+
+        for (int i = 0; i < parent.childCount; i++)
+        {
+            Transform child = parent.GetChild(i);
+            if (child.name == childName)
+            {
+                return child;
+            }
+        }
+
+        return null;
     }
 
     /// <summary>
@@ -174,11 +274,33 @@ public class VehicleController : MonoBehaviour
             gameManager.ResetLevelCompleted();
         }
 
-        // Visuele grootte pas nadat orientation en length bekend zijn.
+        // Visuele rijrichting één keer kiezen (niet opnieuw tijdens play).
+        ChooseVisualFacing();
+
+        // Basis-rotatie per orientation + flipX/Y voor rijrichting (geen 180°).
+        ApplyVisualFacing();
         UpdateVisualSize();
-        ApplyVisualRotation();
 
         Initialize();
+    }
+
+    /// <summary>
+    /// Kiest één keer de visuele rijrichting.
+    /// Target (canExitRight) wijst altijd naar rechts; overige voertuigen random.
+    /// Gameplay-orientation blijft ongemoeid.
+    /// </summary>
+    private void ChooseVisualFacing()
+    {
+        if (canExitRight)
+        {
+            // Target car: altijd naar rechts (richting exit), nooit gespiegeld.
+            visualFlipped = false;
+        }
+        else
+        {
+            // Normale auto: random forward/reverse (puur visueel).
+            visualFlipped = Random.value > 0.5f;
+        }
     }
 
     /// <summary>
@@ -214,51 +336,196 @@ public class VehicleController : MonoBehaviour
     }
 
     /// <summary>
-    /// Draait alleen de Visual-child. Root blijft zonder rotatie (gameplay/collider).
+    /// Zet vaste orientation-rotatie op CarSprite + spiegelt voor rijrichting.
+    /// Geen 180°/–90° rotatie meer (baked lighting/shadows blijven kloppen).
+    /// VisualRoot / TargetIndicator / HintDirection blijven ongemoeid.
     /// </summary>
-    private void ApplyVisualRotation()
+    private void ApplyVisualFacing()
     {
-        if (visualTransform == null)
+        // Visual-container mag geen facing-rotatie of flip krijgen.
+        if (visualTransform != null &&
+            carSpriteTransform != null &&
+            carSpriteTransform != visualTransform)
+        {
+            visualTransform.localRotation = Quaternion.identity;
+        }
+
+        Transform spriteTransform = carSpriteTransform != null
+            ? carSpriteTransform
+            : visualTransform;
+
+        if (spriteTransform == null)
+        {
+            return;
+        }
+
+        // 1) Vaste basisrotatie per gameplay-orientation (niet per rijrichting).
+        if (orientation == VehicleOrientation.Horizontal)
+        {
+            spriteTransform.localRotation = Quaternion.identity;
+        }
+        else
+        {
+            spriteTransform.localRotation = Quaternion.Euler(0f, 0f, 90f);
+        }
+
+        // 2) Rijrichting via SpriteRenderer-flip (alleen CarSprite).
+        if (visualSpriteRenderer == null)
+        {
+            visualSpriteRenderer = spriteTransform.GetComponent<SpriteRenderer>();
+        }
+
+        if (visualSpriteRenderer == null)
         {
             return;
         }
 
         if (orientation == VehicleOrientation.Horizontal)
         {
-            visualTransform.localRotation = Quaternion.identity;
+            // Rechts = origineel, links = horizontaal gespiegeld.
+            visualSpriteRenderer.flipX = visualFlipped;
+            visualSpriteRenderer.flipY = false;
         }
         else
         {
-            visualTransform.localRotation = Quaternion.Euler(0f, 0f, 90f);
+            // Na Z=90° ligt local X op world Y. flipX wisselt omhoog ↔ omlaag
+            // zonder de sprite 180° te draaien (shading blijft correct).
+            // flipY zou hier links/rechts van de verticale auto spiegelen — niet gebruiken.
+            visualSpriteRenderer.flipX = visualFlipped;
+            visualSpriteRenderer.flipY = false;
         }
     }
 
     /// <summary>
-    /// Past de sprite/collider-schaal aan op orientation + lengthInCells.
-    /// Prefab moet een 1x1-cel zijn (BoxCollider2D size ≈ 1x1).
-    /// Scale wordt ABSOLUUT gezet vanaf baseScale — nooit opnieuw vermenigvuldigd.
-    /// Daardoor schalen sprite én BoxCollider2D samen mee.
+    /// Zet gameplay-footprint via BoxCollider2D en past de sprite UNIFORM
+    /// binnen die footprint (geen stretch). Root localScale blijft altijd (1,1,1).
+    /// Occupancy blijft gebaseerd op orientation + lengthInCells, niet op sprite bounds.
     /// </summary>
-    private void UpdateVisualSize()
+    public void UpdateVisualSize()
     {
+        // 1) Root nooit schalen voor length.
+        transform.localScale = Vector3.one;
+
+        float cellSize = gridManager != null ? gridManager.CellSize : 1f;
+
+        // 2) Collider = exacte grid-footprint.
+        UpdateColliderSize(cellSize);
+
+        // 3) Sprite uniform binnen footprint (aspect ratio behouden).
+        UpdateSpriteUniformScale(cellSize);
+
+        // 4) Contact-shadow synct mee (sprite/flip/scale) — geen gameplay.
+        VehicleShadow shadow = GetComponentInChildren<VehicleShadow>(true);
+        if (shadow != null)
+        {
+            shadow.UpdateShadow();
+        }
+    }
+
+    /// <summary>
+    /// BoxCollider2D size in local units (= world units omdat root scale = 1).
+    /// </summary>
+    private void UpdateColliderSize(float cellSize)
+    {
+        if (boxCollider == null)
+        {
+            boxCollider = GetComponent<BoxCollider2D>();
+        }
+
+        if (boxCollider == null)
+        {
+            return;
+        }
+
         if (orientation == VehicleOrientation.Horizontal)
         {
-            // Breedte = length, hoogte = 1 cel.
-            transform.localScale = new Vector3(
-                baseScale.x * lengthInCells,
-                baseScale.y * 1f,
-                baseScale.z * 1f
-            );
+            // length × 1 cel
+            boxCollider.size = new Vector2(lengthInCells * cellSize, cellSize);
         }
         else
         {
-            // Breedte = 1 cel, hoogte = length.
-            transform.localScale = new Vector3(
-                baseScale.x * 1f,
-                baseScale.y * lengthInCells,
-                baseScale.z * 1f
-            );
+            // 1 × length cellen
+            boxCollider.size = new Vector2(cellSize, lengthInCells * cellSize);
         }
+
+        boxCollider.offset = Vector2.zero;
+    }
+
+    /// <summary>
+    /// Past CarSprite.localScale uniform aan zodat de sprite in de footprint past.
+    /// VisualRoot blijft scale 1 zodat indicators niet meeschalen/vervormen.
+    /// </summary>
+    private void UpdateSpriteUniformScale(float cellSize)
+    {
+        Transform spriteTransform = carSpriteTransform != null
+            ? carSpriteTransform
+            : visualTransform;
+
+        if (spriteTransform == null)
+        {
+            return;
+        }
+
+        // Visual-container nooit schalen — alleen CarSprite.
+        if (visualTransform != null && spriteTransform != visualTransform)
+        {
+            visualTransform.localScale = Vector3.one;
+        }
+
+        if (visualSpriteRenderer == null && spriteTransform != null)
+        {
+            visualSpriteRenderer = spriteTransform.GetComponent<SpriteRenderer>();
+            if (visualSpriteRenderer == null)
+            {
+                visualSpriteRenderer = spriteTransform.GetComponentInChildren<SpriteRenderer>();
+            }
+        }
+
+        if (visualSpriteRenderer == null || visualSpriteRenderer.sprite == null)
+        {
+            spriteTransform.localScale = Vector3.one;
+            return;
+        }
+
+        // Footprint in world/local units (root scale = 1).
+        float availableWidth;
+        float availableHeight;
+
+        if (orientation == VehicleOrientation.Horizontal)
+        {
+            availableWidth = lengthInCells * cellSize;
+            availableHeight = cellSize;
+        }
+        else
+        {
+            availableWidth = cellSize;
+            availableHeight = lengthInCells * cellSize;
+        }
+
+        // Sprite-afmetingen in local space (vóór scale). flipX/Y verandert bounds.size niet.
+        Vector2 spriteSize = visualSpriteRenderer.sprite.bounds.size;
+        float spriteWidth = Mathf.Max(0.0001f, spriteSize.x);
+        float spriteHeight = Mathf.Max(0.0001f, spriteSize.y);
+
+        // Bij Z=90° rotatie wisselen local X/Y van rol t.o.v. de footprint.
+        // (Rijrichting gebruikt flipX, geen extra rotatie — sizing blijft hetzelfde.)
+        float scaleX;
+        float scaleY;
+
+        if (orientation == VehicleOrientation.Horizontal)
+        {
+            scaleX = availableWidth / spriteWidth;
+            scaleY = availableHeight / spriteHeight;
+        }
+        else
+        {
+            // local X → world Y, local Y → world X na Z=90°.
+            scaleX = availableHeight / spriteWidth;
+            scaleY = availableWidth / spriteHeight;
+        }
+
+        float uniformScale = Mathf.Min(scaleX, scaleY) * visualFill;
+        spriteTransform.localScale = new Vector3(uniformScale, uniformScale, 1f);
     }
 
     private void Start()
@@ -577,16 +844,11 @@ private bool CanPerformExitRight(Vector3 dragDifference)
             dirY = Mathf.Sign(unclampedWanted.y - gridPosition.y);
         }
 
-        // World-afstand ≈ blockedShakeDistance, ondanks parent-scale.
-        float scaleX = Mathf.Abs(transform.localScale.x);
-        float scaleY = Mathf.Abs(transform.localScale.y);
-
-        if (scaleX < 0.0001f) scaleX = 1f;
-        if (scaleY < 0.0001f) scaleY = 1f;
-
+        // World-afstand ≈ blockedShakeDistance.
+        // Root scale is altijd 1 — local offset = world offset.
         return new Vector3(
-            dirX * blockedShakeDistance / scaleX,
-            dirY * blockedShakeDistance / scaleY,
+            dirX * blockedShakeDistance,
+            dirY * blockedShakeDistance,
             0f
         );
     }

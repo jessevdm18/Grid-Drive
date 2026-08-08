@@ -10,6 +10,9 @@ public class HintManager : MonoBehaviour
 {
     private const int HintMaxStates = 50000;
 
+    // Hint-pijl altijd boven CarSprite (CarSprite sortingOrder = 0 in prefab).
+    private const int HintArrowSortingOrder = 20;
+
     [SerializeField] private CoinManager coinManager;
     [SerializeField] private AdsManager adsManager;
     [SerializeField] private LevelManager levelManager;
@@ -22,14 +25,17 @@ public class HintManager : MonoBehaviour
     [Tooltip("Kleur tijdens de hint-highlight.")]
     [SerializeField] private Color highlightColor = Color.yellow;
 
-    [Tooltip("Optionele pijl-sprite voor de richting-indicator.")]
+    [Tooltip("Optionele pijl-sprite; leeg = sprite op prefab HintDirection.")]
     [SerializeField] private Sprite directionArrowSprite;
 
-    [Tooltip("Afstand van de pijl t.o.v. het voertuig-midden (world units).")]
+    [Tooltip("Niet meer gebruikt: HintDirection behoudt prefab localPosition/scale.")]
     [SerializeField] private float directionOffset = 0.85f;
 
-    // Voorkomt dat meerdere hints tegelijk lopen.
-    private bool isHighlighting;
+    // Voorkomt dat meerdere visual-coroutines door elkaar lopen.
+    private Coroutine hintVisualCoroutine;
+
+    // Laatst getoonde pijl (zodat we die kunnen uitzetten bij een nieuwe hint).
+    private VehicleController activeHintVehicle;
 
     private void Awake()
     {
@@ -44,12 +50,6 @@ public class HintManager : MonoBehaviour
     /// </summary>
     public void UseHint()
     {
-        if (isHighlighting)
-        {
-            Debug.Log("HintManager: hint is al bezig.");
-            return;
-        }
-
         if (coinManager == null)
         {
             Debug.LogError("HintManager: geen CoinManager gekoppeld.");
@@ -70,12 +70,6 @@ public class HintManager : MonoBehaviour
     /// </summary>
     public void UseRewardedHint()
     {
-        if (isHighlighting)
-        {
-            Debug.Log("HintManager: hint is al bezig.");
-            return;
-        }
-
         if (adsManager == null)
         {
             Debug.LogError("HintManager: geen AdsManager gekoppeld.");
@@ -95,7 +89,9 @@ public class HintManager : MonoBehaviour
                 out List<VehicleController> controllers,
                 out List<RushOutSolver.VehicleDefinition> definitions,
                 out RushOutSolver.BoardState boardState,
-                out int exitRow))
+                out int exitRow,
+                out int gridWidth,
+                out int gridHeight))
         {
             return;
         }
@@ -104,6 +100,8 @@ public class HintManager : MonoBehaviour
             definitions,
             boardState,
             exitRow,
+            gridWidth,
+            gridHeight,
             HintMaxStates
         );
 
@@ -139,7 +137,17 @@ public class HintManager : MonoBehaviour
         }
 
         HintDirection direction = GetHintDirection(firstMove);
-        StartCoroutine(ShowHintFeedback(vehicle, direction));
+
+        // Nieuwe hint vervangt een lopende visual (solver/coins/ads ongemoeid).
+        if (hintVisualCoroutine != null)
+        {
+            StopCoroutine(hintVisualCoroutine);
+            hintVisualCoroutine = null;
+            HideHintDirection(activeHintVehicle);
+            activeHintVehicle = null;
+        }
+
+        hintVisualCoroutine = StartCoroutine(ShowHintFeedback(vehicle, direction));
     }
 
     /// <summary>
@@ -149,12 +157,16 @@ public class HintManager : MonoBehaviour
         out List<VehicleController> controllers,
         out List<RushOutSolver.VehicleDefinition> definitions,
         out RushOutSolver.BoardState boardState,
-        out int exitRow)
+        out int exitRow,
+        out int gridWidth,
+        out int gridHeight)
     {
         controllers = new List<VehicleController>();
         definitions = new List<RushOutSolver.VehicleDefinition>();
         boardState = null;
         exitRow = 0;
+        gridWidth = RushOutSolver.DefaultGridSize;
+        gridHeight = RushOutSolver.DefaultGridSize;
 
         LevelData levelData = levelManager != null ? levelManager.CurrentLevelData : null;
         if (levelData == null)
@@ -164,6 +176,8 @@ public class HintManager : MonoBehaviour
         }
 
         exitRow = levelData.exitRow;
+        gridWidth = levelData.ResolvedGridWidth;
+        gridHeight = levelData.ResolvedGridHeight;
 
         VehicleController[] found = FindObjectsByType<VehicleController>(FindObjectsSortMode.None);
         foreach (VehicleController vehicle in found)
@@ -225,22 +239,26 @@ public class HintManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Pulse-kleur ~1s + tijdelijke richtingspijl ("deze auto → deze kant").
+    /// Pulse-kleur + prefab HintDirection-pijl ("deze auto → deze kant").
     /// </summary>
     private IEnumerator ShowHintFeedback(VehicleController vehicle, HintDirection direction)
     {
-        isHighlighting = true;
+        activeHintVehicle = vehicle;
 
-        SpriteRenderer spriteRenderer = vehicle.GetComponentInChildren<SpriteRenderer>();
-        if (spriteRenderer == null)
-        {
-            Debug.LogWarning("HintManager: geen SpriteRenderer op " + vehicle.name);
-            isHighlighting = false;
-            yield break;
-        }
+        Debug.Log("Showing hint on: " + vehicle.name);
+        Debug.Log("Hint direction: " + direction);
 
-        Color originalColor = spriteRenderer.color;
-        GameObject arrow = CreateDirectionIndicator(vehicle, direction);
+        // CarSprite via serialized ref — niet GetComponentInChildren (root heeft disabled SR).
+        SpriteRenderer spriteRenderer = vehicle.VisualSpriteRenderer;
+        Color originalColor = spriteRenderer != null ? spriteRenderer.color : Color.white;
+
+        ShowHintDirection(vehicle, direction);
+
+        GameObject hintObject = vehicle.HintDirection;
+        Debug.Log(
+            "HintDirection active: " +
+            (hintObject != null && hintObject.activeSelf)
+        );
 
         float elapsed = 0f;
         while (elapsed < highlightDuration)
@@ -262,103 +280,118 @@ public class HintManager : MonoBehaviour
             spriteRenderer.color = originalColor;
         }
 
-        if (arrow != null)
-        {
-            Destroy(arrow);
-        }
-
-        isHighlighting = false;
+        HideHintDirection(vehicle);
+        activeHintVehicle = null;
+        hintVisualCoroutine = null;
     }
 
     /// <summary>
-    /// Maakt een eenvoudige pijl-child die de optimale richting toont.
+    /// Zet prefab-HintDirection aan via VehicleController-refs (werkt ook als inactive).
+    /// localPosition blijft onaangeroerd; scale/alpha worden gereset.
     /// </summary>
-    private GameObject CreateDirectionIndicator(VehicleController vehicle, HintDirection direction)
+    private void ShowHintDirection(VehicleController vehicle, HintDirection direction)
     {
-        GameObject arrow = new GameObject("HintDirection");
-        arrow.transform.SetParent(vehicle.transform, worldPositionStays: false);
+        GameObject hintObject = vehicle.HintDirection;
+        SpriteRenderer arrowRenderer = vehicle.HintDirectionRenderer;
 
-        Vector3 localOffset = Vector3.zero;
-        float zRotation = 0f;
-
-        switch (direction)
+        if (hintObject == null || arrowRenderer == null)
         {
-            case HintDirection.Right:
-                localOffset = new Vector3(directionOffset, 0f, 0f);
-                zRotation = 0f;
-                break;
-            case HintDirection.Left:
-                localOffset = new Vector3(-directionOffset, 0f, 0f);
-                zRotation = 180f;
-                break;
-            case HintDirection.Up:
-                localOffset = new Vector3(0f, directionOffset, 0f);
-                zRotation = 90f;
-                break;
-            case HintDirection.Down:
-                localOffset = new Vector3(0f, -directionOffset, 0f);
-                zRotation = -90f;
-                break;
+            Debug.LogWarning(
+                "HintManager: HintDirection-refs ontbreken op " + vehicle.name +
+                " (koppel ze in de prefab Inspector)."
+            );
+            return;
         }
 
-        // Compenseer parent-scale zodat de pijl ongeveer even groot blijft.
-        Vector3 parentScale = vehicle.transform.localScale;
-        float sx = Mathf.Abs(parentScale.x) < 0.0001f ? 1f : parentScale.x;
-        float sy = Mathf.Abs(parentScale.y) < 0.0001f ? 1f : parentScale.y;
+        // 1) Activeren
+        hintObject.SetActive(true);
 
-        arrow.transform.localPosition = new Vector3(
-            localOffset.x / sx,
-            localOffset.y / sy,
-            -0.1f
-        );
-        arrow.transform.localRotation = Quaternion.Euler(0f, 0f, zRotation);
-        arrow.transform.localScale = new Vector3(0.45f / sx, 0.45f / sy, 1f);
+        // 2) Scale + alpha resetten vóór facing
+        hintObject.transform.localScale = vehicle.HintDirectionBaseScale;
 
-        SpriteRenderer arrowRenderer = arrow.AddComponent<SpriteRenderer>();
-        arrowRenderer.sortingOrder = 50;
-        arrowRenderer.color = highlightColor;
+        Color c = arrowRenderer.color;
+        c.a = 1f;
+        arrowRenderer.color = c;
 
         if (directionArrowSprite != null)
         {
             arrowRenderer.sprite = directionArrowSprite;
         }
+
+        // Boven CarSprite tekenen
+        if (vehicle.VisualSpriteRenderer != null)
+        {
+            arrowRenderer.sortingOrder =
+                vehicle.VisualSpriteRenderer.sortingOrder + HintArrowSortingOrder;
+        }
         else
         {
-            // Fallback: witte unity-default sprite (quad) als pijlvorm-placeholder.
-            arrowRenderer.sprite = CreateFallbackArrowSprite();
+            arrowRenderer.sortingOrder = HintArrowSortingOrder;
         }
 
-        return arrow;
+        // 3) Pas daarna richting/flip
+        ApplyHintArrowFacing(hintObject.transform, arrowRenderer, direction);
     }
 
-    private static Sprite fallbackArrowSprite;
-
-    private static Sprite CreateFallbackArrowSprite()
+    /// <summary>
+    /// RIGHT/LEFT: Z=0 + optioneel flipX.
+    /// UP/DOWN: Z=90 + voor DOWN flipX (local X → world Y).
+    /// Geen 180° rotatie. Flip deactiveert het GameObject nooit.
+    /// </summary>
+    private static void ApplyHintArrowFacing(
+        Transform hintTransform,
+        SpriteRenderer arrowRenderer,
+        HintDirection direction)
     {
-        if (fallbackArrowSprite != null)
+        arrowRenderer.flipX = false;
+        arrowRenderer.flipY = false;
+
+        switch (direction)
         {
-            return fallbackArrowSprite;
+            case HintDirection.Right:
+                hintTransform.localRotation = Quaternion.identity;
+                break;
+
+            case HintDirection.Left:
+                hintTransform.localRotation = Quaternion.identity;
+                arrowRenderer.flipX = true;
+                break;
+
+            case HintDirection.Up:
+                hintTransform.localRotation = Quaternion.Euler(0f, 0f, 90f);
+                break;
+
+            case HintDirection.Down:
+                // Na Z=90° wisselt flipX omhoog ↔ omlaag (geen 180°).
+                hintTransform.localRotation = Quaternion.Euler(0f, 0f, 90f);
+                arrowRenderer.flipX = true;
+                break;
+        }
+    }
+
+    /// <summary>
+    /// Zet de prefab-pijl uit en reset flip/rotatie (geen Destroy).
+    /// </summary>
+    private static void HideHintDirection(VehicleController vehicle)
+    {
+        if (vehicle == null)
+        {
+            return;
         }
 
-        // 8x8 witte texture — eenvoudige zichtbare indicator zonder asset.
-        Texture2D tex = new Texture2D(8, 8, TextureFormat.RGBA32, false);
-        Color[] pixels = new Color[64];
-        for (int i = 0; i < pixels.Length; i++)
+        GameObject hintObject = vehicle.HintDirection;
+        SpriteRenderer arrowRenderer = vehicle.HintDirectionRenderer;
+
+        if (arrowRenderer != null)
         {
-            pixels[i] = Color.white;
+            arrowRenderer.flipX = false;
+            arrowRenderer.flipY = false;
         }
 
-        tex.SetPixels(pixels);
-        tex.Apply();
-        tex.filterMode = FilterMode.Point;
-
-        fallbackArrowSprite = Sprite.Create(
-            tex,
-            new Rect(0f, 0f, 8f, 8f),
-            new Vector2(0.5f, 0.5f),
-            8f
-        );
-
-        return fallbackArrowSprite;
+        if (hintObject != null)
+        {
+            hintObject.transform.localRotation = Quaternion.identity;
+            hintObject.SetActive(false);
+        }
     }
 }

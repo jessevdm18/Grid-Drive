@@ -6,16 +6,15 @@ using UnityEngine;
 
 /// <summary>
 /// Editor-only reviewtool voor gegenereerde levels.
-/// Menu: RushOut → Generated Levels → Review
+/// Menu: RushOut â†’ Generated Levels â†’ Review
 ///
-/// Accepteer → Assets/Data/Levels + MainLevelDatabase
-/// Afwijzen → asset verwijderen
+/// Accepteer â†’ Assets/Data/Levels + MainLevelDatabase
+/// Afwijzen â†’ asset verwijderen
 /// </summary>
 public class GeneratedLevelReviewWindow : EditorWindow
 {
     private const string GeneratedFolder = "Assets/Data/GeneratedLevels";
     private const string ApprovedFolder = "Assets/Data/Levels";
-    private const int GridSize = 6;
 
     private readonly List<LevelData> reviewList = new List<LevelData>();
     private int currentIndex;
@@ -65,8 +64,7 @@ public class GeneratedLevelReviewWindow : EditorWindow
         {
             EditorGUILayout.HelpBox(
                 "Geen generated levels gevonden in:\n" + GeneratedFolder +
-                "\n(inclusief subfolders Easy / Medium / Hard / Custom)\n\n" +
-                "Genereer eerst levels via RushOut → Generate Levels.",
+                "\n\nGenereer eerst levels via RushOut â†’ Generate Levels.",
                 MessageType.Info
             );
             return;
@@ -141,11 +139,14 @@ public class GeneratedLevelReviewWindow : EditorWindow
             EditorStyles.boldLabel
         );
         EditorGUILayout.LabelField("Asset", assetName);
-        EditorGUILayout.LabelField("Difficulty Tier", level.difficulty.ToString());
         EditorGUILayout.LabelField("minimumMoves", level.minimumMoves.ToString());
         EditorGUILayout.LabelField("statesExplored", level.statesExplored.ToString());
         EditorGUILayout.LabelField("difficultyScore", level.difficultyScore.ToString());
         EditorGUILayout.LabelField("Vehicles", vehicleCount.ToString());
+        EditorGUILayout.LabelField(
+            "Grid",
+            level.ResolvedGridWidth + "x" + level.ResolvedGridHeight
+        );
         EditorGUILayout.LabelField("exitRow", level.exitRow.ToString());
     }
 
@@ -237,26 +238,34 @@ public class GeneratedLevelReviewWindow : EditorWindow
     }
 
     // -------------------------------------------------------------------------
-    // 6x6 preview (Editor GUI only)
+    // Grid preview (Editor GUI only)
     // -------------------------------------------------------------------------
 
     private void DrawGridPreview(Rect area, LevelData level)
     {
-        // Achtergrond.
+        int gridWidth = level.ResolvedGridWidth;
+        int gridHeight = level.ResolvedGridHeight;
+
         EditorGUI.DrawRect(area, new Color(0.12f, 0.12f, 0.14f));
 
-        float cell = area.width / GridSize;
+        float cell = Mathf.Min(area.width / gridWidth, area.height / gridHeight);
+        float gridPixelW = cell * gridWidth;
+        float gridPixelH = cell * gridHeight;
+        Rect gridArea = new Rect(
+            area.x + (area.width - gridPixelW) * 0.5f,
+            area.y + (area.height - gridPixelH) * 0.5f,
+            gridPixelW,
+            gridPixelH
+        );
 
-        // Cell-achtergronden + lijnen.
-        for (int y = 0; y < GridSize; y++)
+        for (int y = 0; y < gridHeight; y++)
         {
-            for (int x = 0; x < GridSize; x++)
+            for (int x = 0; x < gridWidth; x++)
             {
-                // Grid y=0 onderaan in gameplay → visueel: rij 0 onderin tekenen.
-                int drawY = GridSize - 1 - y;
+                int drawY = gridHeight - 1 - y;
                 Rect cellRect = new Rect(
-                    area.x + x * cell,
-                    area.y + drawY * cell,
+                    gridArea.x + x * cell,
+                    gridArea.y + drawY * cell,
                     cell,
                     cell
                 );
@@ -264,7 +273,6 @@ public class GeneratedLevelReviewWindow : EditorWindow
             }
         }
 
-        // Voertuigen.
         if (level.vehicles != null)
         {
             int colorIndex = 0;
@@ -279,25 +287,28 @@ public class GeneratedLevelReviewWindow : EditorWindow
                     colorIndex++;
                 }
 
-                DrawVehicleRect(area, cell, vehicle, color);
+                DrawVehicleRect(gridArea, cell, gridHeight, vehicle, color);
             }
         }
 
-        // Exit-markering rechts van exitRow.
-        DrawExitMarker(area, cell, level.exitRow);
+        DrawExitMarker(gridArea, cell, gridHeight, level.exitRow);
 
-        // Buitenrand.
         Handles.BeginGUI();
         Handles.color = GridLineColor;
         Handles.DrawSolidRectangleWithOutline(
-            area,
+            gridArea,
             Color.clear,
             GridLineColor
         );
         Handles.EndGUI();
     }
 
-    private void DrawVehicleRect(Rect area, float cell, VehicleData vehicle, Color color)
+    private void DrawVehicleRect(
+        Rect area,
+        float cell,
+        int gridHeight,
+        VehicleData vehicle,
+        Color color)
     {
         int x = vehicle.gridPosition.x;
         int y = vehicle.gridPosition.y;
@@ -313,17 +324,15 @@ public class GeneratedLevelReviewWindow : EditorWindow
         if (horizontal)
         {
             px = area.x + x * cell;
-            // y=0 onderaan → flip
-            py = area.y + (GridSize - 1 - y) * cell;
+            py = area.y + (gridHeight - 1 - y) * cell;
             w = length * cell;
             h = cell;
         }
         else
         {
-            // Vertical: length gaat omhoog in grid-y.
             px = area.x + x * cell;
             int topY = y + length - 1;
-            py = area.y + (GridSize - 1 - topY) * cell;
+            py = area.y + (gridHeight - 1 - topY) * cell;
             w = cell;
             h = length * cell;
         }
@@ -331,7 +340,6 @@ public class GeneratedLevelReviewWindow : EditorWindow
         Rect vehicleRect = Inset(new Rect(px, py, w, h), 3f);
         EditorGUI.DrawRect(vehicleRect, color);
 
-        // Label in het midden.
         string label = string.IsNullOrEmpty(vehicle.vehicleName)
             ? "?"
             : vehicle.vehicleName.Substring(0, 1);
@@ -344,14 +352,14 @@ public class GeneratedLevelReviewWindow : EditorWindow
         GUI.Label(vehicleRect, label, style);
     }
 
-    private void DrawExitMarker(Rect area, float cell, int exitRow)
+    private void DrawExitMarker(Rect area, float cell, int gridHeight, int exitRow)
     {
-        exitRow = Mathf.Clamp(exitRow, 0, GridSize - 1);
+        exitRow = Mathf.Clamp(exitRow, 0, gridHeight - 1);
         float markerWidth = cell * 0.35f;
 
         Rect exitRect = new Rect(
             area.xMax - markerWidth,
-            area.y + (GridSize - 1 - exitRow) * cell + 4f,
+            area.y + (gridHeight - 1 - exitRow) * cell + 4f,
             markerWidth,
             cell - 8f
         );
@@ -366,7 +374,6 @@ public class GeneratedLevelReviewWindow : EditorWindow
         };
         GUI.Label(exitRect, "E", style);
     }
-
     private static Rect Inset(Rect rect, float inset)
     {
         return new Rect(
@@ -393,7 +400,6 @@ public class GeneratedLevelReviewWindow : EditorWindow
             return;
         }
 
-        // FindAssets met map zoekt recursief in subfolders (Easy/Medium/Hard/...).
         string[] guids = AssetDatabase.FindAssets("t:LevelData", new[] { GeneratedFolder });
         foreach (string guid in guids)
         {
@@ -405,17 +411,7 @@ public class GeneratedLevelReviewWindow : EditorWindow
             }
         }
 
-        // Eerst op difficulty-tier, daarna op difficultyScore.
-        reviewList.Sort((a, b) =>
-        {
-            int tier = a.difficulty.CompareTo(b.difficulty);
-            if (tier != 0)
-            {
-                return tier;
-            }
-
-            return CompareByDifficulty(a, b);
-        });
+        reviewList.Sort(CompareByDifficulty);
         Repaint();
     }
 
@@ -460,7 +456,7 @@ public class GeneratedLevelReviewWindow : EditorWindow
             return;
         }
 
-        // Volgend levelNumber = 1 + hoogste bestaande in database én in Levels-map.
+        // Volgend levelNumber = 1 + hoogste bestaande in database Ã©n in Levels-map.
         int nextLevelNumber = GetNextApprovedLevelNumber(database);
         string desiredFileName = "Level_" + nextLevelNumber.ToString("000") + ".asset";
         string destinationPath = GetUniqueAssetPath(ApprovedFolder, desiredFileName);
@@ -468,7 +464,7 @@ public class GeneratedLevelReviewWindow : EditorWindow
         string moveError = AssetDatabase.MoveAsset(sourcePath, destinationPath);
         if (!string.IsNullOrEmpty(moveError))
         {
-            Debug.LogError("Accept: verplaatsen mislukt — " + moveError);
+            Debug.LogError("Accept: verplaatsen mislukt â€” " + moveError);
             return;
         }
 
@@ -500,7 +496,7 @@ public class GeneratedLevelReviewWindow : EditorWindow
         Debug.Log(
             "Accepted " + GetAssetName(moved) +
             " as levelNumber=" + moved.levelNumber +
-            " → " + destinationPath
+            " â†’ " + destinationPath
         );
 
         // Uit reviewlijst + door naar volgende kandidaat.
@@ -557,7 +553,7 @@ public class GeneratedLevelReviewWindow : EditorWindow
 
         Debug.Log(
             "Re-ran solver on " + GetAssetName(level) +
-            " → moves=" + level.minimumMoves +
+            " â†’ moves=" + level.minimumMoves +
             ", states=" + level.statesExplored +
             ", score=" + level.difficultyScore
         );
@@ -608,7 +604,7 @@ public class GeneratedLevelReviewWindow : EditorWindow
         if (guids.Length > 1)
         {
             error = "Meerdere MainLevelDatabase assets gevonden (" + guids.Length +
-                    "). Gebruik precies één database.";
+                    "). Gebruik precies Ã©Ã©n database.";
             return null;
         }
 

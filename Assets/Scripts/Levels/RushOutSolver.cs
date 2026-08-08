@@ -7,10 +7,11 @@ using UnityEngine;
 /// Werkt uitsluitend op data (geen Editor, geen GameObjects).
 /// Move-definitie: één voertuig naar een andere geldige gridpositie = 1 move;
 /// target exit = finale move.
+/// Gridgrootte is variabel (per level), geen vaste 6x6.
 /// </summary>
 public static class RushOutSolver
 {
-    public const int GridSize = 6;
+    public const int DefaultGridSize = 6;
     public const int DefaultMaxStates = 100000;
 
     // -------------------------------------------------------------------------
@@ -154,6 +155,8 @@ public static class RushOutSolver
         List<VehicleDefinition> vehicles,
         BoardState startState,
         int exitRow,
+        int gridWidth,
+        int gridHeight,
         int maxStates = DefaultMaxStates)
     {
         SolverResult result = new SolverResult();
@@ -170,6 +173,9 @@ public static class RushOutSolver
             return result;
         }
 
+        int width = gridWidth > 0 ? gridWidth : DefaultGridSize;
+        int height = gridHeight > 0 ? gridHeight : DefaultGridSize;
+
         int targetIndex = FindTargetIndex(vehicles);
         if (targetIndex < 0)
         {
@@ -177,7 +183,16 @@ public static class RushOutSolver
             return result;
         }
 
-        return RunBfs(vehicles, exitRow, targetIndex, startState, result, maxStates);
+        return RunBfs(
+            vehicles,
+            exitRow,
+            targetIndex,
+            startState,
+            width,
+            height,
+            result,
+            maxStates
+        );
     }
 
     /// <summary>
@@ -191,7 +206,14 @@ public static class RushOutSolver
         }
 
         BuildFromLevelData(levelData, out List<VehicleDefinition> vehicles, out BoardState start);
-        return Solve(vehicles, start, levelData.exitRow, maxStates);
+        return Solve(
+            vehicles,
+            start,
+            levelData.exitRow,
+            levelData.ResolvedGridWidth,
+            levelData.ResolvedGridHeight,
+            maxStates
+        );
     }
 
     public static void BuildFromLevelData(
@@ -219,7 +241,7 @@ public static class RushOutSolver
     }
 
     // -------------------------------------------------------------------------
-    // BFS (zelfde logica als de bewezen Editor LevelSolver)
+    // BFS
     // -------------------------------------------------------------------------
 
     private static SolverResult RunBfs(
@@ -227,6 +249,8 @@ public static class RushOutSolver
         int exitRow,
         int targetIndex,
         BoardState start,
+        int gridWidth,
+        int gridHeight,
         SolverResult result,
         int maxStates)
     {
@@ -253,8 +277,14 @@ public static class RushOutSolver
             BoardState current = queue.Dequeue();
             explored++;
 
-            // Genereer eerst de exit-move als die mogelijk is (winnende zet).
-            SolverMove exitMove = TryCreateExitMove(vehicles, exitRow, targetIndex, current);
+            SolverMove exitMove = TryCreateExitMove(
+                vehicles,
+                exitRow,
+                targetIndex,
+                current,
+                gridWidth,
+                gridHeight
+            );
             if (exitMove != null)
             {
                 result.solvable = true;
@@ -264,8 +294,12 @@ public static class RushOutSolver
                 return result;
             }
 
-            // Alle normale schuif-moves.
-            List<MoveCandidate> candidates = GenerateMoveCandidates(vehicles, current);
+            List<MoveCandidate> candidates = GenerateMoveCandidates(
+                vehicles,
+                current,
+                gridWidth,
+                gridHeight
+            );
             foreach (MoveCandidate candidate in candidates)
             {
                 if (visited.Contains(candidate.nextState))
@@ -311,7 +345,9 @@ public static class RushOutSolver
         List<VehicleDefinition> vehicles,
         int exitRow,
         int targetIndex,
-        BoardState state)
+        BoardState state,
+        int gridWidth,
+        int gridHeight)
     {
         VehicleDefinition target = vehicles[targetIndex];
         Vector2Int pos = state.positions[targetIndex];
@@ -322,9 +358,15 @@ public static class RushOutSolver
         }
 
         int rightMost = pos.x + target.lengthInCells - 1;
-        bool[,] occupied = BuildOccupancy(vehicles, state, ignoreIndex: targetIndex);
+        bool[,] occupied = BuildOccupancy(
+            vehicles,
+            state,
+            ignoreIndex: targetIndex,
+            gridWidth,
+            gridHeight
+        );
 
-        for (int x = rightMost + 1; x < GridSize; x++)
+        for (int x = rightMost + 1; x < gridWidth; x++)
         {
             if (occupied[x, pos.y])
             {
@@ -343,7 +385,9 @@ public static class RushOutSolver
 
     private static List<MoveCandidate> GenerateMoveCandidates(
         List<VehicleDefinition> vehicles,
-        BoardState state)
+        BoardState state,
+        int gridWidth,
+        int gridHeight)
     {
         List<MoveCandidate> candidates = new List<MoveCandidate>();
 
@@ -351,11 +395,16 @@ public static class RushOutSolver
         {
             VehicleDefinition vehicle = vehicles[i];
             Vector2Int from = state.positions[i];
-            bool[,] occupied = BuildOccupancy(vehicles, state, ignoreIndex: i);
+            bool[,] occupied = BuildOccupancy(
+                vehicles,
+                state,
+                ignoreIndex: i,
+                gridWidth,
+                gridHeight
+            );
 
             if (vehicle.IsHorizontal)
             {
-                // Links schuiven: elke bereikbare x is één aparte move.
                 for (int steps = 1; ; steps++)
                 {
                     int newX = from.x - steps;
@@ -374,12 +423,11 @@ public static class RushOutSolver
                     candidates.Add(CreateCandidate(state, i, from, to, vehicle.name));
                 }
 
-                // Rechts schuiven.
                 for (int steps = 1; ; steps++)
                 {
                     int newX = from.x + steps;
                     int rightMost = newX + vehicle.lengthInCells - 1;
-                    if (rightMost >= GridSize)
+                    if (rightMost >= gridWidth)
                     {
                         break;
                     }
@@ -395,7 +443,6 @@ public static class RushOutSolver
             }
             else
             {
-                // Omlaag (y-).
                 for (int steps = 1; ; steps++)
                 {
                     int newY = from.y - steps;
@@ -413,12 +460,11 @@ public static class RushOutSolver
                     candidates.Add(CreateCandidate(state, i, from, to, vehicle.name));
                 }
 
-                // Omhoog (y+).
                 for (int steps = 1; ; steps++)
                 {
                     int newY = from.y + steps;
                     int topMost = newY + vehicle.lengthInCells - 1;
-                    if (topMost >= GridSize)
+                    if (topMost >= gridHeight)
                     {
                         break;
                     }
@@ -456,9 +502,11 @@ public static class RushOutSolver
     private static bool[,] BuildOccupancy(
         List<VehicleDefinition> vehicles,
         BoardState state,
-        int ignoreIndex)
+        int ignoreIndex,
+        int gridWidth,
+        int gridHeight)
     {
-        bool[,] occupied = new bool[GridSize, GridSize];
+        bool[,] occupied = new bool[gridWidth, gridHeight];
 
         for (int i = 0; i < vehicles.Count; i++)
         {
@@ -473,7 +521,7 @@ public static class RushOutSolver
 
             foreach (Vector2Int cell in cells)
             {
-                if (cell.x >= 0 && cell.x < GridSize && cell.y >= 0 && cell.y < GridSize)
+                if (cell.x >= 0 && cell.x < gridWidth && cell.y >= 0 && cell.y < gridHeight)
                 {
                     occupied[cell.x, cell.y] = true;
                 }

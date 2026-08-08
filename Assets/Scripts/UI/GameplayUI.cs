@@ -3,7 +3,8 @@ using UnityEngine.SceneManagement;
 using TMPro;
 
 /// <summary>
-/// Toont coins en levelnummer tijdens Gameplay.
+/// Toont coins, levelnummer en moves tijdens Gameplay.
+/// Level/Moves: alleen ValueText (cijfers); LabelText blijft "LEVEL" / "MOVES".
 /// </summary>
 public class GameplayUI : MonoBehaviour
 {
@@ -11,9 +12,12 @@ public class GameplayUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI coinText;
 
     [SerializeField] private LevelManager levelManager;
-    [SerializeField] private TextMeshProUGUI levelText;
 
-    [SerializeField] private TextMeshProUGUI movesText;
+    [Tooltip("LevelCard/ValueText — alleen het levelnummer, bijv. \"8\".")]
+    [SerializeField] private TextMeshProUGUI levelValueText;
+
+    [Tooltip("MovesCard/ValueText — alleen het aantal moves, bijv. \"0\".")]
+    [SerializeField] private TextMeshProUGUI movesValueText;
 
     private void Start()
     {
@@ -47,40 +51,42 @@ public class GameplayUI : MonoBehaviour
     }
 
     /// <summary>
-    /// Zet de coin-tekst, bijv. "200 Coins".
+    /// Zet CoinText op alleen het aantal coins (icoon staat apart in de UI).
     /// </summary>
     private void UpdateCoinText(int amount)
     {
         if (coinText != null)
         {
-            coinText.text = amount + " Coins";
+            coinText.text = amount.ToString();
         }
     }
 
     /// <summary>
-    /// Zet de leveltekst, bijv. "LEVEL 1" (index 0 → 1).
+    /// Zet alleen LevelCard/ValueText op het levelnummer (index 0 → "1").
+    /// Raakt LabelText ("LEVEL") niet aan.
     /// </summary>
     public void UpdateLevelText()
     {
-        if (levelText == null || levelManager == null)
+        if (levelValueText == null || levelManager == null)
         {
             return;
         }
 
         int displayNumber = levelManager.CurrentLevelIndex + 1;
-        levelText.text = "LEVEL " + displayNumber;
+        levelValueText.text = displayNumber.ToString();
     }
 
     /// <summary>
-    /// Zet de move-teller tekst, bijv. "Moves: 3".
+    /// Zet alleen MovesCard/ValueText op het aantal moves.
+    /// Raakt LabelText ("MOVES") niet aan.
     /// </summary>
     public void UpdateMovesText(int moves)
     {
-        if (movesText == null)
+        if (movesValueText == null)
         {
             return;
         }
 
-        movesText.text = "Moves: " + moves;
+        movesValueText.text = moves.ToString();
     }
 }

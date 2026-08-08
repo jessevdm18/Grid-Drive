@@ -1,17 +1,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Speelveld: variable rectangular grid, gecentreerd in world space.
+/// Occupancy blijft een dictionary (geen vaste 6x6 array).
+/// </summary>
 public class GridManager : MonoBehaviour
 {
     [Header("Grid Settings")]
     [SerializeField] private int gridWidth = 6;
     [SerializeField] private int gridHeight = 6;
     [SerializeField] private float cellSize = 1f;
-
-    // Onderste linker CELMIDDEN van ons 6x6 grid.
-    // Bij een speelveld van -3 tot +3 zijn de celmiddens:
-    // -2.5, -1.5, -0.5, 0.5, 1.5, 2.5
-    [SerializeField] private Vector2 bottomLeftCellCenter = new Vector2(-2.5f, -2.5f);
 
     // Welke auto bezet welke cel?
     private Dictionary<Vector2Int, VehicleController> occupiedCells
@@ -21,17 +20,38 @@ public class GridManager : MonoBehaviour
     public int GridHeight => gridHeight;
     public float CellSize => cellSize;
 
-    // Zet een gridcel om naar de wereldpositie van het MIDDEN van die cel.
-    public Vector3 CellToWorld(Vector2Int cell)
+    /// <summary>
+    /// Zet de runtime-gridgrootte (aangeroepen bij level-load) en wist occupancy.
+    /// Grid blijft gecentreerd rond world origin.
+    /// </summary>
+    public void Configure(int width, int height)
     {
-        return new Vector3(
-            bottomLeftCellCenter.x + cell.x * cellSize,
-            bottomLeftCellCenter.y + cell.y * cellSize,
-            0f
-        );
+        gridWidth = Mathf.Max(1, width);
+        gridHeight = Mathf.Max(1, height);
+        occupiedCells.Clear();
     }
 
-    // Controleert of een cel binnen het 6x6 grid ligt.
+    /// <summary>
+    /// Gridcel → wereldpositie van het CELMIDDEN.
+    /// cellSize = 1: x - (gridWidth - 1) * 0.5f, y - (gridHeight - 1) * 0.5f
+    /// </summary>
+    public Vector3 CellToWorld(Vector2Int cell)
+    {
+        float worldX = (cell.x - (gridWidth - 1) * 0.5f) * cellSize;
+        float worldY = (cell.y - (gridHeight - 1) * 0.5f) * cellSize;
+        return new Vector3(worldX, worldY, 0f);
+    }
+
+    /// <summary>
+    /// Wereldpositie → dichtstbijzijnde gridcel (zelfde centrering als CellToWorld).
+    /// </summary>
+    public Vector2Int WorldToCell(Vector3 worldPosition)
+    {
+        float x = worldPosition.x / cellSize + (gridWidth - 1) * 0.5f;
+        float y = worldPosition.y / cellSize + (gridHeight - 1) * 0.5f;
+        return new Vector2Int(Mathf.RoundToInt(x), Mathf.RoundToInt(y));
+    }
+
     public bool IsInsideGrid(Vector2Int cell)
     {
         return cell.x >= 0 &&
@@ -40,20 +60,22 @@ public class GridManager : MonoBehaviour
                cell.y < gridHeight;
     }
 
-    // Controleert of één cel beschikbaar is.
     public bool IsCellFree(Vector2Int cell, VehicleController requestingVehicle)
     {
         if (!IsInsideGrid(cell))
+        {
             return false;
+        }
 
         if (!occupiedCells.TryGetValue(cell, out VehicleController occupant))
+        {
             return true;
+        }
 
         // Een auto mag zijn eigen huidige cellen natuurlijk gebruiken.
         return occupant == requestingVehicle;
     }
 
-    // Controleert een lijst met cellen.
     public bool AreCellsFree(
         List<Vector2Int> cells,
         VehicleController requestingVehicle)
@@ -61,14 +83,14 @@ public class GridManager : MonoBehaviour
         foreach (Vector2Int cell in cells)
         {
             if (!IsCellFree(cell, requestingVehicle))
+            {
                 return false;
+            }
         }
 
         return true;
     }
 
-    // Verwijdert alle oude registraties van deze auto
-    // en registreert daarna zijn nieuwe cellen.
     public void RegisterVehicle(
         VehicleController vehicle,
         List<Vector2Int> cells)
@@ -88,7 +110,9 @@ public class GridManager : MonoBehaviour
         foreach (var pair in occupiedCells)
         {
             if (pair.Value == vehicle)
+            {
                 cellsToRemove.Add(pair.Key);
+            }
         }
 
         foreach (Vector2Int cell in cellsToRemove)

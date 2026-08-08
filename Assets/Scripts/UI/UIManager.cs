@@ -14,7 +14,8 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject winPanel;
 
     [Header("Win Score")]
-    [SerializeField] private TMP_Text movesText;
+    [Tooltip("Alleen het aantal moves (cijfer). Label blijft buiten deze tekst.")]
+    [SerializeField] private TMP_Text movesValueText;
     [SerializeField] private TMP_Text parText;
     [SerializeField] private Image star1;
     [SerializeField] private Image star2;
@@ -163,9 +164,9 @@ public class UIManager : MonoBehaviour
     {
         int moves = gameManager != null ? gameManager.CurrentMoves : 0;
 
-        if (movesText != null)
+        if (movesValueText != null)
         {
-            movesText.text = "MOVES: " + moves;
+            movesValueText.text = moves.ToString();
         }
 
         if (parText != null)

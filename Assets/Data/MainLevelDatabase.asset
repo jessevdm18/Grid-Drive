@@ -13,18 +13,6 @@ MonoBehaviour:
   m_Name: MainLevelDatabase
   m_EditorClassIdentifier: Assembly-CSharp::LevelDatabase
   levels:
-  - {fileID: 11400000, guid: ef82267090bce3d4da7508e623bcff05, type: 2}
-  - {fileID: 11400000, guid: afc86dfae98ed924797c5e7083494840, type: 2}
-  - {fileID: 11400000, guid: bf5e8455cc7aadf4f9fd02dcc9dfeb91, type: 2}
-  - {fileID: 11400000, guid: fadef8defa523304d90e9eca60f948f3, type: 2}
-  - {fileID: 11400000, guid: 59456fa884381dd4496c48ac263f4715, type: 2}
-  - {fileID: 11400000, guid: bed897c9e5f3a09499cc1dea68f8537c, type: 2}
-  - {fileID: 11400000, guid: 0a1181619c270a642a81bbb125a9fdfa, type: 2}
-  - {fileID: 11400000, guid: 84cc6848a9936534cae607ab2b00feec, type: 2}
-  - {fileID: 11400000, guid: c533375e04cf52b48b70adc887d3c747, type: 2}
-  - {fileID: 11400000, guid: 19f3c5c453c0ac94c9bc3ecc435b2f49, type: 2}
-  - {fileID: 11400000, guid: bbaa9802a3c542244acc24f096f4a6ad, type: 2}
-  - {fileID: 11400000, guid: 7e7362c85b5f8fd4da5cb25455fe775a, type: 2}
-  - {fileID: 11400000, guid: 0857e3f6c247bf442933b3fe4b2e9ce2, type: 2}
-  - {fileID: 11400000, guid: 4486fd2d35f73214b85cf46b55bd983d, type: 2}
-  - {fileID: 11400000, guid: 82dddbf85fcc8284b8e1d3f6656ceb75, type: 2}
+  - {fileID: 11400000, guid: 74f9349f31632894b934d0ad109f4e2a, type: 2}
+  - {fileID: 11400000, guid: 831549a1f5b39d141a839d159067fba3, type: 2}
+  - {fileID: 11400000, guid: 1360c8db3645cbc44b6e233485ad329d, type: 2}

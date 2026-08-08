@@ -30,6 +30,12 @@ public class LevelManager : MonoBehaviour
     [Tooltip("Visuele Exit in de scene (alleen Y volgt exitRow).")]
     [SerializeField] private Transform exitVisual;
 
+    [Tooltip("Optionele sprite-library voor automatische voertuig-visuals.")]
+    [SerializeField] private VehicleSpriteLibrary vehicleSpriteLibrary;
+
+    // Laatst gekozen auto-sprite (voorkomt twee dezelfde achter elkaar).
+    private Sprite lastAutoAssignedSprite;
+
     /// <summary>
     /// Zero-based index van het actieve level (0 = LEVEL 1).
     /// </summary>
@@ -177,6 +183,13 @@ public class LevelManager : MonoBehaviour
 
         // Eerst oude gespawnde voertuigen + occupancy opruimen.
         ClearExistingVehicles();
+        lastAutoAssignedSprite = null;
+
+        // Runtime gridgrootte uit LevelData (oude assets → 6x6).
+        int width = levelData.ResolvedGridWidth;
+        int height = levelData.ResolvedGridHeight;
+        gridManager.Configure(width, height);
+        Debug.Log("Loaded grid " + width + "x" + height);
 
         // Move-teller resetten bij restart én nieuw level.
         if (gameManager != null)
@@ -184,7 +197,7 @@ public class LevelManager : MonoBehaviour
             gameManager.ResetMoves();
         }
 
-        // Visuele exit op de juiste rij zetten (next level + restart).
+        // Visuele exit op rechterrand + exitRow.
         UpdateExitVisualPosition(levelData.exitRow);
 
         // Maak voor elk item in LevelData één voertuig.
@@ -240,8 +253,7 @@ public class LevelManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Zet alleen de Y van exitVisual op de wereld-Y van exitRow.
-    /// X en Z blijven zoals in de scene (rechts buiten het grid).
+    /// Plaatst exitVisual op de rechterrand van het huidige grid, op exitRow.
     /// </summary>
     private void UpdateExitVisualPosition(int exitRow)
     {
@@ -250,17 +262,19 @@ public class LevelManager : MonoBehaviour
             return;
         }
 
-        Vector3 cellWorld = gridManager.CellToWorld(
-            new Vector2Int(gridManager.GridWidth - 1, exitRow)
+        // Eén cel rechts van de laatste kolom = buiten het speelveld.
+        Vector3 exitWorld = gridManager.CellToWorld(
+            new Vector2Int(gridManager.GridWidth, exitRow)
         );
 
         Vector3 position = exitVisual.position;
-        position.y = cellWorld.y;
+        position.x = exitWorld.x;
+        position.y = exitWorld.y;
         exitVisual.position = position;
 
         Debug.Log(
             "Exit visual moved to row " + exitRow +
-            " at world Y " + cellWorld.y
+            " at world (" + exitWorld.x + ", " + exitWorld.y + ")"
         );
     }
 
@@ -290,11 +304,78 @@ public class LevelManager : MonoBehaviour
             levelData.exitRow
         );
 
-        ApplyVehicleSprite(vehicle, data.vehicleSprite);
+        ApplyVehicleSprite(vehicle, ResolveVehicleSprite(data));
+
+        // Sprite kan net gezet zijn — herbereken uniforme visual scale.
+        vehicle.UpdateVisualSize();
+
+        // Shadow moet de definitieve CarSprite (na library-assign) overnemen.
+        VehicleShadow shadow = vehicle.GetComponentInChildren<VehicleShadow>(true);
+        if (shadow != null)
+        {
+            shadow.UpdateShadow();
+        }
     }
 
     /// <summary>
-    /// Zet optioneel een custom sprite op het Visual-child.
+    /// Bepaalt welke sprite dit voertuig krijgt (alleen visueel).
+    /// Prioriteit: target → expliciete vehicleSprite → library.
+    /// </summary>
+    private Sprite ResolveVehicleSprite(VehicleData data)
+    {
+        // 1) Target car altijd de target-sprite.
+        if (data.canExitRight)
+        {
+            if (vehicleSpriteLibrary != null && vehicleSpriteLibrary.TargetCarSprite != null)
+            {
+                return vehicleSpriteLibrary.TargetCarSprite;
+            }
+
+            if (data.vehicleSprite != null)
+            {
+                return data.vehicleSprite;
+            }
+
+            Debug.LogWarning(
+                "LevelManager: target car heeft geen targetCarSprite in VehicleSpriteLibrary."
+            );
+            return null;
+        }
+
+        // 2) Expliciet in LevelData gezet.
+        if (data.vehicleSprite != null)
+        {
+            return data.vehicleSprite;
+        }
+
+        // 3) Automatisch uit library op orientation + length.
+        if (vehicleSpriteLibrary == null)
+        {
+            return null;
+        }
+
+        Sprite chosen = vehicleSpriteLibrary.GetSpriteForVehicle(
+            data.orientation,
+            data.lengthInCells,
+            lastAutoAssignedSprite
+        );
+
+        if (chosen == null)
+        {
+            Debug.LogWarning(
+                "LevelManager: geen geschikte sprite in VehicleSpriteLibrary voor " +
+                data.orientation + " length " + data.lengthInCells +
+                " (" + data.vehicleName + ")."
+            );
+            return null;
+        }
+
+        lastAutoAssignedSprite = chosen;
+        return chosen;
+    }
+
+    /// <summary>
+    /// Zet optioneel een custom sprite op CarSprite (of Visual als fallback).
     /// Null = laat de prefab-sprite zoals die is.
     /// </summary>
     private void ApplyVehicleSprite(VehicleController vehicle, Sprite vehicleSprite)
@@ -304,13 +385,23 @@ public class LevelManager : MonoBehaviour
             return;
         }
 
-        Transform visual = vehicle.transform.Find("Visual");
+        Transform visual = vehicle.transform.Find("VisualRoot");
+        if (visual == null)
+        {
+            visual = vehicle.transform.Find("Visual");
+        }
+
         if (visual == null)
         {
             return;
         }
 
-        SpriteRenderer spriteRenderer = visual.GetComponent<SpriteRenderer>();
+        // Bij voorkeur CarSprite — niet TargetIndicator/HintDirection.
+        Transform carSprite = visual.Find("CarSprite");
+        SpriteRenderer spriteRenderer = carSprite != null
+            ? carSprite.GetComponent<SpriteRenderer>()
+            : visual.GetComponent<SpriteRenderer>();
+
         if (spriteRenderer == null)
         {
             return;

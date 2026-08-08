@@ -10,8 +10,12 @@ using UnityEngine;
 /// </summary>
 public static class LevelJsonImporter
 {
-    private const int GridSize = 6;
     private const string OutputFolder = "Assets/Data/Levels";
+
+    private static int ResolveJsonGridSize(int value)
+    {
+        return value > 0 ? value : LevelData.DefaultGridSize;
+    }
 
     [MenuItem("RushOut/Import Levels From JSON")]
     public static void ImportLevelsFromJson()
@@ -114,6 +118,8 @@ public static class LevelJsonImporter
 
         levelData.levelNumber = jsonLevel.level;
         levelData.exitRow = jsonLevel.exitRow;
+        levelData.gridWidth = ResolveJsonGridSize(jsonLevel.gridWidth);
+        levelData.gridHeight = ResolveJsonGridSize(jsonLevel.gridHeight);
         levelData.vehicles = BuildVehicleList(jsonLevel.vehicles);
 
         EditorUtility.SetDirty(levelData);
@@ -328,9 +334,27 @@ public static class LevelJsonImporter
             return "level-data is null.";
         }
 
-        if (jsonLevel.exitRow < 0 || jsonLevel.exitRow > 5)
+        int gridWidth = ResolveJsonGridSize(jsonLevel.gridWidth);
+        int gridHeight = ResolveJsonGridSize(jsonLevel.gridHeight);
+
+        if (gridWidth < LevelData.MinGridSize || gridWidth > LevelData.MaxGridSize)
         {
-            return "exitRow moet tussen 0 en 5 liggen (nu: " + jsonLevel.exitRow + ").";
+            return "gridWidth moet tussen " + LevelData.MinGridSize +
+                   " en " + LevelData.MaxGridSize +
+                   " liggen (nu: " + gridWidth + ").";
+        }
+
+        if (gridHeight < LevelData.MinGridSize || gridHeight > LevelData.MaxGridSize)
+        {
+            return "gridHeight moet tussen " + LevelData.MinGridSize +
+                   " en " + LevelData.MaxGridSize +
+                   " liggen (nu: " + gridHeight + ").";
+        }
+
+        if (jsonLevel.exitRow < 0 || jsonLevel.exitRow >= gridHeight)
+        {
+            return "exitRow moet tussen 0 en " + (gridHeight - 1) +
+                   " liggen (nu: " + jsonLevel.exitRow + ").";
         }
 
         if (jsonLevel.vehicles == null || jsonLevel.vehicles.Length == 0)
@@ -368,9 +392,10 @@ public static class LevelJsonImporter
             List<Vector2Int> cells = GetOccupiedCells(vehicle);
             foreach (Vector2Int cell in cells)
             {
-                if (cell.x < 0 || cell.x >= GridSize || cell.y < 0 || cell.y >= GridSize)
+                if (cell.x < 0 || cell.x >= gridWidth || cell.y < 0 || cell.y >= gridHeight)
                 {
-                    return vehicleLabel + ": staat (deels) buiten het 6x6 grid op cel " + cell + ".";
+                    return vehicleLabel + ": staat (deels) buiten het " +
+                           gridWidth + "x" + gridHeight + " grid op cel " + cell + ".";
                 }
 
                 if (!occupiedCells.Add(cell))
@@ -455,6 +480,9 @@ public static class LevelJsonImporter
     {
         public int level;
         public int exitRow;
+        // Optioneel — ontbreekt of 0 → default 6.
+        public int gridWidth;
+        public int gridHeight;
         public JsonVehicle[] vehicles;
         // estimatedMinimumMoves / difficultyNote worden bewust genegeerd.
     }

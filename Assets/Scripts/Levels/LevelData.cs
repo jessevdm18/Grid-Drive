@@ -17,11 +17,22 @@ public enum LevelDifficulty
 )]
 public class LevelData : ScriptableObject
 {
+    public const int DefaultGridSize = 6;
+    public const int MinGridSize = 4;
+    public const int MaxGridSize = 10;
+
     [Header("Level Info")]
     public int levelNumber = 1;
 
     [Tooltip("Handmatige / generator difficulty-tier (Easy / Medium / Hard).")]
     public LevelDifficulty difficulty = LevelDifficulty.Medium;
+
+    [Header("Grid")]
+    [Tooltip("Breedte in cellen. Ontbrekende/oude assets (0) → 6.")]
+    public int gridWidth = DefaultGridSize;
+
+    [Tooltip("Hoogte in cellen. Ontbrekende/oude assets (0) → 6.")]
+    public int gridHeight = DefaultGridSize;
 
     [Header("Exit")]
     public int exitRow = 2;
@@ -33,6 +44,35 @@ public class LevelData : ScriptableObject
     public int minimumMoves;
     public int statesExplored;
     public int difficultyScore;
+
+    /// <summary>
+    /// Effectieve breedte (oude assets zonder veld → 6).
+    /// </summary>
+    public int ResolvedGridWidth =>
+        gridWidth > 0 ? gridWidth : DefaultGridSize;
+
+    /// <summary>
+    /// Effectieve hoogte (oude assets zonder veld → 6).
+    /// </summary>
+    public int ResolvedGridHeight =>
+        gridHeight > 0 ? gridHeight : DefaultGridSize;
+
+    private void OnValidate()
+    {
+        if (gridWidth <= 0)
+        {
+            gridWidth = DefaultGridSize;
+        }
+
+        if (gridHeight <= 0)
+        {
+            gridHeight = DefaultGridSize;
+        }
+
+        gridWidth = Mathf.Clamp(gridWidth, MinGridSize, MaxGridSize);
+        gridHeight = Mathf.Clamp(gridHeight, MinGridSize, MaxGridSize);
+        exitRow = Mathf.Clamp(exitRow, 0, Mathf.Max(0, gridHeight - 1));
+    }
 }
 
 [System.Serializable]
