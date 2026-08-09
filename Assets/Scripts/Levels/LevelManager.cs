@@ -33,6 +33,9 @@ public class LevelManager : MonoBehaviour
     [Tooltip("Optionele visuele parkeerplaats (tiles + borders).")]
     [SerializeField] private ParkingGridVisual parkingGridVisual;
 
+    [Tooltip("Past camera framing aan op gridgrootte.")]
+    [SerializeField] private CameraFitter cameraFitter;
+
     [Tooltip("Optionele sprite-library voor automatische voertuig-visuals.")]
     [SerializeField] private VehicleSpriteLibrary vehicleSpriteLibrary;
 
@@ -203,6 +206,13 @@ public class LevelManager : MonoBehaviour
         else
         {
             Debug.LogWarning("ParkingGridVisual is not assigned");
+        }
+
+        // Camera framing na grid-config + parking build.
+        if (cameraFitter != null)
+        {
+            float cellSize = gridManager != null ? gridManager.CellSize : 1f;
+            cameraFitter.FitToGrid(width, height, cellSize);
         }
 
         // Move-teller resetten bij restart én nieuw level.

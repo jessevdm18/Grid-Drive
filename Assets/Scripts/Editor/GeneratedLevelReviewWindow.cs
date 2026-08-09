@@ -142,6 +142,29 @@ public class GeneratedLevelReviewWindow : EditorWindow
         EditorGUILayout.LabelField("minimumMoves", level.minimumMoves.ToString());
         EditorGUILayout.LabelField("statesExplored", level.statesExplored.ToString());
         EditorGUILayout.LabelField("difficultyScore", level.difficultyScore.ToString());
+        EditorGUILayout.LabelField(
+            "solutionComplexityScore",
+            level.solutionComplexityScore.ToString()
+        );
+        EditorGUILayout.LabelField(
+            "uniqueVehicles",
+            level.uniqueVehiclesInSolution.ToString()
+        );
+        EditorGUILayout.LabelField("axisAlternations", level.axisAlternations.ToString());
+        EditorGUILayout.LabelField("vehicleRevisits", level.vehicleRevisits.ToString());
+        EditorGUILayout.LabelField(
+            "longestSingleAxisRun",
+            level.longestSingleAxisRun.ToString()
+        );
+        EditorGUILayout.LabelField(
+            "linearChainRatio",
+            level.linearChainSolutionRatio.ToString("0.00")
+        );
+        EditorGUILayout.LabelField(
+            "secondaryBlockersUsed",
+            level.secondaryBlockersUsed.ToString()
+        );
+        EditorGUILayout.LabelField("forkDependencies", level.forkDependencies.ToString());
         EditorGUILayout.LabelField("Vehicles", vehicleCount.ToString());
         EditorGUILayout.LabelField(
             "Grid",

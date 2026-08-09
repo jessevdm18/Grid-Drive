@@ -5,7 +5,6 @@ public class GameManager : MonoBehaviour
     [SerializeField] private UIManager uiManager;
     [SerializeField] private CoinManager coinManager;
     [SerializeField] private AdsManager adsManager;
-    [SerializeField] private ParticleSystem winConfetti;
     [SerializeField] private GameplayUI gameplayUI;
     [SerializeField] private LevelManager levelManager;
     [SerializeField] private SaveManager saveManager;
@@ -143,12 +142,6 @@ public class GameManager : MonoBehaviour
         completedLevelsSinceAd++;
         Debug.Log("Completed levels since ad: " + completedLevelsSinceAd);
 
-        // Confetti: één keer per level (beschermd door levelCompleted).
-        if (winConfetti != null)
-        {
-            winConfetti.Play();
-        }
-
         if (uiManager != null)
         {
             uiManager.ShowWinPanel();
@@ -204,19 +197,5 @@ public class GameManager : MonoBehaviour
     public void ResetLevelCompleted()
     {
         levelCompleted = false;
-        StopWinConfetti();
-    }
-
-    /// <summary>
-    /// Stopt confetti zodat die niet blijft spelen na restart/next level.
-    /// </summary>
-    private void StopWinConfetti()
-    {
-        if (winConfetti == null)
-        {
-            return;
-        }
-
-        winConfetti.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
     }
 }

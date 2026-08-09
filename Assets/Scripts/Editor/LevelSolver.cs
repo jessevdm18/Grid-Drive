@@ -51,6 +51,20 @@ public static class LevelSolver
         public int statesExplored;
         public int levelNumber;
         public int difficultyScore;
+
+        // Doorgestuurd van RushOutSolver hot-path profiling
+        public int generatedMoves;
+        public int visitedPrecheckRejects;
+        public int occupancyBuildCount;
+        public int childStatesCreated;
+        public int childStatesEnqueued;
+        public int discoveredStates;
+        public int queuePeakSize;
+        public string searchLimitReason;
+        public double totalOccupancyBuildMs;
+        public double totalMoveGenerationMs;
+        public double totalVisitedMs;
+        public double totalStateCopyMs;
     }
 
     // -------------------------------------------------------------------------
@@ -669,6 +683,20 @@ public static class LevelSolver
 
     public static SolverResult Solve(LevelData levelData)
     {
+        return Solve(levelData, MaxStates);
+    }
+
+    /// <summary>
+    /// Solve met configureerbare BFS state-caps (explored + discovered).
+    /// maxDiscoveredStates &lt;= 0 → gelijk aan maxStates.
+    /// </summary>
+    public static SolverResult Solve(LevelData levelData, int maxStates)
+    {
+        return Solve(levelData, maxStates, maxDiscoveredStates: maxStates);
+    }
+
+    public static SolverResult Solve(LevelData levelData, int maxStates, int maxDiscoveredStates)
+    {
         SolverResult result = new SolverResult();
         result.levelNumber = levelData != null ? levelData.levelNumber : -1;
 
@@ -680,7 +708,15 @@ public static class LevelSolver
             return result;
         }
 
-        RushOutSolver.SolverResult core = RushOutSolver.SolveLevelData(levelData, MaxStates);
+        int cappedStates = Mathf.Max(1, maxStates);
+        int cappedDiscovered = maxDiscoveredStates > 0
+            ? maxDiscoveredStates
+            : cappedStates;
+        RushOutSolver.SolverResult core = RushOutSolver.SolveLevelData(
+            levelData,
+            cappedStates,
+            cappedDiscovered
+        );
         return MapCoreResult(core, result);
     }
 
@@ -690,8 +726,20 @@ public static class LevelSolver
     {
         result.solvable = core.solvable;
         result.searchLimitReached = core.searchLimitReached;
+        result.searchLimitReason = core.searchLimitReason;
         result.minimumMoves = core.minimumMoves;
         result.statesExplored = core.statesExplored;
+        result.generatedMoves = core.generatedMoves;
+        result.visitedPrecheckRejects = core.visitedPrecheckRejects;
+        result.occupancyBuildCount = core.occupancyBuildCount;
+        result.childStatesCreated = core.childStatesCreated;
+        result.childStatesEnqueued = core.childStatesEnqueued;
+        result.discoveredStates = core.discoveredStates;
+        result.queuePeakSize = core.queuePeakSize;
+        result.totalOccupancyBuildMs = core.totalOccupancyBuildMs;
+        result.totalMoveGenerationMs = core.totalMoveGenerationMs;
+        result.totalVisitedMs = core.totalVisitedMs;
+        result.totalStateCopyMs = core.totalStateCopyMs;
         result.solution = new List<Move>();
 
         if (core.solution != null)
@@ -831,8 +879,9 @@ public static class LevelSolver
         {
             Debug.LogWarning(
                 "Level " + result.levelNumber +
-                ": Search limit reached (" + MaxStates +
-                "). Explored " + result.statesExplored + " states."
+                ": Search limit reached (" + (result.searchLimitReason ?? "unknown") +
+                "). Explored " + result.statesExplored +
+                " states, discovered " + result.discoveredStates + "."
             );
             return;
         }
@@ -851,6 +900,20 @@ public static class LevelSolver
             "Level " + result.levelNumber +
             " solvable in " + result.minimumMoves +
             " moves. Explored " + result.statesExplored + " states."
+        );
+        Debug.Log(
+            "Solver profile | occBuilds=" + result.occupancyBuildCount +
+            " genMoves=" + result.generatedMoves +
+            " precheckRejects=" + result.visitedPrecheckRejects +
+            " childrenCreated=" + result.childStatesCreated +
+            " childrenEnqueued=" + result.childStatesEnqueued +
+            " discovered=" + result.discoveredStates +
+            " queuePeak=" + result.queuePeakSize +
+            " limitReason=" + (result.searchLimitReason ?? "-") +
+            " | occMs=" + result.totalOccupancyBuildMs.ToString("0.00") +
+            " moveMs=" + result.totalMoveGenerationMs.ToString("0.00") +
+            " visMs=" + result.totalVisitedMs.ToString("0.00") +
+            " copyMs=" + result.totalStateCopyMs.ToString("0.00")
         );
 
         StringBuilder sb = new StringBuilder();

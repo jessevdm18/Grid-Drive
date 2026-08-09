@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using TMPro;
+using UnityEngine.UI;
 
 /// <summary>
 /// Eenvoudig pause-menu voor de Gameplay-scene.
@@ -9,11 +9,20 @@ using TMPro;
 public class PauseManager : MonoBehaviour
 {
     [SerializeField] private GameObject pausePanel;
+    [SerializeField] private GameObject dimOverlay;
     [SerializeField] private LevelManager levelManager;
 
     [SerializeField] private AudioManager audioManager;
-    [SerializeField] private TMP_Text musicButtonText;
-    [SerializeField] private TMP_Text soundButtonText;
+
+    [Header("Audio Icons")]
+    [SerializeField] private Image musicIcon;
+    [SerializeField] private Image soundIcon;
+
+    [SerializeField] private Sprite musicOnSprite;
+    [SerializeField] private Sprite musicOffSprite;
+
+    [SerializeField] private Sprite soundOnSprite;
+    [SerializeField] private Sprite soundOffSprite;
 
     private void Start()
     {
@@ -22,7 +31,7 @@ public class PauseManager : MonoBehaviour
             audioManager = FindFirstObjectByType<AudioManager>();
         }
 
-        UpdateAudioButtonTexts();
+        UpdateAudioIcons();
     }
 
     /// <summary>
@@ -35,7 +44,7 @@ public class PauseManager : MonoBehaviour
             pausePanel.SetActive(true);
         }
 
-        UpdateAudioButtonTexts();
+        UpdateAudioIcons();
         Time.timeScale = 0f;
     }
 
@@ -84,7 +93,27 @@ public class PauseManager : MonoBehaviour
     }
 
     /// <summary>
-    /// MusicButton OnClick: toggle muziek + update label.
+    /// Gaat naar LevelSelect zonder progressie/voltooiing te wijzigen.
+    /// </summary>
+    public void GoToLevelSelect()
+    {
+        Time.timeScale = 1f;
+
+        if (pausePanel != null)
+        {
+            pausePanel.SetActive(false);
+        }
+
+        if (dimOverlay != null)
+        {
+            dimOverlay.SetActive(false);
+        }
+
+        SceneManager.LoadScene("LevelSelect");
+    }
+
+    /// <summary>
+    /// MusicButton OnClick: toggle muziek + update icoon.
     /// </summary>
     public void ToggleMusic()
     {
@@ -95,11 +124,11 @@ public class PauseManager : MonoBehaviour
         }
 
         audioManager.ToggleMusic();
-        UpdateAudioButtonTexts();
+        UpdateAudioIcons();
     }
 
     /// <summary>
-    /// SoundButton OnClick: toggle SFX + update label.
+    /// SoundButton OnClick: toggle SFX + update icoon.
     /// </summary>
     public void ToggleSound()
     {
@@ -110,36 +139,58 @@ public class PauseManager : MonoBehaviour
         }
 
         audioManager.ToggleSfx();
-        UpdateAudioButtonTexts();
+        UpdateAudioIcons();
     }
 
     /// <summary>
-    /// Zet MUSIC: ON/OFF en SOUND: ON/OFF op de pause-knoppen.
+    /// Wisselt Music/Sound iconen tussen ON en OFF sprites.
     /// </summary>
-    private void UpdateAudioButtonTexts()
+    private void UpdateAudioIcons()
     {
         if (audioManager == null)
         {
-            Debug.LogWarning("PauseManager: kan audio-teksten niet updaten — AudioManager ontbreekt.");
+            Debug.LogWarning("PauseManager: kan audio-iconen niet updaten — AudioManager ontbreekt.");
             return;
         }
 
-        if (musicButtonText != null)
+        if (musicIcon != null)
         {
-            musicButtonText.text = audioManager.MusicEnabled ? "MUSIC: ON" : "MUSIC: OFF";
+            Sprite musicSprite = audioManager.MusicEnabled ? musicOnSprite : musicOffSprite;
+            if (musicSprite != null)
+            {
+                musicIcon.sprite = musicSprite;
+            }
+            else
+            {
+                Debug.LogWarning(
+                    "PauseManager: music ON/OFF sprite ontbreekt (" +
+                    (audioManager.MusicEnabled ? "musicOnSprite" : "musicOffSprite") + ")."
+                );
+            }
         }
         else
         {
-            Debug.LogWarning("PauseManager: musicButtonText ontbreekt.");
+            Debug.LogWarning("PauseManager: musicIcon ontbreekt.");
         }
 
-        if (soundButtonText != null)
+        if (soundIcon != null)
         {
-            soundButtonText.text = audioManager.SfxEnabled ? "SOUND: ON" : "SOUND: OFF";
+            Sprite soundSprite = audioManager.SfxEnabled ? soundOnSprite : soundOffSprite;
+            if (soundSprite != null)
+            {
+                soundIcon.sprite = soundSprite;
+            }
+            else
+            {
+                Debug.LogWarning(
+                    "PauseManager: sound ON/OFF sprite ontbreekt (" +
+                    (audioManager.SfxEnabled ? "soundOnSprite" : "soundOffSprite") + ")."
+                );
+            }
         }
         else
         {
-            Debug.LogWarning("PauseManager: soundButtonText ontbreekt.");
+            Debug.LogWarning("PauseManager: soundIcon ontbreekt.");
         }
     }
 

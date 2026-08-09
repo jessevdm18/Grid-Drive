@@ -1,20 +1,25 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using TMPro;
-
 
 /// <summary>
 /// Bouwt automatisch levelknoppen in het LevelSelect-scherm.
+/// Unlock/progress blijft via SaveManager; visuals via LevelButtonUI.
+/// LevelGrid zit in een verticale ScrollRect en groeit mee met het aantal levels.
 /// </summary>
 public class LevelSelectUI : MonoBehaviour
 {
+    private const int GridColumns = 3;
+
     [Header("UI")]
-    [Tooltip("Prefab van één levelknop (Button + LevelNumberText + Stars/Star1-3).")]
+    [Tooltip("Prefab van één levelknop (LevelButtonUI + hierarchy).")]
     [SerializeField] private GameObject levelButtonPrefab;
 
-    [Tooltip("Parent waar de knoppen onder komen (bijv. een Grid Layout Group).")]
+    [Tooltip("Parent waar de knoppen onder komen (GridLayoutGroup / ScrollRect content).")]
     [SerializeField] private Transform levelGrid;
+
+    [Tooltip("Verticale ScrollRect voor de levelgrid.")]
+    [SerializeField] private ScrollRect scrollRect;
 
     [Header("Star Sprites")]
     [SerializeField] private Sprite filledStarSprite;
@@ -28,13 +33,6 @@ public class LevelSelectUI : MonoBehaviour
 
     private void Start()
     {
-        Debug.Log("LevelSelectUI: Start() uitgevoerd.");
-        Debug.Log("LevelSelectUI: levelDatabase is null = " + (levelDatabase == null));
-        Debug.Log("LevelSelectUI: LevelCount = " + (levelDatabase != null ? levelDatabase.LevelCount : 0));
-        Debug.Log("LevelSelectUI: levelButtonPrefab is null = " + (levelButtonPrefab == null));
-        Debug.Log("LevelSelectUI: levelGrid is null = " + (levelGrid == null));
-        Debug.Log("LevelSelectUI: saveManager is null = " + (saveManager == null));
-
         // Welk level is al unlocked? (index, dus 0 = level 1)
         int unlockedLevel = 0;
 
@@ -48,8 +46,6 @@ public class LevelSelectUI : MonoBehaviour
 
             unlockedLevel = saveManager.GetUnlockedLevel();
         }
-
-        Debug.Log("LevelSelectUI: unlockedLevel = " + unlockedLevel);
 
         CreateLevelButtons(unlockedLevel);
     }
@@ -71,15 +67,43 @@ public class LevelSelectUI : MonoBehaviour
             return;
         }
 
-        for (int levelIndex = 0; levelIndex < levelDatabase.LevelCount; levelIndex++)
+        ClearExistingButtons();
+
+        int levelCount = levelDatabase.LevelCount;
+        for (int levelIndex = 0; levelIndex < levelCount; levelIndex++)
         {
             // Lokale kopie voor de knop-callback (voorkomt closure-bugs in de loop).
             int index = levelIndex;
 
             GameObject buttonObject = Instantiate(levelButtonPrefab, levelGrid);
-            Debug.Log("LevelSelectUI: levelbutton geïnstantieerd voor levelIndex = " + index);
+            LevelButtonUI buttonUI = buttonObject.GetComponent<LevelButtonUI>();
 
-            Button button = buttonObject.GetComponent<Button>();
+            if (buttonUI == null)
+            {
+                Debug.LogError("LevelSelectUI: prefab mist LevelButtonUI.");
+                continue;
+            }
+
+            // Bestaande progress/unlock-bepaling (niet wijzigen).
+            bool isUnlocked = index <= unlockedLevel;
+
+            int stars = 0;
+            if (saveManager != null)
+            {
+                stars = saveManager.GetStarsForLevel(index);
+            }
+
+            buttonUI.Setup(
+                index + 1,
+                isUnlocked,
+                stars,
+                filledStarSprite,
+                emptyStarSprite
+            );
+
+            Button button = buttonUI.Button != null
+                ? buttonUI.Button
+                : buttonObject.GetComponent<Button>();
 
             if (button == null)
             {
@@ -87,94 +111,67 @@ public class LevelSelectUI : MonoBehaviour
                 continue;
             }
 
-            // Alleen unlocked levels zijn klikbaar.
-            bool isUnlocked = index <= unlockedLevel;
-            button.interactable = isUnlocked;
-
-            // Levelnummer (TMP) blijven zetten.
-            SetLevelNumberText(buttonObject.transform, index + 1);
-
-            // Sterren via Image-sprites onder Stars/Star1-3.
-            int stars = 0;
-            if (saveManager != null)
-            {
-                stars = saveManager.GetStarsForLevel(index);
-            }
-
-            ApplyStarImages(buttonObject.transform, stars);
-
             if (isUnlocked)
             {
                 button.onClick.AddListener(() => OnLevelButtonClicked(index));
             }
         }
+
+        Canvas.ForceUpdateCanvases();
+        UpdateScrollContentHeight(levelCount);
+
+        if (scrollRect != null)
+        {
+            scrollRect.horizontal = false;
+            scrollRect.vertical = true;
+            scrollRect.verticalNormalizedPosition = 1f;
+        }
     }
 
-    /// <summary>
-    /// Zet LevelNumberText op het zichtbare levelnummer (1-based).
-    /// </summary>
-    private static void SetLevelNumberText(Transform buttonRoot, int displayNumber)
+    private void ClearExistingButtons()
     {
-        Transform numberTransform = buttonRoot.Find("LevelNumberText");
-        if (numberTransform == null)
+        for (int i = levelGrid.childCount - 1; i >= 0; i--)
         {
-            // Fallback: LevelButtonUI of eerste TMP.
-            LevelButtonUI buttonUI = buttonRoot.GetComponent<LevelButtonUI>();
-            if (buttonUI != null)
-            {
-                buttonUI.SetLevelNumber(displayNumber);
-                return;
-            }
-
-            TextMeshProUGUI label = buttonRoot.GetComponentInChildren<TextMeshProUGUI>();
-            if (label != null)
-            {
-                label.text = displayNumber.ToString();
-            }
-
-            return;
-        }
-
-        TMP_Text numberText = numberTransform.GetComponent<TMP_Text>();
-        if (numberText != null)
-        {
-            numberText.text = displayNumber.ToString();
+            Destroy(levelGrid.GetChild(i).gameObject);
         }
     }
 
     /// <summary>
-    /// Zet Star1/Star2/Star3 Images op filled/empty sprites.
+    /// Zet LevelGrid-hoogte zodat alle rijen (3 kolommen) erin passen.
     /// </summary>
-    private void ApplyStarImages(Transform buttonRoot, int stars)
+    private void UpdateScrollContentHeight(int levelCount)
     {
-        stars = Mathf.Clamp(stars, 0, 3);
-
-        Transform starsRoot = buttonRoot.Find("Stars");
-        if (starsRoot == null)
-        {
-            Debug.LogWarning("LevelSelectUI: Stars-child ontbreekt op levelbutton.");
-            return;
-        }
-
-        SetStarImage(starsRoot.Find("Star1"), stars >= 1);
-        SetStarImage(starsRoot.Find("Star2"), stars >= 2);
-        SetStarImage(starsRoot.Find("Star3"), stars >= 3);
-    }
-
-    private void SetStarImage(Transform starTransform, bool filled)
-    {
-        if (starTransform == null)
+        RectTransform gridRect = levelGrid as RectTransform;
+        if (gridRect == null)
         {
             return;
         }
 
-        Image image = starTransform.GetComponent<Image>();
-        if (image == null)
+        GridLayoutGroup grid = levelGrid.GetComponent<GridLayoutGroup>();
+        if (grid == null)
         {
+            Debug.LogWarning("LevelSelectUI: LevelGrid mist GridLayoutGroup.");
             return;
         }
 
-        image.sprite = filled ? filledStarSprite : emptyStarSprite;
+        int rows = Mathf.CeilToInt(levelCount / (float)GridColumns);
+        float height =
+            grid.padding.top +
+            grid.padding.bottom +
+            rows * grid.cellSize.y +
+            Mathf.Max(0, rows - 1) * grid.spacing.y;
+
+        // Stretch X (anchors 0-1), groei in hoogte vanaf de top.
+        gridRect.anchorMin = new Vector2(0f, 1f);
+        gridRect.anchorMax = new Vector2(1f, 1f);
+        gridRect.pivot = new Vector2(0.5f, 1f);
+        gridRect.anchoredPosition = new Vector2(0f, 0f);
+        gridRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, height);
+
+        if (scrollRect != null && scrollRect.content != gridRect)
+        {
+            scrollRect.content = gridRect;
+        }
     }
 
     /// <summary>
@@ -191,7 +188,7 @@ public class LevelSelectUI : MonoBehaviour
     }
 
     public void OnBackButton()
-{
-    SceneManager.LoadScene("MainMenu");
-}
+    {
+        SceneManager.LoadScene("MainMenu");
+    }
 }

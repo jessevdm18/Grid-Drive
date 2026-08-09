@@ -45,6 +45,16 @@ public class LevelData : ScriptableObject
     public int statesExplored;
     public int difficultyScore;
 
+    [Header("Solution Structure (generator)")]
+    public int solutionComplexityScore;
+    public int uniqueVehiclesInSolution;
+    public int axisAlternations;
+    public int vehicleRevisits;
+    public int longestSingleAxisRun;
+    public float linearChainSolutionRatio;
+    public int secondaryBlockersUsed;
+    public int forkDependencies;
+
     /// <summary>
     /// Effectieve breedte (oude assets zonder veld → 6).
     /// </summary>

@@ -7,6 +7,8 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public class MainMenuUI : MonoBehaviour
 {
+    [SerializeField] private MainMenuSettingsUI settingsUI;
+
     /// <summary>
     /// Start het spel → Gameplay-scene.
     /// </summary>
@@ -24,10 +26,22 @@ public class MainMenuUI : MonoBehaviour
     }
 
     /// <summary>
-    /// Settings — later uitbreiden.
+    /// SettingsButton: opent het MainMenu settingspanel.
     /// </summary>
     public void OnSettingsButton()
     {
-        Debug.Log("Settings clicked");
+        if (settingsUI == null)
+        {
+            settingsUI = FindFirstObjectByType<MainMenuSettingsUI>();
+        }
+
+        if (settingsUI != null)
+        {
+            settingsUI.OpenSettings();
+        }
+        else
+        {
+            Debug.LogWarning("MainMenuUI: MainMenuSettingsUI is not assigned.");
+        }
     }
 }

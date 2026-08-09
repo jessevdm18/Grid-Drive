@@ -16,7 +16,8 @@ public class UIManager : MonoBehaviour
     [Header("Win Score")]
     [Tooltip("Alleen het aantal moves (cijfer). Label blijft buiten deze tekst.")]
     [SerializeField] private TMP_Text movesValueText;
-    [SerializeField] private TMP_Text parText;
+    [Tooltip("ParCard/ValueText — alleen het par-getal, bijv. \"8\".")]
+    [SerializeField] private TMP_Text parValueText;
     [SerializeField] private Image star1;
     [SerializeField] private Image star2;
     [SerializeField] private Image star3;
@@ -36,6 +37,9 @@ public class UIManager : MonoBehaviour
     [SerializeField] private float rewardFlyDuration = 0.5f;
     [SerializeField] private float rewardStartScale = 0.6f;
     [SerializeField] private float rewardPopScale = 1.2f;
+
+    [Header("Win Confetti")]
+    [SerializeField] private UIWinConfetti winConfetti;
 
     [Header("Referenties")]
     [SerializeField] private LevelManager levelManager;
@@ -91,6 +95,16 @@ public class UIManager : MonoBehaviour
             winPanel.SetActive(true);
         }
 
+        if (winConfetti != null)
+        {
+            Debug.Log("UIManager calling UIWinConfetti.PlayConfetti");
+            winConfetti.PlayConfetti();
+        }
+        else
+        {
+            Debug.LogWarning("UIManager: winConfetti is not assigned.");
+        }
+
         int earnedStars = gameManager != null ? gameManager.LastEarnedStars : 0;
         int earnedCoins = gameManager != null ? gameManager.LastEarnedCoins : 0;
         winSequenceCoroutine = StartCoroutine(WinSequenceRoutine(earnedStars, earnedCoins));
@@ -123,6 +137,11 @@ public class UIManager : MonoBehaviour
         {
             StopCoroutine(coinHudPopCoroutine);
             coinHudPopCoroutine = null;
+        }
+
+        if (winConfetti != null)
+        {
+            winConfetti.StopConfetti();
         }
 
         if (coinTextRect != null)
@@ -169,7 +188,7 @@ public class UIManager : MonoBehaviour
             movesValueText.text = moves.ToString();
         }
 
-        if (parText != null)
+        if (parValueText != null)
         {
             int par = 0;
             LevelData levelData = levelManager != null ? levelManager.CurrentLevelData : null;
@@ -178,7 +197,7 @@ public class UIManager : MonoBehaviour
                 par = levelData.minimumMoves;
             }
 
-            parText.text = par > 0 ? "PAR: " + par : "PAR: -";
+            parValueText.text = par.ToString();
         }
     }
 

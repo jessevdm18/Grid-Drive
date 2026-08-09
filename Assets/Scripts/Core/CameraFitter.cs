@@ -1,8 +1,8 @@
 using UnityEngine;
 
 /// <summary>
-/// Past de Orthographic Size van de camera aan zodat een vaste world-breedte
-/// altijd in beeld blijft (belangrijk voor portrait Android-schermen).
+/// Past orthographic camera framing aan op het actieve grid (variabele WxH),
+/// zodat bord + borders + exit tussen HUD/buttons zichtbaar blijven.
 /// </summary>
 public class CameraFitter : MonoBehaviour
 {
@@ -10,15 +10,44 @@ public class CameraFitter : MonoBehaviour
     [Tooltip("De orthographic camera die aangepast wordt (meestal Main Camera).")]
     [SerializeField] private Camera targetCamera;
 
-    [Header("Fit-instellingen")]
-    [Tooltip("Hoeveel world-units horizontaal altijd zichtbaar moeten zijn.")]
-    [SerializeField] private float targetWorldWidth = 8f;
+    [Header("Board Padding")]
+    [SerializeField] private float horizontalPadding = 1.0f;
+    [SerializeField] private float verticalPadding = 1.0f;
 
-    [Tooltip("Kleine schermen mogen niet smaller kijken dan deze size.")]
+    [Tooltip("Extra world-units rechts voor exit/curb.")]
+    [SerializeField] private float rightExitPadding = 0.75f;
+
+    [Tooltip("Totale extra world-space voor left+right borders (≈ 1 cell).")]
+    [SerializeField] private float borderPaddingX = 1.0f;
+
+    [Tooltip("Totale extra world-space voor top+bottom borders (≈ 1 cell).")]
+    [SerializeField] private float borderPaddingY = 1.0f;
+
+    [Header("UI Reserved Space")]
+    [SerializeField] private float topReservedWorldSpace = 2.2f;
+    [SerializeField] private float bottomReservedWorldSpace = 2.2f;
+
+    [Header("Orthographic Limits")]
     [SerializeField] private float minOrthographicSize = 5f;
+    [SerializeField] private float maxOrthographicSize = 9f;
 
-    // Onthoud de laatste aspectratio om onnodige updates te vermijden.
+    [Header("Framing")]
+    [Tooltip("Verschuift camera Y t.o.v. grid-center (negatief = iets omlaag, meer ruimte voor top-HUD).")]
+    [SerializeField] private float gameplayCenterYOffset = 0f;
+
     private float lastAspect = -1f;
+    private int lastGridWidth = 6;
+    private int lastGridHeight = 6;
+    private float lastCellSize = 1f;
+    private bool hasFit;
+
+    private void Awake()
+    {
+        if (targetCamera == null)
+        {
+            targetCamera = Camera.main;
+        }
+    }
 
     private void Start()
     {
@@ -27,46 +56,90 @@ public class CameraFitter : MonoBehaviour
             targetCamera = Camera.main;
         }
 
-        FitCamera();
+        // Fallback tot LevelManager FitToGrid aanroept.
+        if (!hasFit)
+        {
+            FitToGrid(lastGridWidth, lastGridHeight, lastCellSize);
+        }
     }
 
     private void Update()
     {
-        // Op sommige phones verandert de resolutie (cutouts, rotatie, safe area).
-        if (targetCamera == null)
+        if (targetCamera == null || !hasFit)
         {
             return;
         }
 
-        float aspect = (float)Screen.width / Screen.height;
-
+        float aspect = targetCamera.aspect;
         if (!Mathf.Approximately(aspect, lastAspect))
         {
-            FitCamera();
+            FitToGrid(lastGridWidth, lastGridHeight, lastCellSize);
         }
     }
 
     /// <summary>
-    /// Berekent Orthographic Size zodat targetWorldWidth volledig zichtbaar is.
+    /// Frame de camera op het gegeven grid (na LevelData load / ParkingGridVisual build).
     /// </summary>
-    private void FitCamera()
+    public void FitToGrid(int gridWidth, int gridHeight, float cellSize)
     {
+        if (targetCamera == null)
+        {
+            targetCamera = Camera.main;
+        }
+
         if (targetCamera == null || !targetCamera.orthographic)
         {
             Debug.LogWarning("CameraFitter: targetCamera ontbreekt of is niet orthographic.");
             return;
         }
 
-        float aspect = (float)Screen.width / Screen.height;
+        gridWidth = Mathf.Max(1, gridWidth);
+        gridHeight = Mathf.Max(1, gridHeight);
+        cellSize = Mathf.Max(0.01f, cellSize);
+
+        lastGridWidth = gridWidth;
+        lastGridHeight = gridHeight;
+        lastCellSize = cellSize;
+        hasFit = true;
+
+        float aspect = targetCamera.aspect;
         lastAspect = aspect;
 
-        // Zichtbare world-hoogte = 2 * orthographicSize
-        // Zichtbare world-breedte = aspect * 2 * orthographicSize
-        // We willen: aspect * 2 * size = targetWorldWidth
-        // Dus: size = targetWorldWidth / (2 * aspect)
-        float sizeForWidth = targetWorldWidth / (2f * aspect);
+        // Board extents inclusief curb + exit + padding.
+        float boardWidth =
+            gridWidth * cellSize +
+            borderPaddingX +
+            horizontalPadding +
+            rightExitPadding;
 
-        // Nooit kleiner dan het minimum (voorkomt te strakke zoom op brede schermen).
-        targetCamera.orthographicSize = Mathf.Max(sizeForWidth, minOrthographicSize);
+        float boardHeight =
+            gridHeight * cellSize +
+            borderPaddingY +
+            verticalPadding +
+            topReservedWorldSpace +
+            bottomReservedWorldSpace;
+
+        // Ortho: visible height = 2 * size, visible width = 2 * size * aspect
+        float requiredForWidth = boardWidth / (2f * Mathf.Max(0.01f, aspect));
+        float requiredForHeight = boardHeight / 2f;
+        float requiredSize = Mathf.Max(requiredForWidth, requiredForHeight);
+
+        targetCamera.orthographicSize = Mathf.Clamp(
+            requiredSize,
+            minOrthographicSize,
+            maxOrthographicSize
+        );
+
+        // Grid is gecentreerd rond world origin (GridManager).
+        Vector3 camPos = targetCamera.transform.position;
+        camPos.x = 0f;
+        camPos.y = gameplayCenterYOffset;
+        targetCamera.transform.position = camPos;
+
+        Debug.Log(
+            "CameraFitter FitToGrid " + gridWidth + "x" + gridHeight +
+            " | size=" + targetCamera.orthographicSize.ToString("0.00") +
+            " | board=" + boardWidth.ToString("0.00") + "x" + boardHeight.ToString("0.00")
+        );
     }
 }
