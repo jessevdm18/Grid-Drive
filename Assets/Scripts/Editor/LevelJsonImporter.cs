@@ -383,9 +383,9 @@ public static class LevelJsonImporter
                        vehicle.orientation + "\").";
             }
 
-            if (vehicle.lengthInCells != 2 && vehicle.lengthInCells != 3)
+            if (vehicle.lengthInCells < 2 || vehicle.lengthInCells > 4)
             {
-                return vehicleLabel + ": lengthInCells moet 2 of 3 zijn (nu: " +
+                return vehicleLabel + ": lengthInCells moet 2, 3 of 4 zijn (nu: " +
                        vehicle.lengthInCells + ").";
             }
 

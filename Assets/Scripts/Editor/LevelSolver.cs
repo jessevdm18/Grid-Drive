@@ -807,9 +807,9 @@ public static class LevelSolver
                 ? ("voertuig index " + i)
                 : v.vehicleName;
 
-            if (v.lengthInCells != 2 && v.lengthInCells != 3)
+            if (v.lengthInCells < 2 || v.lengthInCells > 4)
             {
-                return label + ": lengthInCells moet 2 of 3 zijn.";
+                return label + ": lengthInCells moet 2, 3 of 4 zijn.";
             }
 
             bool horizontal =

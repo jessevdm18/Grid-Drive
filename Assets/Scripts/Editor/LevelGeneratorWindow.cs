@@ -59,7 +59,7 @@ public class LevelGeneratorWindow : EditorWindow
     private int minInitialBranching = 4;
     private int maxInitialBranching = 18;
     private int maxFillerTravelDistance = 2;
-    private bool useConstructiveHardAutoTuning = true;
+    private bool useConstructiveHardAutoTuning = false;
     private float minChainMoveEfficiency = 0.75f;
     private float minChainParticipation = 0.70f;
     private int chainOnlySolverMaxStates = 8000;
@@ -116,6 +116,10 @@ public class LevelGeneratorWindow : EditorWindow
     private float maxMovableRatio = 0.85f;
     private float maxLongVehicleRatio = 0.40f;
     private float minSolutionVehicleRatio = 0.35f;
+
+    // Length-4 trucks (filler / ordinary only; ConstructiveHard chain blijft 2/3).
+    private bool allowLength4Vehicles = false;
+    private int maxLength4Vehicles = 2;
 
     // Placement-diagnostics (tijdelijk, gereset per GenerateLevels).
     private int failTargetPlacement;
@@ -242,115 +246,126 @@ public class LevelGeneratorWindow : EditorWindow
             "Strategy",
             generationStrategy
         );
-        minBlockingChainLength = EditorGUILayout.IntField(
-            "Min Blocking Chain Length",
-            minBlockingChainLength
-        );
-        maxBlockingChainLength = EditorGUILayout.IntField(
-            "Max Blocking Chain Length",
-            maxBlockingChainLength
-        );
-        constructiveMinMovableRatio = EditorGUILayout.Slider(
-            "Constructive Min Movable Ratio",
-            constructiveMinMovableRatio,
-            0f,
-            1f
-        );
-        constructiveMaxMovableRatio = EditorGUILayout.Slider(
-            "Constructive Max Movable Ratio",
-            constructiveMaxMovableRatio,
-            0f,
-            1f
-        );
-        minInitialBranching = EditorGUILayout.IntField(
-            "Min Initial Branching",
-            minInitialBranching
-        );
-        maxInitialBranching = EditorGUILayout.IntField(
-            "Max Initial Branching",
-            maxInitialBranching
-        );
-        maxFillerTravelDistance = EditorGUILayout.IntField(
-            "Max Filler Travel Distance",
-            maxFillerTravelDistance
-        );
-        useConstructiveHardAutoTuning = EditorGUILayout.Toggle(
-            "Use ConstructiveHard Auto Tuning",
-            useConstructiveHardAutoTuning
-        );
-        verboseChainDiagnostics = EditorGUILayout.Toggle(
-            "Verbose Chain Diagnostics",
-            verboseChainDiagnostics
-        );
-        minChainMoveEfficiency = EditorGUILayout.Slider(
-            "Min Chain Move Efficiency",
-            minChainMoveEfficiency,
-            0.5f,
-            1f
-        );
-        minChainParticipation = EditorGUILayout.Slider(
-            "Min Chain Participation",
-            minChainParticipation,
-            0f,
-            1f
-        );
-        chainOnlySolverMaxStates = EditorGUILayout.IntField(
-            "Chain-Only Solver Max States",
-            chainOnlySolverMaxStates
-        );
-        minSecondaryBlockers = EditorGUILayout.IntField(
-            "Min Secondary Blockers",
-            minSecondaryBlockers
-        );
-        maxSecondaryBlockers = EditorGUILayout.IntField(
-            "Max Secondary Blockers",
-            maxSecondaryBlockers
-        );
-        enableForkDependencies = EditorGUILayout.Toggle(
-            "Enable Fork Dependencies",
-            enableForkDependencies
-        );
 
-        EditorGUILayout.Space(4f);
-        EditorGUILayout.LabelField("Solution Structure Quality", EditorStyles.boldLabel);
-        minAxisAlternations = EditorGUILayout.IntField(
-            "Min Axis Alternations",
-            minAxisAlternations
-        );
-        maxSingleAxisRun = EditorGUILayout.IntField(
-            "Max Single Axis Run",
-            maxSingleAxisRun
-        );
-        minVehicleRevisits = EditorGUILayout.IntField(
-            "Min Vehicle Revisits",
-            minVehicleRevisits
-        );
-        maxLinearChainSolutionRatio = EditorGUILayout.Slider(
-            "Max Linear Chain Solution Ratio",
-            maxLinearChainSolutionRatio,
-            0.3f,
-            1f
-        );
-        minSecondaryBlockersUsed = EditorGUILayout.IntField(
-            "Min Secondary Blockers Used",
-            minSecondaryBlockersUsed
-        );
-        minForkDependencies = EditorGUILayout.IntField(
-            "Min Fork Dependencies",
-            minForkDependencies
-        );
-        minSolutionComplexityScore = EditorGUILayout.IntField(
-            "Min Solution Complexity Score",
-            minSolutionComplexityScore
-        );
+        if (generationStrategy == GenerationStrategy.Random)
+        {
+            EditorGUILayout.HelpBox(
+                "Actieve pipeline: Random → cheap filters → solver → minimumMoves → basic quality.\n" +
+                "ConstructiveHard blijft beschikbaar via Strategy, maar wordt niet auto-geselecteerd.",
+                MessageType.Info
+            );
+        }
+        else
+        {
+            // ConstructiveHard UI alleen zichtbaar bij expliciete keuze (fase 1: niet verwijderd).
+            minBlockingChainLength = EditorGUILayout.IntField(
+                "Min Blocking Chain Length",
+                minBlockingChainLength
+            );
+            maxBlockingChainLength = EditorGUILayout.IntField(
+                "Max Blocking Chain Length",
+                maxBlockingChainLength
+            );
+            constructiveMinMovableRatio = EditorGUILayout.Slider(
+                "Constructive Min Movable Ratio",
+                constructiveMinMovableRatio,
+                0f,
+                1f
+            );
+            constructiveMaxMovableRatio = EditorGUILayout.Slider(
+                "Constructive Max Movable Ratio",
+                constructiveMaxMovableRatio,
+                0f,
+                1f
+            );
+            minInitialBranching = EditorGUILayout.IntField(
+                "Min Initial Branching",
+                minInitialBranching
+            );
+            maxInitialBranching = EditorGUILayout.IntField(
+                "Max Initial Branching",
+                maxInitialBranching
+            );
+            maxFillerTravelDistance = EditorGUILayout.IntField(
+                "Max Filler Travel Distance",
+                maxFillerTravelDistance
+            );
+            useConstructiveHardAutoTuning = EditorGUILayout.Toggle(
+                "Use ConstructiveHard Auto Tuning",
+                useConstructiveHardAutoTuning
+            );
+            verboseChainDiagnostics = EditorGUILayout.Toggle(
+                "Verbose Chain Diagnostics",
+                verboseChainDiagnostics
+            );
+            minChainMoveEfficiency = EditorGUILayout.Slider(
+                "Min Chain Move Efficiency",
+                minChainMoveEfficiency,
+                0.5f,
+                1f
+            );
+            minChainParticipation = EditorGUILayout.Slider(
+                "Min Chain Participation",
+                minChainParticipation,
+                0f,
+                1f
+            );
+            chainOnlySolverMaxStates = EditorGUILayout.IntField(
+                "Chain-Only Solver Max States",
+                chainOnlySolverMaxStates
+            );
+            minSecondaryBlockers = EditorGUILayout.IntField(
+                "Min Secondary Blockers",
+                minSecondaryBlockers
+            );
+            maxSecondaryBlockers = EditorGUILayout.IntField(
+                "Max Secondary Blockers",
+                maxSecondaryBlockers
+            );
+            enableForkDependencies = EditorGUILayout.Toggle(
+                "Enable Fork Dependencies",
+                enableForkDependencies
+            );
 
-        EditorGUILayout.HelpBox(
-            "ConstructiveHard: pre-solver chain + soft floor; mandatory secondary enrichment;\n" +
-            "forks optional (Enable Fork Dependencies, default off).\n" +
-            "Auto tuning 10×10: chain 6–7, vehicles 12–17, branching 5–12, filler travel 1,\n" +
-            "occupancy ~0.20–0.42, complexity score ≥ 5.",
-            MessageType.None
-        );
+            EditorGUILayout.Space(4f);
+            EditorGUILayout.LabelField("Solution Structure Quality", EditorStyles.boldLabel);
+            minAxisAlternations = EditorGUILayout.IntField(
+                "Min Axis Alternations",
+                minAxisAlternations
+            );
+            maxSingleAxisRun = EditorGUILayout.IntField(
+                "Max Single Axis Run",
+                maxSingleAxisRun
+            );
+            minVehicleRevisits = EditorGUILayout.IntField(
+                "Min Vehicle Revisits",
+                minVehicleRevisits
+            );
+            maxLinearChainSolutionRatio = EditorGUILayout.Slider(
+                "Max Linear Chain Solution Ratio",
+                maxLinearChainSolutionRatio,
+                0.3f,
+                1f
+            );
+            minSecondaryBlockersUsed = EditorGUILayout.IntField(
+                "Min Secondary Blockers Used",
+                minSecondaryBlockersUsed
+            );
+            minForkDependencies = EditorGUILayout.IntField(
+                "Min Fork Dependencies",
+                minForkDependencies
+            );
+            minSolutionComplexityScore = EditorGUILayout.IntField(
+                "Min Solution Complexity Score",
+                minSolutionComplexityScore
+            );
+
+            EditorGUILayout.HelpBox(
+                "ConstructiveHard (legacy): chain / secondary / fork / complexity gates.\n" +
+                "Voor normale levelgeneratie: kies Strategy = Random.",
+                MessageType.Warning
+            );
+        }
 
         EditorGUILayout.Space(8f);
         EditorGUILayout.LabelField("Basics", EditorStyles.boldLabel);
@@ -418,6 +433,20 @@ public class LevelGeneratorWindow : EditorWindow
         maxMovableRatio = EditorGUILayout.Slider("Max Movable Ratio", maxMovableRatio, 0f, 1f);
 
         EditorGUILayout.Space(4f);
+        EditorGUILayout.LabelField("Vehicle Lengths", EditorStyles.boldLabel);
+        allowLength4Vehicles = EditorGUILayout.Toggle(
+            "Allow Length 4 Vehicles",
+            allowLength4Vehicles
+        );
+        using (new EditorGUI.DisabledScope(!allowLength4Vehicles))
+        {
+            maxLength4Vehicles = EditorGUILayout.IntField(
+                "Max Length 4 Vehicles",
+                maxLength4Vehicles
+            );
+        }
+
+        EditorGUILayout.Space(4f);
         EditorGUILayout.HelpBox(
             "Strengere 'almost solved'-check geldt alleen als Min Minimum Moves >= 4 " +
             "(tutorials met lagere min-moves blijven mogelijk).\n" +
@@ -459,9 +488,31 @@ public class LevelGeneratorWindow : EditorWindow
     {
         ResolveEffectiveSettings();
 
-        string effectiveLabel = generationStrategy == GenerationStrategy.ConstructiveHard
-            ? "Effective ConstructiveHard:"
-            : "Effective:";
+        if (generationStrategy == GenerationStrategy.Random)
+        {
+            EditorGUILayout.HelpBox(
+                "Grid: " + gridWidth + "x" + gridHeight +
+                "\nStrategy: Random" +
+                "\nVehicles: " + effectiveMinVehicles + "-" + effectiveMaxVehicles +
+                "\nMoves: " + effectiveMinMoves + "-" + effectiveMaxMoves +
+                "\nOccupancy: " +
+                effectiveMinOccupancy.ToString("0.00") + "-" +
+                effectiveMaxOccupancy.ToString("0.00") +
+                "\nMovable: " +
+                GetEffectiveMinMovableRatio().ToString("0.00") + "-" +
+                GetEffectiveMaxMovableRatio().ToString("0.00") +
+                "\nLength 4: " +
+                (allowLength4Vehicles
+                    ? ("on (max " + maxLength4Vehicles + ")")
+                    : "off") +
+                "\nArea scale: " + AreaScale.ToString("0.00") +
+                " (baseline 6x6 = 1.00)",
+                MessageType.Info
+            );
+            return;
+        }
+
+        string effectiveLabel = "Effective ConstructiveHard:";
 
         EditorGUILayout.HelpBox(
             "Grid: " + gridWidth + "x" + gridHeight +
@@ -521,8 +572,21 @@ public class LevelGeneratorWindow : EditorWindow
         effectiveMinOccupancy = minBoardOccupancy;
         effectiveMaxOccupancy = maxBoardOccupancy;
 
-        if (!useConstructiveHardAutoTuning ||
-            generationStrategy != GenerationStrategy.ConstructiveHard)
+        // Fase 1 Random: geen ConstructiveHard accept-gates / auto-tuning.
+        if (generationStrategy != GenerationStrategy.ConstructiveHard)
+        {
+            effectiveMinSolutionComplexityScore = 0;
+            effectiveMinAxisAlternations = 0;
+            effectiveMinVehicleRevisits = 0;
+            effectiveMaxSingleAxisRun = 99;
+            effectiveMaxLinearChainSolutionRatio = 1f;
+            effectiveMinSecondaryBlockersUsed = 0;
+            effectiveMinForkDependencies = 0;
+            effectivePreSolverMoveFloor = 0;
+            return;
+        }
+
+        if (!useConstructiveHardAutoTuning)
         {
             return;
         }
@@ -611,8 +675,8 @@ public class LevelGeneratorWindow : EditorWindow
             case DifficultyPreset.Easy:
                 baseMinV = 3;
                 baseMaxV = 6;
-                minMinimumMoves = 2;
-                maxMinimumMoves = 5;
+                minMinimumMoves = 3;
+                maxMinimumMoves = 6;
                 baseMinUsed = 2;
                 baseMinBlockers = 1;
                 baseMinOcc = 0.20f;
@@ -627,8 +691,8 @@ public class LevelGeneratorWindow : EditorWindow
             case DifficultyPreset.Medium:
                 baseMinV = 5;
                 baseMaxV = 9;
-                minMinimumMoves = 5;
-                maxMinimumMoves = 9;
+                minMinimumMoves = 6;
+                maxMinimumMoves = 10;
                 baseMinUsed = 3;
                 baseMinBlockers = 1;
                 baseMinOcc = 0.30f;
@@ -643,8 +707,8 @@ public class LevelGeneratorWindow : EditorWindow
             case DifficultyPreset.Hard:
                 baseMinV = 7;
                 baseMaxV = 11;
-                minMinimumMoves = 8;
-                maxMinimumMoves = 14;
+                minMinimumMoves = 10;
+                maxMinimumMoves = 16;
                 baseMinUsed = 4;
                 baseMinBlockers = 2;
                 baseMinOcc = 0.40f;
@@ -675,28 +739,45 @@ public class LevelGeneratorWindow : EditorWindow
             baseAttempts
         );
         ApplyGenerationStrategyDefaults(preset);
+        ApplyLength4DefaultsForGrid();
     }
 
     /// <summary>
-    /// Auto-strategy: ConstructiveHard voor Hard op ≥8×8; Random voor Easy/Medium.
-    /// Handmatig overschrijfbaar via de Strategy-popup.
+    /// Length-4 defaults voor Random-pipeline op 6×6–8×8 (fase 1).
+    /// 6→ uit; 7→ max 1; 8+→ max 2. Gebruikt max(side) zodat 8×6 ook trucks kan krijgen.
+    /// </summary>
+    private void ApplyLength4DefaultsForGrid()
+    {
+        int size = Mathf.Max(gridWidth, gridHeight);
+        if (size >= 8)
+        {
+            allowLength4Vehicles = true;
+            maxLength4Vehicles = 2;
+        }
+        else if (size >= 7)
+        {
+            allowLength4Vehicles = true;
+            maxLength4Vehicles = 1;
+        }
+        else
+        {
+            allowLength4Vehicles = false;
+            maxLength4Vehicles = 1;
+        }
+    }
+
+    /// <summary>
+    /// Fase 1: altijd Random als actieve default. ConstructiveHard alleen handmatig.
+    /// Geen auto-switch meer naar ConstructiveHard op Hard/8×8.
     /// </summary>
     private void ApplyGenerationStrategyDefaults(DifficultyPreset preset)
     {
-        int minSide = Mathf.Min(gridWidth, gridHeight);
-
-        if (preset == DifficultyPreset.Hard && minSide >= 8)
-        {
-            generationStrategy = GenerationStrategy.ConstructiveHard;
-            useConstructiveHardAutoTuning = true;
-        }
-        else if (preset == DifficultyPreset.Easy ||
-                 preset == DifficultyPreset.Medium ||
-                 preset == DifficultyPreset.Hard)
+        if (preset == DifficultyPreset.Easy ||
+            preset == DifficultyPreset.Medium ||
+            preset == DifficultyPreset.Hard)
         {
             generationStrategy = GenerationStrategy.Random;
-            minBlockingChainLength = 2;
-            maxBlockingChainLength = 4;
+            useConstructiveHardAutoTuning = false;
         }
     }
 
@@ -883,6 +964,7 @@ public class LevelGeneratorWindow : EditorWindow
         minInitialBranching = Mathf.Max(0, minInitialBranching);
         maxInitialBranching = Mathf.Max(minInitialBranching, maxInitialBranching);
         maxFillerTravelDistance = Mathf.Clamp(maxFillerTravelDistance, 1, 8);
+        maxLength4Vehicles = Mathf.Clamp(maxLength4Vehicles, 0, 8);
         minChainMoveEfficiency = Mathf.Clamp(minChainMoveEfficiency, 0.5f, 1f);
         minChainParticipation = Mathf.Clamp01(minChainParticipation);
         chainOnlySolverMaxStates = Mathf.Clamp(chainOnlySolverMaxStates, 500, 100000);
@@ -984,9 +1066,22 @@ public class LevelGeneratorWindow : EditorWindow
         LevelDifficulty tier = GetLevelDifficultyTier();
 
         System.Random rng = new System.Random(randomSeed);
-        HashSet<string> usedHashes = new HashSet<string>();
+
+        int existingDuplicateReports;
+        int generatedAssetsScanned;
+        int databaseLevelsScanned;
+        HashSet<string> existingLevelKeys = LevelCanonicalKey.CollectExistingLevelKeys(
+            out int existingLevelKeysLoaded,
+            out generatedAssetsScanned,
+            out databaseLevelsScanned,
+            out existingDuplicateReports
+        );
+        HashSet<string> generatedKeysThisRun = new HashSet<string>(StringComparer.Ordinal);
+        int rejectedDuplicatesThisRun = 0;
+        int rejectedDuplicatesAgainstExisting = 0;
 
         int accepted = 0;
+        long sumAcceptedMinimumMoves = 0;
         int totalAttempts = 0;
         int rejectedUnsolvable = 0;
         int rejectedTooEasy = 0;
@@ -1189,7 +1284,7 @@ public class LevelGeneratorWindow : EditorWindow
                     }
 
                     // --- Pre-solver quality filters (CHEAP FIRST — never call BFS early) ---
-                    // Order: trivial → density → balance → movable → blockers → duplicate → SOLVER
+                    // Random order: trivial → density → movable → blockers → balance → duplicate → SOLVER
                     phaseWatch.Restart();
                     if (IsTrivialExit(candidate))
                     {
@@ -1227,16 +1322,6 @@ public class LevelGeneratorWindow : EditorWindow
                     sumDensityMs += phaseWatch.Elapsed.TotalMilliseconds;
 
                     phaseWatch.Restart();
-                    if (!PassesOrientationLengthBalance(candidate))
-                    {
-                        rejectedOrientationLengthBalance++;
-                        rejectedBeforeSolverCount++;
-                        sumOtherFilterMs += phaseWatch.Elapsed.TotalMilliseconds;
-                        sumTotalCandidateMs += candidateWatch.Elapsed.TotalMilliseconds;
-                        continue;
-                    }
-
-                    phaseWatch.Restart();
                     float movableRatio = CalculateMovableRatio(candidate);
                     float effectiveMinMovable = GetEffectiveMinMovableRatio();
                     float effectiveMaxMovable = GetEffectiveMaxMovableRatio();
@@ -1262,7 +1347,17 @@ public class LevelGeneratorWindow : EditorWindow
                         continue;
                     }
 
-                    // Goedkope branching-estimate vóór BFS (ConstructiveHard).
+                    phaseWatch.Restart();
+                    if (!PassesOrientationLengthBalance(candidate))
+                    {
+                        rejectedOrientationLengthBalance++;
+                        rejectedBeforeSolverCount++;
+                        sumOtherFilterMs += phaseWatch.Elapsed.TotalMilliseconds;
+                        sumTotalCandidateMs += candidateWatch.Elapsed.TotalMilliseconds;
+                        continue;
+                    }
+
+                    // Goedkope branching-estimate vóór BFS (alleen ConstructiveHard-gate).
                     phaseWatch.Restart();
                     int initialBranching = CountInitialBranching(candidate);
                     int initialMovable = CountInitialMovableVehicles(candidate);
@@ -1292,10 +1387,21 @@ public class LevelGeneratorWindow : EditorWindow
                     // Geen pre-solver almost-solved zonder betekenis van de filter te wijzigen.
 
                     phaseWatch.Restart();
-                    string hash = BuildCanonicalHash(candidate);
-                    if (!usedHashes.Add(hash))
+                    string layoutKey = BuildCanonicalHash(candidate);
+                    if (!generatedKeysThisRun.Add(layoutKey))
                     {
                         rejectedDuplicates++;
+                        rejectedDuplicatesThisRun++;
+                        rejectedBeforeSolverCount++;
+                        sumDuplicateMs += phaseWatch.Elapsed.TotalMilliseconds;
+                        sumTotalCandidateMs += candidateWatch.Elapsed.TotalMilliseconds;
+                        continue;
+                    }
+
+                    if (existingLevelKeys.Contains(layoutKey))
+                    {
+                        rejectedDuplicates++;
+                        rejectedDuplicatesAgainstExisting++;
                         rejectedBeforeSolverCount++;
                         sumDuplicateMs += phaseWatch.Elapsed.TotalMilliseconds;
                         sumTotalCandidateMs += candidateWatch.Elapsed.TotalMilliseconds;
@@ -1514,62 +1620,69 @@ public class LevelGeneratorWindow : EditorWindow
                     }
 
                     phaseWatch.Restart();
-                    StructureRejectReason structureReject = EvaluateSolutionStructure(
-                        structure,
-                        candidate);
                     int acceptanceScore = ComputeAcceptanceComplexityScore(structure);
                     structure.acceptanceComplexityScore = acceptanceScore;
-                    sumAxisAlternations += structure.axisAlternations;
-                    sumVehicleRevisits += structure.vehicleRevisits;
-                    sumLongestSingleAxisRun += structure.longestSingleAxisRun;
-                    sumLinearChainRatio += (long)(structure.linearChainSolutionRatio * 1000);
-                    sumSecondaryUsedSolved += structure.secondaryBlockersUsed;
-                    sumForkDependenciesSolved += structure.forkDependencies;
-                    sumAcceptanceComplexityScore += acceptanceScore;
-                    acceptanceComplexitySamples++;
-                    structureMetricSamples++;
 
-                    if (structureReject != StructureRejectReason.None)
+                    // Fase 1: structure/complexity accept-gates alleen voor ConstructiveHard.
+                    // Random gebruikt minimumMoves + unique vehicles + almost-solved.
+                    if (generationStrategy == GenerationStrategy.ConstructiveHard)
                     {
-                        postSolverRejects++;
-                        switch (structureReject)
+                        StructureRejectReason structureReject = EvaluateSolutionStructure(
+                            structure,
+                            candidate);
+                        acceptanceScore = ComputeAcceptanceComplexityScore(structure);
+                        structure.acceptanceComplexityScore = acceptanceScore;
+                        sumAxisAlternations += structure.axisAlternations;
+                        sumVehicleRevisits += structure.vehicleRevisits;
+                        sumLongestSingleAxisRun += structure.longestSingleAxisRun;
+                        sumLinearChainRatio += (long)(structure.linearChainSolutionRatio * 1000);
+                        sumSecondaryUsedSolved += structure.secondaryBlockersUsed;
+                        sumForkDependenciesSolved += structure.forkDependencies;
+                        sumAcceptanceComplexityScore += acceptanceScore;
+                        acceptanceComplexitySamples++;
+                        structureMetricSamples++;
+
+                        if (structureReject != StructureRejectReason.None)
                         {
-                            case StructureRejectReason.RepetitiveRatio:
-                                rejectedRepetitiveSolution++;
-                                break;
-                            case StructureRejectReason.LowComplexityScore:
-                                rejectedLowComplexityScore++;
-                                // Diagnostische uitsplitsing (niet hard-AND van alle eisen).
-                                if (structure.linearChainSolutionRatio >
-                                    effectiveMaxLinearChainSolutionRatio + 0.0001f)
-                                {
-                                    rejectedLinearSolution++;
-                                }
+                            postSolverRejects++;
+                            switch (structureReject)
+                            {
+                                case StructureRejectReason.RepetitiveRatio:
+                                    rejectedRepetitiveSolution++;
+                                    break;
+                                case StructureRejectReason.LowComplexityScore:
+                                    rejectedLowComplexityScore++;
+                                    if (structure.linearChainSolutionRatio >
+                                        effectiveMaxLinearChainSolutionRatio + 0.0001f)
+                                    {
+                                        rejectedLinearSolution++;
+                                    }
 
-                                if (structure.axisAlternations < effectiveMinAxisAlternations ||
-                                    structure.longestSingleAxisRun > effectiveMaxSingleAxisRun)
-                                {
-                                    rejectedLowAxisAlternation++;
-                                }
+                                    if (structure.axisAlternations < effectiveMinAxisAlternations ||
+                                        structure.longestSingleAxisRun > effectiveMaxSingleAxisRun)
+                                    {
+                                        rejectedLowAxisAlternation++;
+                                    }
 
-                                if (structure.vehicleRevisits < effectiveMinVehicleRevisits)
-                                {
-                                    rejectedNoVehicleRevisit++;
-                                }
+                                    if (structure.vehicleRevisits < effectiveMinVehicleRevisits)
+                                    {
+                                        rejectedNoVehicleRevisit++;
+                                    }
 
-                                if (structure.secondaryBlockersUsed < 1 &&
-                                    effectiveMinSolutionComplexityScore > 0)
-                                {
-                                    rejectedNoSecondaryBlocker++;
-                                }
+                                    if (structure.secondaryBlockersUsed < 1 &&
+                                        effectiveMinSolutionComplexityScore > 0)
+                                    {
+                                        rejectedNoSecondaryBlocker++;
+                                    }
 
-                                break;
+                                    break;
+                            }
+
+                            sumRepetitiveMs += phaseWatch.Elapsed.TotalMilliseconds;
+                            DestroyImmediate(tempLevel);
+                            sumTotalCandidateMs += candidateWatch.Elapsed.TotalMilliseconds;
+                            continue;
                         }
-
-                        sumRepetitiveMs += phaseWatch.Elapsed.TotalMilliseconds;
-                        DestroyImmediate(tempLevel);
-                        sumTotalCandidateMs += candidateWatch.Elapsed.TotalMilliseconds;
-                        continue;
                     }
 
                     // Almost-solved: needs uniqueVehiclesMoved from solution (betekenis ongewijzigd).
@@ -1601,6 +1714,8 @@ public class LevelGeneratorWindow : EditorWindow
                     EditorUtility.SetDirty(tempLevel);
 
                     accepted++;
+                    sumAcceptedMinimumMoves += result.minimumMoves;
+                    existingLevelKeys.Add(layoutKey);
                     nextFileIndex++;
                     found = true;
 
@@ -1676,12 +1791,124 @@ public class LevelGeneratorWindow : EditorWindow
             solverInvocations > 0 ? sumSolverMs / solverInvocations : 0;
         double solverInvocationRatio =
             totalAttempts > 0 ? (double)solverInvocations / totalAttempts : 0;
+        double acceptanceRate =
+            totalAttempts > 0 ? (double)accepted / totalAttempts : 0;
+        double averageMinimumMovesAccepted =
+            accepted > 0 ? (double)sumAcceptedMinimumMoves / accepted : 0;
+
+        if (generationStrategy == GenerationStrategy.Random)
+        {
+            StringBuilder randomSummary = new StringBuilder();
+            randomSummary.AppendLine("=== LevelGenerator klaar (Random) ===");
+            randomSummary.AppendLine(
+                "total elapsed seconds: " + batchWatch.Elapsed.TotalSeconds.ToString("0.00")
+            );
+            randomSummary.AppendLine("attempts: " + totalAttempts);
+            randomSummary.AppendLine("accepted: " + accepted);
+            randomSummary.AppendLine(
+                "acceptanceRate: " + acceptanceRate.ToString("0.000") +
+                " (" + accepted + "/" + totalAttempts + ")"
+            );
+            randomSummary.AppendLine(
+                "averageMinimumMovesAccepted: " +
+                (accepted > 0 ? averageMinimumMovesAccepted.ToString("0.00") : "n/a")
+            );
+            randomSummary.AppendLine("solverInvocations: " + solverInvocations);
+            randomSummary.AppendLine(
+                "solverInvocationRatio: " + solverInvocationRatio.ToString("0.000") +
+                " (" + solverInvocations + "/" + totalAttempts + ")"
+            );
+            randomSummary.AppendLine(
+                "average solver ms: " + avgSolverPerInvocation.ToString("0.00")
+            );
+            randomSummary.AppendLine("maximum solver ms: " + maxSolverMs.ToString("0.00"));
+            randomSummary.AppendLine("");
+            randomSummary.AppendLine("--- rejected ---");
+            randomSummary.AppendLine("placement failed: " + rejectedPlacementFailed);
+            randomSummary.AppendLine("density: " + rejectedDensity);
+            randomSummary.AppendLine("movable ratio: " + rejectedMovableRatio);
+            randomSummary.AppendLine("blockers: " + rejectedBlockers);
+            randomSummary.AppendLine("trivial: " + rejectedTrivial);
+            randomSummary.AppendLine("duplicate: " + rejectedDuplicates);
+            randomSummary.AppendLine(
+                "  · duplicates rejected this run: " + rejectedDuplicatesThisRun
+            );
+            randomSummary.AppendLine(
+                "  · duplicates rejected against existing assets: " +
+                rejectedDuplicatesAgainstExisting
+            );
+            randomSummary.AppendLine("unsolvable: " + rejectedUnsolvable);
+            randomSummary.AppendLine("search limit: " + rejectedSearchLimit);
+            randomSummary.AppendLine("too easy: " + rejectedTooEasy);
+            randomSummary.AppendLine("too hard: " + rejectedTooHard);
+            randomSummary.AppendLine(
+                "low solution participation: " + rejectedLowSolutionParticipation
+            );
+            randomSummary.AppendLine("almost solved: " + rejectedAlmostSolved);
+            randomSummary.AppendLine(
+                "orientation/length balance: " + rejectedOrientationLengthBalance
+            );
+            randomSummary.AppendLine("invalid: " + rejectedInvalid);
+            if (accepted == 0)
+            {
+                string topReject = FindTopRandomRejectReason(
+                    rejectedPlacementFailed,
+                    rejectedDensity,
+                    rejectedMovableRatio,
+                    rejectedBlockers,
+                    rejectedTrivial,
+                    rejectedDuplicates,
+                    rejectedUnsolvable,
+                    rejectedSearchLimit,
+                    rejectedTooEasy,
+                    rejectedTooHard,
+                    rejectedLowSolutionParticipation,
+                    rejectedAlmostSolved,
+                    rejectedOrientationLengthBalance,
+                    rejectedInvalid
+                );
+                randomSummary.AppendLine("");
+                randomSummary.AppendLine("TOP REJECT REASON (accepted=0): " + topReject);
+            }
+
+            randomSummary.AppendLine("");
+            randomSummary.AppendLine("--- batch ---");
+            randomSummary.AppendLine(
+                "existing level keys loaded: " + existingLevelKeysLoaded +
+                " (generated scanned=" + generatedAssetsScanned +
+                ", database scanned=" + databaseLevelsScanned +
+                ", existing duplicate reports=" + existingDuplicateReports + ")"
+            );
+            randomSummary.AppendLine("grid: " + gridWidth + "x" + gridHeight);
+            randomSummary.AppendLine(
+                "vehicle count range: " + effectiveMinVehicles + "-" + effectiveMaxVehicles
+            );
+            randomSummary.AppendLine(
+                "length 4: " +
+                (allowLength4Vehicles
+                    ? ("enabled, max " + maxLength4Vehicles)
+                    : "disabled")
+            );
+            randomSummary.AppendLine(
+                "minimumMoves range: " + effectiveMinMoves + "-" + effectiveMaxMoves
+            );
+            randomSummary.AppendLine("preset: " + difficultyPreset);
+            randomSummary.AppendLine("output folder: " + outputFolder);
+            randomSummary.AppendLine("(niet toegevoegd aan MainLevelDatabase)");
+            Debug.Log(randomSummary.ToString());
+            cancelGeneration = false;
+            return;
+        }
 
         StringBuilder summary = new StringBuilder();
         summary.AppendLine("=== LevelGenerator klaar ===");
         summary.AppendLine("total elapsed seconds: " + batchWatch.Elapsed.TotalSeconds.ToString("0.00"));
         summary.AppendLine("attempts: " + totalAttempts);
         summary.AppendLine("accepted: " + accepted);
+        summary.AppendLine(
+            "acceptanceRate: " + acceptanceRate.ToString("0.000") +
+            " (" + accepted + "/" + totalAttempts + ")"
+        );
         summary.AppendLine("solverInvocations: " + solverInvocations);
         summary.AppendLine(
             "solverInvocationRatio: " + solverInvocationRatio.ToString("0.000") +
@@ -1817,6 +2044,16 @@ public class LevelGeneratorWindow : EditorWindow
         summary.AppendLine("rejected too easy: " + rejectedTooEasy);
         summary.AppendLine("rejected too hard: " + rejectedTooHard);
         summary.AppendLine("rejected duplicate: " + rejectedDuplicates);
+        summary.AppendLine(
+            "  · duplicates rejected this run: " + rejectedDuplicatesThisRun
+        );
+        summary.AppendLine(
+            "  · duplicates rejected against existing assets: " +
+            rejectedDuplicatesAgainstExisting
+        );
+        summary.AppendLine(
+            "existing level keys loaded: " + existingLevelKeysLoaded
+        );
         summary.AppendLine("rejected low solution participation: " + rejectedLowSolutionParticipation);
         summary.AppendLine("rejected density: " + rejectedDensity);
         summary.AppendLine("rejected movable ratio: " + rejectedMovableRatio);
@@ -2115,6 +2352,66 @@ public class LevelGeneratorWindow : EditorWindow
 
         Debug.Log(summary.ToString());
         cancelGeneration = false;
+    }
+
+    private static string FindTopRandomRejectReason(
+        int rejectedPlacementFailed,
+        int rejectedDensity,
+        int rejectedMovableRatio,
+        int rejectedBlockers,
+        int rejectedTrivial,
+        int rejectedDuplicates,
+        int rejectedUnsolvable,
+        int rejectedSearchLimit,
+        int rejectedTooEasy,
+        int rejectedTooHard,
+        int rejectedLowSolutionParticipation,
+        int rejectedAlmostSolved,
+        int rejectedOrientationLengthBalance,
+        int rejectedInvalid)
+    {
+        string topName = "none";
+        int topCount = -1;
+
+        CompareTop(ref topName, ref topCount, "placement failed", rejectedPlacementFailed);
+        CompareTop(ref topName, ref topCount, "density", rejectedDensity);
+        CompareTop(ref topName, ref topCount, "movable ratio", rejectedMovableRatio);
+        CompareTop(ref topName, ref topCount, "blockers", rejectedBlockers);
+        CompareTop(ref topName, ref topCount, "trivial", rejectedTrivial);
+        CompareTop(ref topName, ref topCount, "duplicate", rejectedDuplicates);
+        CompareTop(ref topName, ref topCount, "unsolvable", rejectedUnsolvable);
+        CompareTop(ref topName, ref topCount, "search limit", rejectedSearchLimit);
+        CompareTop(ref topName, ref topCount, "too easy", rejectedTooEasy);
+        CompareTop(ref topName, ref topCount, "too hard", rejectedTooHard);
+        CompareTop(
+            ref topName,
+            ref topCount,
+            "low solution participation",
+            rejectedLowSolutionParticipation
+        );
+        CompareTop(ref topName, ref topCount, "almost solved", rejectedAlmostSolved);
+        CompareTop(
+            ref topName,
+            ref topCount,
+            "orientation/length balance",
+            rejectedOrientationLengthBalance
+        );
+        CompareTop(ref topName, ref topCount, "invalid", rejectedInvalid);
+
+        return topCount <= 0 ? "none" : topName + " (" + topCount + ")";
+    }
+
+    private static void CompareTop(
+        ref string topName,
+        ref int topCount,
+        string name,
+        int count)
+    {
+        if (count > topCount)
+        {
+            topCount = count;
+            topName = name;
+        }
     }
 
     private void MaybeLogAttemptProgress(
@@ -5421,11 +5718,13 @@ public class LevelGeneratorWindow : EditorWindow
         for (int attempt = 0; attempt < placementAttemptsPerVehicle; attempt++)
         {
             bool preferHorizontal = rng.Next(0, 2) == 0;
-            int length = 2;
-            if (length3Placed < maxLength3 && rng.NextDouble() < (constructiveSparseFiller ? 0.20 : 0.35))
-            {
-                length = 3;
-            }
+            int length = PickNonTargetVehicleLength(
+                rng,
+                candidate,
+                length3Placed,
+                maxLength3,
+                constructiveSparseFiller ? 0.20 : 0.35
+            );
 
             bool[] orientations = preferHorizontal
                 ? new[] { true, false }
@@ -5453,7 +5752,7 @@ public class LevelGeneratorWindow : EditorWindow
 
                     candidate.vehicles.Add(vehicle);
                     Occupy(occupied, vehicle);
-                    if (length == 3)
+                    if (length >= 3)
                     {
                         length3Placed++;
                     }
@@ -5463,7 +5762,7 @@ public class LevelGeneratorWindow : EditorWindow
                     {
                         candidate.vehicles.RemoveAt(candidate.vehicles.Count - 1);
                         Unoccupy(occupied, vehicle);
-                        if (length == 3)
+                        if (length >= 3)
                         {
                             length3Placed--;
                         }
@@ -5475,7 +5774,7 @@ public class LevelGeneratorWindow : EditorWindow
                 }
             }
 
-            if (length == 3)
+            if (length >= 3)
             {
                 foreach (bool horizontal in orientations)
                 {
@@ -6377,11 +6676,13 @@ public class LevelGeneratorWindow : EditorWindow
         for (int attempt = 0; attempt < placementAttemptsPerVehicle; attempt++)
         {
             bool preferHorizontal = rng.Next(0, 2) == 0;
-            int length = 2;
-            if (length3Placed < maxLength3 && rng.NextDouble() < 0.45)
-            {
-                length = 3;
-            }
+            int length = PickNonTargetVehicleLength(
+                rng,
+                candidate,
+                length3Placed,
+                maxLength3,
+                0.45
+            );
 
             // Probeer gekozen oriëntatie, daarna de andere.
             bool[] orientations = preferHorizontal
@@ -6425,7 +6726,7 @@ public class LevelGeneratorWindow : EditorWindow
 
                 candidate.vehicles.Add(vehicle);
                 Occupy(occupied, vehicle);
-                if (length == 3)
+                if (length >= 3)
                 {
                     length3Placed++;
                 }
@@ -6434,8 +6735,8 @@ public class LevelGeneratorWindow : EditorWindow
                 return true;
             }
 
-            // Length-2 fallback als length-3 geen plek had.
-            if (length == 3)
+            // Length-2 fallback als langere length geen plek had.
+            if (length >= 3)
             {
                 foreach (bool horizontal in orientations)
                 {
@@ -6470,6 +6771,52 @@ public class LevelGeneratorWindow : EditorWindow
 
         failReason = PlacementFailReason.OrdinaryVehiclePlacementFailed;
         return false;
+    }
+
+    /// <summary>
+    /// Kiest length 2/3/4 voor non-target vehicles.
+    /// Length 4 alleen als allowLength4Vehicles + maxLength4Vehicles + long-budget.
+    /// </summary>
+    private int PickNonTargetVehicleLength(
+        System.Random rng,
+        CandidateLevel candidate,
+        int length3Placed,
+        int maxLength3,
+        double longVehicleChance)
+    {
+        if (length3Placed >= maxLength3 || rng.NextDouble() >= longVehicleChance)
+        {
+            return 2;
+        }
+
+        bool canLength4 =
+            allowLength4Vehicles &&
+            maxLength4Vehicles > 0 &&
+            CountNonTargetLength(candidate, 4) < maxLength4Vehicles &&
+            Mathf.Min(gridWidth, gridHeight) >= 4;
+
+        // Onder de long picks: soms length 4, anders length 3.
+        if (canLength4 && rng.NextDouble() < 0.40)
+        {
+            return 4;
+        }
+
+        return 3;
+    }
+
+    private static int CountNonTargetLength(CandidateLevel candidate, int length)
+    {
+        int count = 0;
+        for (int i = 0; i < candidate.vehicles.Count; i++)
+        {
+            CandidateVehicle v = candidate.vehicles[i];
+            if (!v.canExitRight && v.length == length)
+            {
+                count++;
+            }
+        }
+
+        return count;
     }
 
     private static bool IsPlacementInsideGrid(
@@ -7191,13 +7538,13 @@ public class LevelGeneratorWindow : EditorWindow
     }
 
     /// <summary>
-    /// Lengtebalans (max ~40% length-3 bij non-target) + oriëntatiebalans
+    /// Lengtebalans (max ~40% long vehicles length≥3 bij non-target) + oriëntatiebalans
     /// wanneer er genoeg voertuigen zijn (schaalt licht met board area).
     /// </summary>
     private bool PassesOrientationLengthBalance(CandidateLevel candidate)
     {
         int nonTarget = 0;
-        int length3 = 0;
+        int lengthLong = 0;
         int horizontal = 0;
         int vertical = 0;
 
@@ -7216,9 +7563,9 @@ public class LevelGeneratorWindow : EditorWindow
             }
 
             nonTarget++;
-            if (v.length == 3)
+            if (v.length >= 3)
             {
-                length3++;
+                lengthLong++;
             }
 
             if (v.horizontal)
@@ -7233,7 +7580,7 @@ public class LevelGeneratorWindow : EditorWindow
 
         if (nonTarget > 0)
         {
-            float longRatio = length3 / (float)nonTarget;
+            float longRatio = lengthLong / (float)nonTarget;
             // Blijft ~40%; iets soepeler op hele grote boards zodat density haalbaar blijft.
             float maxLong = Mathf.Lerp(0.40f, 0.45f, Mathf.Clamp01(AreaScale - 1f));
             if (longRatio > maxLong + 0.0001f)
@@ -7278,26 +7625,38 @@ public class LevelGeneratorWindow : EditorWindow
     }
 
     // -------------------------------------------------------------------------
-    // Canonical hash
+    // Canonical hash (gameplay layout only — shared format with LevelCanonicalKey)
     // -------------------------------------------------------------------------
 
     private static string BuildCanonicalHash(CandidateLevel candidate)
     {
-        List<string> parts = new List<string>();
-        parts.Add("exit=" + candidate.exitRow);
+        int count = candidate.vehicles != null ? candidate.vehicles.Count : 0;
+        bool[] canExitRight = new bool[count];
+        int[] xs = new int[count];
+        int[] ys = new int[count];
+        bool[] horizontal = new bool[count];
+        int[] lengths = new int[count];
 
-        foreach (CandidateVehicle v in candidate.vehicles)
+        for (int i = 0; i < count; i++)
         {
-            parts.Add(
-                (v.horizontal ? "H" : "V") +
-                v.length +
-                "@" + v.position.x + "," + v.position.y +
-                (v.canExitRight ? "T" : "")
-            );
+            CandidateVehicle v = candidate.vehicles[i];
+            canExitRight[i] = v.canExitRight;
+            xs[i] = v.position.x;
+            ys[i] = v.position.y;
+            horizontal[i] = v.horizontal;
+            lengths[i] = v.length;
         }
 
-        parts.Sort(StringComparer.Ordinal);
-        return string.Join("|", parts);
+        return LevelCanonicalKey.BuildCanonicalLevelKey(
+            candidate.gridWidth,
+            candidate.gridHeight,
+            candidate.exitRow,
+            canExitRight,
+            xs,
+            ys,
+            horizontal,
+            lengths
+        );
     }
 
     // -------------------------------------------------------------------------

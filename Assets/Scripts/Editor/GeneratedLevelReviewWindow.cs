@@ -22,6 +22,10 @@ public class GeneratedLevelReviewWindow : EditorWindow
     private string databaseStatusMessage = "";
     private bool canAcceptToDatabase = true;
 
+    // Canonical layout key → assetnamen (GeneratedLevels + MainLevelDatabase).
+    private readonly Dictionary<string, List<string>> layoutKeyOwners =
+        new Dictionary<string, List<string>>(StringComparer.Ordinal);
+
     // Preview-kleuren
     private static readonly Color CellColor = new Color(0.18f, 0.18f, 0.20f);
     private static readonly Color GridLineColor = new Color(0.35f, 0.35f, 0.38f);
@@ -171,6 +175,49 @@ public class GeneratedLevelReviewWindow : EditorWindow
             level.ResolvedGridWidth + "x" + level.ResolvedGridHeight
         );
         EditorGUILayout.LabelField("exitRow", level.exitRow.ToString());
+
+        DrawDuplicateWarning(level);
+    }
+
+    private void DrawDuplicateWarning(LevelData level)
+    {
+        string key = LevelCanonicalKey.BuildCanonicalLevelKey(level);
+        if (string.IsNullOrEmpty(key))
+        {
+            return;
+        }
+
+        List<string> owners;
+        if (!layoutKeyOwners.TryGetValue(key, out owners) || owners == null || owners.Count <= 1)
+        {
+            return;
+        }
+
+        string currentName = GetAssetName(level);
+        List<string> others = new List<string>();
+        for (int i = 0; i < owners.Count; i++)
+        {
+            if (!string.Equals(owners[i], currentName, StringComparison.Ordinal))
+            {
+                others.Add(owners[i]);
+            }
+        }
+
+        if (others.Count == 0)
+        {
+            return;
+        }
+
+        string preview = others[0];
+        if (others.Count > 1)
+        {
+            preview += " (+" + (others.Count - 1) + " more)";
+        }
+
+        EditorGUILayout.HelpBox(
+            "Duplicate gameplay layout vs existing level(s): " + preview,
+            MessageType.Warning
+        );
     }
 
     private void DrawVehicleList(LevelData level)
@@ -414,11 +461,13 @@ public class GeneratedLevelReviewWindow : EditorWindow
     private void RefreshGeneratedLevels()
     {
         reviewList.Clear();
+        layoutKeyOwners.Clear();
         currentIndex = 0;
         UpdateDatabaseStatus();
 
         if (!AssetDatabase.IsValidFolder(GeneratedFolder))
         {
+            RebuildLayoutKeyOwners();
             Repaint();
             return;
         }
@@ -435,7 +484,69 @@ public class GeneratedLevelReviewWindow : EditorWindow
         }
 
         reviewList.Sort(CompareByDifficulty);
+        RebuildLayoutKeyOwners();
         Repaint();
+    }
+
+    private void RebuildLayoutKeyOwners()
+    {
+        layoutKeyOwners.Clear();
+
+        for (int i = 0; i < reviewList.Count; i++)
+        {
+            LevelData level = reviewList[i];
+            if (level == null)
+            {
+                continue;
+            }
+
+            RegisterLayoutOwner(level, GetAssetName(level));
+        }
+
+        LevelDatabase database = TryLoadMainLevelDatabase(out _);
+        if (database == null || database.levels == null)
+        {
+            return;
+        }
+
+        HashSet<LevelData> seen = new HashSet<LevelData>();
+        for (int i = 0; i < database.levels.Count; i++)
+        {
+            LevelData level = database.levels[i];
+            if (level == null || !seen.Add(level))
+            {
+                continue;
+            }
+
+            string label = GetAssetName(level);
+            if (string.IsNullOrEmpty(label))
+            {
+                label = "MainLevelDatabase[" + i + "]";
+            }
+
+            RegisterLayoutOwner(level, label);
+        }
+    }
+
+    private void RegisterLayoutOwner(LevelData level, string ownerLabel)
+    {
+        string key = LevelCanonicalKey.BuildCanonicalLevelKey(level);
+        if (string.IsNullOrEmpty(key))
+        {
+            return;
+        }
+
+        List<string> owners;
+        if (!layoutKeyOwners.TryGetValue(key, out owners))
+        {
+            owners = new List<string>();
+            layoutKeyOwners[key] = owners;
+        }
+
+        if (!owners.Contains(ownerLabel))
+        {
+            owners.Add(ownerLabel);
+        }
     }
 
     private static int CompareByDifficulty(LevelData a, LevelData b)

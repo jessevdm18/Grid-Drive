@@ -191,7 +191,9 @@ MonoBehaviour:
   targetIndicator: {fileID: 822005890634540295}
   hintDirection: {fileID: 6153005633372175390}
   hintDirectionRenderer: {fileID: 7403369548930395720}
-  visualFill: 0.88
+  length2VisualFill: 0.88
+  length3VisualFill: 0.95
+  length4VisualFill: 1
   moveAnimationDuration: 0.06
   blockedShakeDistance: 0.08
   blockedShakeDuration: 0.12
@@ -200,7 +202,7 @@ MonoBehaviour:
   exitDistance: 4
   orientation: 0
   lengthInCells: 2
-  dragThreshold: 0.12
+  dragThreshold: 0.05
   gridPosition: {x: 0, y: 0}
 --- !u!1 &727311823259249163
 GameObject:

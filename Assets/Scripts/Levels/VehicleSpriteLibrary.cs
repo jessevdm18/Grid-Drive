@@ -15,8 +15,10 @@ public class VehicleSpriteLibrary : ScriptableObject
 
     [SerializeField] private List<Sprite> horizontalLength2Sprites = new List<Sprite>();
     [SerializeField] private List<Sprite> horizontalLength3Sprites = new List<Sprite>();
+    [SerializeField] private List<Sprite> horizontalLength4Sprites = new List<Sprite>();
     [SerializeField] private List<Sprite> verticalLength2Sprites = new List<Sprite>();
     [SerializeField] private List<Sprite> verticalLength3Sprites = new List<Sprite>();
+    [SerializeField] private List<Sprite> verticalLength4Sprites = new List<Sprite>();
 
     public Sprite TargetCarSprite => targetCarSprite;
 
@@ -42,10 +44,52 @@ public class VehicleSpriteLibrary : ScriptableObject
 
         if (horizontal)
         {
-            return lengthInCells >= 3 ? horizontalLength3Sprites : horizontalLength2Sprites;
+            if (lengthInCells >= 4)
+            {
+                return HasSprites(horizontalLength4Sprites)
+                    ? horizontalLength4Sprites
+                    : horizontalLength3Sprites;
+            }
+
+            if (lengthInCells >= 3)
+            {
+                return horizontalLength3Sprites;
+            }
+
+            return horizontalLength2Sprites;
         }
 
-        return lengthInCells >= 3 ? verticalLength3Sprites : verticalLength2Sprites;
+        if (lengthInCells >= 4)
+        {
+            return HasSprites(verticalLength4Sprites)
+                ? verticalLength4Sprites
+                : verticalLength3Sprites;
+        }
+
+        if (lengthInCells >= 3)
+        {
+            return verticalLength3Sprites;
+        }
+
+        return verticalLength2Sprites;
+    }
+
+    private static bool HasSprites(List<Sprite> pool)
+    {
+        if (pool == null || pool.Count == 0)
+        {
+            return false;
+        }
+
+        for (int i = 0; i < pool.Count; i++)
+        {
+            if (pool[i] != null)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private static Sprite PickFromPool(List<Sprite> pool, Sprite avoidSameSprite)

@@ -23,6 +23,11 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 52ab84013f3135b4db5e0b9df08b37ec, type: 3}
   - {fileID: 21300000, guid: f9b0407c46af7ff448bc56b870f8bc52, type: 3}
   - {fileID: 21300000, guid: 82af8bb33cc16834eb1baf2209a6601a, type: 3}
+  horizontalLength4Sprites:
+  - {fileID: 21300000, guid: 20bcfe04935ef194db80be11e9d2fc7d, type: 3}
+  - {fileID: 21300000, guid: 9edcbde7e4a55cb4184d79c7de8b9a71, type: 3}
+  - {fileID: 21300000, guid: 230c42433fe3afc4ab3cbf190ca087f9, type: 3}
+  - {fileID: 21300000, guid: 004549a6381829f488a7b1769ff609ff, type: 3}
   verticalLength2Sprites:
   - {fileID: 21300000, guid: 7e7e71b42e748574dbd8a1c57117ceac, type: 3}
   - {fileID: 21300000, guid: 48cdc45f9e9308446b235fc4f5225a6f, type: 3}
@@ -33,3 +38,8 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 52ab84013f3135b4db5e0b9df08b37ec, type: 3}
   - {fileID: 21300000, guid: f9b0407c46af7ff448bc56b870f8bc52, type: 3}
   - {fileID: 21300000, guid: 82af8bb33cc16834eb1baf2209a6601a, type: 3}
+  verticalLength4Sprites:
+  - {fileID: 21300000, guid: 20bcfe04935ef194db80be11e9d2fc7d, type: 3}
+  - {fileID: 21300000, guid: 9edcbde7e4a55cb4184d79c7de8b9a71, type: 3}
+  - {fileID: 21300000, guid: 230c42433fe3afc4ab3cbf190ca087f9, type: 3}
+  - {fileID: 21300000, guid: 004549a6381829f488a7b1769ff609ff, type: 3}

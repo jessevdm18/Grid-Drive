@@ -92,7 +92,7 @@ public class VehicleData
 
     public VehicleController.VehicleOrientation orientation;
 
-    public int lengthInCells = 2;
+    public int lengthInCells = 2; // Geldig: 2 (auto), 3 (bus), 4 (truck)
 
     public Vector2Int gridPosition;
 

@@ -38,9 +38,18 @@ public class VehicleController : MonoBehaviour
     [Tooltip("SpriteRenderer op HintDirection.")]
     [SerializeField] private SpriteRenderer hintDirectionRenderer;
 
-    [Tooltip("Hoeveel van de grid-footprint de sprite mag vullen (1 = rand tot rand).")]
+    [Header("Visual Fill (per length)")]
+    [Tooltip("Hoeveel van de 2×1 footprint de sprite mag vullen (uniform, geen stretch).")]
     [SerializeField, Range(0.5f, 1f)]
-    private float visualFill = 0.88f;
+    private float length2VisualFill = 0.88f;
+
+    [Tooltip("Hoeveel van de 3×1 footprint de sprite mag vullen (uniform, geen stretch).")]
+    [SerializeField, Range(0.5f, 1f)]
+    private float length3VisualFill = 0.94f;
+
+    [Tooltip("Hoeveel van de 4×1 footprint de sprite mag vullen (uniform, geen stretch).")]
+    [SerializeField, Range(0.5f, 1f)]
+    private float length4VisualFill = 0.97f;
 
     [Tooltip("Duur van de soepele visual-beweging tussen gridcellen (lager = sneller op mobiel).")]
     [SerializeField] private float moveAnimationDuration = 0.06f;
@@ -487,19 +496,21 @@ public class VehicleController : MonoBehaviour
             return;
         }
 
-        // Footprint in world/local units (root scale = 1).
-        float availableWidth;
-        float availableHeight;
+        float visualFill = GetVisualFillForLength();
+
+        // Footprint × length-specifieke fill (root scale = 1).
+        float targetWidth;
+        float targetHeight;
 
         if (orientation == VehicleOrientation.Horizontal)
         {
-            availableWidth = lengthInCells * cellSize;
-            availableHeight = cellSize;
+            targetWidth = lengthInCells * cellSize * visualFill;
+            targetHeight = cellSize * visualFill;
         }
         else
         {
-            availableWidth = cellSize;
-            availableHeight = lengthInCells * cellSize;
+            targetWidth = cellSize * visualFill;
+            targetHeight = lengthInCells * cellSize * visualFill;
         }
 
         // Sprite-afmetingen in local space (vóór scale). flipX/Y verandert bounds.size niet.
@@ -514,18 +525,33 @@ public class VehicleController : MonoBehaviour
 
         if (orientation == VehicleOrientation.Horizontal)
         {
-            scaleX = availableWidth / spriteWidth;
-            scaleY = availableHeight / spriteHeight;
+            scaleX = targetWidth / spriteWidth;
+            scaleY = targetHeight / spriteHeight;
         }
         else
         {
             // local X → world Y, local Y → world X na Z=90°.
-            scaleX = availableHeight / spriteWidth;
-            scaleY = availableWidth / spriteHeight;
+            scaleX = targetHeight / spriteWidth;
+            scaleY = targetWidth / spriteHeight;
         }
 
-        float uniformScale = Mathf.Min(scaleX, scaleY) * visualFill;
+        float uniformScale = Mathf.Min(scaleX, scaleY);
         spriteTransform.localScale = new Vector3(uniformScale, uniformScale, 1f);
+    }
+
+    private float GetVisualFillForLength()
+    {
+        if (lengthInCells >= 4)
+        {
+            return length4VisualFill;
+        }
+
+        if (lengthInCells >= 3)
+        {
+            return length3VisualFill;
+        }
+
+        return length2VisualFill;
     }
 
     private void Start()
