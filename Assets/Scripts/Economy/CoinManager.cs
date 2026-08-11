@@ -51,6 +51,19 @@ public class CoinManager : MonoBehaviour
     }
 
     /// <summary>
+    /// True als er genoeg coins zijn voor amount (schrijft niets af).
+    /// </summary>
+    public bool CanAfford(int amount)
+    {
+        if (amount <= 0)
+        {
+            return true;
+        }
+
+        return coins >= amount;
+    }
+
+    /// <summary>
     /// Probeert coins uit te geven.
     /// True = gelukt, false = te weinig coins.
     /// </summary>

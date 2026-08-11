@@ -1,41 +1,65 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
+using TMPro;
 using UnityEngine;
 
 /// <summary>
-/// Hint via RushOutSolver: toont de eerste zet van een minimale oplossing
-/// vanaf de ACTUELE bordstand (highlight + richting).
+/// Hint via RushOutSolver vanaf ACTUELE runtime-bordstand.
+/// Coins worden pas afgeschreven nadat een geldige first move gevonden is.
 /// </summary>
 public class HintManager : MonoBehaviour
 {
-    private const int HintMaxStates = 50000;
+    public enum HintResult
+    {
+        Success,
+        NotEnoughCoins,
+        SearchLimitReached,
+        Unsolvable,
+        InvalidRuntimeState,
+        NoMoveFound,
+        SpendFailed
+    }
 
-    // Hint-pijl altijd boven CarSprite (CarSprite sortingOrder = 0 in prefab).
     private const int HintArrowSortingOrder = 20;
 
     [SerializeField] private CoinManager coinManager;
     [SerializeField] private AdsManager adsManager;
     [SerializeField] private LevelManager levelManager;
+    [SerializeField] private GameManager gameManager;
 
     [SerializeField] private int hintCost = 100;
 
-    [Tooltip("Hoe lang de highlight zichtbaar blijft (seconden).")]
+    [Tooltip("Ruimere search-limiet dan level-generation — mid-game 8x8 states.")]
+    [SerializeField] private int hintSolverMaxStates = 200000;
+
+    [Header("Status Message")]
+    [SerializeField] private TextMeshProUGUI hintStatusText;
+
+    [SerializeField] private float hintStatusDuration = 2f;
+
+    [SerializeField, TextArea]
+    private string hintUnavailableMessage = "HINT UNAVAILABLE\nNo coins spent";
+
+    [SerializeField, TextArea]
+    private string notEnoughCoinsMessage = "NOT ENOUGH COINS";
+
+    [Header("Hint Visual")]
     [SerializeField] private float highlightDuration = 1f;
-
-    [Tooltip("Kleur tijdens de hint-highlight.")]
     [SerializeField] private Color highlightColor = Color.yellow;
-
-    [Tooltip("Optionele pijl-sprite; leeg = sprite op prefab HintDirection.")]
     [SerializeField] private Sprite directionArrowSprite;
-
-    [Tooltip("Niet meer gebruikt: HintDirection behoudt prefab localPosition/scale.")]
     [SerializeField] private float directionOffset = 0.85f;
 
-    // Voorkomt dat meerdere visual-coroutines door elkaar lopen.
     private Coroutine hintVisualCoroutine;
+    private Coroutine hintStatusCoroutine;
 
-    // Laatst getoonde pijl (zodat we die kunnen uitzetten bij een nieuwe hint).
     private VehicleController activeHintVehicle;
+
+    private SpriteRenderer highlightedRenderer;
+    private Color originalVehicleColor;
+    private bool hasStoredOriginalColor;
+
+    private bool isHintRequestInProgress;
 
     private void Awake()
     {
@@ -43,123 +67,412 @@ public class HintManager : MonoBehaviour
         {
             levelManager = FindFirstObjectByType<LevelManager>();
         }
+
+        if (gameManager == null)
+        {
+            gameManager = FindFirstObjectByType<GameManager>();
+        }
+
+        if (hintStatusText != null)
+        {
+            hintStatusText.gameObject.SetActive(false);
+        }
+    }
+
+    private void OnDisable()
+    {
+        ClearCurrentHint();
+    }
+
+    private void OnDestroy()
+    {
+        ClearCurrentHint();
     }
 
     /// <summary>
-    /// Knop-callback: betaal met coins en toon een hint.
+    /// Knop-callback: check coins → solve → alleen bij succes SpendCoins + toon hint.
     /// </summary>
     public void UseHint()
     {
+        if (isHintRequestInProgress)
+        {
+            Debug.Log("HintManager: hint request already in progress.");
+            return;
+        }
+
         if (coinManager == null)
         {
             Debug.LogError("HintManager: geen CoinManager gekoppeld.");
             return;
         }
 
-        if (!coinManager.SpendCoins(hintCost))
+        int coinsBefore = coinManager.GetCoins();
+        if (!coinManager.CanAfford(hintCost))
         {
+            LogHintRequest(
+                HintResult.NotEnoughCoins,
+                null,
+                coinsBefore,
+                coinsSpent: false,
+                paidHint: true
+            );
             Debug.Log("Not enough coins");
+            ShowHintStatus(notEnoughCoinsMessage);
             return;
         }
 
-        GiveHint();
+        isHintRequestInProgress = true;
+
+        try
+        {
+            HintComputeResult compute = TryComputeHint();
+
+            if (compute.result != HintResult.Success)
+            {
+                LogHintRequest(
+                    compute.result,
+                    compute.solverResult,
+                    coinsBefore,
+                    coinsSpent: false,
+                    paidHint: true
+                );
+                HandleHintFailure(compute.result, paidHint: true);
+                return;
+            }
+
+            if (!coinManager.SpendCoins(hintCost))
+            {
+                Debug.LogWarning(
+                    "HintManager: SpendCoins faalde onverwacht na CanAfford — geen hint getoond."
+                );
+                LogHintRequest(
+                    HintResult.SpendFailed,
+                    compute.solverResult,
+                    coinsBefore,
+                    coinsSpent: false,
+                    paidHint: true
+                );
+                return;
+            }
+
+            LogHintRequest(
+                HintResult.Success,
+                compute.solverResult,
+                coinsBefore,
+                coinsSpent: true,
+                paidHint: true
+            );
+
+            ShowHintVisual(compute.vehicle, compute.direction);
+        }
+        finally
+        {
+            isHintRequestInProgress = false;
+        }
     }
 
     /// <summary>
-    /// Knop-callback: toon een rewarded ad. Hint alleen via de reward-callback.
+    /// Rewarded hint: eerst availability check, dan ad, daarna opnieuw solven + tonen.
+    /// Geen coins.
     /// </summary>
     public void UseRewardedHint()
     {
+        if (isHintRequestInProgress)
+        {
+            Debug.Log("HintManager: hint request already in progress.");
+            return;
+        }
+
         if (adsManager == null)
         {
             Debug.LogError("HintManager: geen AdsManager gekoppeld.");
             return;
         }
 
-        adsManager.ShowRewardedAd(() => GiveHint());
+        isHintRequestInProgress = true;
+
+        try
+        {
+            int coinsBefore = coinManager != null ? coinManager.GetCoins() : -1;
+            HintComputeResult probe = TryComputeHint();
+            LogHintRequest(probe.result, probe.solverResult, coinsBefore, false, false);
+
+            if (probe.result != HintResult.Success)
+            {
+                HandleHintFailure(probe.result, paidHint: false);
+                return;
+            }
+
+            if (!adsManager.IsRewardedAdReady())
+            {
+                Debug.LogWarning(
+                    "HintManager: hint beschikbaar maar rewarded ad not ready — geen ad gestart."
+                );
+                ShowHintStatus(hintUnavailableMessage);
+                return;
+            }
+
+            // Ad starten; na reward opnieuw solven (board kan veranderd zijn).
+            adsManager.ShowRewardedAd(OnRewardedAdCompleted);
+        }
+        finally
+        {
+            // Ad is async — lock vrijgeven na probe; reward path heeft eigen guard.
+            isHintRequestInProgress = false;
+        }
+    }
+
+    private void OnRewardedAdCompleted()
+    {
+        if (isHintRequestInProgress)
+        {
+            return;
+        }
+
+        isHintRequestInProgress = true;
+
+        try
+        {
+            int coinsBefore = coinManager != null ? coinManager.GetCoins() : -1;
+            HintComputeResult compute = TryComputeHint();
+            LogHintRequest(compute.result, compute.solverResult, coinsBefore, false, false);
+
+            if (compute.result != HintResult.Success)
+            {
+                Debug.LogWarning(
+                    "Hint failed after rewarded ad: " + compute.result +
+                    " — ad was watched, no coins spent, no hint shown."
+                );
+                HandleHintFailure(compute.result, paidHint: false);
+                return;
+            }
+
+            ShowHintVisual(compute.vehicle, compute.direction);
+        }
+        finally
+        {
+            isHintRequestInProgress = false;
+        }
+    }
+
+    public void OnVehicleMoveCompleted()
+    {
+        ClearCurrentHint();
+    }
+
+    public void ClearCurrentHint()
+    {
+        if (hintVisualCoroutine != null)
+        {
+            StopCoroutine(hintVisualCoroutine);
+            hintVisualCoroutine = null;
+        }
+
+        HideHintDirection(activeHintVehicle);
+        activeHintVehicle = null;
+        RestorePreviousHighlight();
+    }
+
+    private struct HintComputeResult
+    {
+        public HintResult result;
+        public VehicleController vehicle;
+        public HintDirection direction;
+        public RushOutSolver.SolverResult solverResult;
     }
 
     /// <summary>
-    /// Berekent de optimale volgende zet vanaf de actuele state en toont die visueel.
-    /// Beweegt voertuigen NIET.
+    /// Snapshot + solve. Geen coins, geen visual (behalve clear van oude hint).
     /// </summary>
-    private void GiveHint()
+    private HintComputeResult TryComputeHint()
     {
-        if (!TryBuildCurrentSolverInput(
+        HintComputeResult outcome = new HintComputeResult
+        {
+            result = HintResult.InvalidRuntimeState,
+            vehicle = null,
+            direction = HintDirection.Right,
+            solverResult = null
+        };
+
+        ClearCurrentHint();
+
+        if (!TryBuildCurrentSolverState(
                 out List<VehicleController> controllers,
                 out List<RushOutSolver.VehicleDefinition> definitions,
                 out RushOutSolver.BoardState boardState,
                 out int exitRow,
                 out int gridWidth,
-                out int gridHeight))
+                out int gridHeight,
+                out LevelData levelData))
         {
-            return;
+            outcome.result = HintResult.InvalidRuntimeState;
+            return outcome;
         }
 
+        int maxStates = Mathf.Max(1, hintSolverMaxStates);
         RushOutSolver.SolverResult result = RushOutSolver.Solve(
             definitions,
             boardState,
             exitRow,
             gridWidth,
             gridHeight,
-            HintMaxStates
+            maxStates
+        );
+
+        outcome.solverResult = result;
+        LogHintDiagnostics(
+            controllers,
+            definitions,
+            boardState,
+            levelData,
+            gridWidth,
+            gridHeight,
+            result,
+            maxStates
         );
 
         if (result.searchLimitReached)
         {
-            Debug.LogWarning("Hint solver search limit reached");
-            return;
+            outcome.result = HintResult.SearchLimitReached;
+            return outcome;
         }
 
         if (!result.solvable)
         {
-            Debug.LogWarning("No solution found from current board state");
-            return;
+            outcome.result = HintResult.Unsolvable;
+            return outcome;
         }
 
         if (result.solution == null || result.solution.Count == 0)
         {
-            return;
+            outcome.result = HintResult.NoMoveFound;
+            return outcome;
         }
 
         RushOutSolver.SolverMove firstMove = result.solution[0];
         if (firstMove.vehicleIndex < 0 || firstMove.vehicleIndex >= controllers.Count)
         {
-            Debug.LogWarning("HintManager: ongeldige vehicleIndex in solver-move.");
-            return;
+            outcome.result = HintResult.NoMoveFound;
+            return outcome;
         }
 
         VehicleController vehicle = controllers[firstMove.vehicleIndex];
         if (vehicle == null || !vehicle.gameObject.activeInHierarchy)
         {
-            Debug.LogWarning("HintManager: hint-voertuig is niet beschikbaar.");
+            outcome.result = HintResult.NoMoveFound;
+            return outcome;
+        }
+
+        outcome.result = HintResult.Success;
+        outcome.vehicle = vehicle;
+        outcome.direction = GetHintDirection(firstMove);
+        return outcome;
+    }
+
+    private void HandleHintFailure(HintResult result, bool paidHint)
+    {
+        Debug.Log(
+            "Hint failed: " + result +
+            (paidHint ? " — no coins spent" : " — no coins spent (rewarded)")
+        );
+
+        if (result == HintResult.NotEnoughCoins)
+        {
+            ShowHintStatus(notEnoughCoinsMessage);
             return;
         }
 
-        HintDirection direction = GetHintDirection(firstMove);
+        ShowHintStatus(hintUnavailableMessage);
+    }
 
-        // Nieuwe hint vervangt een lopende visual (solver/coins/ads ongemoeid).
+    private void ShowHintVisual(VehicleController vehicle, HintDirection direction)
+    {
         if (hintVisualCoroutine != null)
         {
             StopCoroutine(hintVisualCoroutine);
             hintVisualCoroutine = null;
-            HideHintDirection(activeHintVehicle);
-            activeHintVehicle = null;
         }
 
         hintVisualCoroutine = StartCoroutine(ShowHintFeedback(vehicle, direction));
     }
 
-    /// <summary>
-    /// Bouwt solver-input uit actieve VehicleControllers (actuele posities).
-    /// </summary>
-    private bool TryBuildCurrentSolverInput(
+    private void ShowHintStatus(string message)
+    {
+        if (hintStatusText == null)
+        {
+            Debug.Log("HintStatus: " + message);
+            return;
+        }
+
+        if (hintStatusCoroutine != null)
+        {
+            StopCoroutine(hintStatusCoroutine);
+            hintStatusCoroutine = null;
+        }
+
+        hintStatusCoroutine = StartCoroutine(ShowHintStatusRoutine(message));
+    }
+
+    private IEnumerator ShowHintStatusRoutine(string message)
+    {
+        hintStatusText.text = message;
+        hintStatusText.gameObject.SetActive(true);
+
+        yield return new WaitForSecondsRealtime(Mathf.Max(0.1f, hintStatusDuration));
+
+        if (hintStatusText != null)
+        {
+            hintStatusText.gameObject.SetActive(false);
+        }
+
+        hintStatusCoroutine = null;
+    }
+
+    private void LogHintRequest(
+        HintResult result,
+        RushOutSolver.SolverResult solverResult,
+        int coinsBefore,
+        bool coinsSpent,
+        bool paidHint)
+    {
+        StringBuilder log = new StringBuilder(512);
+        log.AppendLine("=== HINT REQUEST ===");
+        log.AppendLine("Paid hint: " + paidHint);
+        log.AppendLine("Cost: " + hintCost);
+        log.AppendLine("Coins before: " + coinsBefore);
+
+        if (solverResult != null)
+        {
+            log.AppendLine("Solver:");
+            log.AppendLine("solvable = " + solverResult.solvable);
+            log.AppendLine("searchLimitReached = " + solverResult.searchLimitReached);
+            log.AppendLine("statesExplored = " + solverResult.statesExplored);
+            log.AppendLine(
+                "solutionMoves = " +
+                (solverResult.solution != null ? solverResult.solution.Count : 0)
+            );
+        }
+        else
+        {
+            log.AppendLine("Solver: (not run / invalid state)");
+        }
+
+        log.AppendLine("Result: " + result);
+        log.AppendLine("Coins spent: " + coinsSpent);
+        log.AppendLine(
+            "Coins after: " + (coinManager != null ? coinManager.GetCoins() : -1)
+        );
+        Debug.Log(log.ToString());
+    }
+
+    private bool TryBuildCurrentSolverState(
         out List<VehicleController> controllers,
         out List<RushOutSolver.VehicleDefinition> definitions,
         out RushOutSolver.BoardState boardState,
         out int exitRow,
         out int gridWidth,
-        out int gridHeight)
+        out int gridHeight,
+        out LevelData levelData)
     {
         controllers = new List<VehicleController>();
         definitions = new List<RushOutSolver.VehicleDefinition>();
@@ -167,8 +480,8 @@ public class HintManager : MonoBehaviour
         exitRow = 0;
         gridWidth = RushOutSolver.DefaultGridSize;
         gridHeight = RushOutSolver.DefaultGridSize;
+        levelData = levelManager != null ? levelManager.CurrentLevelData : null;
 
-        LevelData levelData = levelManager != null ? levelManager.CurrentLevelData : null;
         if (levelData == null)
         {
             Debug.LogWarning("HintManager: geen CurrentLevelData beschikbaar.");
@@ -179,9 +492,20 @@ public class HintManager : MonoBehaviour
         gridWidth = levelData.ResolvedGridWidth;
         gridHeight = levelData.ResolvedGridHeight;
 
-        VehicleController[] found = FindObjectsByType<VehicleController>(FindObjectsSortMode.None);
-        foreach (VehicleController vehicle in found)
+        IReadOnlyList<VehicleController> runtimeVehicles =
+            levelManager != null ? levelManager.ActiveVehicles : null;
+
+        if (runtimeVehicles == null || runtimeVehicles.Count == 0)
         {
+            Debug.LogWarning(
+                "HintManager: ActiveVehicles leeg — fallback FindObjectsByType."
+            );
+            runtimeVehicles = FindObjectsByType<VehicleController>(FindObjectsSortMode.None);
+        }
+
+        for (int i = 0; i < runtimeVehicles.Count; i++)
+        {
+            VehicleController vehicle = runtimeVehicles[i];
             if (vehicle == null || !vehicle.gameObject.activeInHierarchy)
             {
                 continue;
@@ -213,6 +537,91 @@ public class HintManager : MonoBehaviour
         return true;
     }
 
+    private void LogHintDiagnostics(
+        List<VehicleController> controllers,
+        List<RushOutSolver.VehicleDefinition> definitions,
+        RushOutSolver.BoardState boardState,
+        LevelData levelData,
+        int gridWidth,
+        int gridHeight,
+        RushOutSolver.SolverResult result,
+        int maxStates)
+    {
+        StringBuilder log = new StringBuilder(2048);
+        int moveCount = gameManager != null ? gameManager.CurrentMoves : -1;
+
+        log.AppendLine("=== HINT SOLVER ===");
+        log.AppendLine("Current move count: " + moveCount);
+        log.AppendLine("Grid: " + gridWidth + "x" + gridHeight);
+        log.AppendLine("Runtime vehicles: " + controllers.Count);
+        log.AppendLine("hintSolverMaxStates: " + maxStates);
+
+        for (int i = 0; i < controllers.Count; i++)
+        {
+            VehicleController v = controllers[i];
+            Vector2Int pos = boardState.positions[i];
+            RushOutSolver.VehicleDefinition def = definitions[i];
+            log.AppendLine(
+                "[" + i + "] name=" + v.name +
+                " pos=(" + pos.x + "," + pos.y + ")" +
+                " orientation=" + def.orientation +
+                " length=" + def.lengthInCells +
+                " target=" + def.canExitRight
+            );
+        }
+
+        log.AppendLine("Solver result:");
+        log.AppendLine("solvable = " + result.solvable);
+        log.AppendLine("searchLimitReached = " + result.searchLimitReached);
+        if (result.searchLimitReached)
+        {
+            log.AppendLine("searchLimitReason = " + result.searchLimitReason);
+        }
+
+        log.AppendLine("statesExplored = " + result.statesExplored);
+        log.AppendLine("discoveredStates = " + result.discoveredStates);
+        log.AppendLine(
+            "solutionMoves = " +
+            (result.solution != null ? result.solution.Count : 0)
+        );
+
+        if (result.solvable && result.solution != null && result.solution.Count > 0)
+        {
+            RushOutSolver.SolverMove first = result.solution[0];
+            log.AppendLine("First hint:");
+            log.AppendLine("vehicle index = " + first.vehicleIndex);
+            log.AppendLine(
+                "from = (" + first.fromPosition.x + "," + first.fromPosition.y + ")"
+            );
+            log.AppendLine(
+                "to = (" + first.toPosition.x + "," + first.toPosition.y + ")"
+            );
+            log.AppendLine("exitsBoard = " + first.exitsBoard);
+            log.AppendLine("direction = " + GetHintDirection(first));
+        }
+        else if (!result.solvable && !result.searchLimitReached && levelData != null)
+        {
+            log.AppendLine("--- FAIL DIAGNOSTIC: LevelData start vs runtime ---");
+            int count = Mathf.Min(
+                controllers.Count,
+                levelData.vehicles != null ? levelData.vehicles.Count : 0
+            );
+            for (int i = 0; i < count; i++)
+            {
+                VehicleData data = levelData.vehicles[i];
+                Vector2Int runtimePos = boardState.positions[i];
+                log.AppendLine(
+                    "[" + i + "] LevelData start=(" +
+                    data.gridPosition.x + "," + data.gridPosition.y + ")" +
+                    " runtime=(" + runtimePos.x + "," + runtimePos.y + ")" +
+                    " same=" + (data.gridPosition == runtimePos)
+                );
+            }
+        }
+
+        Debug.Log(log.ToString());
+    }
+
     private enum HintDirection
     {
         Left,
@@ -238,9 +647,6 @@ public class HintManager : MonoBehaviour
         return HintDirection.Right;
     }
 
-    /// <summary>
-    /// Pulse-kleur + prefab HintDirection-pijl ("deze auto → deze kant").
-    /// </summary>
     private IEnumerator ShowHintFeedback(VehicleController vehicle, HintDirection direction)
     {
         activeHintVehicle = vehicle;
@@ -248,17 +654,8 @@ public class HintManager : MonoBehaviour
         Debug.Log("Showing hint on: " + vehicle.name);
         Debug.Log("Hint direction: " + direction);
 
-        // CarSprite via serialized ref — niet GetComponentInChildren (root heeft disabled SR).
-        SpriteRenderer spriteRenderer = vehicle.VisualSpriteRenderer;
-        Color originalColor = spriteRenderer != null ? spriteRenderer.color : Color.white;
-
+        BeginHighlight(vehicle);
         ShowHintDirection(vehicle, direction);
-
-        GameObject hintObject = vehicle.HintDirection;
-        Debug.Log(
-            "HintDirection active: " +
-            (hintObject != null && hintObject.activeSelf)
-        );
 
         float elapsed = 0f;
         while (elapsed < highlightDuration)
@@ -267,28 +664,66 @@ public class HintManager : MonoBehaviour
             float t = Mathf.PingPong(elapsed * 4f, 1f);
             float eased = Mathf.SmoothStep(0f, 1f, t);
 
-            if (spriteRenderer != null)
+            if (highlightedRenderer != null && hasStoredOriginalColor)
             {
-                spriteRenderer.color = Color.Lerp(originalColor, highlightColor, eased);
+                highlightedRenderer.color = Color.Lerp(
+                    originalVehicleColor,
+                    highlightColor,
+                    eased
+                );
             }
 
             yield return null;
         }
 
-        if (spriteRenderer != null)
-        {
-            spriteRenderer.color = originalColor;
-        }
-
         HideHintDirection(vehicle);
         activeHintVehicle = null;
+        RestorePreviousHighlight();
         hintVisualCoroutine = null;
     }
 
-    /// <summary>
-    /// Zet prefab-HintDirection aan via VehicleController-refs (werkt ook als inactive).
-    /// localPosition blijft onaangeroerd; scale/alpha worden gereset.
-    /// </summary>
+    private void BeginHighlight(VehicleController vehicle)
+    {
+        RestorePreviousHighlight();
+
+        if (vehicle == null)
+        {
+            return;
+        }
+
+        SpriteRenderer targetRenderer = vehicle.VisualSpriteRenderer;
+        if (targetRenderer == null)
+        {
+            return;
+        }
+
+        highlightedRenderer = targetRenderer;
+        originalVehicleColor = targetRenderer.color;
+        hasStoredOriginalColor = true;
+
+        Debug.Log(
+            "HINT VISUAL: highlight vehicle " + vehicle.name +
+            ", originalColor=" + originalVehicleColor +
+            ", newColor=" + highlightColor
+        );
+    }
+
+    private void RestorePreviousHighlight()
+    {
+        if (highlightedRenderer != null && hasStoredOriginalColor)
+        {
+            Debug.Log(
+                "HINT VISUAL: restore vehicle " + highlightedRenderer.gameObject.name +
+                " to " + originalVehicleColor
+            );
+
+            highlightedRenderer.color = originalVehicleColor;
+        }
+
+        highlightedRenderer = null;
+        hasStoredOriginalColor = false;
+    }
+
     private void ShowHintDirection(VehicleController vehicle, HintDirection direction)
     {
         GameObject hintObject = vehicle.HintDirection;
@@ -297,16 +732,12 @@ public class HintManager : MonoBehaviour
         if (hintObject == null || arrowRenderer == null)
         {
             Debug.LogWarning(
-                "HintManager: HintDirection-refs ontbreken op " + vehicle.name +
-                " (koppel ze in de prefab Inspector)."
+                "HintManager: HintDirection-refs ontbreken op " + vehicle.name
             );
             return;
         }
 
-        // 1) Activeren
         hintObject.SetActive(true);
-
-        // 2) Scale + alpha resetten vóór facing
         hintObject.transform.localScale = vehicle.HintDirectionBaseScale;
 
         Color c = arrowRenderer.color;
@@ -318,7 +749,6 @@ public class HintManager : MonoBehaviour
             arrowRenderer.sprite = directionArrowSprite;
         }
 
-        // Boven CarSprite tekenen
         if (vehicle.VisualSpriteRenderer != null)
         {
             arrowRenderer.sortingOrder =
@@ -329,15 +759,9 @@ public class HintManager : MonoBehaviour
             arrowRenderer.sortingOrder = HintArrowSortingOrder;
         }
 
-        // 3) Pas daarna richting/flip
         ApplyHintArrowFacing(hintObject.transform, arrowRenderer, direction);
     }
 
-    /// <summary>
-    /// RIGHT/LEFT: Z=0 + optioneel flipX.
-    /// UP/DOWN: Z=90 + voor DOWN flipX (local X → world Y).
-    /// Geen 180° rotatie. Flip deactiveert het GameObject nooit.
-    /// </summary>
     private static void ApplyHintArrowFacing(
         Transform hintTransform,
         SpriteRenderer arrowRenderer,
@@ -362,16 +786,12 @@ public class HintManager : MonoBehaviour
                 break;
 
             case HintDirection.Down:
-                // Na Z=90° wisselt flipX omhoog ↔ omlaag (geen 180°).
                 hintTransform.localRotation = Quaternion.Euler(0f, 0f, 90f);
                 arrowRenderer.flipX = true;
                 break;
         }
     }
 
-    /// <summary>
-    /// Zet de prefab-pijl uit en reset flip/rotatie (geen Destroy).
-    /// </summary>
     private static void HideHintDirection(VehicleController vehicle)
     {
         if (vehicle == null)

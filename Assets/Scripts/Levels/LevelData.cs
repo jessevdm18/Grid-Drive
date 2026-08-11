@@ -45,7 +45,8 @@ public class LevelData : ScriptableObject
     public int statesExplored;
     public int difficultyScore;
 
-    [Header("Solution Structure (generator)")]
+    [Header("Solution Structure (legacy / unused by Random generator)")]
+    [Tooltip("Legacy ConstructiveHard metadata. Random generator writes uniqueVehiclesInSolution only.")]
     public int solutionComplexityScore;
     public int uniqueVehiclesInSolution;
     public int axisAlternations;

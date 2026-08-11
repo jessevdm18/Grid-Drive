@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -42,10 +43,19 @@ public class LevelManager : MonoBehaviour
     // Laatst gekozen auto-sprite (voorkomt twee dezelfde achter elkaar).
     private Sprite lastAutoAssignedSprite;
 
+    // Stabiele spawn-order (zelfde volgorde als LevelData.vehicles).
+    // HintManager / solver gebruiken deze lijst — nooit her-sorteren op positie.
+    private readonly List<VehicleController> activeVehicles = new List<VehicleController>();
+
     /// <summary>
     /// Zero-based index van het actieve level (0 = LEVEL 1).
     /// </summary>
     public int CurrentLevelIndex => currentLevelIndex;
+
+    /// <summary>
+    /// Actieve voertuigen in LevelData-spawnvolgorde (stabiele solver-indices).
+    /// </summary>
+    public IReadOnlyList<VehicleController> ActiveVehicles => activeVehicles;
 
     /// <summary>
     /// Aantal levels in de database.
@@ -187,8 +197,15 @@ public class LevelManager : MonoBehaviour
             return;
         }
 
+        // Hint tint eerst herstellen, daarna voertuigen vernietigen.
+        if (gameManager != null)
+        {
+            gameManager.ResetMoves();
+        }
+
         // Eerst oude gespawnde voertuigen + occupancy opruimen.
         ClearExistingVehicles();
+        activeVehicles.Clear();
         lastAutoAssignedSprite = null;
 
         // Runtime gridgrootte uit LevelData (oude assets → 6x6).
@@ -208,26 +225,35 @@ public class LevelManager : MonoBehaviour
             Debug.LogWarning("ParkingGridVisual is not assigned");
         }
 
-        // Camera framing na grid-config + parking build.
+        // Visuele exit op rechterrand + exitRow — VOOR camera fit,
+        // zodat exit road/arrow in de visual bounds zitten.
+        UpdateExitVisualPosition(levelData.exitRow);
+
+        // Camera framing nadat parking + exit visuals klaar zijn.
         if (cameraFitter != null)
         {
+            if (parkingGridVisual != null)
+            {
+                cameraFitter.SetBoardVisualRoot(parkingGridVisual.transform);
+            }
+
+            if (exitVisual != null)
+            {
+                cameraFitter.SetExitVisualRoot(exitVisual);
+            }
+
             float cellSize = gridManager != null ? gridManager.CellSize : 1f;
             cameraFitter.FitToGrid(width, height, cellSize);
         }
 
-        // Move-teller resetten bij restart én nieuw level.
-        if (gameManager != null)
-        {
-            gameManager.ResetMoves();
-        }
-
-        // Visuele exit op rechterrand + exitRow.
-        UpdateExitVisualPosition(levelData.exitRow);
-
-        // Maak voor elk item in LevelData één voertuig.
+        // Maak voor elk item in LevelData één voertuig (volgorde = solver indices).
         foreach (VehicleData data in levelData.vehicles)
         {
-            SpawnVehicle(data, levelData);
+            VehicleController spawned = SpawnVehicle(data, levelData);
+            if (spawned != null)
+            {
+                activeVehicles.Add(spawned);
+            }
         }
 
         Debug.Log(
@@ -247,6 +273,8 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     private void ClearExistingVehicles()
     {
+        activeVehicles.Clear();
+
         if (vehicleParent != null)
         {
             // Loop achterstevoren zodat Destroy veilig is tijdens de loop.
@@ -305,7 +333,7 @@ public class LevelManager : MonoBehaviour
     /// <summary>
     /// Instantieert één voertuig en vult alle data via Setup(...).
     /// </summary>
-    private void SpawnVehicle(VehicleData data, LevelData levelData)
+    private VehicleController SpawnVehicle(VehicleData data, LevelData levelData)
     {
         VehicleController vehicle = Instantiate(
             vehiclePrefab,
@@ -339,6 +367,8 @@ public class LevelManager : MonoBehaviour
         {
             shadow.UpdateShadow();
         }
+
+        return vehicle;
     }
 
     /// <summary>

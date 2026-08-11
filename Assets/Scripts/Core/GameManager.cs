@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameplayUI gameplayUI;
     [SerializeField] private LevelManager levelManager;
     [SerializeField] private SaveManager saveManager;
+    [SerializeField] private HintManager hintManager;
 
     private AudioManager audioManager;
 
@@ -55,6 +56,11 @@ public class GameManager : MonoBehaviour
         {
             saveManager = FindFirstObjectByType<SaveManager>();
         }
+
+        if (hintManager == null)
+        {
+            hintManager = FindFirstObjectByType<HintManager>();
+        }
     }
 
     /// <summary>
@@ -69,6 +75,12 @@ public class GameManager : MonoBehaviour
         {
             gameplayUI.UpdateMovesText(currentMoves);
         }
+
+        // Hint-cache/visual invalidatie: elke move maakt een oude hint ongeldig.
+        if (hintManager != null)
+        {
+            hintManager.OnVehicleMoveCompleted();
+        }
     }
 
     /// <summary>
@@ -81,6 +93,11 @@ public class GameManager : MonoBehaviour
         if (gameplayUI != null)
         {
             gameplayUI.UpdateMovesText(currentMoves);
+        }
+
+        if (hintManager != null)
+        {
+            hintManager.ClearCurrentHint();
         }
     }
 
@@ -95,6 +112,11 @@ public class GameManager : MonoBehaviour
         }
 
         levelCompleted = true;
+
+        if (hintManager != null)
+        {
+            hintManager.ClearCurrentHint();
+        }
 
         Debug.Log("LEVEL COMPLETED!");
 

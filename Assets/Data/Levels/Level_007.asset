@@ -10,118 +10,88 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e98a2ca1400bdfc4896e8c352e3628b7, type: 3}
-  m_Name: Hard_Batch_01_002
+  m_Name: Level_007
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
-  levelNumber: 2
-  difficulty: 2
-  gridWidth: 8
-  gridHeight: 8
-  exitRow: 3
+  levelNumber: 7
+  difficulty: 1
+  gridWidth: 7
+  gridHeight: 7
+  exitRow: 2
   vehicles:
   - vehicleName: Target
     orientation: 0
     lengthInCells: 2
-    gridPosition: {x: 2, y: 3}
+    gridPosition: {x: 1, y: 2}
     canExitRight: 1
     vehicleSprite: {fileID: 0}
   - vehicleName: A
     orientation: 1
-    lengthInCells: 3
-    gridPosition: {x: 5, y: 2}
+    lengthInCells: 2
+    gridPosition: {x: 5, y: 1}
     canExitRight: 0
     vehicleSprite: {fileID: 0}
   - vehicleName: B
-    orientation: 1
-    lengthInCells: 3
-    gridPosition: {x: 7, y: 1}
+    orientation: 0
+    lengthInCells: 2
+    gridPosition: {x: 4, y: 5}
     canExitRight: 0
     vehicleSprite: {fileID: 0}
   - vehicleName: C
     orientation: 0
-    lengthInCells: 4
-    gridPosition: {x: 4, y: 7}
+    lengthInCells: 3
+    gridPosition: {x: 1, y: 5}
     canExitRight: 0
     vehicleSprite: {fileID: 0}
   - vehicleName: D
-    orientation: 0
-    lengthInCells: 4
-    gridPosition: {x: 0, y: 7}
+    orientation: 1
+    lengthInCells: 3
+    gridPosition: {x: 3, y: 2}
     canExitRight: 0
     vehicleSprite: {fileID: 0}
   - vehicleName: E
-    orientation: 1
+    orientation: 0
     lengthInCells: 3
-    gridPosition: {x: 1, y: 2}
+    gridPosition: {x: 4, y: 3}
     canExitRight: 0
     vehicleSprite: {fileID: 0}
   - vehicleName: F
     orientation: 1
-    lengthInCells: 3
-    gridPosition: {x: 3, y: 0}
+    lengthInCells: 2
+    gridPosition: {x: 0, y: 4}
     canExitRight: 0
     vehicleSprite: {fileID: 0}
   - vehicleName: G
-    orientation: 0
-    lengthInCells: 2
+    orientation: 1
+    lengthInCells: 3
     gridPosition: {x: 6, y: 4}
     canExitRight: 0
     vehicleSprite: {fileID: 0}
   - vehicleName: H
     orientation: 1
     lengthInCells: 2
-    gridPosition: {x: 0, y: 3}
+    gridPosition: {x: 4, y: 1}
     canExitRight: 0
     vehicleSprite: {fileID: 0}
   - vehicleName: I
     orientation: 1
     lengthInCells: 2
-    gridPosition: {x: 6, y: 0}
+    gridPosition: {x: 1, y: 0}
     canExitRight: 0
     vehicleSprite: {fileID: 0}
   - vehicleName: J
     orientation: 0
     lengthInCells: 2
-    gridPosition: {x: 2, y: 6}
+    gridPosition: {x: 1, y: 4}
     canExitRight: 0
     vehicleSprite: {fileID: 0}
-  - vehicleName: K
-    orientation: 1
-    lengthInCells: 2
-    gridPosition: {x: 0, y: 0}
-    canExitRight: 0
-    vehicleSprite: {fileID: 0}
-  - vehicleName: L
-    orientation: 0
-    lengthInCells: 2
-    gridPosition: {x: 4, y: 0}
-    canExitRight: 0
-    vehicleSprite: {fileID: 0}
-  - vehicleName: M
-    orientation: 0
-    lengthInCells: 2
-    gridPosition: {x: 4, y: 1}
-    canExitRight: 0
-    vehicleSprite: {fileID: 0}
-  - vehicleName: N
-    orientation: 0
-    lengthInCells: 2
-    gridPosition: {x: 1, y: 1}
-    canExitRight: 0
-    vehicleSprite: {fileID: 0}
-  - vehicleName: O
-    orientation: 1
-    lengthInCells: 2
-    gridPosition: {x: 5, y: 5}
-    canExitRight: 0
-    vehicleSprite: {fileID: 0}
-  minimumMoves: 11
-  statesExplored: 24944
-  difficultyScore: 1560
-  solutionComplexityScore: 8
-  uniqueVehiclesInSolution: 9
-  axisAlternations: 7
-  vehicleRevisits: 2
-  longestSingleAxisRun: 2
+  minimumMoves: 6
+  statesExplored: 1930
+  difficultyScore: 874
+  solutionComplexityScore: 0
+  uniqueVehiclesInSolution: 6
+  axisAlternations: 0
+  vehicleRevisits: 0
+  longestSingleAxisRun: 0
   linearChainSolutionRatio: 0
   secondaryBlockersUsed: 0
   forkDependencies: 0
