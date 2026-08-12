@@ -4,7 +4,7 @@ using UnityEngine.UI;
 using TMPro;
 
 /// <summary>
-/// Bestuurt het win-scherm van Rush Out.
+/// Bestuurt het win-scherm van Grid Drive.
 /// Koppel knoppen in de Inspector aan OnNextLevelButton / OnRestartButton.
 /// </summary>
 public class UIManager : MonoBehaviour

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,6 +11,12 @@ public class VehicleController : MonoBehaviour
         Horizontal,
         Vertical
     }
+
+    /// <summary>
+    /// Afgevuurd na een succesvolle verplaatsing (andere gridpositie) of exit.
+    /// Niet bij touch/select/mislukte drag/zelfde positie.
+    /// </summary>
+    public event Action<VehicleController> OnVehicleMoved;
 
     [Header("Exit Settings")]
 [SerializeField] private bool canExitRight = false;
@@ -308,7 +315,7 @@ public class VehicleController : MonoBehaviour
         else
         {
             // Normale auto: random forward/reverse (puur visueel).
-            visualFlipped = Random.value > 0.5f;
+            visualFlipped = UnityEngine.Random.value > 0.5f;
         }
     }
 
@@ -670,6 +677,7 @@ private bool CanPerformExitRight(Vector3 dragDifference)
             gameManager.RegisterMove();
         }
 
+        NotifyVehicleMoved();
         StartCoroutine(PlayExitAnimation());
         return true;
     }
@@ -1037,10 +1045,23 @@ private bool CanPerformExitRight(Vector3 dragDifference)
         );
 
         // Eén move per drag, alleen als de gridpositie echt veranderde.
-        if (gridPosition != dragStartGridPosition && gameManager != null)
+        if (gridPosition != dragStartGridPosition)
         {
-            gameManager.RegisterMove();
+            if (gameManager != null)
+            {
+                gameManager.RegisterMove();
+            }
+
+            NotifyVehicleMoved();
         }
+    }
+
+    /// <summary>
+    /// Notify listeners dat dit voertuig echt van gridpositie is veranderd.
+    /// </summary>
+    private void NotifyVehicleMoved()
+    {
+        OnVehicleMoved?.Invoke(this);
     }
 
    private Vector3 GetMouseWorldPosition()

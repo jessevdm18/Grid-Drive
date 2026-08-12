@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 8384ec7dcc5aeeb43801fa6c5decd3ce
+guid: 50a0e72c4081e8b4da629fdedf90fdc8
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -5263901000037509129
-    second: Arrow_Hint_0
+      213: -982637426271686815
+    second: GridDriveAdaptiveForeground_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -126,13 +126,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Arrow_Hint_0
+      name: GridDriveAdaptiveForeground_0
       rect:
         serializedVersion: 2
-        x: 1
-        y: 0
-        width: 484
-        height: 315
+        x: 0
+        y: 31
+        width: 1215
+        height: 1203
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 7f7d0f70eedd2f6b0800000000000000
-      internalID: -5263901000037509129
+      spriteID: 16f62109778fc52f0800000000000000
+      internalID: -982637426271686815
       vertices: []
       indices: 
       edges: []
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Arrow_Hint_0: -5263901000037509129
+      GridDriveAdaptiveForeground_0: -982637426271686815
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

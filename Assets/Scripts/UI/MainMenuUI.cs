@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 /// <summary>
 /// Knoppen voor het MainMenu-scherm.
@@ -14,7 +13,7 @@ public class MainMenuUI : MonoBehaviour
     /// </summary>
     public void OnPlayButton()
     {
-        SceneManager.LoadScene("Gameplay");
+        SceneTransition.LoadScene("Gameplay");
     }
 
     /// <summary>
@@ -22,7 +21,7 @@ public class MainMenuUI : MonoBehaviour
     /// </summary>
     public void OnLevelsButton()
     {
-        SceneManager.LoadScene("LevelSelect");
+        SceneTransition.LoadScene("LevelSelect");
     }
 
     /// <summary>

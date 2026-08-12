@@ -193,7 +193,7 @@ MonoBehaviour:
   hintDirectionRenderer: {fileID: 7403369548930395720}
   length2VisualFill: 0.88
   length3VisualFill: 0.95
-  length4VisualFill: 1
+  length4VisualFill: 0.95
   moveAnimationDuration: 0.06
   blockedShakeDistance: 0.08
   blockedShakeDuration: 0.12

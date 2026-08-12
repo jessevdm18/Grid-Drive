@@ -4,7 +4,7 @@ using System.Diagnostics;
 using UnityEngine;
 
 /// <summary>
-/// Runtime-safe Rush Hour BFS-solver voor Rush Out.
+/// Runtime-safe Rush Hour BFS-solver voor Grid Drive.
 /// Werkt uitsluitend op data (geen Editor, geen GameObjects).
 /// Move-definitie: één voertuig naar een andere geldige gridpositie = 1 move;
 /// target exit = finale move.

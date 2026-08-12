@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using TMPro;
 
 /// <summary>
@@ -47,7 +46,7 @@ public class GameplayUI : MonoBehaviour
     /// </summary>
     public void OnBackToMenuButton()
     {
-        SceneManager.LoadScene("MainMenu");
+        SceneTransition.LoadScene("MainMenu");
     }
 
     /// <summary>

@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 /// <summary>
@@ -184,11 +183,11 @@ public class LevelSelectUI : MonoBehaviour
             saveManager.SaveCurrentLevel(levelIndex);
         }
 
-        SceneManager.LoadScene("Gameplay");
+        SceneTransition.LoadScene("Gameplay");
     }
 
     public void OnBackButton()
     {
-        SceneManager.LoadScene("MainMenu");
+        SceneTransition.LoadScene("MainMenu");
     }
 }

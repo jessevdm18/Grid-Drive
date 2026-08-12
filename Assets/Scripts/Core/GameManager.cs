@@ -75,12 +75,6 @@ public class GameManager : MonoBehaviour
         {
             gameplayUI.UpdateMovesText(currentMoves);
         }
-
-        // Hint-cache/visual invalidatie: elke move maakt een oude hint ongeldig.
-        if (hintManager != null)
-        {
-            hintManager.OnVehicleMoveCompleted();
-        }
     }
 
     /// <summary>

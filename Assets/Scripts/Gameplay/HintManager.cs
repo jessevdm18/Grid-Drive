@@ -45,13 +45,32 @@ public class HintManager : MonoBehaviour
     private string notEnoughCoinsMessage = "NOT ENOUGH COINS";
 
     [Header("Hint Visual")]
-    [SerializeField] private float highlightDuration = 1f;
-    [SerializeField] private Color highlightColor = Color.yellow;
+    [Tooltip("Fallback: highlight verdwijnt na deze tijd als hinted vehicle niet beweegt.")]
+    [SerializeField] private float hintHighlightMaxDuration = 8f;
+
+    [Tooltip("Pulse-frequentie in Hz (unscaled).")]
+    [SerializeField] private float hintPulseSpeed = 1.2f;
+
+    [SerializeField] private float hintArrowMinScale = 0.92f;
+    [SerializeField] private float hintArrowMaxScale = 1.12f;
+
+    [Tooltip("Max tint-mix naar highlightColor (0 = alleen origineel, 1 = vol highlight).")]
+    [SerializeField, Range(0f, 1f)]
+    private float maxHighlightStrength = 0.40f;
+
+    [Tooltip("Heldere pulse-kleur; wordt gemengd met originele vehicle color.")]
+    [SerializeField] private Color highlightColor = new Color(1f, 0.95f, 0.35f, 1f);
+
     [SerializeField] private Sprite directionArrowSprite;
     [SerializeField] private float directionOffset = 0.85f;
 
-    private Coroutine hintVisualCoroutine;
+    private Coroutine hintPulseCoroutine;
     private Coroutine hintStatusCoroutine;
+    private Coroutine hintTimeoutCoroutine;
+
+    // Runtime vehicle dat de huidige hint heeft (stabiele ActiveVehicles-index mapping).
+    private VehicleController highlightedVehicle;
+    private int highlightedVehicleIndex = -1;
 
     private VehicleController activeHintVehicle;
 
@@ -59,7 +78,12 @@ public class HintManager : MonoBehaviour
     private Color originalVehicleColor;
     private bool hasStoredOriginalColor;
 
+    private Transform activeHintArrowTransform;
+    private Vector3 originalArrowScale = Vector3.one;
+    private bool hasStoredArrowScale;
+
     private bool isHintRequestInProgress;
+    private bool isSubscribedToHighlightedVehicle;
 
     private void Awake()
     {
@@ -163,7 +187,7 @@ public class HintManager : MonoBehaviour
                 paidHint: true
             );
 
-            ShowHintVisual(compute.vehicle, compute.direction);
+            ShowHintVisual(compute.vehicle, compute.direction, compute.vehicleIndex);
         }
         finally
         {
@@ -247,7 +271,7 @@ public class HintManager : MonoBehaviour
                 return;
             }
 
-            ShowHintVisual(compute.vehicle, compute.direction);
+            ShowHintVisual(compute.vehicle, compute.direction, compute.vehicleIndex);
         }
         finally
         {
@@ -255,28 +279,48 @@ public class HintManager : MonoBehaviour
         }
     }
 
-    public void OnVehicleMoveCompleted()
-    {
-        ClearCurrentHint();
-    }
-
     public void ClearCurrentHint()
     {
-        if (hintVisualCoroutine != null)
+        ClearCurrentHint("ManualClear");
+    }
+
+    public void ClearCurrentHint(string reason)
+    {
+        if (hintTimeoutCoroutine != null)
         {
-            StopCoroutine(hintVisualCoroutine);
-            hintVisualCoroutine = null;
+            StopCoroutine(hintTimeoutCoroutine);
+            hintTimeoutCoroutine = null;
         }
+
+        if (hintPulseCoroutine != null)
+        {
+            StopCoroutine(hintPulseCoroutine);
+            hintPulseCoroutine = null;
+        }
+
+        UnsubscribeFromHighlightedVehicle();
 
         HideHintDirection(activeHintVehicle);
         activeHintVehicle = null;
+        activeHintArrowTransform = null;
+        hasStoredArrowScale = false;
+
         RestorePreviousHighlight();
+
+        if (highlightedVehicle != null || highlightedVehicleIndex >= 0)
+        {
+            Debug.Log("Hint cleared\nReason: " + reason);
+        }
+
+        highlightedVehicle = null;
+        highlightedVehicleIndex = -1;
     }
 
     private struct HintComputeResult
     {
         public HintResult result;
         public VehicleController vehicle;
+        public int vehicleIndex;
         public HintDirection direction;
         public RushOutSolver.SolverResult solverResult;
     }
@@ -290,11 +334,12 @@ public class HintManager : MonoBehaviour
         {
             result = HintResult.InvalidRuntimeState,
             vehicle = null,
+            vehicleIndex = -1,
             direction = HintDirection.Right,
             solverResult = null
         };
 
-        ClearCurrentHint();
+        ClearCurrentHint("NewHintRequested");
 
         if (!TryBuildCurrentSolverState(
                 out List<VehicleController> controllers,
@@ -365,6 +410,7 @@ public class HintManager : MonoBehaviour
 
         outcome.result = HintResult.Success;
         outcome.vehicle = vehicle;
+        outcome.vehicleIndex = firstMove.vehicleIndex;
         outcome.direction = GetHintDirection(firstMove);
         return outcome;
     }
@@ -385,15 +431,125 @@ public class HintManager : MonoBehaviour
         ShowHintStatus(hintUnavailableMessage);
     }
 
-    private void ShowHintVisual(VehicleController vehicle, HintDirection direction)
+    private void ShowHintVisual(
+        VehicleController vehicle,
+        HintDirection direction,
+        int vehicleIndex)
     {
-        if (hintVisualCoroutine != null)
+        // Nieuwe hint vervangt altijd de oude (veilig bij dubbele calls).
+        ClearCurrentHint("NewHintRequested");
+
+        if (vehicle == null)
         {
-            StopCoroutine(hintVisualCoroutine);
-            hintVisualCoroutine = null;
+            return;
         }
 
-        hintVisualCoroutine = StartCoroutine(ShowHintFeedback(vehicle, direction));
+        highlightedVehicle = vehicle;
+        highlightedVehicleIndex = vehicleIndex;
+        activeHintVehicle = vehicle;
+
+        SubscribeToHighlightedVehicle();
+        BeginHighlight(vehicle);
+        ShowHintDirection(vehicle, direction);
+
+        if (hintPulseCoroutine != null)
+        {
+            StopCoroutine(hintPulseCoroutine);
+        }
+
+        hintPulseCoroutine = StartCoroutine(HintPulseRoutine());
+
+        Debug.Log(
+            "=== HINT VISUAL ===\n" +
+            "Vehicle: " + vehicle.name + "\n" +
+            "Vehicle index: " + vehicleIndex + "\n" +
+            "Max duration: " + hintHighlightMaxDuration + "\n" +
+            "Pulse speed: " + hintPulseSpeed + "\n" +
+            "Waiting for hinted vehicle movement"
+        );
+
+        if (hintTimeoutCoroutine != null)
+        {
+            StopCoroutine(hintTimeoutCoroutine);
+        }
+
+        hintTimeoutCoroutine = StartCoroutine(HintFallbackTimeoutRoutine());
+    }
+
+    /// <summary>
+    /// Eén gedeelde pulse voor arrow scale + vehicle highlight (unscaledTime).
+    /// </summary>
+    private IEnumerator HintPulseRoutine()
+    {
+        while (highlightedVehicle != null)
+        {
+            float pulse =
+                (Mathf.Sin(Time.unscaledTime * hintPulseSpeed * Mathf.PI * 2f) + 1f) * 0.5f;
+
+            if (hasStoredArrowScale && activeHintArrowTransform != null)
+            {
+                float scale = Mathf.Lerp(hintArrowMinScale, hintArrowMaxScale, pulse);
+                activeHintArrowTransform.localScale = originalArrowScale * scale;
+            }
+
+            if (highlightedRenderer != null && hasStoredOriginalColor)
+            {
+                float strength = pulse * maxHighlightStrength;
+                highlightedRenderer.color = Color.Lerp(
+                    originalVehicleColor,
+                    highlightColor,
+                    strength
+                );
+            }
+
+            yield return null;
+        }
+
+        hintPulseCoroutine = null;
+    }
+
+    private IEnumerator HintFallbackTimeoutRoutine()
+    {
+        yield return new WaitForSecondsRealtime(Mathf.Max(0.1f, hintHighlightMaxDuration));
+        hintTimeoutCoroutine = null;
+        ClearCurrentHint("Timeout");
+    }
+
+    private void SubscribeToHighlightedVehicle()
+    {
+        if (highlightedVehicle == null || isSubscribedToHighlightedVehicle)
+        {
+            return;
+        }
+
+        highlightedVehicle.OnVehicleMoved += OnHintedVehicleMoved;
+        isSubscribedToHighlightedVehicle = true;
+    }
+
+    private void UnsubscribeFromHighlightedVehicle()
+    {
+        if (highlightedVehicle != null && isSubscribedToHighlightedVehicle)
+        {
+            highlightedVehicle.OnVehicleMoved -= OnHintedVehicleMoved;
+        }
+
+        isSubscribedToHighlightedVehicle = false;
+    }
+
+    private void OnHintedVehicleMoved(VehicleController movedVehicle)
+    {
+        if (highlightedVehicle == null)
+        {
+            return;
+        }
+
+        // Alleen de hinted auto mag zijn eigen highlight verwijderen.
+        if (movedVehicle != highlightedVehicle)
+        {
+            return;
+        }
+
+        ClearCurrentHint("HintedVehicleMoved");
     }
 
     private void ShowHintStatus(string message)
@@ -647,41 +803,6 @@ public class HintManager : MonoBehaviour
         return HintDirection.Right;
     }
 
-    private IEnumerator ShowHintFeedback(VehicleController vehicle, HintDirection direction)
-    {
-        activeHintVehicle = vehicle;
-
-        Debug.Log("Showing hint on: " + vehicle.name);
-        Debug.Log("Hint direction: " + direction);
-
-        BeginHighlight(vehicle);
-        ShowHintDirection(vehicle, direction);
-
-        float elapsed = 0f;
-        while (elapsed < highlightDuration)
-        {
-            elapsed += Time.deltaTime;
-            float t = Mathf.PingPong(elapsed * 4f, 1f);
-            float eased = Mathf.SmoothStep(0f, 1f, t);
-
-            if (highlightedRenderer != null && hasStoredOriginalColor)
-            {
-                highlightedRenderer.color = Color.Lerp(
-                    originalVehicleColor,
-                    highlightColor,
-                    eased
-                );
-            }
-
-            yield return null;
-        }
-
-        HideHintDirection(vehicle);
-        activeHintVehicle = null;
-        RestorePreviousHighlight();
-        hintVisualCoroutine = null;
-    }
-
     private void BeginHighlight(VehicleController vehicle)
     {
         RestorePreviousHighlight();
@@ -704,7 +825,8 @@ public class HintManager : MonoBehaviour
         Debug.Log(
             "HINT VISUAL: highlight vehicle " + vehicle.name +
             ", originalColor=" + originalVehicleColor +
-            ", newColor=" + highlightColor
+            ", highlightColor=" + highlightColor +
+            ", maxStrength=" + maxHighlightStrength
         );
     }
 
@@ -738,7 +860,12 @@ public class HintManager : MonoBehaviour
         }
 
         hintObject.SetActive(true);
-        hintObject.transform.localScale = vehicle.HintDirectionBaseScale;
+
+        // Basis-scale van prefab — pulse rekent altijd vanaf deze originele scale.
+        originalArrowScale = vehicle.HintDirectionBaseScale;
+        activeHintArrowTransform = hintObject.transform;
+        activeHintArrowTransform.localScale = originalArrowScale;
+        hasStoredArrowScale = true;
 
         Color c = arrowRenderer.color;
         c.a = 1f;
@@ -792,7 +919,7 @@ public class HintManager : MonoBehaviour
         }
     }
 
-    private static void HideHintDirection(VehicleController vehicle)
+    private void HideHintDirection(VehicleController vehicle)
     {
         if (vehicle == null)
         {
@@ -810,6 +937,16 @@ public class HintManager : MonoBehaviour
 
         if (hintObject != null)
         {
+            // Altijd terug naar opgeslagen/base scale (niet mid-pulse laten hangen).
+            if (hasStoredArrowScale)
+            {
+                hintObject.transform.localScale = originalArrowScale;
+            }
+            else
+            {
+                hintObject.transform.localScale = vehicle.HintDirectionBaseScale;
+            }
+
             hintObject.transform.localRotation = Quaternion.identity;
             hintObject.SetActive(false);
         }

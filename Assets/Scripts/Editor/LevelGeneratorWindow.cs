@@ -8,7 +8,7 @@ using UnityEngine;
 using Debug = UnityEngine.Debug;
 
 /// <summary>
-/// Editor-only Random level generator voor Rush Out.
+/// Editor-only Random level generator voor Grid Drive.
 /// Menu: RushOut → Generate Levels
 ///
 /// Pipeline: Random placement → cheap filters → RushOutSolver →
@@ -101,7 +101,7 @@ public class LevelGeneratorWindow : EditorWindow
     {
         scroll = EditorGUILayout.BeginScrollView(scroll);
 
-        EditorGUILayout.LabelField("Rush Out — Level Generator", EditorStyles.boldLabel);
+        EditorGUILayout.LabelField("Grid Drive — Level Generator", EditorStyles.boldLabel);
         EditorGUILayout.Space(6f);
 
         DifficultyPreset newPreset = (DifficultyPreset)EditorGUILayout.EnumPopup(

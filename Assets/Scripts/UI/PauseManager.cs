@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 /// <summary>
@@ -89,7 +88,7 @@ public class PauseManager : MonoBehaviour
     public void GoToMainMenu()
     {
         Time.timeScale = 1f;
-        SceneManager.LoadScene("MainMenu");
+        SceneTransition.LoadScene("MainMenu");
     }
 
     /// <summary>
@@ -109,7 +108,7 @@ public class PauseManager : MonoBehaviour
             dimOverlay.SetActive(false);
         }
 
-        SceneManager.LoadScene("LevelSelect");
+        SceneTransition.LoadScene("LevelSelect");
     }
 
     /// <summary>

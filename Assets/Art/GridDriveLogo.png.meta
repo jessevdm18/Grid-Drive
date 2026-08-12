@@ -1,10 +1,22 @@
 fileFormatVersion: 2
-guid: 8384ec7dcc5aeeb43801fa6c5decd3ce
+guid: 2d45239d0b5624e438c364dc281b5529
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -5263901000037509129
-    second: Arrow_Hint_0
+      213: -7472144772829311979
+    second: GridDriveLogo_0
+  - first:
+      213: 3613561662722252853
+    second: GridDriveLogo_1
+  - first:
+      213: -8645433231818656065
+    second: GridDriveLogo_2
+  - first:
+      213: 8403388008392917303
+    second: GridDriveLogo_3
+  - first:
+      213: -8783203145051442189
+    second: GridDriveLogo_4
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -126,13 +138,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Arrow_Hint_0
+      name: GridDriveLogo_0
       rect:
         serializedVersion: 2
-        x: 1
-        y: 0
-        width: 484
-        height: 315
+        x: 0
+        y: 47
+        width: 1254
+        height: 1155
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,8 +153,96 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 7f7d0f70eedd2f6b0800000000000000
-      internalID: -5263901000037509129
+      spriteID: 51c87311beb9d4890800000000000000
+      internalID: -7472144772829311979
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GridDriveLogo_1
+      rect:
+        serializedVersion: 2
+        x: 939
+        y: 103
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 530a780df23f52230800000000000000
+      internalID: 3613561662722252853
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GridDriveLogo_2
+      rect:
+        serializedVersion: 2
+        x: 940
+        y: 106
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fb67718f740450880800000000000000
+      internalID: -8645433231818656065
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GridDriveLogo_3
+      rect:
+        serializedVersion: 2
+        x: 943
+        y: 98
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 731890eded4de9470800000000000000
+      internalID: 8403388008392917303
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GridDriveLogo_4
+      rect:
+        serializedVersion: 2
+        x: 946
+        y: 111
+        width: 8
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3f37d15664bcb1680800000000000000
+      internalID: -8783203145051442189
       vertices: []
       indices: 
       edges: []
@@ -161,7 +261,11 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Arrow_Hint_0: -5263901000037509129
+      GridDriveLogo_0: -7472144772829311979
+      GridDriveLogo_1: 3613561662722252853
+      GridDriveLogo_2: -8645433231818656065
+      GridDriveLogo_3: 8403388008392917303
+      GridDriveLogo_4: -8783203145051442189
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
