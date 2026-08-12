@@ -7,6 +7,7 @@ using UnityEngine;
 public class MainMenuUI : MonoBehaviour
 {
     [SerializeField] private MainMenuSettingsUI settingsUI;
+    [SerializeField] private ShopUIController shopUI;
 
     /// <summary>
     /// Start het spel → Gameplay-scene.
@@ -41,6 +42,26 @@ public class MainMenuUI : MonoBehaviour
         else
         {
             Debug.LogWarning("MainMenuUI: MainMenuSettingsUI is not assigned.");
+        }
+    }
+
+    /// <summary>
+    /// ShopButton: opent het ShopPanel (geen scene load).
+    /// </summary>
+    public void OnShopButton()
+    {
+        if (shopUI == null)
+        {
+            shopUI = FindFirstObjectByType<ShopUIController>();
+        }
+
+        if (shopUI != null)
+        {
+            shopUI.OpenShop();
+        }
+        else
+        {
+            Debug.LogWarning("MainMenuUI: ShopUIController is not assigned.");
         }
     }
 }
