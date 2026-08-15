@@ -1,0 +1,1690 @@
+fileFormatVersion: 2
+guid: 0ed48e96497cf284e9676faf9e6c52aa
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 4495642639387609335
+    second: CandyCity_FloatingCandy_0
+  - first:
+      213: 483720969220733665
+    second: CandyCity_FloatingCandy_1
+  - first:
+      213: 5768416392700317357
+    second: CandyCity_FloatingCandy_2
+  - first:
+      213: -5433048935362523781
+    second: CandyCity_FloatingCandy_3
+  - first:
+      213: -3463130046655282417
+    second: CandyCity_FloatingCandy_4
+  - first:
+      213: -109125421266274684
+    second: CandyCity_FloatingCandy_5
+  - first:
+      213: -3906803448571882032
+    second: CandyCity_FloatingCandy_6
+  - first:
+      213: 7471810666080864533
+    second: CandyCity_FloatingCandy_7
+  - first:
+      213: 6336317357749575476
+    second: CandyCity_FloatingCandy_8
+  - first:
+      213: 3036339831649359456
+    second: CandyCity_FloatingCandy_9
+  - first:
+      213: -7568531845948849916
+    second: CandyCity_FloatingCandy_10
+  - first:
+      213: -4696483003363513013
+    second: CandyCity_FloatingCandy_11
+  - first:
+      213: 4355943961788998926
+    second: CandyCity_FloatingCandy_12
+  - first:
+      213: 6435736419046088697
+    second: CandyCity_FloatingCandy_13
+  - first:
+      213: 4003974678563653917
+    second: CandyCity_FloatingCandy_14
+  - first:
+      213: -7384332031639040536
+    second: CandyCity_FloatingCandy_15
+  - first:
+      213: -8320570576442371606
+    second: CandyCity_FloatingCandy_16
+  - first:
+      213: 8919240610798190366
+    second: CandyCity_FloatingCandy_17
+  - first:
+      213: 1762453679143877081
+    second: CandyCity_FloatingCandy_18
+  - first:
+      213: -7819591168807615595
+    second: CandyCity_FloatingCandy_19
+  - first:
+      213: 6425506054571728262
+    second: CandyCity_FloatingCandy_20
+  - first:
+      213: 8057651506811218575
+    second: CandyCity_FloatingCandy_21
+  - first:
+      213: -1919705094127488401
+    second: CandyCity_FloatingCandy_22
+  - first:
+      213: -2941238622385941885
+    second: CandyCity_FloatingCandy_23
+  - first:
+      213: -7788330631963609796
+    second: CandyCity_FloatingCandy_24
+  - first:
+      213: -3615145640813236693
+    second: CandyCity_FloatingCandy_25
+  - first:
+      213: 2456787736393089673
+    second: CandyCity_FloatingCandy_26
+  - first:
+      213: 4483953012197147782
+    second: CandyCity_FloatingCandy_27
+  - first:
+      213: 4987020275870390432
+    second: CandyCity_FloatingCandy_28
+  - first:
+      213: -574008114195531808
+    second: CandyCity_FloatingCandy_29
+  - first:
+      213: 5163072196834796606
+    second: CandyCity_FloatingCandy_30
+  - first:
+      213: 6447337100069868703
+    second: CandyCity_FloatingCandy_31
+  - first:
+      213: 7528203832060214304
+    second: CandyCity_FloatingCandy_32
+  - first:
+      213: -5539226739304057187
+    second: CandyCity_FloatingCandy_33
+  - first:
+      213: -8481321789545161236
+    second: CandyCity_FloatingCandy_34
+  - first:
+      213: 1724471138214820262
+    second: CandyCity_FloatingCandy_35
+  - first:
+      213: 3864388555603579642
+    second: CandyCity_FloatingCandy_36
+  - first:
+      213: 1033416260429312313
+    second: CandyCity_FloatingCandy_37
+  - first:
+      213: -118714738366899171
+    second: CandyCity_FloatingCandy_38
+  - first:
+      213: 7784238243454861576
+    second: CandyCity_FloatingCandy_39
+  - first:
+      213: 6473234984757032349
+    second: CandyCity_FloatingCandy_40
+  - first:
+      213: -1440318360899733873
+    second: CandyCity_FloatingCandy_41
+  - first:
+      213: -8741086639218066821
+    second: CandyCity_FloatingCandy_42
+  - first:
+      213: -3798949048373918569
+    second: CandyCity_FloatingCandy_43
+  - first:
+      213: -7978657017949616032
+    second: CandyCity_FloatingCandy_44
+  - first:
+      213: 1282969433963586268
+    second: CandyCity_FloatingCandy_45
+  - first:
+      213: 8754457107424396060
+    second: CandyCity_FloatingCandy_46
+  - first:
+      213: -2686035320978044631
+    second: CandyCity_FloatingCandy_47
+  - first:
+      213: 4277028465400592452
+    second: CandyCity_FloatingCandy_48
+  - first:
+      213: 462194738703472758
+    second: CandyCity_FloatingCandy_49
+  - first:
+      213: 4496517316627630815
+    second: CandyCity_FloatingCandy_50
+  - first:
+      213: 4357252569361037346
+    second: CandyCity_FloatingCandy_51
+  - first:
+      213: 8747936332772908180
+    second: CandyCity_FloatingCandy_52
+  - first:
+      213: 1212356802513500212
+    second: CandyCity_FloatingCandy_53
+  - first:
+      213: -3495015404982434245
+    second: CandyCity_FloatingCandy_54
+  - first:
+      213: 8391307095082218869
+    second: CandyCity_FloatingCandy_55
+  - first:
+      213: 4604993129536314589
+    second: CandyCity_FloatingCandy_56
+  - first:
+      213: -2751886353735860292
+    second: CandyCity_FloatingCandy_57
+  - first:
+      213: 3138593538870025548
+    second: CandyCity_FloatingCandy_58
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: CandyCity_FloatingCandy_0
+      rect:
+        serializedVersion: 2
+        x: 142
+        y: 1620
+        width: 56
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7f84ccd592bb36e30800000000000000
+      internalID: 4495642639387609335
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_FloatingCandy_1
+      rect:
+        serializedVersion: 2
+        x: 379
+        y: 1510
+        width: 212
+        height: 126
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1ea3fcc98a586b600800000000000000
+      internalID: 483720969220733665
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_FloatingCandy_2
+      rect:
+        serializedVersion: 2
+        x: 752
+        y: 1548
+        width: 115
+        height: 102
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dae417395288d0050800000000000000
+      internalID: 5768416392700317357
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_FloatingCandy_3
+      rect:
+        serializedVersion: 2
+        x: 892
+        y: 1599
+        width: 18
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b7d076067cee994b0800000000000000
+      internalID: -5433048935362523781
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_FloatingCandy_4
+      rect:
+        serializedVersion: 2
+        x: 12
+        y: 1458
+        width: 151
+        height: 155
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f03412e229d70ffc0800000000000000
+      internalID: -3463130046655282417
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_FloatingCandy_5
+      rect:
+        serializedVersion: 2
+        x: 902
+        y: 1601
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 486757de10f4c7ef0800000000000000
+      internalID: -109125421266274684
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_FloatingCandy_6
+      rect:
+        serializedVersion: 2
+        x: 162
+        y: 1526
+        width: 38
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0d51a9076fe38c9c0800000000000000
+      internalID: -3906803448571882032
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_FloatingCandy_7
+      rect:
+        serializedVersion: 2
+        x: 574
+        y: 1544
+        width: 7
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 51989b4a63431b760800000000000000
+      internalID: 7471810666080864533
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_FloatingCandy_8
+      rect:
+        serializedVersion: 2
+        x: 744
+        y: 1500
+        width: 57
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 43f1eccc01f1fe750800000000000000
+      internalID: 6336317357749575476
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_FloatingCandy_9
+      rect:
+        serializedVersion: 2
+        x: 842
+        y: 1415
+        width: 99
+        height: 164
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 06654da5dfe332a20800000000000000
+      internalID: 3036339831649359456
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_FloatingCandy_10
+      rect:
+        serializedVersion: 2
+        x: 118
+        y: 1438
+        width: 58
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 401ccfac26c27f690800000000000000
+      internalID: -7568531845948849916
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_FloatingCandy_11
+      rect:
+        serializedVersion: 2
+        x: 795
+        y: 1468
+        width: 48
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b4dabda679db2deb0800000000000000
+      internalID: -4696483003363513013
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_FloatingCandy_12
+      rect:
+        serializedVersion: 2
+        x: 53
+        y: 1398
+        width: 53
+        height: 43
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e05e0f754fb637c30800000000000000
+      internalID: 4355943961788998926
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_FloatingCandy_13
+      rect:
+        serializedVersion: 2
+        x: 105
+        y: 1423
+        width: 10
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9ff5945dc24505950800000000000000
+      internalID: 6435736419046088697
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_FloatingCandy_14
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 1305
+        width: 117
+        height: 126
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d19027591c9f09730800000000000000
+      internalID: 4003974678563653917
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_FloatingCandy_15
+      rect:
+        serializedVersion: 2
+        x: 227
+        y: 87
+        width: 579
+        height: 1356
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8edcd9e1425958990800000000000000
+      internalID: -7384332031639040536
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_FloatingCandy_16
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1264
+        width: 98
+        height: 157
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ae1d59e1525678c80800000000000000
+      internalID: -8320570576442371606
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_FloatingCandy_17
+      rect:
+        serializedVersion: 2
+        x: 178
+        y: 1346
+        width: 10
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e1f3dd0541287cb70800000000000000
+      internalID: 8919240610798190366
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_FloatingCandy_18
+      rect:
+        serializedVersion: 2
+        x: 827
+        y: 1264
+        width: 114
+        height: 120
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9d97376884e757810800000000000000
+      internalID: 1762453679143877081
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_FloatingCandy_19
+      rect:
+        serializedVersion: 2
+        x: 166
+        y: 1319
+        width: 18
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 593c07e034b3b7390800000000000000
+      internalID: -7819591168807615595
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_FloatingCandy_20
+      rect:
+        serializedVersion: 2
+        x: 266
+        y: 1285
+        width: 31
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 68d9edc76bbfb2950800000000000000
+      internalID: 6425506054571728262
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_FloatingCandy_21
+      rect:
+        serializedVersion: 2
+        x: 810
+        y: 1173
+        width: 53
+        height: 122
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f8aaf5baa5782df60800000000000000
+      internalID: 8057651506811218575
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_FloatingCandy_22
+      rect:
+        serializedVersion: 2
+        x: 14
+        y: 1112
+        width: 82
+        height: 80
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f62f50f4366db55e0800000000000000
+      internalID: -1919705094127488401
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_FloatingCandy_23
+      rect:
+        serializedVersion: 2
+        x: 887
+        y: 1185
+        width: 54
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 382d6096e0f9e27d0800000000000000
+      internalID: -2941238622385941885
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_FloatingCandy_24
+      rect:
+        serializedVersion: 2
+        x: 45
+        y: 1044
+        width: 78
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c35f388fd8a4ae390800000000000000
+      internalID: -7788330631963609796
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_FloatingCandy_25
+      rect:
+        serializedVersion: 2
+        x: 797
+        y: 1068
+        width: 97
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b2e660c813c64ddc0800000000000000
+      internalID: -3615145640813236693
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_FloatingCandy_26
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1004
+        width: 50
+        height: 57
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9820f3cfd63481220800000000000000
+      internalID: 2456787736393089673
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_FloatingCandy_27
+      rect:
+        serializedVersion: 2
+        x: 101
+        y: 1014
+        width: 12
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 684cd81f1833a3e30800000000000000
+      internalID: 4483953012197147782
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_FloatingCandy_28
+      rect:
+        serializedVersion: 2
+        x: 880
+        y: 1011
+        width: 52
+        height: 56
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0a8dceeb484753540800000000000000
+      internalID: 4987020275870390432
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_FloatingCandy_29
+      rect:
+        serializedVersion: 2
+        x: 45
+        y: 905
+        width: 70
+        height: 67
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0e7fe2f49a6b808f0800000000000000
+      internalID: -574008114195531808
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_FloatingCandy_30
+      rect:
+        serializedVersion: 2
+        x: 833
+        y: 821
+        width: 108
+        height: 181
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e34a802decae6a740800000000000000
+      internalID: 5163072196834796606
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_FloatingCandy_31
+      rect:
+        serializedVersion: 2
+        x: 713
+        y: 875
+        width: 26
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f949cdcdeea897950800000000000000
+      internalID: 6447337100069868703
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_FloatingCandy_32
+      rect:
+        serializedVersion: 2
+        x: 14
+        y: 833
+        width: 38
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 02cfea6cf7d897860800000000000000
+      internalID: 7528203832060214304
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_FloatingCandy_33
+      rect:
+        serializedVersion: 2
+        x: 807
+        y: 813
+        width: 40
+        height: 43
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d96bf61f0a6b023b0800000000000000
+      internalID: -5539226739304057187
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_FloatingCandy_34
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 722
+        width: 117
+        height: 104
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ced5164b4ca4c4a80800000000000000
+      internalID: -8481321789545161236
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_FloatingCandy_35
+      rect:
+        serializedVersion: 2
+        x: 89
+        y: 702
+        width: 42
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6a935b21d5d8ee710800000000000000
+      internalID: 1724471138214820262
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_FloatingCandy_36
+      rect:
+        serializedVersion: 2
+        x: 823
+        y: 702
+        width: 113
+        height: 107
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: af216dabae011a530800000000000000
+      internalID: 3864388555603579642
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_FloatingCandy_37
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 524
+        width: 82
+        height: 124
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 93170041d9e675e00800000000000000
+      internalID: 1033416260429312313
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_FloatingCandy_38
+      rect:
+        serializedVersion: 2
+        x: 833
+        y: 640
+        width: 77
+        height: 43
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d1c990e039d3a5ef0800000000000000
+      internalID: -118714738366899171
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_FloatingCandy_39
+      rect:
+        serializedVersion: 2
+        x: 811
+        y: 494
+        width: 66
+        height: 61
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8014324907b270c60800000000000000
+      internalID: 7784238243454861576
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_FloatingCandy_40
+      rect:
+        serializedVersion: 2
+        x: 837
+        y: 554
+        width: 71
+        height: 63
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d95f2160cec85d950800000000000000
+      internalID: 6473234984757032349
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_FloatingCandy_41
+      rect:
+        serializedVersion: 2
+        x: 873
+        y: 433
+        width: 57
+        height: 67
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f863917f416f20ce0800000000000000
+      internalID: -1440318360899733873
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_FloatingCandy_42
+      rect:
+        serializedVersion: 2
+        x: 925
+        y: 487
+        width: 11
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b7a7e7e830c61b680800000000000000
+      internalID: -8741086639218066821
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_FloatingCandy_43
+      rect:
+        serializedVersion: 2
+        x: 78
+        y: 330
+        width: 134
+        height: 98
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7944ddbd7fb674bc0800000000000000
+      internalID: -3798949048373918569
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_FloatingCandy_44
+      rect:
+        serializedVersion: 2
+        x: 801
+        y: 316
+        width: 56
+        height: 56
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0688f6407bd164190800000000000000
+      internalID: -7978657017949616032
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_FloatingCandy_45
+      rect:
+        serializedVersion: 2
+        x: 854
+        y: 369
+        width: 58
+        height: 51
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cd2651917e50ec110800000000000000
+      internalID: 1282969433963586268
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_FloatingCandy_46
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 29
+        width: 123
+        height: 170
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c13cc692b541e7970800000000000000
+      internalID: 8754457107424396060
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_FloatingCandy_47
+      rect:
+        serializedVersion: 2
+        x: 31
+        y: 196
+        width: 92
+        height: 126
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 92983f65b1949bad0800000000000000
+      internalID: -2686035320978044631
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_FloatingCandy_48
+      rect:
+        serializedVersion: 2
+        x: 184
+        y: 216
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 448bf668abe0b5b30800000000000000
+      internalID: 4277028465400592452
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_FloatingCandy_49
+      rect:
+        serializedVersion: 2
+        x: 193
+        y: 216
+        width: 11
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 67899718aab0a6600800000000000000
+      internalID: 462194738703472758
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_FloatingCandy_50
+      rect:
+        serializedVersion: 2
+        x: 251
+        y: 195
+        width: 42
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fda8bf70da6d66e30800000000000000
+      internalID: 4496517316627630815
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_FloatingCandy_51
+      rect:
+        serializedVersion: 2
+        x: 290
+        y: 216
+        width: 19
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2283c694022187c30800000000000000
+      internalID: 4357252569361037346
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_FloatingCandy_52
+      rect:
+        serializedVersion: 2
+        x: 357
+        y: 184
+        width: 11
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 49c99a00fb9e66970800000000000000
+      internalID: 8747936332772908180
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_FloatingCandy_53
+      rect:
+        serializedVersion: 2
+        x: 805
+        y: 190
+        width: 136
+        height: 134
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 43878daa61823d010800000000000000
+      internalID: 1212356802513500212
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_FloatingCandy_54
+      rect:
+        serializedVersion: 2
+        x: 808
+        y: 166
+        width: 37
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b36018da1063f7fc0800000000000000
+      internalID: -3495015404982434245
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_FloatingCandy_55
+      rect:
+        serializedVersion: 2
+        x: 135
+        y: 59
+        width: 47
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 575379b0859e37470800000000000000
+      internalID: 8391307095082218869
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_FloatingCandy_56
+      rect:
+        serializedVersion: 2
+        x: 144
+        y: 111
+        width: 66
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ddc502f5ad838ef30800000000000000
+      internalID: 4604993129536314589
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_FloatingCandy_57
+      rect:
+        serializedVersion: 2
+        x: 777
+        y: 31
+        width: 135
+        height: 132
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cbf345ff0f55fc9d0800000000000000
+      internalID: -2751886353735860292
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_FloatingCandy_58
+      rect:
+        serializedVersion: 2
+        x: 168
+        y: 0
+        width: 98
+        height: 72
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c4d1fa2d1368e8b20800000000000000
+      internalID: 3138593538870025548
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      CandyCity_FloatingCandy_0: 4495642639387609335
+      CandyCity_FloatingCandy_1: 483720969220733665
+      CandyCity_FloatingCandy_10: -7568531845948849916
+      CandyCity_FloatingCandy_11: -4696483003363513013
+      CandyCity_FloatingCandy_12: 4355943961788998926
+      CandyCity_FloatingCandy_13: 6435736419046088697
+      CandyCity_FloatingCandy_14: 4003974678563653917
+      CandyCity_FloatingCandy_15: -7384332031639040536
+      CandyCity_FloatingCandy_16: -8320570576442371606
+      CandyCity_FloatingCandy_17: 8919240610798190366
+      CandyCity_FloatingCandy_18: 1762453679143877081
+      CandyCity_FloatingCandy_19: -7819591168807615595
+      CandyCity_FloatingCandy_2: 5768416392700317357
+      CandyCity_FloatingCandy_20: 6425506054571728262
+      CandyCity_FloatingCandy_21: 8057651506811218575
+      CandyCity_FloatingCandy_22: -1919705094127488401
+      CandyCity_FloatingCandy_23: -2941238622385941885
+      CandyCity_FloatingCandy_24: -7788330631963609796
+      CandyCity_FloatingCandy_25: -3615145640813236693
+      CandyCity_FloatingCandy_26: 2456787736393089673
+      CandyCity_FloatingCandy_27: 4483953012197147782
+      CandyCity_FloatingCandy_28: 4987020275870390432
+      CandyCity_FloatingCandy_29: -574008114195531808
+      CandyCity_FloatingCandy_3: -5433048935362523781
+      CandyCity_FloatingCandy_30: 5163072196834796606
+      CandyCity_FloatingCandy_31: 6447337100069868703
+      CandyCity_FloatingCandy_32: 7528203832060214304
+      CandyCity_FloatingCandy_33: -5539226739304057187
+      CandyCity_FloatingCandy_34: -8481321789545161236
+      CandyCity_FloatingCandy_35: 1724471138214820262
+      CandyCity_FloatingCandy_36: 3864388555603579642
+      CandyCity_FloatingCandy_37: 1033416260429312313
+      CandyCity_FloatingCandy_38: -118714738366899171
+      CandyCity_FloatingCandy_39: 7784238243454861576
+      CandyCity_FloatingCandy_4: -3463130046655282417
+      CandyCity_FloatingCandy_40: 6473234984757032349
+      CandyCity_FloatingCandy_41: -1440318360899733873
+      CandyCity_FloatingCandy_42: -8741086639218066821
+      CandyCity_FloatingCandy_43: -3798949048373918569
+      CandyCity_FloatingCandy_44: -7978657017949616032
+      CandyCity_FloatingCandy_45: 1282969433963586268
+      CandyCity_FloatingCandy_46: 8754457107424396060
+      CandyCity_FloatingCandy_47: -2686035320978044631
+      CandyCity_FloatingCandy_48: 4277028465400592452
+      CandyCity_FloatingCandy_49: 462194738703472758
+      CandyCity_FloatingCandy_5: -109125421266274684
+      CandyCity_FloatingCandy_50: 4496517316627630815
+      CandyCity_FloatingCandy_51: 4357252569361037346
+      CandyCity_FloatingCandy_52: 8747936332772908180
+      CandyCity_FloatingCandy_53: 1212356802513500212
+      CandyCity_FloatingCandy_54: -3495015404982434245
+      CandyCity_FloatingCandy_55: 8391307095082218869
+      CandyCity_FloatingCandy_56: 4604993129536314589
+      CandyCity_FloatingCandy_57: -2751886353735860292
+      CandyCity_FloatingCandy_58: 3138593538870025548
+      CandyCity_FloatingCandy_6: -3906803448571882032
+      CandyCity_FloatingCandy_7: 7471810666080864533
+      CandyCity_FloatingCandy_8: 6336317357749575476
+      CandyCity_FloatingCandy_9: 3036339831649359456
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

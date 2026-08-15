@@ -1,0 +1,2106 @@
+fileFormatVersion: 2
+guid: e3837e0d4e72d8f4da74af6de74418d0
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -6603673044871936057
+    second: CandyCity_Sparkles_0
+  - first:
+      213: 1657080898772003525
+    second: CandyCity_Sparkles_1
+  - first:
+      213: 8383088900631051585
+    second: CandyCity_Sparkles_2
+  - first:
+      213: -3514913606410424430
+    second: CandyCity_Sparkles_3
+  - first:
+      213: 2410839771609783279
+    second: CandyCity_Sparkles_4
+  - first:
+      213: -5700723701091380160
+    second: CandyCity_Sparkles_5
+  - first:
+      213: -567243511700672035
+    second: CandyCity_Sparkles_6
+  - first:
+      213: -8527668256948600428
+    second: CandyCity_Sparkles_7
+  - first:
+      213: -1115884758499412700
+    second: CandyCity_Sparkles_8
+  - first:
+      213: -668035925363309797
+    second: CandyCity_Sparkles_9
+  - first:
+      213: -8990627865996452100
+    second: CandyCity_Sparkles_10
+  - first:
+      213: -5943818665456812727
+    second: CandyCity_Sparkles_11
+  - first:
+      213: 4734548436908924883
+    second: CandyCity_Sparkles_12
+  - first:
+      213: -5692385230658294403
+    second: CandyCity_Sparkles_13
+  - first:
+      213: -7065942375884189368
+    second: CandyCity_Sparkles_14
+  - first:
+      213: 8376980086379843178
+    second: CandyCity_Sparkles_15
+  - first:
+      213: 1359560097409787683
+    second: CandyCity_Sparkles_16
+  - first:
+      213: 2787414905797103928
+    second: CandyCity_Sparkles_17
+  - first:
+      213: 367985505696785962
+    second: CandyCity_Sparkles_18
+  - first:
+      213: 1931680574240783332
+    second: CandyCity_Sparkles_19
+  - first:
+      213: 6195838046696164794
+    second: CandyCity_Sparkles_20
+  - first:
+      213: -4641775187886841308
+    second: CandyCity_Sparkles_21
+  - first:
+      213: -2158563130192351827
+    second: CandyCity_Sparkles_22
+  - first:
+      213: -179281372133559275
+    second: CandyCity_Sparkles_23
+  - first:
+      213: -5114825507748611546
+    second: CandyCity_Sparkles_24
+  - first:
+      213: 7217466167250563895
+    second: CandyCity_Sparkles_25
+  - first:
+      213: -2335507325196838149
+    second: CandyCity_Sparkles_26
+  - first:
+      213: -5354136995882566560
+    second: CandyCity_Sparkles_27
+  - first:
+      213: -6538896109263412345
+    second: CandyCity_Sparkles_28
+  - first:
+      213: -2525327295600951390
+    second: CandyCity_Sparkles_29
+  - first:
+      213: 7567934451265875721
+    second: CandyCity_Sparkles_30
+  - first:
+      213: -3342093397566880529
+    second: CandyCity_Sparkles_31
+  - first:
+      213: 1326541790811514609
+    second: CandyCity_Sparkles_32
+  - first:
+      213: -2033275755332393607
+    second: CandyCity_Sparkles_33
+  - first:
+      213: -1542978866283344496
+    second: CandyCity_Sparkles_34
+  - first:
+      213: -5099848491377495379
+    second: CandyCity_Sparkles_35
+  - first:
+      213: -4482045844453007768
+    second: CandyCity_Sparkles_36
+  - first:
+      213: 8472580719514354552
+    second: CandyCity_Sparkles_37
+  - first:
+      213: -8506522908843538914
+    second: CandyCity_Sparkles_38
+  - first:
+      213: 7914539739675021094
+    second: CandyCity_Sparkles_39
+  - first:
+      213: 3845773603476639207
+    second: CandyCity_Sparkles_40
+  - first:
+      213: -8525408326956692621
+    second: CandyCity_Sparkles_41
+  - first:
+      213: -8571829752361241298
+    second: CandyCity_Sparkles_42
+  - first:
+      213: 4132971748386638345
+    second: CandyCity_Sparkles_43
+  - first:
+      213: 3535737253391112824
+    second: CandyCity_Sparkles_44
+  - first:
+      213: 8772074028476984810
+    second: CandyCity_Sparkles_45
+  - first:
+      213: 5705170238275466730
+    second: CandyCity_Sparkles_46
+  - first:
+      213: 947763198300267213
+    second: CandyCity_Sparkles_47
+  - first:
+      213: 2578345917606746669
+    second: CandyCity_Sparkles_48
+  - first:
+      213: -1295955519666340213
+    second: CandyCity_Sparkles_49
+  - first:
+      213: -3177814475980519497
+    second: CandyCity_Sparkles_50
+  - first:
+      213: -43267741380725280
+    second: CandyCity_Sparkles_51
+  - first:
+      213: 2672983841978649220
+    second: CandyCity_Sparkles_52
+  - first:
+      213: -8496754490459787017
+    second: CandyCity_Sparkles_53
+  - first:
+      213: 2509026324021631352
+    second: CandyCity_Sparkles_54
+  - first:
+      213: 7034044760873936354
+    second: CandyCity_Sparkles_55
+  - first:
+      213: 5913476194669656627
+    second: CandyCity_Sparkles_56
+  - first:
+      213: 4365950357077140399
+    second: CandyCity_Sparkles_57
+  - first:
+      213: 5164031787169696487
+    second: CandyCity_Sparkles_58
+  - first:
+      213: -2373118298897991598
+    second: CandyCity_Sparkles_59
+  - first:
+      213: -5540853066682979167
+    second: CandyCity_Sparkles_60
+  - first:
+      213: -7036069942779714679
+    second: CandyCity_Sparkles_61
+  - first:
+      213: -4691238313312613447
+    second: CandyCity_Sparkles_62
+  - first:
+      213: -6571462556188637413
+    second: CandyCity_Sparkles_63
+  - first:
+      213: 6631124679390895885
+    second: CandyCity_Sparkles_64
+  - first:
+      213: 5454360223807785712
+    second: CandyCity_Sparkles_65
+  - first:
+      213: 5776260942388564630
+    second: CandyCity_Sparkles_66
+  - first:
+      213: -7314105443237437200
+    second: CandyCity_Sparkles_67
+  - first:
+      213: 8287559947721330346
+    second: CandyCity_Sparkles_68
+  - first:
+      213: -6240579789490508188
+    second: CandyCity_Sparkles_69
+  - first:
+      213: 2119338373053735776
+    second: CandyCity_Sparkles_70
+  - first:
+      213: 169809630621249083
+    second: CandyCity_Sparkles_71
+  - first:
+      213: -3313199333708855838
+    second: CandyCity_Sparkles_72
+  - first:
+      213: 1508815078867656363
+    second: CandyCity_Sparkles_73
+  - first:
+      213: 8669058176761155925
+    second: CandyCity_Sparkles_74
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 489
+        width: 516
+        height: 1183
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7c7069b7a5a0b54a0800000000000000
+      internalID: -6603673044871936057
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_1
+      rect:
+        serializedVersion: 2
+        x: 30
+        y: 1357
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5cae36f3c422ff610800000000000000
+      internalID: 1657080898772003525
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_2
+      rect:
+        serializedVersion: 2
+        x: 38
+        y: 1357
+        width: 6
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 14d32aa80f6b65470800000000000000
+      internalID: 8383088900631051585
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_3
+      rect:
+        serializedVersion: 2
+        x: 61
+        y: 1307
+        width: 58
+        height: 75
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 29f28b1a2b4883fc0800000000000000
+      internalID: -3514913606410424430
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_4
+      rect:
+        serializedVersion: 2
+        x: 118
+        y: 1309
+        width: 102
+        height: 109
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: feb5f25cff5057120800000000000000
+      internalID: 2410839771609783279
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_5
+      rect:
+        serializedVersion: 2
+        x: 397
+        y: 1355
+        width: 261
+        height: 299
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0445cc16ff5f2e0b0800000000000000
+      internalID: -5700723701091380160
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_6
+      rect:
+        serializedVersion: 2
+        x: 584
+        y: 1528
+        width: 9
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dd1bfef080fb028f0800000000000000
+      internalID: -567243511700672035
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_7
+      rect:
+        serializedVersion: 2
+        x: 592
+        y: 1528
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 491443ed6e2a7a980800000000000000
+      internalID: -8527668256948600428
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_8
+      rect:
+        serializedVersion: 2
+        x: 608
+        y: 1510
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 425be5f69b49380f0800000000000000
+      internalID: -1115884758499412700
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_9
+      rect:
+        serializedVersion: 2
+        x: 647
+        y: 1380
+        width: 294
+        height: 292
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b1345838dd8aab6f0800000000000000
+      internalID: -668035925363309797
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_10
+      rect:
+        serializedVersion: 2
+        x: 653
+        y: 1430
+        width: 11
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cfe9d8b179fda3380800000000000000
+      internalID: -8990627865996452100
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_11
+      rect:
+        serializedVersion: 2
+        x: 775
+        y: 1309
+        width: 106
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 94d3c1c5a60538da0800000000000000
+      internalID: -5943818665456812727
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_12
+      rect:
+        serializedVersion: 2
+        x: 880
+        y: 1287
+        width: 52
+        height: 107
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3df56d9f7be74b140800000000000000
+      internalID: 4734548436908924883
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_13
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1181
+        width: 64
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d7daee1dac59001b0800000000000000
+      internalID: -5692385230658294403
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_14
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1010
+        width: 64
+        height: 85
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8411b0a98dab0fd90800000000000000
+      internalID: -7065942375884189368
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_15
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 718
+        width: 82
+        height: 154
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a6e01336103014470800000000000000
+      internalID: 8376980086379843178
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_16
+      rect:
+        serializedVersion: 2
+        x: 9
+        y: 873
+        width: 87
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 327e7e094b02ed210800000000000000
+      internalID: 1359560097409787683
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_17
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 1253
+        width: 40
+        height: 59
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8315aa5a613eea620800000000000000
+      internalID: 2787414905797103928
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_18
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 1102
+        width: 89
+        height: 98
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a26ac852ed85b1500800000000000000
+      internalID: 367985505696785962
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_19
+      rect:
+        serializedVersion: 2
+        x: 18
+        y: 1094
+        width: 14
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4ebf42f6f35beca10800000000000000
+      internalID: 1931680574240783332
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_20
+      rect:
+        serializedVersion: 2
+        x: 103
+        y: 1020
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: abdcc2360e90cf550800000000000000
+      internalID: 6195838046696164794
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_21
+      rect:
+        serializedVersion: 2
+        x: 111
+        y: 909
+        width: 52
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 42268ce4f0a159fb0800000000000000
+      internalID: -4641775187886841308
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_22
+      rect:
+        serializedVersion: 2
+        x: 162
+        y: 1082
+        width: 48
+        height: 59
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dad21a7054e3b02e0800000000000000
+      internalID: -2158563130192351827
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_23
+      rect:
+        serializedVersion: 2
+        x: 176
+        y: 1179
+        width: 20
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 514722bba80138df0800000000000000
+      internalID: -179281372133559275
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_24
+      rect:
+        serializedVersion: 2
+        x: 282
+        y: 996
+        width: 15
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 62a798adc4d7409b0800000000000000
+      internalID: -5114825507748611546
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_25
+      rect:
+        serializedVersion: 2
+        x: 302
+        y: 887
+        width: 11
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 733be554d37992460800000000000000
+      internalID: 7217466167250563895
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_26
+      rect:
+        serializedVersion: 2
+        x: 308
+        y: 887
+        width: 14
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bfad157367c969fd0800000000000000
+      internalID: -2335507325196838149
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_27
+      rect:
+        serializedVersion: 2
+        x: 314
+        y: 954
+        width: 9
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 06c74a905c842b5b0800000000000000
+      internalID: -5354136995882566560
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_28
+      rect:
+        serializedVersion: 2
+        x: 322
+        y: 954
+        width: 6
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 783ab2812ac2145a0800000000000000
+      internalID: -6538896109263412345
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_29
+      rect:
+        serializedVersion: 2
+        x: 324
+        y: 835
+        width: 16
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2af7b14543c34fcd0800000000000000
+      internalID: -2525327295600951390
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_30
+      rect:
+        serializedVersion: 2
+        x: 339
+        y: 821
+        width: 29
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 90fa42b6944b60960800000000000000
+      internalID: 7567934451265875721
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_31
+      rect:
+        serializedVersion: 2
+        x: 414
+        y: 935
+        width: 45
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fe409d713cf7e91d0800000000000000
+      internalID: -3342093397566880529
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_32
+      rect:
+        serializedVersion: 2
+        x: 470
+        y: 1018
+        width: 8
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1f6e70dfab2d86210800000000000000
+      internalID: 1326541790811514609
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_33
+      rect:
+        serializedVersion: 2
+        x: 513
+        y: 841
+        width: 43
+        height: 41
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 975aff8297a58c3e0800000000000000
+      internalID: -2033275755332393607
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_34
+      rect:
+        serializedVersion: 2
+        x: 543
+        y: 831
+        width: 296
+        height: 518
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 09d0f3b65ec369ae0800000000000000
+      internalID: -1542978866283344496
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_35
+      rect:
+        serializedVersion: 2
+        x: 625
+        y: 789
+        width: 35
+        height: 59
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: da2f12731d2b939b0800000000000000
+      internalID: -5099848491377495379
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_36
+      rect:
+        serializedVersion: 2
+        x: 694
+        y: 571
+        width: 247
+        height: 380
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 86edc562d039cc1c0800000000000000
+      internalID: -4482045844453007768
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_37
+      rect:
+        serializedVersion: 2
+        x: 752
+        y: 923
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8730a755647a49570800000000000000
+      internalID: 8472580719514354552
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_38
+      rect:
+        serializedVersion: 2
+        x: 767
+        y: 1124
+        width: 64
+        height: 84
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e1688a0eb72c2f980800000000000000
+      internalID: -8506522908843538914
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_39
+      rect:
+        serializedVersion: 2
+        x: 777
+        y: 966
+        width: 19
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 62fca00d5f716dd60800000000000000
+      internalID: 7914539739675021094
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_40
+      rect:
+        serializedVersion: 2
+        x: 817
+        y: 1090
+        width: 38
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7ed8cc177beee5530800000000000000
+      internalID: 3845773603476639207
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_41
+      rect:
+        serializedVersion: 2
+        x: 819
+        y: 1212
+        width: 16
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 37bc692db4aafa980800000000000000
+      internalID: -8525408326956692621
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_42
+      rect:
+        serializedVersion: 2
+        x: 825
+        y: 1197
+        width: 10
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e253267714eba0980800000000000000
+      internalID: -8571829752361241298
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_43
+      rect:
+        serializedVersion: 2
+        x: 827
+        y: 947
+        width: 18
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 90a8f4168e34b5930800000000000000
+      internalID: 4132971748386638345
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_44
+      rect:
+        serializedVersion: 2
+        x: 832
+        y: 1187
+        width: 102
+        height: 107
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 87a1e7f7c46711130800000000000000
+      internalID: 3535737253391112824
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_45
+      rect:
+        serializedVersion: 2
+        x: 848
+        y: 1022
+        width: 93
+        height: 162
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aedecca3adaacb970800000000000000
+      internalID: 8772074028476984810
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_46
+      rect:
+        serializedVersion: 2
+        x: 858
+        y: 968
+        width: 13
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ae53a8bba16dc2f40800000000000000
+      internalID: 5705170238275466730
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_47
+      rect:
+        serializedVersion: 2
+        x: 868
+        y: 970
+        width: 19
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dc220ed7b91272d00800000000000000
+      internalID: 947763198300267213
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_48
+      rect:
+        serializedVersion: 2
+        x: 882
+        y: 939
+        width: 59
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d2a570f83ff18c320800000000000000
+      internalID: 2578345917606746669
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_49
+      rect:
+        serializedVersion: 2
+        x: 904
+        y: 1209
+        width: 12
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b8eb4953257d30ee0800000000000000
+      internalID: -1295955519666340213
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_50
+      rect:
+        serializedVersion: 2
+        x: 87
+        y: 734
+        width: 9
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7b74615229226e3d0800000000000000
+      internalID: -3177814475980519497
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_51
+      rect:
+        serializedVersion: 2
+        x: 95
+        y: 729
+        width: 10
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0e5b4cce738466ff0800000000000000
+      internalID: -43267741380725280
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_52
+      rect:
+        serializedVersion: 2
+        x: 103
+        y: 730
+        width: 9
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 48a0f7764a8581520800000000000000
+      internalID: 2672983841978649220
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_53
+      rect:
+        serializedVersion: 2
+        x: 560
+        y: 594
+        width: 90
+        height: 148
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7f070740fc6751a80800000000000000
+      internalID: -8496754490459787017
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_54
+      rect:
+        serializedVersion: 2
+        x: 803
+        y: 471
+        width: 138
+        height: 273
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 879d967f52ad1d220800000000000000
+      internalID: 2509026324021631352
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_55
+      rect:
+        serializedVersion: 2
+        x: 833
+        y: 738
+        width: 12
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2e5a61a2172fd9160800000000000000
+      internalID: 7034044760873936354
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_56
+      rect:
+        serializedVersion: 2
+        x: 436
+        y: 722
+        width: 13
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 33a7303a443e01250800000000000000
+      internalID: 5913476194669656627
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_57
+      rect:
+        serializedVersion: 2
+        x: 464
+        y: 722
+        width: 10
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fa3a29cc7b8f69c30800000000000000
+      internalID: 4365950357077140399
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_58
+      rect:
+        serializedVersion: 2
+        x: 507
+        y: 713
+        width: 23
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7ea431bdc835aa740800000000000000
+      internalID: 5164031787169696487
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_59
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 638
+        width: 115
+        height: 63
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 258b4300b7df01fd0800000000000000
+      internalID: -2373118298897991598
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_60
+      rect:
+        serializedVersion: 2
+        x: 479
+        y: 696
+        width: 7
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1ac2ab71e7fea13b0800000000000000
+      internalID: -5540853066682979167
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_61
+      rect:
+        serializedVersion: 2
+        x: 257
+        y: 666
+        width: 10
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 983efcd6aabda5e90800000000000000
+      internalID: -7036069942779714679
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_62
+      rect:
+        serializedVersion: 2
+        x: 266
+        y: 665
+        width: 9
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9bb8c4afb9f55eeb0800000000000000
+      internalID: -4691238313312613447
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_63
+      rect:
+        serializedVersion: 2
+        x: 150
+        y: 513
+        width: 76
+        height: 96
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b17889b4f997dc4a0800000000000000
+      internalID: -6571462556188637413
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_64
+      rect:
+        serializedVersion: 2
+        x: 178
+        y: 602
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d0f9b6043cc760c50800000000000000
+      internalID: 6631124679390895885
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_65
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 509
+        width: 48
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0fa4511a9b7c1bb40800000000000000
+      internalID: 5454360223807785712
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_66
+      rect:
+        serializedVersion: 2
+        x: 387
+        y: 550
+        width: 20
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 692980129b6692050800000000000000
+      internalID: 5776260942388564630
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_67
+      rect:
+        serializedVersion: 2
+        x: 111
+        y: 521
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0f0e416e9d31f7a90800000000000000
+      internalID: -7314105443237437200
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_68
+      rect:
+        serializedVersion: 2
+        x: 432
+        y: 0
+        width: 509
+        height: 527
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aae4fa2fcd3530370800000000000000
+      internalID: 8287559947721330346
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_69
+      rect:
+        serializedVersion: 2
+        x: 706
+        y: 519
+        width: 35
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 46eafe6deb10569a0800000000000000
+      internalID: -6240579789490508188
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_70
+      rect:
+        serializedVersion: 2
+        x: 762
+        y: 451
+        width: 67
+        height: 90
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 063e8b48507696d10800000000000000
+      internalID: 2119338373053735776
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_71
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 433
+        height: 501
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b3eae9895f84b5200800000000000000
+      internalID: 169809630621249083
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_72
+      rect:
+        serializedVersion: 2
+        x: 430
+        y: 258
+        width: 21
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2e5093492c62502d0800000000000000
+      internalID: -3313199333708855838
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_73
+      rect:
+        serializedVersion: 2
+        x: 517
+        y: 134
+        width: 11
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: baed8a7f15360f410800000000000000
+      internalID: 1508815078867656363
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Sparkles_74
+      rect:
+        serializedVersion: 2
+        x: 460
+        y: 115
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5515b0b2b7eae4870800000000000000
+      internalID: 8669058176761155925
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      CandyCity_Sparkles_0: -6603673044871936057
+      CandyCity_Sparkles_1: 1657080898772003525
+      CandyCity_Sparkles_10: -8990627865996452100
+      CandyCity_Sparkles_11: -5943818665456812727
+      CandyCity_Sparkles_12: 4734548436908924883
+      CandyCity_Sparkles_13: -5692385230658294403
+      CandyCity_Sparkles_14: -7065942375884189368
+      CandyCity_Sparkles_15: 8376980086379843178
+      CandyCity_Sparkles_16: 1359560097409787683
+      CandyCity_Sparkles_17: 2787414905797103928
+      CandyCity_Sparkles_18: 367985505696785962
+      CandyCity_Sparkles_19: 1931680574240783332
+      CandyCity_Sparkles_2: 8383088900631051585
+      CandyCity_Sparkles_20: 6195838046696164794
+      CandyCity_Sparkles_21: -4641775187886841308
+      CandyCity_Sparkles_22: -2158563130192351827
+      CandyCity_Sparkles_23: -179281372133559275
+      CandyCity_Sparkles_24: -5114825507748611546
+      CandyCity_Sparkles_25: 7217466167250563895
+      CandyCity_Sparkles_26: -2335507325196838149
+      CandyCity_Sparkles_27: -5354136995882566560
+      CandyCity_Sparkles_28: -6538896109263412345
+      CandyCity_Sparkles_29: -2525327295600951390
+      CandyCity_Sparkles_3: -3514913606410424430
+      CandyCity_Sparkles_30: 7567934451265875721
+      CandyCity_Sparkles_31: -3342093397566880529
+      CandyCity_Sparkles_32: 1326541790811514609
+      CandyCity_Sparkles_33: -2033275755332393607
+      CandyCity_Sparkles_34: -1542978866283344496
+      CandyCity_Sparkles_35: -5099848491377495379
+      CandyCity_Sparkles_36: -4482045844453007768
+      CandyCity_Sparkles_37: 8472580719514354552
+      CandyCity_Sparkles_38: -8506522908843538914
+      CandyCity_Sparkles_39: 7914539739675021094
+      CandyCity_Sparkles_4: 2410839771609783279
+      CandyCity_Sparkles_40: 3845773603476639207
+      CandyCity_Sparkles_41: -8525408326956692621
+      CandyCity_Sparkles_42: -8571829752361241298
+      CandyCity_Sparkles_43: 4132971748386638345
+      CandyCity_Sparkles_44: 3535737253391112824
+      CandyCity_Sparkles_45: 8772074028476984810
+      CandyCity_Sparkles_46: 5705170238275466730
+      CandyCity_Sparkles_47: 947763198300267213
+      CandyCity_Sparkles_48: 2578345917606746669
+      CandyCity_Sparkles_49: -1295955519666340213
+      CandyCity_Sparkles_5: -5700723701091380160
+      CandyCity_Sparkles_50: -3177814475980519497
+      CandyCity_Sparkles_51: -43267741380725280
+      CandyCity_Sparkles_52: 2672983841978649220
+      CandyCity_Sparkles_53: -8496754490459787017
+      CandyCity_Sparkles_54: 2509026324021631352
+      CandyCity_Sparkles_55: 7034044760873936354
+      CandyCity_Sparkles_56: 5913476194669656627
+      CandyCity_Sparkles_57: 4365950357077140399
+      CandyCity_Sparkles_58: 5164031787169696487
+      CandyCity_Sparkles_59: -2373118298897991598
+      CandyCity_Sparkles_6: -567243511700672035
+      CandyCity_Sparkles_60: -5540853066682979167
+      CandyCity_Sparkles_61: -7036069942779714679
+      CandyCity_Sparkles_62: -4691238313312613447
+      CandyCity_Sparkles_63: -6571462556188637413
+      CandyCity_Sparkles_64: 6631124679390895885
+      CandyCity_Sparkles_65: 5454360223807785712
+      CandyCity_Sparkles_66: 5776260942388564630
+      CandyCity_Sparkles_67: -7314105443237437200
+      CandyCity_Sparkles_68: 8287559947721330346
+      CandyCity_Sparkles_69: -6240579789490508188
+      CandyCity_Sparkles_7: -8527668256948600428
+      CandyCity_Sparkles_70: 2119338373053735776
+      CandyCity_Sparkles_71: 169809630621249083
+      CandyCity_Sparkles_72: -3313199333708855838
+      CandyCity_Sparkles_73: 1508815078867656363
+      CandyCity_Sparkles_74: 8669058176761155925
+      CandyCity_Sparkles_8: -1115884758499412700
+      CandyCity_Sparkles_9: -668035925363309797
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

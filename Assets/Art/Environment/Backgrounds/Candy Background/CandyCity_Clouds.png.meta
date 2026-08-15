@@ -1,0 +1,832 @@
+fileFormatVersion: 2
+guid: 6fd34fbce951fa242adf34238f2d9c24
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -5388420762645401549
+    second: CandyCity_Clouds_0
+  - first:
+      213: 6113961706947743261
+    second: CandyCity_Clouds_1
+  - first:
+      213: -5433830248652101519
+    second: CandyCity_Clouds_2
+  - first:
+      213: -4016734903627524510
+    second: CandyCity_Clouds_3
+  - first:
+      213: 2316638923401251918
+    second: CandyCity_Clouds_4
+  - first:
+      213: -792159839329224980
+    second: CandyCity_Clouds_5
+  - first:
+      213: 5265283933403797218
+    second: CandyCity_Clouds_6
+  - first:
+      213: 2260475067010882692
+    second: CandyCity_Clouds_7
+  - first:
+      213: -3024681530205974073
+    second: CandyCity_Clouds_8
+  - first:
+      213: -1737740898334041691
+    second: CandyCity_Clouds_9
+  - first:
+      213: 2910172206434987432
+    second: CandyCity_Clouds_10
+  - first:
+      213: 8348079024723147366
+    second: CandyCity_Clouds_11
+  - first:
+      213: -7694636305105244542
+    second: CandyCity_Clouds_12
+  - first:
+      213: -2333331993554443126
+    second: CandyCity_Clouds_13
+  - first:
+      213: 1705445930774574331
+    second: CandyCity_Clouds_14
+  - first:
+      213: -396962670405560956
+    second: CandyCity_Clouds_15
+  - first:
+      213: 4349529186497630353
+    second: CandyCity_Clouds_16
+  - first:
+      213: 2886808219507282906
+    second: CandyCity_Clouds_17
+  - first:
+      213: -4724336297786041645
+    second: CandyCity_Clouds_18
+  - first:
+      213: 7367416167665034994
+    second: CandyCity_Clouds_19
+  - first:
+      213: -2795931213218134642
+    second: CandyCity_Clouds_20
+  - first:
+      213: 905941484303418789
+    second: CandyCity_Clouds_21
+  - first:
+      213: 2347468698512470554
+    second: CandyCity_Clouds_22
+  - first:
+      213: -7910853783258182352
+    second: CandyCity_Clouds_23
+  - first:
+      213: 3250805301843414920
+    second: CandyCity_Clouds_24
+  - first:
+      213: 5874565873969895480
+    second: CandyCity_Clouds_25
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: CandyCity_Clouds_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1339
+        width: 381
+        height: 333
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3307e2e8ddb7835b0800000000000000
+      internalID: -5388420762645401549
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Clouds_1
+      rect:
+        serializedVersion: 2
+        x: 566
+        y: 1468
+        width: 150
+        height: 186
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d1e06f087c729d450800000000000000
+      internalID: 6113961706947743261
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Clouds_2
+      rect:
+        serializedVersion: 2
+        x: 647
+        y: 1396
+        width: 294
+        height: 257
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 178a153bd282794b0800000000000000
+      internalID: -5433830248652101519
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Clouds_3
+      rect:
+        serializedVersion: 2
+        x: 740
+        y: 1622
+        width: 34
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2665e5003e0b148c0800000000000000
+      internalID: -4016734903627524510
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Clouds_4
+      rect:
+        serializedVersion: 2
+        x: 827
+        y: 1639
+        width: 6
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e4ccc26a3da562020800000000000000
+      internalID: 2316638923401251918
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Clouds_5
+      rect:
+        serializedVersion: 2
+        x: 832
+        y: 1645
+        width: 25
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ce6737bb2dea105f0800000000000000
+      internalID: -792159839329224980
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Clouds_6
+      rect:
+        serializedVersion: 2
+        x: 834
+        y: 1641
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2e6da1c37db021940800000000000000
+      internalID: 5265283933403797218
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Clouds_7
+      rect:
+        serializedVersion: 2
+        x: 874
+        y: 1639
+        width: 9
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 48c9fc0d812de5f10800000000000000
+      internalID: 2260475067010882692
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Clouds_8
+      rect:
+        serializedVersion: 2
+        x: 878
+        y: 1647
+        width: 36
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7c153697c2c2606d0800000000000000
+      internalID: -3024681530205974073
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Clouds_9
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 1548
+        width: 66
+        height: 88
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5a991232cdd42e7e0800000000000000
+      internalID: -1737740898334041691
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Clouds_10
+      rect:
+        serializedVersion: 2
+        x: 681
+        y: 1534
+        width: 6
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8ada5c7f332036820800000000000000
+      internalID: 2910172206434987432
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Clouds_11
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 554
+        width: 814
+        height: 880
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 66a338994a55ad370800000000000000
+      internalID: 8348079024723147366
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Clouds_12
+      rect:
+        serializedVersion: 2
+        x: 412
+        y: 1417
+        width: 216
+        height: 106
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 28ea0666c09273590800000000000000
+      internalID: -7694636305105244542
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Clouds_13
+      rect:
+        serializedVersion: 2
+        x: 649
+        y: 1334
+        width: 119
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a8422251ae65e9fd0800000000000000
+      internalID: -2333331993554443126
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Clouds_14
+      rect:
+        serializedVersion: 2
+        x: 736
+        y: 1398
+        width: 9
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bf43477c906faa710800000000000000
+      internalID: 1705445930774574331
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Clouds_15
+      rect:
+        serializedVersion: 2
+        x: 785
+        y: 1380
+        width: 9
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 485d261fd84bd7af0800000000000000
+      internalID: -396962670405560956
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Clouds_16
+      rect:
+        serializedVersion: 2
+        x: 224
+        y: 1333
+        width: 78
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 190926510c1ac5c30800000000000000
+      internalID: 4349529186497630353
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Clouds_17
+      rect:
+        serializedVersion: 2
+        x: 479
+        y: 1076
+        width: 462
+        height: 321
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ad3d86ad7c0001820800000000000000
+      internalID: 2886808219507282906
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Clouds_18
+      rect:
+        serializedVersion: 2
+        x: 14
+        y: 1223
+        width: 11
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3da9af2fa29cf6eb0800000000000000
+      internalID: -4724336297786041645
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Clouds_19
+      rect:
+        serializedVersion: 2
+        x: 47
+        y: 1187
+        width: 118
+        height: 61
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2f6e42268f15e3660800000000000000
+      internalID: 7367416167665034994
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Clouds_20
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1028
+        width: 167
+        height: 168
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e85c4b3006bd239d0800000000000000
+      internalID: -2795931213218134642
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Clouds_21
+      rect:
+        serializedVersion: 2
+        x: 740
+        y: 1048
+        width: 13
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5a50237eafc829c00800000000000000
+      internalID: 905941484303418789
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Clouds_22
+      rect:
+        serializedVersion: 2
+        x: 752
+        y: 1054
+        width: 28
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a123f280852e39020800000000000000
+      internalID: 2347468698512470554
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Clouds_23
+      rect:
+        serializedVersion: 2
+        x: 764
+        y: 949
+        width: 177
+        height: 98
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 03d47dac560073290800000000000000
+      internalID: -7910853783258182352
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Clouds_24
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 470
+        height: 414
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 88f4552d23e2d1d20800000000000000
+      internalID: 3250805301843414920
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CandyCity_Clouds_25
+      rect:
+        serializedVersion: 2
+        x: 574
+        y: 0
+        width: 367
+        height: 410
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8389b9f9986a68150800000000000000
+      internalID: 5874565873969895480
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      CandyCity_Clouds_0: -5388420762645401549
+      CandyCity_Clouds_1: 6113961706947743261
+      CandyCity_Clouds_10: 2910172206434987432
+      CandyCity_Clouds_11: 8348079024723147366
+      CandyCity_Clouds_12: -7694636305105244542
+      CandyCity_Clouds_13: -2333331993554443126
+      CandyCity_Clouds_14: 1705445930774574331
+      CandyCity_Clouds_15: -396962670405560956
+      CandyCity_Clouds_16: 4349529186497630353
+      CandyCity_Clouds_17: 2886808219507282906
+      CandyCity_Clouds_18: -4724336297786041645
+      CandyCity_Clouds_19: 7367416167665034994
+      CandyCity_Clouds_2: -5433830248652101519
+      CandyCity_Clouds_20: -2795931213218134642
+      CandyCity_Clouds_21: 905941484303418789
+      CandyCity_Clouds_22: 2347468698512470554
+      CandyCity_Clouds_23: -7910853783258182352
+      CandyCity_Clouds_24: 3250805301843414920
+      CandyCity_Clouds_25: 5874565873969895480
+      CandyCity_Clouds_3: -4016734903627524510
+      CandyCity_Clouds_4: 2316638923401251918
+      CandyCity_Clouds_5: -792159839329224980
+      CandyCity_Clouds_6: 5265283933403797218
+      CandyCity_Clouds_7: 2260475067010882692
+      CandyCity_Clouds_8: -3024681530205974073
+      CandyCity_Clouds_9: -1737740898334041691
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
