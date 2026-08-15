@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a836af6d5637554aa4394737576f32d, type: 3}
+  m_Name: Skin_Classic
+  m_EditorClassIdentifier: Assembly-CSharp::VehicleSkinData
+  skinId: classic
+  displayName: Classic
+  coinPrice: 0
+  previewSprite: {fileID: 21300000, guid: a60fd6b4e6fa27d45acc69211d5def01, type: 3}
+  unlockedByDefault: 1
+  spriteLibrary: {fileID: 11400000, guid: 7c942e01680e5684694332f4f78afb87, type: 2}
+  backgroundTheme: {fileID: 11400000, guid: ae74c23a54668754c807872c157828ff, type: 2}

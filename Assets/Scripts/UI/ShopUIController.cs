@@ -30,8 +30,16 @@ public class ShopUIController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI coinBalanceText;
     [SerializeField] private CoinManager coinManager;
 
+    [Header("Skins (optioneel)")]
+    [SerializeField] private SkinManager skinManager;
+
     private void Awake()
     {
+        if (skinManager == null)
+        {
+            skinManager = FindFirstObjectByType<SkinManager>();
+        }
+
         WireButtons();
 
         if (shopPanel != null)
@@ -110,6 +118,62 @@ public class ShopUIController : MonoBehaviour
         }
 
         SetTabVisual(coinsActive: false);
+        RefreshSkinCards();
+    }
+
+    /// <summary>
+    /// Helper voor Inspector OnClick: koop skin via SkinManager.
+    /// </summary>
+    public void OnSkinBuyClicked(string skinId)
+    {
+        if (skinManager == null)
+        {
+            skinManager = FindFirstObjectByType<SkinManager>();
+        }
+
+        if (skinManager == null || string.IsNullOrWhiteSpace(skinId))
+        {
+            return;
+        }
+
+        skinManager.TryPurchaseSkin(skinId);
+        RefreshSkinCards();
+        RefreshCoinBalance();
+    }
+
+    /// <summary>
+    /// Helper voor Inspector OnClick: selecteer owned skin.
+    /// </summary>
+    public void OnSkinSelectClicked(string skinId)
+    {
+        if (skinManager == null)
+        {
+            skinManager = FindFirstObjectByType<SkinManager>();
+        }
+
+        if (skinManager == null || string.IsNullOrWhiteSpace(skinId))
+        {
+            return;
+        }
+
+        skinManager.SelectSkin(skinId);
+        RefreshSkinCards();
+    }
+
+    private void RefreshSkinCards()
+    {
+        SkinShopCardUI[] cards = FindObjectsByType<SkinShopCardUI>(
+            FindObjectsInactive.Include,
+            FindObjectsSortMode.None
+        );
+
+        for (int i = 0; i < cards.Length; i++)
+        {
+            if (cards[i] != null)
+            {
+                cards[i].Refresh();
+            }
+        }
     }
 
     private void WireButtons()

@@ -1,0 +1,1014 @@
+fileFormatVersion: 2
+guid: 89ed8582541825949a15a4ea625d29da
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -55853547404331392
+    second: Car_Target_Neon_0
+  - first:
+      213: 1404061591626405219
+    second: Car_Target_Neon_1
+  - first:
+      213: -8049874794129124981
+    second: Car_Target_Neon_2
+  - first:
+      213: -9019962748017578061
+    second: Car_Target_Neon_3
+  - first:
+      213: -739534469899253430
+    second: Car_Target_Neon_4
+  - first:
+      213: 6482355760794400415
+    second: Car_Target_Neon_5
+  - first:
+      213: -8934802648022477565
+    second: Car_Target_Neon_6
+  - first:
+      213: 378234800225448354
+    second: Car_Target_Neon_7
+  - first:
+      213: -8399034563914873732
+    second: Car_Target_Neon_8
+  - first:
+      213: -5292867269623655443
+    second: Car_Target_Neon_9
+  - first:
+      213: -6484955253294697053
+    second: Car_Target_Neon_10
+  - first:
+      213: 3198727320988639131
+    second: Car_Target_Neon_11
+  - first:
+      213: -4666856951773720525
+    second: Car_Target_Neon_12
+  - first:
+      213: 5299723255334175004
+    second: Car_Target_Neon_13
+  - first:
+      213: -2322228017000767612
+    second: Car_Target_Neon_14
+  - first:
+      213: 4258397873287465714
+    second: Car_Target_Neon_15
+  - first:
+      213: 6337351639179269038
+    second: Car_Target_Neon_16
+  - first:
+      213: -7537856290862363489
+    second: Car_Target_Neon_17
+  - first:
+      213: 405710726169595210
+    second: Car_Target_Neon_18
+  - first:
+      213: 164313614269126451
+    second: Car_Target_Neon_19
+  - first:
+      213: -7793947218878741321
+    second: Car_Target_Neon_20
+  - first:
+      213: 2818923846746036397
+    second: Car_Target_Neon_21
+  - first:
+      213: 6303967879898904857
+    second: Car_Target_Neon_22
+  - first:
+      213: 1593666912946987681
+    second: Car_Target_Neon_23
+  - first:
+      213: 6774122733590469114
+    second: Car_Target_Neon_24
+  - first:
+      213: -7019975001948302385
+    second: Car_Target_Neon_25
+  - first:
+      213: 550378240749129952
+    second: Car_Target_Neon_26
+  - first:
+      213: -6768375117789889533
+    second: Car_Target_Neon_27
+  - first:
+      213: -4519452319337949463
+    second: Car_Target_Neon_28
+  - first:
+      213: 7472923390206989075
+    second: Car_Target_Neon_29
+  - first:
+      213: 4864436967919691768
+    second: Car_Target_Neon_30
+  - first:
+      213: -4859650185987064357
+    second: Car_Target_Neon_31
+  - first:
+      213: 1338867918804852075
+    second: Car_Target_Neon_32
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Car_Target_Neon_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 1523
+        height: 1004
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 086f48b9e71993ff0800000000000000
+      internalID: -55853547404331392
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Car_Target_Neon_1
+      rect:
+        serializedVersion: 2
+        x: 998
+        y: 879
+        width: 61
+        height: 133
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 36559ab149a3c7310800000000000000
+      internalID: 1404061591626405219
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Car_Target_Neon_2
+      rect:
+        serializedVersion: 2
+        x: 1336
+        y: 983
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b8110995689194090800000000000000
+      internalID: -8049874794129124981
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Car_Target_Neon_3
+      rect:
+        serializedVersion: 2
+        x: 1360
+        y: 983
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3bfe725aba7a2d280800000000000000
+      internalID: -9019962748017578061
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Car_Target_Neon_4
+      rect:
+        serializedVersion: 2
+        x: 910
+        y: 883
+        width: 15
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a498f7e5155acb5f0800000000000000
+      internalID: -739534469899253430
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Car_Target_Neon_5
+      rect:
+        serializedVersion: 2
+        x: 962
+        y: 884
+        width: 7
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f967bdd2834f5f950800000000000000
+      internalID: 6482355760794400415
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Car_Target_Neon_6
+      rect:
+        serializedVersion: 2
+        x: 710
+        y: 871
+        width: 9
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 305966a8454310480800000000000000
+      internalID: -8934802648022477565
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Car_Target_Neon_7
+      rect:
+        serializedVersion: 2
+        x: 882
+        y: 871
+        width: 7
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2a1f02dfb82cf3500800000000000000
+      internalID: 378234800225448354
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Car_Target_Neon_8
+      rect:
+        serializedVersion: 2
+        x: 1088
+        y: 867
+        width: 7
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c7440a96092a07b80800000000000000
+      internalID: -8399034563914873732
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Car_Target_Neon_9
+      rect:
+        serializedVersion: 2
+        x: 1094
+        y: 861
+        width: 23
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: de35ac6d245fb86b0800000000000000
+      internalID: -5292867269623655443
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Car_Target_Neon_10
+      rect:
+        serializedVersion: 2
+        x: 1472
+        y: 573
+        width: 25
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3a5f01f4e8fc006a0800000000000000
+      internalID: -6484955253294697053
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Car_Target_Neon_11
+      rect:
+        serializedVersion: 2
+        x: 95
+        y: 535
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b9f5dd40d89246c20800000000000000
+      internalID: 3198727320988639131
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Car_Target_Neon_12
+      rect:
+        serializedVersion: 2
+        x: 1454
+        y: 486
+        width: 7
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 33017f3145efb3fb0800000000000000
+      internalID: -4666856951773720525
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Car_Target_Neon_13
+      rect:
+        serializedVersion: 2
+        x: 1477
+        y: 479
+        width: 10
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c11021ab8366c8940800000000000000
+      internalID: 5299723255334175004
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Car_Target_Neon_14
+      rect:
+        serializedVersion: 2
+        x: 1464
+        y: 462
+        width: 19
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 48f95371ce9c5cfd0800000000000000
+      internalID: -2322228017000767612
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Car_Target_Neon_15
+      rect:
+        serializedVersion: 2
+        x: 130
+        y: 417
+        width: 23
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2fa0495cd4ed81b30800000000000000
+      internalID: 4258397873287465714
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Car_Target_Neon_16
+      rect:
+        serializedVersion: 2
+        x: 1472
+        y: 447
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ea315063dbbc2f750800000000000000
+      internalID: 6337351639179269038
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Car_Target_Neon_17
+      rect:
+        serializedVersion: 2
+        x: 1430
+        y: 431
+        width: 16
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f9c843704a7246790800000000000000
+      internalID: -7537856290862363489
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Car_Target_Neon_18
+      rect:
+        serializedVersion: 2
+        x: 1416
+        y: 415
+        width: 7
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a4d87e281cf51a500800000000000000
+      internalID: 405710726169595210
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Car_Target_Neon_19
+      rect:
+        serializedVersion: 2
+        x: 130
+        y: 359
+        width: 21
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 33795429c52c74200800000000000000
+      internalID: 164313614269126451
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Car_Target_Neon_20
+      rect:
+        serializedVersion: 2
+        x: 1424
+        y: 343
+        width: 27
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7b4c69c6c4656d390800000000000000
+      internalID: -7793947218878741321
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Car_Target_Neon_21
+      rect:
+        serializedVersion: 2
+        x: 1478
+        y: 247
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: da8dc26ad44de1720800000000000000
+      internalID: 2818923846746036397
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Car_Target_Neon_22
+      rect:
+        serializedVersion: 2
+        x: 358
+        y: 167
+        width: 9
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 919b8dc03613c7750800000000000000
+      internalID: 6303967879898904857
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Car_Target_Neon_23
+      rect:
+        serializedVersion: 2
+        x: 592
+        y: 173
+        width: 27
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1a2af7c1d97dd1610800000000000000
+      internalID: 1593666912946987681
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Car_Target_Neon_24
+      rect:
+        serializedVersion: 2
+        x: 1010
+        y: 174
+        width: 17
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: af9de804cb4820e50800000000000000
+      internalID: 6774122733590469114
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Car_Target_Neon_25
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 177
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fc3dfbcdde9049e90800000000000000
+      internalID: -7019975001948302385
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Car_Target_Neon_26
+      rect:
+        serializedVersion: 2
+        x: 386
+        y: 161
+        width: 9
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0e0d4fb081653a700800000000000000
+      internalID: 550378240749129952
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Car_Target_Neon_27
+      rect:
+        serializedVersion: 2
+        x: 750
+        y: 145
+        width: 25
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 30c7a85d0b6e112a0800000000000000
+      internalID: -6768375117789889533
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Car_Target_Neon_28
+      rect:
+        serializedVersion: 2
+        x: 944
+        y: 141
+        width: 31
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9e6db868f0ea741c0800000000000000
+      internalID: -4519452319337949463
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Car_Target_Neon_29
+      rect:
+        serializedVersion: 2
+        x: 330
+        y: 121
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 313defaea3825b760800000000000000
+      internalID: 7472923390206989075
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Car_Target_Neon_30
+      rect:
+        serializedVersion: 2
+        x: 1192
+        y: 102
+        width: 17
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8f7a12146a3f18340800000000000000
+      internalID: 4864436967919691768
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Car_Target_Neon_31
+      rect:
+        serializedVersion: 2
+        x: 574
+        y: 69
+        width: 21
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bdd749347ed0f8cb0800000000000000
+      internalID: -4859650185987064357
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Car_Target_Neon_32
+      rect:
+        serializedVersion: 2
+        x: 1112
+        y: 90
+        width: 7
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b6d978d474d949210800000000000000
+      internalID: 1338867918804852075
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Car_Target_Neon_0: -55853547404331392
+      Car_Target_Neon_1: 1404061591626405219
+      Car_Target_Neon_10: -6484955253294697053
+      Car_Target_Neon_11: 3198727320988639131
+      Car_Target_Neon_12: -4666856951773720525
+      Car_Target_Neon_13: 5299723255334175004
+      Car_Target_Neon_14: -2322228017000767612
+      Car_Target_Neon_15: 4258397873287465714
+      Car_Target_Neon_16: 6337351639179269038
+      Car_Target_Neon_17: -7537856290862363489
+      Car_Target_Neon_18: 405710726169595210
+      Car_Target_Neon_19: 164313614269126451
+      Car_Target_Neon_2: -8049874794129124981
+      Car_Target_Neon_20: -7793947218878741321
+      Car_Target_Neon_21: 2818923846746036397
+      Car_Target_Neon_22: 6303967879898904857
+      Car_Target_Neon_23: 1593666912946987681
+      Car_Target_Neon_24: 6774122733590469114
+      Car_Target_Neon_25: -7019975001948302385
+      Car_Target_Neon_26: 550378240749129952
+      Car_Target_Neon_27: -6768375117789889533
+      Car_Target_Neon_28: -4519452319337949463
+      Car_Target_Neon_29: 7472923390206989075
+      Car_Target_Neon_3: -9019962748017578061
+      Car_Target_Neon_30: 4864436967919691768
+      Car_Target_Neon_31: -4859650185987064357
+      Car_Target_Neon_32: 1338867918804852075
+      Car_Target_Neon_4: -739534469899253430
+      Car_Target_Neon_5: 6482355760794400415
+      Car_Target_Neon_6: -8934802648022477565
+      Car_Target_Neon_7: 378234800225448354
+      Car_Target_Neon_8: -8399034563914873732
+      Car_Target_Neon_9: -5292867269623655443
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a0b1a7b68e7e43644b22fbf7f60a427f, type: 3}
+  m_Name: VehicleLibrary_Neon
+  m_EditorClassIdentifier: Assembly-CSharp::VehicleSpriteLibrary
+  targetCarSprite: {fileID: 21300000, guid: 89ed8582541825949a15a4ea625d29da, type: 3}
+  horizontalLength2Sprites:
+  - {fileID: 21300000, guid: 761b4733b08c2ad48a3cf06eafd52be6, type: 3}
+  - {fileID: 21300000, guid: 7f2fb0a142a57a049a056aeae56414ac, type: 3}
+  - {fileID: 21300000, guid: c7d669c2251b9a24fb6182e2e8da4ff8, type: 3}
+  - {fileID: 21300000, guid: aedfc5b0ecd2f654bbb27212b061b4ee, type: 3}
+  horizontalLength3Sprites:
+  - {fileID: 21300000, guid: 93248f09a0540a44caef6475dd29d2fc, type: 3}
+  - {fileID: 21300000, guid: 756a39c44332fc14790a30d1850c194c, type: 3}
+  - {fileID: 21300000, guid: 773f72eefae1d8e488737831ac08ca40, type: 3}
+  - {fileID: 21300000, guid: c0762272909789c44895a9a4e82bab36, type: 3}
+  horizontalLength4Sprites:
+  - {fileID: 21300000, guid: 40e307effd4746a42b3f7eb810ee91e4, type: 3}
+  - {fileID: 21300000, guid: 6c29d26e43fb61e4a9505acbbc9f46f4, type: 3}
+  - {fileID: 21300000, guid: ed4e36ba7f4760e48b93854fe0a2e47f, type: 3}
+  - {fileID: 21300000, guid: 8816ec3c38c09a145858e539e0482c8a, type: 3}
+  verticalLength2Sprites:
+  - {fileID: 21300000, guid: 761b4733b08c2ad48a3cf06eafd52be6, type: 3}
+  - {fileID: 21300000, guid: 7f2fb0a142a57a049a056aeae56414ac, type: 3}
+  - {fileID: 21300000, guid: c7d669c2251b9a24fb6182e2e8da4ff8, type: 3}
+  - {fileID: 21300000, guid: aedfc5b0ecd2f654bbb27212b061b4ee, type: 3}
+  verticalLength3Sprites:
+  - {fileID: 21300000, guid: 93248f09a0540a44caef6475dd29d2fc, type: 3}
+  - {fileID: 21300000, guid: 756a39c44332fc14790a30d1850c194c, type: 3}
+  - {fileID: 21300000, guid: 773f72eefae1d8e488737831ac08ca40, type: 3}
+  - {fileID: 21300000, guid: c0762272909789c44895a9a4e82bab36, type: 3}
+  verticalLength4Sprites:
+  - {fileID: 21300000, guid: 40e307effd4746a42b3f7eb810ee91e4, type: 3}
+  - {fileID: 21300000, guid: 6c29d26e43fb61e4a9505acbbc9f46f4, type: 3}
+  - {fileID: 21300000, guid: ed4e36ba7f4760e48b93854fe0a2e47f, type: 3}
+  - {fileID: 21300000, guid: 8816ec3c38c09a145858e539e0482c8a, type: 3}

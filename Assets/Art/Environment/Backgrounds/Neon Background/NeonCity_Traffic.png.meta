@@ -1,0 +1,780 @@
+fileFormatVersion: 2
+guid: 5164fc2625951334abff5bde1479f0fb
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 6295727202634782409
+    second: NeonCity_Traffic_0
+  - first:
+      213: -8743040271181414254
+    second: NeonCity_Traffic_1
+  - first:
+      213: 5968806933211396320
+    second: NeonCity_Traffic_2
+  - first:
+      213: 1568921102457273552
+    second: NeonCity_Traffic_3
+  - first:
+      213: -359934752343042208
+    second: NeonCity_Traffic_4
+  - first:
+      213: -3650509032502028775
+    second: NeonCity_Traffic_5
+  - first:
+      213: -7311661621385672361
+    second: NeonCity_Traffic_6
+  - first:
+      213: 1484421148921245473
+    second: NeonCity_Traffic_7
+  - first:
+      213: -1522449008919646593
+    second: NeonCity_Traffic_8
+  - first:
+      213: 3981816739660142345
+    second: NeonCity_Traffic_9
+  - first:
+      213: -2250944861330037121
+    second: NeonCity_Traffic_10
+  - first:
+      213: 7188798198976869818
+    second: NeonCity_Traffic_11
+  - first:
+      213: 8311152810223014334
+    second: NeonCity_Traffic_12
+  - first:
+      213: 6679247047122028726
+    second: NeonCity_Traffic_13
+  - first:
+      213: -3200772077164748614
+    second: NeonCity_Traffic_14
+  - first:
+      213: 1352575727296967931
+    second: NeonCity_Traffic_15
+  - first:
+      213: 1758612912210682907
+    second: NeonCity_Traffic_16
+  - first:
+      213: -1563270029342624450
+    second: NeonCity_Traffic_17
+  - first:
+      213: 8090239257839114860
+    second: NeonCity_Traffic_18
+  - first:
+      213: -5183900202352833890
+    second: NeonCity_Traffic_19
+  - first:
+      213: 4469230681106353457
+    second: NeonCity_Traffic_20
+  - first:
+      213: 2991848673567019824
+    second: NeonCity_Traffic_21
+  - first:
+      213: 7247915150419157487
+    second: NeonCity_Traffic_22
+  - first:
+      213: 8404129444728255468
+    second: NeonCity_Traffic_23
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: NeonCity_Traffic_0
+      rect:
+        serializedVersion: 2
+        x: 183
+        y: 1480
+        width: 143
+        height: 162
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9c65fcbd88aee5750800000000000000
+      internalID: 6295727202634782409
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Traffic_1
+      rect:
+        serializedVersion: 2
+        x: 211
+        y: 231
+        width: 703
+        height: 1412
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2900c4b223b7aa680800000000000000
+      internalID: -8743040271181414254
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Traffic_2
+      rect:
+        serializedVersion: 2
+        x: 355
+        y: 1277
+        width: 159
+        height: 375
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0e834fa184675d250800000000000000
+      internalID: 5968806933211396320
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Traffic_3
+      rect:
+        serializedVersion: 2
+        x: 466
+        y: 1633
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0dc74902e6de5c510800000000000000
+      internalID: 1568921102457273552
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Traffic_4
+      rect:
+        serializedVersion: 2
+        x: 641
+        y: 1524
+        width: 90
+        height: 118
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0675640ff31410bf0800000000000000
+      internalID: -359934752343042208
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Traffic_5
+      rect:
+        serializedVersion: 2
+        x: 47
+        y: 1430
+        width: 137
+        height: 162
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9169c5c4069c65dc0800000000000000
+      internalID: -3650509032502028775
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Traffic_6
+      rect:
+        serializedVersion: 2
+        x: 14
+        y: 1044
+        width: 206
+        height: 260
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 75943738e72c78a90800000000000000
+      internalID: -7311661621385672361
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Traffic_7
+      rect:
+        serializedVersion: 2
+        x: 255
+        y: 1277
+        width: 38
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 12f278e8b29b99410800000000000000
+      internalID: 1484421148921245473
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Traffic_8
+      rect:
+        serializedVersion: 2
+        x: 795
+        y: 1234
+        width: 121
+        height: 147
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f7ee2b251bc2fdae0800000000000000
+      internalID: -1522449008919646593
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Traffic_9
+      rect:
+        serializedVersion: 2
+        x: 316
+        y: 1217
+        width: 16
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 90795286a31424730800000000000000
+      internalID: 3981816739660142345
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Traffic_10
+      rect:
+        serializedVersion: 2
+        x: 18
+        y: 722
+        width: 269
+        height: 438
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f76ae6b139903c0e0800000000000000
+      internalID: -2250944861330037121
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Traffic_11
+      rect:
+        serializedVersion: 2
+        x: 825
+        y: 1042
+        width: 101
+        height: 120
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ab5fbf3cfddb3c360800000000000000
+      internalID: 7188798198976869818
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Traffic_12
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 584
+        width: 161
+        height: 206
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eb1155f4275275370800000000000000
+      internalID: 8311152810223014334
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Traffic_13
+      rect:
+        serializedVersion: 2
+        x: 767
+        y: 570
+        width: 174
+        height: 244
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6b809ca1dc371bc50800000000000000
+      internalID: 6679247047122028726
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Traffic_14
+      rect:
+        serializedVersion: 2
+        x: 389
+        y: 554
+        width: 16
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ab02b9511c29493d0800000000000000
+      internalID: -3200772077164748614
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Traffic_15
+      rect:
+        serializedVersion: 2
+        x: 815
+        y: 369
+        width: 126
+        height: 189
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bf4f95d257055c210800000000000000
+      internalID: 1352575727296967931
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Traffic_16
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 385
+        width: 109
+        height: 158
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b14abb94029d76810800000000000000
+      internalID: 1758612912210682907
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Traffic_17
+      rect:
+        serializedVersion: 2
+        x: 12
+        y: 0
+        width: 273
+        height: 325
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e35b40dd0362e4ae0800000000000000
+      internalID: -1563270029342624450
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Traffic_18
+      rect:
+        serializedVersion: 2
+        x: 288
+        y: 310
+        width: 15
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c6a9b67bdbd464070800000000000000
+      internalID: 8090239257839114860
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Traffic_19
+      rect:
+        serializedVersion: 2
+        x: 298
+        y: 318
+        width: 9
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e9a0faf3b361f08b0800000000000000
+      internalID: -5183900202352833890
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Traffic_20
+      rect:
+        serializedVersion: 2
+        x: 762
+        y: 93
+        width: 179
+        height: 225
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 13d0f9e10a5e50e30800000000000000
+      internalID: 4469230681106353457
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Traffic_21
+      rect:
+        serializedVersion: 2
+        x: 242
+        y: 0
+        width: 126
+        height: 197
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0339fa1648e258920800000000000000
+      internalID: 2991848673567019824
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Traffic_22
+      rect:
+        serializedVersion: 2
+        x: 625
+        y: 0
+        width: 120
+        height: 227
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fe1e7ee9d64c59460800000000000000
+      internalID: 7247915150419157487
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Traffic_23
+      rect:
+        serializedVersion: 2
+        x: 777
+        y: 0
+        width: 118
+        height: 147
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ce3bd67f33771a470800000000000000
+      internalID: 8404129444728255468
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      NeonCity_Traffic_0: 6295727202634782409
+      NeonCity_Traffic_1: -8743040271181414254
+      NeonCity_Traffic_10: -2250944861330037121
+      NeonCity_Traffic_11: 7188798198976869818
+      NeonCity_Traffic_12: 8311152810223014334
+      NeonCity_Traffic_13: 6679247047122028726
+      NeonCity_Traffic_14: -3200772077164748614
+      NeonCity_Traffic_15: 1352575727296967931
+      NeonCity_Traffic_16: 1758612912210682907
+      NeonCity_Traffic_17: -1563270029342624450
+      NeonCity_Traffic_18: 8090239257839114860
+      NeonCity_Traffic_19: -5183900202352833890
+      NeonCity_Traffic_2: 5968806933211396320
+      NeonCity_Traffic_20: 4469230681106353457
+      NeonCity_Traffic_21: 2991848673567019824
+      NeonCity_Traffic_22: 7247915150419157487
+      NeonCity_Traffic_23: 8404129444728255468
+      NeonCity_Traffic_3: 1568921102457273552
+      NeonCity_Traffic_4: -359934752343042208
+      NeonCity_Traffic_5: -3650509032502028775
+      NeonCity_Traffic_6: -7311661621385672361
+      NeonCity_Traffic_7: 1484421148921245473
+      NeonCity_Traffic_8: -1522449008919646593
+      NeonCity_Traffic_9: 3981816739660142345
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

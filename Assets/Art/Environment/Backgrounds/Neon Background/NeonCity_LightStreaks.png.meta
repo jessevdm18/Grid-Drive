@@ -1,0 +1,1742 @@
+fileFormatVersion: 2
+guid: fd2a32b04c5447b418cfd34d81e9cc71
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 7004478941886187937
+    second: NeonCity_LightStreaks_0
+  - first:
+      213: -5022395739755712252
+    second: NeonCity_LightStreaks_1
+  - first:
+      213: 5872734995350014236
+    second: NeonCity_LightStreaks_2
+  - first:
+      213: -2172021300956410679
+    second: NeonCity_LightStreaks_3
+  - first:
+      213: 3591887778971556208
+    second: NeonCity_LightStreaks_4
+  - first:
+      213: -1256122925796156774
+    second: NeonCity_LightStreaks_5
+  - first:
+      213: -7850060152434498377
+    second: NeonCity_LightStreaks_6
+  - first:
+      213: -4004685274948398431
+    second: NeonCity_LightStreaks_7
+  - first:
+      213: 8073136847454535111
+    second: NeonCity_LightStreaks_8
+  - first:
+      213: -556306823230095066
+    second: NeonCity_LightStreaks_9
+  - first:
+      213: -74209743660841415
+    second: NeonCity_LightStreaks_10
+  - first:
+      213: 6797578560040245625
+    second: NeonCity_LightStreaks_11
+  - first:
+      213: 2265313894295388047
+    second: NeonCity_LightStreaks_12
+  - first:
+      213: -4075729043326232090
+    second: NeonCity_LightStreaks_13
+  - first:
+      213: 1058132207804245452
+    second: NeonCity_LightStreaks_14
+  - first:
+      213: 5992202715031269362
+    second: NeonCity_LightStreaks_15
+  - first:
+      213: 1359185562365384496
+    second: NeonCity_LightStreaks_16
+  - first:
+      213: 6944912341443458235
+    second: NeonCity_LightStreaks_17
+  - first:
+      213: 8905376137935102039
+    second: NeonCity_LightStreaks_18
+  - first:
+      213: 3167151269820471094
+    second: NeonCity_LightStreaks_19
+  - first:
+      213: 6603878384603929306
+    second: NeonCity_LightStreaks_20
+  - first:
+      213: -5832420507083985
+    second: NeonCity_LightStreaks_21
+  - first:
+      213: 3148085032463274648
+    second: NeonCity_LightStreaks_22
+  - first:
+      213: 5429828847373377701
+    second: NeonCity_LightStreaks_23
+  - first:
+      213: 2519930832592284575
+    second: NeonCity_LightStreaks_24
+  - first:
+      213: -7378491068810292599
+    second: NeonCity_LightStreaks_25
+  - first:
+      213: 6000616898454957070
+    second: NeonCity_LightStreaks_26
+  - first:
+      213: 7093269416871176664
+    second: NeonCity_LightStreaks_27
+  - first:
+      213: 1394912061937201498
+    second: NeonCity_LightStreaks_28
+  - first:
+      213: -7704506704839007519
+    second: NeonCity_LightStreaks_29
+  - first:
+      213: -4844443765390811934
+    second: NeonCity_LightStreaks_30
+  - first:
+      213: 6919170698743943404
+    second: NeonCity_LightStreaks_31
+  - first:
+      213: 546001478983986971
+    second: NeonCity_LightStreaks_32
+  - first:
+      213: 7668185368175143392
+    second: NeonCity_LightStreaks_33
+  - first:
+      213: 844627687284600369
+    second: NeonCity_LightStreaks_34
+  - first:
+      213: -6498650446650527316
+    second: NeonCity_LightStreaks_35
+  - first:
+      213: 5260753559214368719
+    second: NeonCity_LightStreaks_36
+  - first:
+      213: -277576074909863473
+    second: NeonCity_LightStreaks_37
+  - first:
+      213: 8357002365415241862
+    second: NeonCity_LightStreaks_38
+  - first:
+      213: -561073242465569832
+    second: NeonCity_LightStreaks_39
+  - first:
+      213: -9214750975615605799
+    second: NeonCity_LightStreaks_40
+  - first:
+      213: -309312341042797341
+    second: NeonCity_LightStreaks_41
+  - first:
+      213: 1649842380919137411
+    second: NeonCity_LightStreaks_42
+  - first:
+      213: -3796403643725118574
+    second: NeonCity_LightStreaks_43
+  - first:
+      213: 6847778648053655850
+    second: NeonCity_LightStreaks_44
+  - first:
+      213: -938292361609260721
+    second: NeonCity_LightStreaks_45
+  - first:
+      213: -2447858057638658541
+    second: NeonCity_LightStreaks_46
+  - first:
+      213: -4053999124707846980
+    second: NeonCity_LightStreaks_47
+  - first:
+      213: -628275806849881348
+    second: NeonCity_LightStreaks_48
+  - first:
+      213: -3564830148602227115
+    second: NeonCity_LightStreaks_49
+  - first:
+      213: 1763648191108091677
+    second: NeonCity_LightStreaks_50
+  - first:
+      213: -8180545633392501876
+    second: NeonCity_LightStreaks_51
+  - first:
+      213: -7528116653790851207
+    second: NeonCity_LightStreaks_52
+  - first:
+      213: 989324259546309108
+    second: NeonCity_LightStreaks_53
+  - first:
+      213: 3987912440000603709
+    second: NeonCity_LightStreaks_54
+  - first:
+      213: 1019940949207816403
+    second: NeonCity_LightStreaks_55
+  - first:
+      213: -7918592828588103062
+    second: NeonCity_LightStreaks_56
+  - first:
+      213: 3609664479269055940
+    second: NeonCity_LightStreaks_57
+  - first:
+      213: 251544367436733452
+    second: NeonCity_LightStreaks_58
+  - first:
+      213: -3586738302766016237
+    second: NeonCity_LightStreaks_59
+  - first:
+      213: 5890603251352957027
+    second: NeonCity_LightStreaks_60
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: NeonCity_LightStreaks_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1287
+        width: 336
+        height: 385
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1a984df7c78e43160800000000000000
+      internalID: 7004478941886187937
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_LightStreaks_1
+      rect:
+        serializedVersion: 2
+        x: 361
+        y: 1404
+        width: 153
+        height: 246
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 401fc6a3faddc4ab0800000000000000
+      internalID: -5022395739755712252
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_LightStreaks_2
+      rect:
+        serializedVersion: 2
+        x: 399
+        y: 1426
+        width: 56
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c19c7d9fc55208150800000000000000
+      internalID: 5872734995350014236
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_LightStreaks_3
+      rect:
+        serializedVersion: 2
+        x: 410
+        y: 1466
+        width: 21
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9cc49e7722e6bd1e0800000000000000
+      internalID: -2172021300956410679
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_LightStreaks_4
+      rect:
+        serializedVersion: 2
+        x: 430
+        y: 1607
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0799aa287e2f8d130800000000000000
+      internalID: 3591887778971556208
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_LightStreaks_5
+      rect:
+        serializedVersion: 2
+        x: 454
+        y: 1492
+        width: 20
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a9a12bdaada519ee0800000000000000
+      internalID: -1256122925796156774
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_LightStreaks_6
+      rect:
+        serializedVersion: 2
+        x: 468
+        y: 1542
+        width: 8
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7b461bcf1ebfe0390800000000000000
+      internalID: -7850060152434498377
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_LightStreaks_7
+      rect:
+        serializedVersion: 2
+        x: 470
+        y: 1552
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1a2967dc5ff7c68c0800000000000000
+      internalID: -4004685274948398431
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_LightStreaks_8
+      rect:
+        serializedVersion: 2
+        x: 558
+        y: 1195
+        width: 383
+        height: 477
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7cdf4af703b890070800000000000000
+      internalID: 8073136847454535111
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_LightStreaks_9
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 433
+        height: 1288
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6218e3744e99748f0800000000000000
+      internalID: -556306823230095066
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_LightStreaks_10
+      rect:
+        serializedVersion: 2
+        x: 316
+        y: 1142
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 936093e91aa58fef0800000000000000
+      internalID: -74209743660841415
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_LightStreaks_11
+      rect:
+        serializedVersion: 2
+        x: 324
+        y: 1205
+        width: 22
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 979920c6fa9d55e50800000000000000
+      internalID: 6797578560040245625
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_LightStreaks_12
+      rect:
+        serializedVersion: 2
+        x: 324
+        y: 1159
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f8fbb361cf2007f10800000000000000
+      internalID: 2265313894295388047
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_LightStreaks_13
+      rect:
+        serializedVersion: 2
+        x: 337
+        y: 797
+        width: 189
+        height: 596
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6e91ccb770a1077c0800000000000000
+      internalID: -4075729043326232090
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_LightStreaks_14
+      rect:
+        serializedVersion: 2
+        x: 349
+        y: 859
+        width: 31
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cc5629303ad3fae00800000000000000
+      internalID: 1058132207804245452
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_LightStreaks_15
+      rect:
+        serializedVersion: 2
+        x: 379
+        y: 857
+        width: 26
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2ffe19b0f94982350800000000000000
+      internalID: 5992202715031269362
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_LightStreaks_16
+      rect:
+        serializedVersion: 2
+        x: 452
+        y: 0
+        width: 489
+        height: 882
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 037d0a4511cccd210800000000000000
+      internalID: 1359185562365384496
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_LightStreaks_17
+      rect:
+        serializedVersion: 2
+        x: 487
+        y: 1277
+        width: 39
+        height: 124
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bb4b6f39af8416060800000000000000
+      internalID: 6944912341443458235
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_LightStreaks_18
+      rect:
+        serializedVersion: 2
+        x: 519
+        y: 923
+        width: 93
+        height: 102
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 750acdc2a60469b70800000000000000
+      internalID: 8905376137935102039
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_LightStreaks_19
+      rect:
+        serializedVersion: 2
+        x: 543
+        y: 1090
+        width: 105
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6379393bc4bf3fb20800000000000000
+      internalID: 3167151269820471094
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_LightStreaks_20
+      rect:
+        serializedVersion: 2
+        x: 566
+        y: 1014
+        width: 13
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ada9236e660b5ab50800000000000000
+      internalID: 6603878384603929306
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_LightStreaks_21
+      rect:
+        serializedVersion: 2
+        x: 588
+        y: 1218
+        width: 11
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f2b9e77c1774beff0800000000000000
+      internalID: -5832420507083985
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_LightStreaks_22
+      rect:
+        serializedVersion: 2
+        x: 590
+        y: 1211
+        width: 11
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 89292b268ae30bb20800000000000000
+      internalID: 3148085032463274648
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_LightStreaks_23
+      rect:
+        serializedVersion: 2
+        x: 606
+        y: 986
+        width: 42
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5a0ebd67190aa5b40800000000000000
+      internalID: 5429828847373377701
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_LightStreaks_24
+      rect:
+        serializedVersion: 2
+        x: 608
+        y: 873
+        width: 8
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f9ba737bdb798f220800000000000000
+      internalID: 2519930832592284575
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_LightStreaks_25
+      rect:
+        serializedVersion: 2
+        x: 610
+        y: 879
+        width: 20
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9829b2147755a9990800000000000000
+      internalID: -7378491068810292599
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_LightStreaks_26
+      rect:
+        serializedVersion: 2
+        x: 614
+        y: 931
+        width: 46
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e0c2d99c649764350800000000000000
+      internalID: 6000616898454957070
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_LightStreaks_27
+      rect:
+        serializedVersion: 2
+        x: 614
+        y: 875
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8d9afb0f3fa507260800000000000000
+      internalID: 7093269416871176664
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_LightStreaks_28
+      rect:
+        serializedVersion: 2
+        x: 663
+        y: 1063
+        width: 107
+        height: 121
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a51bca83129bb5310800000000000000
+      internalID: 1394912061937201498
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_LightStreaks_29
+      rect:
+        serializedVersion: 2
+        x: 762
+        y: 881
+        width: 179
+        height: 391
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1e2a470e8f7141590800000000000000
+      internalID: -7704506704839007519
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_LightStreaks_30
+      rect:
+        serializedVersion: 2
+        x: 775
+        y: 891
+        width: 60
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2ec5685ff0415ccb0800000000000000
+      internalID: -4844443765390811934
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_LightStreaks_31
+      rect:
+        serializedVersion: 2
+        x: 831
+        y: 947
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ce09ce65715d50060800000000000000
+      internalID: 6919170698743943404
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_LightStreaks_32
+      rect:
+        serializedVersion: 2
+        x: 835
+        y: 875
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b1fada9c379c39700800000000000000
+      internalID: 546001478983986971
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_LightStreaks_33
+      rect:
+        serializedVersion: 2
+        x: 892
+        y: 837
+        width: 49
+        height: 67
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0e96dede6fdda6a60800000000000000
+      internalID: 7668185368175143392
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_LightStreaks_34
+      rect:
+        serializedVersion: 2
+        x: 908
+        y: 923
+        width: 8
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 13eee041868b8bb00800000000000000
+      internalID: 844627687284600369
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_LightStreaks_35
+      rect:
+        serializedVersion: 2
+        x: 397
+        y: 664
+        width: 119
+        height: 72
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ca136ff99d720d5a0800000000000000
+      internalID: -6498650446650527316
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_LightStreaks_36
+      rect:
+        serializedVersion: 2
+        x: 389
+        y: 552
+        width: 36
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fc728db4d73f10940800000000000000
+      internalID: 5260753559214368719
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_LightStreaks_37
+      rect:
+        serializedVersion: 2
+        x: 347
+        y: 479
+        width: 7
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fc1b9d0d70ad52cf0800000000000000
+      internalID: -277576074909863473
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_LightStreaks_38
+      rect:
+        serializedVersion: 2
+        x: 330
+        y: 439
+        width: 10
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 688bca1cf590af370800000000000000
+      internalID: 8357002365415241862
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_LightStreaks_39
+      rect:
+        serializedVersion: 2
+        x: 339
+        y: 403
+        width: 19
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8d3fcd1dbdaa638f0800000000000000
+      internalID: -561073242465569832
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_LightStreaks_40
+      rect:
+        serializedVersion: 2
+        x: 576
+        y: 433
+        width: 7
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9d36fbc3fc0ae1080800000000000000
+      internalID: -9214750975615605799
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_LightStreaks_41
+      rect:
+        serializedVersion: 2
+        x: 316
+        y: 402
+        width: 10
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3e4ef7b801a15bbf0800000000000000
+      internalID: -309312341042797341
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_LightStreaks_42
+      rect:
+        serializedVersion: 2
+        x: 290
+        y: 343
+        width: 40
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 384e11a77ea65e610800000000000000
+      internalID: 1649842380919137411
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_LightStreaks_43
+      rect:
+        serializedVersion: 2
+        x: 341
+        y: 357
+        width: 15
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 29304cf0007705bc0800000000000000
+      internalID: -3796403643725118574
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_LightStreaks_44
+      rect:
+        serializedVersion: 2
+        x: 361
+        y: 337
+        width: 11
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a292eb93662380f50800000000000000
+      internalID: 6847778648053655850
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_LightStreaks_45
+      rect:
+        serializedVersion: 2
+        x: 397
+        y: 337
+        width: 6
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f4151d281148af2f0800000000000000
+      internalID: -938292361609260721
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_LightStreaks_46
+      rect:
+        serializedVersion: 2
+        x: 509
+        y: 318
+        width: 15
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 31ebeddd016770ed0800000000000000
+      internalID: -2447858057638658541
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_LightStreaks_47
+      rect:
+        serializedVersion: 2
+        x: 367
+        y: 310
+        width: 21
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cb45b0c664d4db7c0800000000000000
+      internalID: -4053999124707846980
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_LightStreaks_48
+      rect:
+        serializedVersion: 2
+        x: 541
+        y: 290
+        width: 14
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cfaadbf7b7ae747f0800000000000000
+      internalID: -628275806849881348
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_LightStreaks_49
+      rect:
+        serializedVersion: 2
+        x: 434
+        y: 260
+        width: 17
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 55616fbfddd278ec0800000000000000
+      internalID: -3564830148602227115
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_LightStreaks_50
+      rect:
+        serializedVersion: 2
+        x: 452
+        y: 256
+        width: 14
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d1f02c38facb97810800000000000000
+      internalID: 1763648191108091677
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_LightStreaks_51
+      rect:
+        serializedVersion: 2
+        x: 584
+        y: 264
+        width: 7
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c8b54ccb61dd87e80800000000000000
+      internalID: -8180545633392501876
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_LightStreaks_52
+      rect:
+        serializedVersion: 2
+        x: 470
+        y: 256
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 97f081ff9c1c68790800000000000000
+      internalID: -7528116653790851207
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_LightStreaks_53
+      rect:
+        serializedVersion: 2
+        x: 487
+        y: 232
+        width: 7
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4f12fe12c29cabd00800000000000000
+      internalID: 989324259546309108
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_LightStreaks_54
+      rect:
+        serializedVersion: 2
+        x: 509
+        y: 239
+        width: 13
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d36e89d3c39e75730800000000000000
+      internalID: 3987912440000603709
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_LightStreaks_55
+      rect:
+        serializedVersion: 2
+        x: 456
+        y: 208
+        width: 22
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3d81861b3ee872e00800000000000000
+      internalID: 1019940949207816403
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_LightStreaks_56
+      rect:
+        serializedVersion: 2
+        x: 469
+        y: 193
+        width: 9
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a6aec03e6c18b1290800000000000000
+      internalID: -7918592828588103062
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_LightStreaks_57
+      rect:
+        serializedVersion: 2
+        x: 477
+        y: 206
+        width: 9
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4cd6d2518ba181230800000000000000
+      internalID: 3609664479269055940
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_LightStreaks_58
+      rect:
+        serializedVersion: 2
+        x: 452
+        y: 183
+        width: 16
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c0c115af44aad7300800000000000000
+      internalID: 251544367436733452
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_LightStreaks_59
+      rect:
+        serializedVersion: 2
+        x: 460
+        y: 113
+        width: 12
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 31918595488593ec0800000000000000
+      internalID: -3586738302766016237
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_LightStreaks_60
+      rect:
+        serializedVersion: 2
+        x: 594
+        y: 124
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 36077a58270afb150800000000000000
+      internalID: 5890603251352957027
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      NeonCity_LightStreaks_0: 7004478941886187937
+      NeonCity_LightStreaks_1: -5022395739755712252
+      NeonCity_LightStreaks_10: -74209743660841415
+      NeonCity_LightStreaks_11: 6797578560040245625
+      NeonCity_LightStreaks_12: 2265313894295388047
+      NeonCity_LightStreaks_13: -4075729043326232090
+      NeonCity_LightStreaks_14: 1058132207804245452
+      NeonCity_LightStreaks_15: 5992202715031269362
+      NeonCity_LightStreaks_16: 1359185562365384496
+      NeonCity_LightStreaks_17: 6944912341443458235
+      NeonCity_LightStreaks_18: 8905376137935102039
+      NeonCity_LightStreaks_19: 3167151269820471094
+      NeonCity_LightStreaks_2: 5872734995350014236
+      NeonCity_LightStreaks_20: 6603878384603929306
+      NeonCity_LightStreaks_21: -5832420507083985
+      NeonCity_LightStreaks_22: 3148085032463274648
+      NeonCity_LightStreaks_23: 5429828847373377701
+      NeonCity_LightStreaks_24: 2519930832592284575
+      NeonCity_LightStreaks_25: -7378491068810292599
+      NeonCity_LightStreaks_26: 6000616898454957070
+      NeonCity_LightStreaks_27: 7093269416871176664
+      NeonCity_LightStreaks_28: 1394912061937201498
+      NeonCity_LightStreaks_29: -7704506704839007519
+      NeonCity_LightStreaks_3: -2172021300956410679
+      NeonCity_LightStreaks_30: -4844443765390811934
+      NeonCity_LightStreaks_31: 6919170698743943404
+      NeonCity_LightStreaks_32: 546001478983986971
+      NeonCity_LightStreaks_33: 7668185368175143392
+      NeonCity_LightStreaks_34: 844627687284600369
+      NeonCity_LightStreaks_35: -6498650446650527316
+      NeonCity_LightStreaks_36: 5260753559214368719
+      NeonCity_LightStreaks_37: -277576074909863473
+      NeonCity_LightStreaks_38: 8357002365415241862
+      NeonCity_LightStreaks_39: -561073242465569832
+      NeonCity_LightStreaks_4: 3591887778971556208
+      NeonCity_LightStreaks_40: -9214750975615605799
+      NeonCity_LightStreaks_41: -309312341042797341
+      NeonCity_LightStreaks_42: 1649842380919137411
+      NeonCity_LightStreaks_43: -3796403643725118574
+      NeonCity_LightStreaks_44: 6847778648053655850
+      NeonCity_LightStreaks_45: -938292361609260721
+      NeonCity_LightStreaks_46: -2447858057638658541
+      NeonCity_LightStreaks_47: -4053999124707846980
+      NeonCity_LightStreaks_48: -628275806849881348
+      NeonCity_LightStreaks_49: -3564830148602227115
+      NeonCity_LightStreaks_5: -1256122925796156774
+      NeonCity_LightStreaks_50: 1763648191108091677
+      NeonCity_LightStreaks_51: -8180545633392501876
+      NeonCity_LightStreaks_52: -7528116653790851207
+      NeonCity_LightStreaks_53: 989324259546309108
+      NeonCity_LightStreaks_54: 3987912440000603709
+      NeonCity_LightStreaks_55: 1019940949207816403
+      NeonCity_LightStreaks_56: -7918592828588103062
+      NeonCity_LightStreaks_57: 3609664479269055940
+      NeonCity_LightStreaks_58: 251544367436733452
+      NeonCity_LightStreaks_59: -3586738302766016237
+      NeonCity_LightStreaks_6: -7850060152434498377
+      NeonCity_LightStreaks_60: 5890603251352957027
+      NeonCity_LightStreaks_7: -4004685274948398431
+      NeonCity_LightStreaks_8: 8073136847454535111
+      NeonCity_LightStreaks_9: -556306823230095066
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

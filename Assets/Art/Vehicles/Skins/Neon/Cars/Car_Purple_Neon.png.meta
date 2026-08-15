@@ -1,0 +1,910 @@
+fileFormatVersion: 2
+guid: c7d669c2251b9a24fb6182e2e8da4ff8
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -1385965397587788240
+    second: Car_Purple_Neon_0
+  - first:
+      213: 5172912150994096277
+    second: Car_Purple_Neon_1
+  - first:
+      213: -2671890961899494442
+    second: Car_Purple_Neon_2
+  - first:
+      213: -1846907612797870700
+    second: Car_Purple_Neon_3
+  - first:
+      213: 6613246695640705364
+    second: Car_Purple_Neon_4
+  - first:
+      213: -2867087799792864636
+    second: Car_Purple_Neon_5
+  - first:
+      213: 3009485293222332762
+    second: Car_Purple_Neon_6
+  - first:
+      213: 6398873647119887650
+    second: Car_Purple_Neon_7
+  - first:
+      213: -3296785435273547475
+    second: Car_Purple_Neon_8
+  - first:
+      213: -1001161950677325150
+    second: Car_Purple_Neon_9
+  - first:
+      213: -6021455921816100231
+    second: Car_Purple_Neon_10
+  - first:
+      213: -7319348586405799173
+    second: Car_Purple_Neon_11
+  - first:
+      213: 7117716310799245849
+    second: Car_Purple_Neon_12
+  - first:
+      213: 5693940503070562386
+    second: Car_Purple_Neon_13
+  - first:
+      213: -2255024929953498541
+    second: Car_Purple_Neon_14
+  - first:
+      213: -4077146127253399758
+    second: Car_Purple_Neon_15
+  - first:
+      213: -4422329514480692711
+    second: Car_Purple_Neon_16
+  - first:
+      213: -6012831489954810112
+    second: Car_Purple_Neon_17
+  - first:
+      213: 7123914521581528102
+    second: Car_Purple_Neon_18
+  - first:
+      213: -8298726963670913460
+    second: Car_Purple_Neon_19
+  - first:
+      213: 2315133297780551324
+    second: Car_Purple_Neon_20
+  - first:
+      213: 8865107316260341628
+    second: Car_Purple_Neon_21
+  - first:
+      213: 6929293038318002441
+    second: Car_Purple_Neon_22
+  - first:
+      213: 1594148909008069298
+    second: Car_Purple_Neon_23
+  - first:
+      213: -8500651716080094449
+    second: Car_Purple_Neon_24
+  - first:
+      213: 692855249726317722
+    second: Car_Purple_Neon_25
+  - first:
+      213: 5639456435167654673
+    second: Car_Purple_Neon_26
+  - first:
+      213: 2732641588291673641
+    second: Car_Purple_Neon_27
+  - first:
+      213: 1822893588663784120
+    second: Car_Purple_Neon_28
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Car_Purple_Neon_0
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 23
+        width: 1455
+        height: 970
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 03efbc560df04cce0800000000000000
+      internalID: -1385965397587788240
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Car_Purple_Neon_1
+      rect:
+        serializedVersion: 2
+        x: 888
+        y: 862
+        width: 11
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5901e4ea130e9c740800000000000000
+      internalID: 5172912150994096277
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Car_Purple_Neon_2
+      rect:
+        serializedVersion: 2
+        x: 904
+        y: 865
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6d3676193598bead0800000000000000
+      internalID: -2671890961899494442
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Car_Purple_Neon_3
+      rect:
+        serializedVersion: 2
+        x: 908
+        y: 863
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 49dd73ebf477e56e0800000000000000
+      internalID: -1846907612797870700
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Car_Purple_Neon_4
+      rect:
+        serializedVersion: 2
+        x: 984
+        y: 865
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 459a0b9c4d8f6cb50800000000000000
+      internalID: 6613246695640705364
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Car_Purple_Neon_5
+      rect:
+        serializedVersion: 2
+        x: 100
+        y: 687
+        width: 139
+        height: 101
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4827d7926de0638d0800000000000000
+      internalID: -2867087799792864636
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Car_Purple_Neon_6
+      rect:
+        serializedVersion: 2
+        x: 234
+        y: 775
+        width: 15
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a598743ede6d3c920800000000000000
+      internalID: 3009485293222332762
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Car_Purple_Neon_7
+      rect:
+        serializedVersion: 2
+        x: 248
+        y: 783
+        width: 7
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 22d603bedad5dc850800000000000000
+      internalID: 6398873647119887650
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Car_Purple_Neon_8
+      rect:
+        serializedVersion: 2
+        x: 88
+        y: 512
+        width: 21
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d21b6dd1d177f32d0800000000000000
+      internalID: -3296785435273547475
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Car_Purple_Neon_9
+      rect:
+        serializedVersion: 2
+        x: 94
+        y: 545
+        width: 79
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2aaad3f92882b12f0800000000000000
+      internalID: -1001161950677325150
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Car_Purple_Neon_10
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 393
+        width: 145
+        height: 115
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 972aa7dfdbd7f6ca0800000000000000
+      internalID: -6021455921816100231
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Car_Purple_Neon_11
+      rect:
+        serializedVersion: 2
+        x: 92
+        y: 438
+        width: 11
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bfa56008d337c6a90800000000000000
+      internalID: -7319348586405799173
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Car_Purple_Neon_12
+      rect:
+        serializedVersion: 2
+        x: 94
+        y: 375
+        width: 51
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 912613df54537c260800000000000000
+      internalID: 7117716310799245849
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Car_Purple_Neon_13
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 351
+        width: 9
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 258dab148b0f40f40800000000000000
+      internalID: 5693940503070562386
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Car_Purple_Neon_14
+      rect:
+        serializedVersion: 2
+        x: 108
+        y: 356
+        width: 17
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 35ab87a16ca84b0e0800000000000000
+      internalID: -2255024929953498541
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Car_Purple_Neon_15
+      rect:
+        serializedVersion: 2
+        x: 1184
+        y: 213
+        width: 7
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 23793bbe2311b67c0800000000000000
+      internalID: -4077146127253399758
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Car_Purple_Neon_16
+      rect:
+        serializedVersion: 2
+        x: 1190
+        y: 206
+        width: 11
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 91217a1bcbab0a2c0800000000000000
+      internalID: -4422329514480692711
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Car_Purple_Neon_17
+      rect:
+        serializedVersion: 2
+        x: 1200
+        y: 207
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 007f5f20e912e8ca0800000000000000
+      internalID: -6012831489954810112
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Car_Purple_Neon_18
+      rect:
+        serializedVersion: 2
+        x: 312
+        y: 185
+        width: 17
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6242d15638a3dd260800000000000000
+      internalID: 7123914521581528102
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Car_Purple_Neon_19
+      rect:
+        serializedVersion: 2
+        x: 334
+        y: 191
+        width: 9
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c4e607a8bcff4dc80800000000000000
+      internalID: -8298726963670913460
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Car_Purple_Neon_20
+      rect:
+        serializedVersion: 2
+        x: 414
+        y: 191
+        width: 19
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c9e63edd771012020800000000000000
+      internalID: 2315133297780551324
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Car_Purple_Neon_21
+      rect:
+        serializedVersion: 2
+        x: 522
+        y: 202
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c770a618220370b70800000000000000
+      internalID: 8865107316260341628
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Car_Purple_Neon_22
+      rect:
+        serializedVersion: 2
+        x: 525
+        y: 197
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 901288d2e4bc92060800000000000000
+      internalID: 6929293038318002441
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Car_Purple_Neon_23
+      rect:
+        serializedVersion: 2
+        x: 532
+        y: 169
+        width: 21
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2b2a0809cfd8f1610800000000000000
+      internalID: 1594148909008069298
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Car_Purple_Neon_24
+      rect:
+        serializedVersion: 2
+        x: 1166
+        y: 191
+        width: 17
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f033bb77d4e970a80800000000000000
+      internalID: -8500651716080094449
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Car_Purple_Neon_25
+      rect:
+        serializedVersion: 2
+        x: 754
+        y: 145
+        width: 17
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a94a3b0cd248d9900800000000000000
+      internalID: 692855249726317722
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Car_Purple_Neon_26
+      rect:
+        serializedVersion: 2
+        x: 816
+        y: 127
+        width: 15
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1137578afbf534e40800000000000000
+      internalID: 5639456435167654673
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Car_Purple_Neon_27
+      rect:
+        serializedVersion: 2
+        x: 1148
+        y: 128
+        width: 15
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 92e9590eb0b4ce520800000000000000
+      internalID: 2732641588291673641
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Car_Purple_Neon_28
+      rect:
+        serializedVersion: 2
+        x: 575
+        y: 69
+        width: 15
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8b254af8f083c4910800000000000000
+      internalID: 1822893588663784120
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Car_Purple_Neon_0: -1385965397587788240
+      Car_Purple_Neon_1: 5172912150994096277
+      Car_Purple_Neon_10: -6021455921816100231
+      Car_Purple_Neon_11: -7319348586405799173
+      Car_Purple_Neon_12: 7117716310799245849
+      Car_Purple_Neon_13: 5693940503070562386
+      Car_Purple_Neon_14: -2255024929953498541
+      Car_Purple_Neon_15: -4077146127253399758
+      Car_Purple_Neon_16: -4422329514480692711
+      Car_Purple_Neon_17: -6012831489954810112
+      Car_Purple_Neon_18: 7123914521581528102
+      Car_Purple_Neon_19: -8298726963670913460
+      Car_Purple_Neon_2: -2671890961899494442
+      Car_Purple_Neon_20: 2315133297780551324
+      Car_Purple_Neon_21: 8865107316260341628
+      Car_Purple_Neon_22: 6929293038318002441
+      Car_Purple_Neon_23: 1594148909008069298
+      Car_Purple_Neon_24: -8500651716080094449
+      Car_Purple_Neon_25: 692855249726317722
+      Car_Purple_Neon_26: 5639456435167654673
+      Car_Purple_Neon_27: 2732641588291673641
+      Car_Purple_Neon_28: 1822893588663784120
+      Car_Purple_Neon_3: -1846907612797870700
+      Car_Purple_Neon_4: 6613246695640705364
+      Car_Purple_Neon_5: -2867087799792864636
+      Car_Purple_Neon_6: 3009485293222332762
+      Car_Purple_Neon_7: 6398873647119887650
+      Car_Purple_Neon_8: -3296785435273547475
+      Car_Purple_Neon_9: -1001161950677325150
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -1,0 +1,1118 @@
+fileFormatVersion: 2
+guid: cdd91087a1cff5c458319e579146c3a2
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 4011049403666187645
+    second: DefaultCity_Traffic_0
+  - first:
+      213: 1093439676435970493
+    second: DefaultCity_Traffic_1
+  - first:
+      213: -7907266004405453755
+    second: DefaultCity_Traffic_2
+  - first:
+      213: 5254562986361164965
+    second: DefaultCity_Traffic_3
+  - first:
+      213: -735647012243078231
+    second: DefaultCity_Traffic_4
+  - first:
+      213: 7111537225297710476
+    second: DefaultCity_Traffic_5
+  - first:
+      213: -7968141765489274230
+    second: DefaultCity_Traffic_6
+  - first:
+      213: 4726562509773643489
+    second: DefaultCity_Traffic_7
+  - first:
+      213: 3870682769432527108
+    second: DefaultCity_Traffic_8
+  - first:
+      213: -5880139182111221181
+    second: DefaultCity_Traffic_9
+  - first:
+      213: 6144847454473660971
+    second: DefaultCity_Traffic_10
+  - first:
+      213: -7676698519680324857
+    second: DefaultCity_Traffic_11
+  - first:
+      213: -3336816732623752102
+    second: DefaultCity_Traffic_12
+  - first:
+      213: 5804021571677647021
+    second: DefaultCity_Traffic_13
+  - first:
+      213: 8552255529244439632
+    second: DefaultCity_Traffic_14
+  - first:
+      213: 8469567344367967976
+    second: DefaultCity_Traffic_15
+  - first:
+      213: -9080729733409271014
+    second: DefaultCity_Traffic_16
+  - first:
+      213: -606390484750669209
+    second: DefaultCity_Traffic_17
+  - first:
+      213: 9030229714786938673
+    second: DefaultCity_Traffic_18
+  - first:
+      213: 488852368890290894
+    second: DefaultCity_Traffic_19
+  - first:
+      213: 3023076066986014820
+    second: DefaultCity_Traffic_20
+  - first:
+      213: 8976274760336959117
+    second: DefaultCity_Traffic_21
+  - first:
+      213: -2633872637998704188
+    second: DefaultCity_Traffic_22
+  - first:
+      213: 7964401244777757699
+    second: DefaultCity_Traffic_23
+  - first:
+      213: -375075274715721637
+    second: DefaultCity_Traffic_24
+  - first:
+      213: 1782820276290392601
+    second: DefaultCity_Traffic_25
+  - first:
+      213: -4913934974217402091
+    second: DefaultCity_Traffic_26
+  - first:
+      213: 2718456072808615442
+    second: DefaultCity_Traffic_27
+  - first:
+      213: -1493488929639141028
+    second: DefaultCity_Traffic_28
+  - first:
+      213: -247067678694392651
+    second: DefaultCity_Traffic_29
+  - first:
+      213: -165654192725038324
+    second: DefaultCity_Traffic_30
+  - first:
+      213: 4494392902263405282
+    second: DefaultCity_Traffic_31
+  - first:
+      213: -4960298944030610865
+    second: DefaultCity_Traffic_32
+  - first:
+      213: -8057578834078778611
+    second: DefaultCity_Traffic_33
+  - first:
+      213: -2199609751325643780
+    second: DefaultCity_Traffic_34
+  - first:
+      213: -2073217238251137086
+    second: DefaultCity_Traffic_35
+  - first:
+      213: 8151592744227718497
+    second: DefaultCity_Traffic_36
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: DefaultCity_Traffic_0
+      rect:
+        serializedVersion: 2
+        x: 12
+        y: 1408
+        width: 103
+        height: 121
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d75c0126e2c1aa730800000000000000
+      internalID: 4011049403666187645
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DefaultCity_Traffic_1
+      rect:
+        serializedVersion: 2
+        x: 138
+        y: 1454
+        width: 139
+        height: 202
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: db9b849a79dac2f00800000000000000
+      internalID: 1093439676435970493
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DefaultCity_Traffic_2
+      rect:
+        serializedVersion: 2
+        x: 298
+        y: 1422
+        width: 133
+        height: 221
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 54cf3e6a67fb34290800000000000000
+      internalID: -7907266004405453755
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DefaultCity_Traffic_3
+      rect:
+        serializedVersion: 2
+        x: 397
+        y: 1480
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5a419fb3235fbe840800000000000000
+      internalID: 5254562986361164965
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DefaultCity_Traffic_4
+      rect:
+        serializedVersion: 2
+        x: 454
+        y: 1501
+        width: 9
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9a38c23a0f47ac5f0800000000000000
+      internalID: -735647012243078231
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DefaultCity_Traffic_5
+      rect:
+        serializedVersion: 2
+        x: 458
+        y: 1494
+        width: 10
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c8d46d88d6141b260800000000000000
+      internalID: 7111537225297710476
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DefaultCity_Traffic_6
+      rect:
+        serializedVersion: 2
+        x: 509
+        y: 1378
+        width: 174
+        height: 264
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a82de0408497b6190800000000000000
+      internalID: -7968141765489274230
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DefaultCity_Traffic_7
+      rect:
+        serializedVersion: 2
+        x: 673
+        y: 1434
+        width: 44
+        height: 79
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1ee9cbb6f8f189140800000000000000
+      internalID: 4726562509773643489
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DefaultCity_Traffic_8
+      rect:
+        serializedVersion: 2
+        x: 679
+        y: 1512
+        width: 20
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4014046987d67b530800000000000000
+      internalID: 3870682769432527108
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DefaultCity_Traffic_9
+      rect:
+        serializedVersion: 2
+        x: 744
+        y: 1492
+        width: 104
+        height: 151
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 34a9764719c856ea0800000000000000
+      internalID: -5880139182111221181
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DefaultCity_Traffic_10
+      rect:
+        serializedVersion: 2
+        x: 746
+        y: 1436
+        width: 52
+        height: 53
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b2aaddaf332e64550800000000000000
+      internalID: 6144847454473660971
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DefaultCity_Traffic_11
+      rect:
+        serializedVersion: 2
+        x: 856
+        y: 1447
+        width: 85
+        height: 87
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 70befa68e53e67590800000000000000
+      internalID: -7676698519680324857
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DefaultCity_Traffic_12
+      rect:
+        serializedVersion: 2
+        x: 633
+        y: 1382
+        width: 33
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a54b1636cde31b1d0800000000000000
+      internalID: -3336816732623752102
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DefaultCity_Traffic_13
+      rect:
+        serializedVersion: 2
+        x: 649
+        y: 1398
+        width: 9
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: da0fc805ed60c8050800000000000000
+      internalID: 5804021571677647021
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DefaultCity_Traffic_14
+      rect:
+        serializedVersion: 2
+        x: 726
+        y: 1398
+        width: 21
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0543cf09717bfa670800000000000000
+      internalID: 8552255529244439632
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DefaultCity_Traffic_15
+      rect:
+        serializedVersion: 2
+        x: 10
+        y: 1175
+        width: 86
+        height: 96
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8ee1d4240a2f98570800000000000000
+      internalID: 8469567344367967976
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DefaultCity_Traffic_16
+      rect:
+        serializedVersion: 2
+        x: 130
+        y: 1213
+        width: 149
+        height: 99
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a1310d25b64caf180800000000000000
+      internalID: -9080729733409271014
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DefaultCity_Traffic_17
+      rect:
+        serializedVersion: 2
+        x: 649
+        y: 901
+        width: 280
+        height: 393
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 76a6241211ba597f0800000000000000
+      internalID: -606390484750669209
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DefaultCity_Traffic_18
+      rect:
+        serializedVersion: 2
+        x: 97
+        y: 989
+        width: 192
+        height: 113
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 13f6d06d412d15d70800000000000000
+      internalID: 9030229714786938673
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DefaultCity_Traffic_19
+      rect:
+        serializedVersion: 2
+        x: 844
+        y: 947
+        width: 97
+        height: 101
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ec26053b3a0c8c600800000000000000
+      internalID: 488852368890290894
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DefaultCity_Traffic_20
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 897
+        width: 85
+        height: 87
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 468bfad7aaf14f920800000000000000
+      internalID: 3023076066986014820
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DefaultCity_Traffic_21
+      rect:
+        serializedVersion: 2
+        x: 176
+        y: 843
+        width: 83
+        height: 51
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d8660301652229c70800000000000000
+      internalID: 8976274760336959117
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DefaultCity_Traffic_22
+      rect:
+        serializedVersion: 2
+        x: 233
+        y: 441
+        width: 101
+        height: 406
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4c957746aca927bd0800000000000000
+      internalID: -2633872637998704188
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DefaultCity_Traffic_23
+      rect:
+        serializedVersion: 2
+        x: 842
+        y: 769
+        width: 82
+        height: 86
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 30c38a32cbc378e60800000000000000
+      internalID: 7964401244777757699
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DefaultCity_Traffic_24
+      rect:
+        serializedVersion: 2
+        x: 13
+        y: 722
+        width: 88
+        height: 116
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b50998e56077bcaf0800000000000000
+      internalID: -375075274715721637
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DefaultCity_Traffic_25
+      rect:
+        serializedVersion: 2
+        x: 31
+        y: 63
+        width: 291
+        height: 598
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 91217a27899ddb810800000000000000
+      internalID: 1782820276290392601
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DefaultCity_Traffic_26
+      rect:
+        serializedVersion: 2
+        x: 543
+        y: 401
+        width: 383
+        height: 278
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 51947641d223ecbb0800000000000000
+      internalID: -4913934974217402091
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DefaultCity_Traffic_27
+      rect:
+        serializedVersion: 2
+        x: 840
+        y: 357
+        width: 101
+        height: 96
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 21ec24d2565e9b520800000000000000
+      internalID: 2718456072808615442
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DefaultCity_Traffic_28
+      rect:
+        serializedVersion: 2
+        x: 27
+        y: 164
+        width: 107
+        height: 127
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c5171e83bbf064be0800000000000000
+      internalID: -1493488929639141028
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DefaultCity_Traffic_29
+      rect:
+        serializedVersion: 2
+        x: 406
+        y: 47
+        width: 45
+        height: 124
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5bcb0f7514d329cf0800000000000000
+      internalID: -247067678694392651
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DefaultCity_Traffic_30
+      rect:
+        serializedVersion: 2
+        x: 485
+        y: 136
+        width: 60
+        height: 102
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c0be11fa36a73bdf0800000000000000
+      internalID: -165654192725038324
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DefaultCity_Traffic_31
+      rect:
+        serializedVersion: 2
+        x: 527
+        y: 208
+        width: 64
+        height: 87
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2ea7274488a4f5e30800000000000000
+      internalID: 4494392902263405282
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DefaultCity_Traffic_32
+      rect:
+        serializedVersion: 2
+        x: 621
+        y: 162
+        width: 120
+        height: 196
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f4a6f45246a792bb0800000000000000
+      internalID: -4960298944030610865
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DefaultCity_Traffic_33
+      rect:
+        serializedVersion: 2
+        x: 825
+        y: 79
+        width: 99
+        height: 116
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d0b3705cdbabd2090800000000000000
+      internalID: -8057578834078778611
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DefaultCity_Traffic_34
+      rect:
+        serializedVersion: 2
+        x: 162
+        y: 18
+        width: 111
+        height: 116
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cfbefbfc59a6971e0800000000000000
+      internalID: -2199609751325643780
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DefaultCity_Traffic_35
+      rect:
+        serializedVersion: 2
+        x: 460
+        y: 111
+        width: 12
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2c713dbf7e37a33e0800000000000000
+      internalID: -2073217238251137086
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DefaultCity_Traffic_36
+      rect:
+        serializedVersion: 2
+        x: 629
+        y: 19
+        width: 91
+        height: 113
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 16548517966402170800000000000000
+      internalID: 8151592744227718497
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      DefaultCity_Traffic_0: 4011049403666187645
+      DefaultCity_Traffic_1: 1093439676435970493
+      DefaultCity_Traffic_10: 6144847454473660971
+      DefaultCity_Traffic_11: -7676698519680324857
+      DefaultCity_Traffic_12: -3336816732623752102
+      DefaultCity_Traffic_13: 5804021571677647021
+      DefaultCity_Traffic_14: 8552255529244439632
+      DefaultCity_Traffic_15: 8469567344367967976
+      DefaultCity_Traffic_16: -9080729733409271014
+      DefaultCity_Traffic_17: -606390484750669209
+      DefaultCity_Traffic_18: 9030229714786938673
+      DefaultCity_Traffic_19: 488852368890290894
+      DefaultCity_Traffic_2: -7907266004405453755
+      DefaultCity_Traffic_20: 3023076066986014820
+      DefaultCity_Traffic_21: 8976274760336959117
+      DefaultCity_Traffic_22: -2633872637998704188
+      DefaultCity_Traffic_23: 7964401244777757699
+      DefaultCity_Traffic_24: -375075274715721637
+      DefaultCity_Traffic_25: 1782820276290392601
+      DefaultCity_Traffic_26: -4913934974217402091
+      DefaultCity_Traffic_27: 2718456072808615442
+      DefaultCity_Traffic_28: -1493488929639141028
+      DefaultCity_Traffic_29: -247067678694392651
+      DefaultCity_Traffic_3: 5254562986361164965
+      DefaultCity_Traffic_30: -165654192725038324
+      DefaultCity_Traffic_31: 4494392902263405282
+      DefaultCity_Traffic_32: -4960298944030610865
+      DefaultCity_Traffic_33: -8057578834078778611
+      DefaultCity_Traffic_34: -2199609751325643780
+      DefaultCity_Traffic_35: -2073217238251137086
+      DefaultCity_Traffic_36: 8151592744227718497
+      DefaultCity_Traffic_4: -735647012243078231
+      DefaultCity_Traffic_5: 7111537225297710476
+      DefaultCity_Traffic_6: -7968141765489274230
+      DefaultCity_Traffic_7: 4726562509773643489
+      DefaultCity_Traffic_8: 3870682769432527108
+      DefaultCity_Traffic_9: -5880139182111221181
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

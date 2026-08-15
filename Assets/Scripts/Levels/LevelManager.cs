@@ -40,6 +40,9 @@ public class LevelManager : MonoBehaviour
     [Tooltip("Optionele sprite-library voor automatische voertuig-visuals.")]
     [SerializeField] private VehicleSpriteLibrary vehicleSpriteLibrary;
 
+    // Actieve library voor deze load (skin overlay of inspector-default).
+    private VehicleSpriteLibrary activeVehicleSpriteLibrary;
+
     // Laatst gekozen auto-sprite (voorkomt twee dezelfde achter elkaar).
     private Sprite lastAutoAssignedSprite;
 
@@ -176,6 +179,8 @@ public class LevelManager : MonoBehaviour
             Debug.LogError("LevelManager: currentLevelIndex buiten bereik: " + currentLevelIndex);
             return;
         }
+
+        activeVehicleSpriteLibrary = ResolveActiveSpriteLibrary();
 
         LevelData levelData = levelDatabase.GetLevel(currentLevelIndex);
 
@@ -375,14 +380,36 @@ public class LevelManager : MonoBehaviour
     /// Bepaalt welke sprite dit voertuig krijgt (alleen visueel).
     /// Prioriteit: target → expliciete vehicleSprite → library.
     /// </summary>
+    /// <summary>
+    /// Selected skin library indien aanwezig, anders Inspector-default.
+    /// </summary>
+    private VehicleSpriteLibrary ResolveActiveSpriteLibrary()
+    {
+        SkinManager skinManager = FindFirstObjectByType<SkinManager>();
+        if (skinManager != null)
+        {
+            VehicleSpriteLibrary fromSkin = skinManager.GetActiveSpriteLibrary();
+            if (fromSkin != null)
+            {
+                return fromSkin;
+            }
+        }
+
+        return vehicleSpriteLibrary;
+    }
+
     private Sprite ResolveVehicleSprite(VehicleData data)
     {
+        VehicleSpriteLibrary library = activeVehicleSpriteLibrary != null
+            ? activeVehicleSpriteLibrary
+            : vehicleSpriteLibrary;
+
         // 1) Target car altijd de target-sprite.
         if (data.canExitRight)
         {
-            if (vehicleSpriteLibrary != null && vehicleSpriteLibrary.TargetCarSprite != null)
+            if (library != null && library.TargetCarSprite != null)
             {
-                return vehicleSpriteLibrary.TargetCarSprite;
+                return library.TargetCarSprite;
             }
 
             if (data.vehicleSprite != null)
@@ -403,12 +430,12 @@ public class LevelManager : MonoBehaviour
         }
 
         // 3) Automatisch uit library op orientation + length.
-        if (vehicleSpriteLibrary == null)
+        if (library == null)
         {
             return null;
         }
 
-        Sprite chosen = vehicleSpriteLibrary.GetSpriteForVehicle(
+        Sprite chosen = library.GetSpriteForVehicle(
             data.orientation,
             data.lengthInCells,
             lastAutoAssignedSprite

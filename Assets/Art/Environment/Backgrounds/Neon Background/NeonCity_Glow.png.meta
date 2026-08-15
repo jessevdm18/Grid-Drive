@@ -1,0 +1,1898 @@
+fileFormatVersion: 2
+guid: 0dd590bf706b20545b201cd3176bf0cd
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 3165680116196254368
+    second: NeonCity_Glow_0
+  - first:
+      213: -3739030597915590590
+    second: NeonCity_Glow_1
+  - first:
+      213: 187536676112275190
+    second: NeonCity_Glow_2
+  - first:
+      213: -4652438454083543743
+    second: NeonCity_Glow_3
+  - first:
+      213: 6328431286256272303
+    second: NeonCity_Glow_4
+  - first:
+      213: -5706244688637166418
+    second: NeonCity_Glow_5
+  - first:
+      213: -5340243265477157176
+    second: NeonCity_Glow_6
+  - first:
+      213: -1760049297908650520
+    second: NeonCity_Glow_7
+  - first:
+      213: 8144168218807583418
+    second: NeonCity_Glow_8
+  - first:
+      213: -2765150683726942845
+    second: NeonCity_Glow_9
+  - first:
+      213: 8072939792320234199
+    second: NeonCity_Glow_10
+  - first:
+      213: 3106619838692161600
+    second: NeonCity_Glow_11
+  - first:
+      213: 5627896691131763237
+    second: NeonCity_Glow_12
+  - first:
+      213: -545961432369445893
+    second: NeonCity_Glow_13
+  - first:
+      213: 2293497449515185523
+    second: NeonCity_Glow_14
+  - first:
+      213: 5038728234971199808
+    second: NeonCity_Glow_15
+  - first:
+      213: -2845288798353352898
+    second: NeonCity_Glow_16
+  - first:
+      213: -530696698623623694
+    second: NeonCity_Glow_17
+  - first:
+      213: 7983147855472959101
+    second: NeonCity_Glow_18
+  - first:
+      213: -7493614655034740859
+    second: NeonCity_Glow_19
+  - first:
+      213: 1432950994842383845
+    second: NeonCity_Glow_20
+  - first:
+      213: 7244080769595625698
+    second: NeonCity_Glow_21
+  - first:
+      213: -857291084055687554
+    second: NeonCity_Glow_22
+  - first:
+      213: 6905169415084112716
+    second: NeonCity_Glow_23
+  - first:
+      213: 7652596969452528787
+    second: NeonCity_Glow_24
+  - first:
+      213: -1756142789320658507
+    second: NeonCity_Glow_25
+  - first:
+      213: -4810369419177418807
+    second: NeonCity_Glow_26
+  - first:
+      213: 5870104097994656522
+    second: NeonCity_Glow_27
+  - first:
+      213: -682871178001104286
+    second: NeonCity_Glow_28
+  - first:
+      213: 6678049498742995394
+    second: NeonCity_Glow_29
+  - first:
+      213: -3600645421408917278
+    second: NeonCity_Glow_30
+  - first:
+      213: -1471729994816633374
+    second: NeonCity_Glow_31
+  - first:
+      213: -7866397715241781277
+    second: NeonCity_Glow_32
+  - first:
+      213: -675835110069351094
+    second: NeonCity_Glow_33
+  - first:
+      213: 6553951634667620342
+    second: NeonCity_Glow_34
+  - first:
+      213: -2899114275252212868
+    second: NeonCity_Glow_35
+  - first:
+      213: -7734622906905275585
+    second: NeonCity_Glow_36
+  - first:
+      213: -6618657977789382314
+    second: NeonCity_Glow_37
+  - first:
+      213: -5545815682622650309
+    second: NeonCity_Glow_38
+  - first:
+      213: 3819000422587905887
+    second: NeonCity_Glow_39
+  - first:
+      213: -4056551354637379208
+    second: NeonCity_Glow_40
+  - first:
+      213: 2531635287567210287
+    second: NeonCity_Glow_41
+  - first:
+      213: -898150614421900361
+    second: NeonCity_Glow_42
+  - first:
+      213: 9016624657844697485
+    second: NeonCity_Glow_43
+  - first:
+      213: 5745820987744033064
+    second: NeonCity_Glow_44
+  - first:
+      213: 6196326197144918418
+    second: NeonCity_Glow_45
+  - first:
+      213: -1668910335788284516
+    second: NeonCity_Glow_46
+  - first:
+      213: -8800390804386501433
+    second: NeonCity_Glow_47
+  - first:
+      213: -4851446746404987233
+    second: NeonCity_Glow_48
+  - first:
+      213: 720075558244559367
+    second: NeonCity_Glow_49
+  - first:
+      213: 6104346521937550673
+    second: NeonCity_Glow_50
+  - first:
+      213: -7177631986352459819
+    second: NeonCity_Glow_51
+  - first:
+      213: 7986560384431985100
+    second: NeonCity_Glow_52
+  - first:
+      213: -1863104639222481231
+    second: NeonCity_Glow_53
+  - first:
+      213: 5836488440218634130
+    second: NeonCity_Glow_54
+  - first:
+      213: 6384548256565045280
+    second: NeonCity_Glow_55
+  - first:
+      213: 4013680918412958485
+    second: NeonCity_Glow_56
+  - first:
+      213: -8236485224707264271
+    second: NeonCity_Glow_57
+  - first:
+      213: -8148929030396762624
+    second: NeonCity_Glow_58
+  - first:
+      213: -2041613077059534583
+    second: NeonCity_Glow_59
+  - first:
+      213: -2921226394892055723
+    second: NeonCity_Glow_60
+  - first:
+      213: -2077511204421755706
+    second: NeonCity_Glow_61
+  - first:
+      213: -9174726988016495938
+    second: NeonCity_Glow_62
+  - first:
+      213: 4290840041313348504
+    second: NeonCity_Glow_63
+  - first:
+      213: 980069943907448431
+    second: NeonCity_Glow_64
+  - first:
+      213: -4823680632512099093
+    second: NeonCity_Glow_65
+  - first:
+      213: -6302498332308602769
+    second: NeonCity_Glow_66
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: NeonCity_Glow_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 496
+        height: 1672
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0a2256e0b41ceeb20800000000000000
+      internalID: 3165680116196254368
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_1
+      rect:
+        serializedVersion: 2
+        x: 420
+        y: 1631
+        width: 29
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 240ccee3b7b4c1cc0800000000000000
+      internalID: -3739030597915590590
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_2
+      rect:
+        serializedVersion: 2
+        x: 466
+        y: 1597
+        width: 50
+        height: 51
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6f697020d934a9200800000000000000
+      internalID: 187536676112275190
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_3
+      rect:
+        serializedVersion: 2
+        x: 477
+        y: 1638
+        width: 39
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 14d9bfc20e73f6fb0800000000000000
+      internalID: -4652438454083543743
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_4
+      rect:
+        serializedVersion: 2
+        x: 495
+        y: 0
+        width: 446
+        height: 1672
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fa306c2b9ba13d750800000000000000
+      internalID: 6328431286256272303
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_5
+      rect:
+        serializedVersion: 2
+        x: 479
+        y: 1593
+        width: 11
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eac725c40b85fc0b0800000000000000
+      internalID: -5706244688637166418
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_6
+      rect:
+        serializedVersion: 2
+        x: 526
+        y: 1607
+        width: 8
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8cedf0b3b05a3e5b0800000000000000
+      internalID: -5340243265477157176
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_7
+      rect:
+        serializedVersion: 2
+        x: 456
+        y: 1589
+        width: 16
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8edaafa1d7c0397e0800000000000000
+      internalID: -1760049297908650520
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_8
+      rect:
+        serializedVersion: 2
+        x: 503
+        y: 1580
+        width: 11
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ab24d0968d5e50170800000000000000
+      internalID: 8144168218807583418
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_9
+      rect:
+        serializedVersion: 2
+        x: 450
+        y: 1556
+        width: 20
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 38de6028a1630a9d0800000000000000
+      internalID: -2765150683726942845
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_10
+      rect:
+        serializedVersion: 2
+        x: 468
+        y: 1573
+        width: 18
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7d20d5608f7d80070800000000000000
+      internalID: 8072939792320234199
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_11
+      rect:
+        serializedVersion: 2
+        x: 453
+        y: 1478
+        width: 55
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0487d61a84eec1b20800000000000000
+      internalID: 3106619838692161600
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_12
+      rect:
+        serializedVersion: 2
+        x: 458
+        y: 1516
+        width: 62
+        height: 56
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 52a4183093e4a1e40800000000000000
+      internalID: 5627896691131763237
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_13
+      rect:
+        serializedVersion: 2
+        x: 507
+        y: 1478
+        width: 27
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bf34e8a48fa5c68f0800000000000000
+      internalID: -545961432369445893
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_14
+      rect:
+        serializedVersion: 2
+        x: 468
+        y: 1436
+        width: 10
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 375fd9367c324df10800000000000000
+      internalID: 2293497449515185523
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_15
+      rect:
+        serializedVersion: 2
+        x: 470
+        y: 1414
+        width: 52
+        height: 56
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 049703522a82de540800000000000000
+      internalID: 5038728234971199808
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_16
+      rect:
+        serializedVersion: 2
+        x: 452
+        y: 1404
+        width: 28
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e3710c2b9e08388d0800000000000000
+      internalID: -2845288798353352898
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_17
+      rect:
+        serializedVersion: 2
+        x: 485
+        y: 1418
+        width: 9
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2fdf0131a2692a8f0800000000000000
+      internalID: -530696698623623694
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_18
+      rect:
+        serializedVersion: 2
+        x: 414
+        y: 1309
+        width: 49
+        height: 62
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d7e13e29da6d9ce60800000000000000
+      internalID: 7983147855472959101
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_19
+      rect:
+        serializedVersion: 2
+        x: 454
+        y: 1366
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 58f2ef29c25510890800000000000000
+      internalID: -7493614655034740859
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_20
+      rect:
+        serializedVersion: 2
+        x: 464
+        y: 1367
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5e57f14765dd2e310800000000000000
+      internalID: 1432950994842383845
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_21
+      rect:
+        serializedVersion: 2
+        x: 468
+        y: 1331
+        width: 26
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2e05cf34415288460800000000000000
+      internalID: 7244080769595625698
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_22
+      rect:
+        serializedVersion: 2
+        x: 497
+        y: 1363
+        width: 29
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e7e40c91d4a4a14f0800000000000000
+      internalID: -857291084055687554
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_23
+      rect:
+        serializedVersion: 2
+        x: 525
+        y: 1347
+        width: 11
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c4bfaf37ff614df50800000000000000
+      internalID: 6905169415084112716
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_24
+      rect:
+        serializedVersion: 2
+        x: 469
+        y: 1320
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 394e275066c733a60800000000000000
+      internalID: 7652596969452528787
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_25
+      rect:
+        serializedVersion: 2
+        x: 475
+        y: 1316
+        width: 17
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5b1bda3007de0a7e0800000000000000
+      internalID: -1756142789320658507
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_26
+      rect:
+        serializedVersion: 2
+        x: 525
+        y: 1314
+        width: 11
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9cf178bef722e3db0800000000000000
+      internalID: -4810369419177418807
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_27
+      rect:
+        serializedVersion: 2
+        x: 533
+        y: 1303
+        width: 14
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a0b4983739cc67150800000000000000
+      internalID: 5870104097994656522
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_28
+      rect:
+        serializedVersion: 2
+        x: 430
+        y: 1267
+        width: 17
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 26244e71844f586f0800000000000000
+      internalID: -682871178001104286
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_29
+      rect:
+        serializedVersion: 2
+        x: 479
+        y: 1274
+        width: 23
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2c93d0523a23dac50800000000000000
+      internalID: 6678049498742995394
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_30
+      rect:
+        serializedVersion: 2
+        x: 363
+        y: 1082
+        width: 80
+        height: 142
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2e8e8c6f010f70ec0800000000000000
+      internalID: -3600645421408917278
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_31
+      rect:
+        serializedVersion: 2
+        x: 511
+        y: 1120
+        width: 76
+        height: 123
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2e5caa50e5d539be0800000000000000
+      internalID: -1471729994816633374
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_32
+      rect:
+        serializedVersion: 2
+        x: 517
+        y: 1223
+        width: 24
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3e7b119b4f0f4d290800000000000000
+      internalID: -7866397715241781277
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_33
+      rect:
+        serializedVersion: 2
+        x: 428
+        y: 1194
+        width: 16
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a4d44915c83fe96f0800000000000000
+      internalID: -675835110069351094
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_34
+      rect:
+        serializedVersion: 2
+        x: 410
+        y: 1146
+        width: 35
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6f74473994054fa50800000000000000
+      internalID: 6553951634667620342
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_35
+      rect:
+        serializedVersion: 2
+        x: 478
+        y: 1052
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c7be3544de644c7d0800000000000000
+      internalID: -2899114275252212868
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_36
+      rect:
+        serializedVersion: 2
+        x: 491
+        y: 945
+        width: 106
+        height: 196
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f33df4a227919a490800000000000000
+      internalID: -7734622906905275585
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_37
+      rect:
+        serializedVersion: 2
+        x: 414
+        y: 1020
+        width: 35
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6510f08e2adc524a0800000000000000
+      internalID: -6618657977789382314
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_38
+      rect:
+        serializedVersion: 2
+        x: 466
+        y: 909
+        width: 16
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b388c77050e4903b0800000000000000
+      internalID: -5545815682622650309
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_39
+      rect:
+        serializedVersion: 2
+        x: 436
+        y: 806
+        width: 11
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f573b6186a0dff430800000000000000
+      internalID: 3819000422587905887
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_40
+      rect:
+        serializedVersion: 2
+        x: 472
+        y: 802
+        width: 14
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 87995b5190c34b7c0800000000000000
+      internalID: -4056551354637379208
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_41
+      rect:
+        serializedVersion: 2
+        x: 436
+        y: 722
+        width: 9
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f27994081ec222320800000000000000
+      internalID: 2531635287567210287
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_42
+      rect:
+        serializedVersion: 2
+        x: 470
+        y: 725
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7b3759856c02983f0800000000000000
+      internalID: -898150614421900361
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_43
+      rect:
+        serializedVersion: 2
+        x: 517
+        y: 716
+        width: 9
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d897cdbaa5c712d70800000000000000
+      internalID: 9016624657844697485
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_44
+      rect:
+        serializedVersion: 2
+        x: 460
+        y: 658
+        width: 12
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8299775eeb14dbf40800000000000000
+      internalID: 5745820987744033064
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_45
+      rect:
+        serializedVersion: 2
+        x: 503
+        y: 481
+        width: 107
+        height: 239
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2991545c8d5cdf550800000000000000
+      internalID: 6196326197144918418
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_46
+      rect:
+        serializedVersion: 2
+        x: 468
+        y: 640
+        width: 10
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c958c5154e6d6d8e0800000000000000
+      internalID: -1668910335788284516
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_47
+      rect:
+        serializedVersion: 2
+        x: 428
+        y: 505
+        width: 13
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7ccadeb903bbed580800000000000000
+      internalID: -8800390804386501433
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_48
+      rect:
+        serializedVersion: 2
+        x: 428
+        y: 487
+        width: 15
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f9e5ec163e23cacb0800000000000000
+      internalID: -4851446746404987233
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_49
+      rect:
+        serializedVersion: 2
+        x: 458
+        y: 487
+        width: 27
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 70aab94b7e83ef900800000000000000
+      internalID: 720075558244559367
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_50
+      rect:
+        serializedVersion: 2
+        x: 460
+        y: 460
+        width: 22
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 15d9af9c1def6b450800000000000000
+      internalID: 6104346521937550673
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_51
+      rect:
+        serializedVersion: 2
+        x: 495
+        y: 481
+        width: 7
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5dfeaf4bcbde36c90800000000000000
+      internalID: -7177631986352459819
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_52
+      rect:
+        serializedVersion: 2
+        x: 497
+        y: 368
+        width: 102
+        height: 113
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cc19643ea56f5de60800000000000000
+      internalID: 7986560384431985100
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_53
+      rect:
+        serializedVersion: 2
+        x: 452
+        y: 457
+        width: 9
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1bef2c7a33ce426e0800000000000000
+      internalID: -1863104639222481231
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_54
+      rect:
+        serializedVersion: 2
+        x: 462
+        y: 433
+        width: 12
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 297c7e6305f5ff050800000000000000
+      internalID: 5836488440218634130
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_55
+      rect:
+        serializedVersion: 2
+        x: 468
+        y: 449
+        width: 8
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 02826e300d87a9850800000000000000
+      internalID: 6384548256565045280
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_56
+      rect:
+        serializedVersion: 2
+        x: 394
+        y: 288
+        width: 118
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 51b94c7a78573b730800000000000000
+      internalID: 4013680918412958485
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_57
+      rect:
+        serializedVersion: 2
+        x: 426
+        y: 391
+        width: 64
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1f0f19fa35022bd80800000000000000
+      internalID: -8236485224707264271
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_58
+      rect:
+        serializedVersion: 2
+        x: 526
+        y: 361
+        width: 23
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0062553c83039ee80800000000000000
+      internalID: -8148929030396762624
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_59
+      rect:
+        serializedVersion: 2
+        x: 509
+        y: 310
+        width: 15
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 901031d29bbbaa3e0800000000000000
+      internalID: -2041613077059534583
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_60
+      rect:
+        serializedVersion: 2
+        x: 523
+        y: 324
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 55bc6f73218b577d0800000000000000
+      internalID: -2921226394892055723
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_61
+      rect:
+        serializedVersion: 2
+        x: 434
+        y: 264
+        width: 15
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6cc1c8311923b23e0800000000000000
+      internalID: -2077511204421755706
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_62
+      rect:
+        serializedVersion: 2
+        x: 509
+        y: 276
+        width: 21
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eb256180a62dca080800000000000000
+      internalID: -9174726988016495938
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_63
+      rect:
+        serializedVersion: 2
+        x: 503
+        y: 257
+        width: 11
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 89b2182a8402c8b30800000000000000
+      internalID: 4290840041313348504
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_64
+      rect:
+        serializedVersion: 2
+        x: 533
+        y: 136
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f66f3addb68e99d00800000000000000
+      internalID: 980069943907448431
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_65
+      rect:
+        serializedVersion: 2
+        x: 460
+        y: 113
+        width: 10
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bec4f2d8508de0db0800000000000000
+      internalID: -4823680632512099093
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NeonCity_Glow_66
+      rect:
+        serializedVersion: 2
+        x: 464
+        y: 73
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f600149a8270988a0800000000000000
+      internalID: -6302498332308602769
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      NeonCity_Glow_0: 3165680116196254368
+      NeonCity_Glow_1: -3739030597915590590
+      NeonCity_Glow_10: 8072939792320234199
+      NeonCity_Glow_11: 3106619838692161600
+      NeonCity_Glow_12: 5627896691131763237
+      NeonCity_Glow_13: -545961432369445893
+      NeonCity_Glow_14: 2293497449515185523
+      NeonCity_Glow_15: 5038728234971199808
+      NeonCity_Glow_16: -2845288798353352898
+      NeonCity_Glow_17: -530696698623623694
+      NeonCity_Glow_18: 7983147855472959101
+      NeonCity_Glow_19: -7493614655034740859
+      NeonCity_Glow_2: 187536676112275190
+      NeonCity_Glow_20: 1432950994842383845
+      NeonCity_Glow_21: 7244080769595625698
+      NeonCity_Glow_22: -857291084055687554
+      NeonCity_Glow_23: 6905169415084112716
+      NeonCity_Glow_24: 7652596969452528787
+      NeonCity_Glow_25: -1756142789320658507
+      NeonCity_Glow_26: -4810369419177418807
+      NeonCity_Glow_27: 5870104097994656522
+      NeonCity_Glow_28: -682871178001104286
+      NeonCity_Glow_29: 6678049498742995394
+      NeonCity_Glow_3: -4652438454083543743
+      NeonCity_Glow_30: -3600645421408917278
+      NeonCity_Glow_31: -1471729994816633374
+      NeonCity_Glow_32: -7866397715241781277
+      NeonCity_Glow_33: -675835110069351094
+      NeonCity_Glow_34: 6553951634667620342
+      NeonCity_Glow_35: -2899114275252212868
+      NeonCity_Glow_36: -7734622906905275585
+      NeonCity_Glow_37: -6618657977789382314
+      NeonCity_Glow_38: -5545815682622650309
+      NeonCity_Glow_39: 3819000422587905887
+      NeonCity_Glow_4: 6328431286256272303
+      NeonCity_Glow_40: -4056551354637379208
+      NeonCity_Glow_41: 2531635287567210287
+      NeonCity_Glow_42: -898150614421900361
+      NeonCity_Glow_43: 9016624657844697485
+      NeonCity_Glow_44: 5745820987744033064
+      NeonCity_Glow_45: 6196326197144918418
+      NeonCity_Glow_46: -1668910335788284516
+      NeonCity_Glow_47: -8800390804386501433
+      NeonCity_Glow_48: -4851446746404987233
+      NeonCity_Glow_49: 720075558244559367
+      NeonCity_Glow_5: -5706244688637166418
+      NeonCity_Glow_50: 6104346521937550673
+      NeonCity_Glow_51: -7177631986352459819
+      NeonCity_Glow_52: 7986560384431985100
+      NeonCity_Glow_53: -1863104639222481231
+      NeonCity_Glow_54: 5836488440218634130
+      NeonCity_Glow_55: 6384548256565045280
+      NeonCity_Glow_56: 4013680918412958485
+      NeonCity_Glow_57: -8236485224707264271
+      NeonCity_Glow_58: -8148929030396762624
+      NeonCity_Glow_59: -2041613077059534583
+      NeonCity_Glow_6: -5340243265477157176
+      NeonCity_Glow_60: -2921226394892055723
+      NeonCity_Glow_61: -2077511204421755706
+      NeonCity_Glow_62: -9174726988016495938
+      NeonCity_Glow_63: 4290840041313348504
+      NeonCity_Glow_64: 980069943907448431
+      NeonCity_Glow_65: -4823680632512099093
+      NeonCity_Glow_66: -6302498332308602769
+      NeonCity_Glow_7: -1760049297908650520
+      NeonCity_Glow_8: 8144168218807583418
+      NeonCity_Glow_9: -2765150683726942845
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
