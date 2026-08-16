@@ -36,7 +36,7 @@ public class GameplayBackgroundController : MonoBehaviour
     {
         if (skinManager == null)
         {
-            skinManager = FindFirstObjectByType<SkinManager>();
+            skinManager = FindAnyObjectByType<SkinManager>();
         }
 
         if (baseBackgroundCover == null && baseBackgroundImage != null)
@@ -117,7 +117,7 @@ public class GameplayBackgroundController : MonoBehaviour
     {
         if (skinManager == null)
         {
-            skinManager = FindFirstObjectByType<SkinManager>();
+            skinManager = FindAnyObjectByType<SkinManager>();
         }
 
         if (skinManager != null)

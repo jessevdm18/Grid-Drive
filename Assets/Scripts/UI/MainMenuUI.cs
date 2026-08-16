@@ -32,7 +32,7 @@ public class MainMenuUI : MonoBehaviour
     {
         if (settingsUI == null)
         {
-            settingsUI = FindFirstObjectByType<MainMenuSettingsUI>();
+            settingsUI = FindAnyObjectByType<MainMenuSettingsUI>();
         }
 
         if (settingsUI != null)
@@ -52,7 +52,7 @@ public class MainMenuUI : MonoBehaviour
     {
         if (shopUI == null)
         {
-            shopUI = FindFirstObjectByType<ShopUIController>();
+            shopUI = FindAnyObjectByType<ShopUIController>();
         }
 
         if (shopUI != null)

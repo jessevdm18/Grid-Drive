@@ -223,12 +223,12 @@ public class SkinShopCardUI : MonoBehaviour
     {
         if (skinManager == null)
         {
-            skinManager = FindFirstObjectByType<SkinManager>();
+            skinManager = FindAnyObjectByType<SkinManager>();
         }
 
         if (coinManager == null)
         {
-            coinManager = FindFirstObjectByType<CoinManager>();
+            coinManager = FindAnyObjectByType<CoinManager>();
         }
     }
 

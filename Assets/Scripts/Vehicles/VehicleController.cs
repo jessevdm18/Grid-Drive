@@ -23,6 +23,16 @@ public class VehicleController : MonoBehaviour
 [SerializeField] private int exitRow = 2;
 [SerializeField] private GameManager gameManager;
 
+    // Runtime: NoTouchChallenge protected flag (uit VehicleData via Setup).
+    private bool isProtectedVehicle;
+
+    // Runtime: FragileCargo cargo-target flag (uit VehicleData via Setup).
+    private bool isFragileCargo;
+
+    // Runtime: LimitedVehicle blocker flag + movement lock.
+    private bool isLimitedVehicle;
+    private bool isLimitedVehicleLocked;
+
     [Header("References")]
     [SerializeField] private GridManager gridManager;
 
@@ -98,6 +108,29 @@ public class VehicleController : MonoBehaviour
     public VehicleOrientation Orientation => orientation;
     public int LengthInCells => lengthInCells;
     public bool CanExitRight => canExitRight;
+
+    /// <summary>
+    /// NoTouchChallenge: dit voertuig mag geen geldige grid-move doen.
+    /// Andere objectives negeren dit.
+    /// </summary>
+    public bool IsProtectedVehicle => isProtectedVehicle;
+
+    /// <summary>
+    /// FragileCargo: dit voertuig heeft het cargo-movebudget.
+    /// Andere objectives negeren dit.
+    /// </summary>
+    public bool IsFragileCargo => isFragileCargo;
+
+    /// <summary>
+    /// LimitedVehicle: dit voertuig heeft een eigen movebudget.
+    /// Andere objectives negeren dit.
+    /// </summary>
+    public bool IsLimitedVehicle => isLimitedVehicle;
+
+    /// <summary>
+    /// LimitedVehicle: budget op — dit voertuig accepteert geen movement-input meer.
+    /// </summary>
+    public bool IsLimitedVehicleLocked => isLimitedVehicleLocked;
 
     // CarSprite-renderer voor hint-highlight (niet de disabled root-SpriteRenderer).
     public SpriteRenderer VisualSpriteRenderer => visualSpriteRenderer;
@@ -266,7 +299,10 @@ public class VehicleController : MonoBehaviour
         int newLengthInCells,
         Vector2Int newGridPosition,
         bool newCanExitRight,
-        int newExitRow)
+        int newExitRow,
+        bool newIsProtectedVehicle = false,
+        bool newIsFragileCargo = false,
+        bool newIsLimitedVehicle = false)
     {
         gridManager = newGridManager;
         gameManager = newGameManager;
@@ -275,6 +311,10 @@ public class VehicleController : MonoBehaviour
         gridPosition = newGridPosition;
         canExitRight = newCanExitRight;
         exitRow = newExitRow;
+        isProtectedVehicle = newIsProtectedVehicle;
+        isFragileCargo = newIsFragileCargo;
+        isLimitedVehicle = newIsLimitedVehicle;
+        isLimitedVehicleLocked = false;
 
         // Alleen de doelauto toont de target-indicator.
         if (targetIndicator != null)
@@ -298,6 +338,14 @@ public class VehicleController : MonoBehaviour
         UpdateVisualSize();
 
         Initialize();
+    }
+
+    /// <summary>
+    /// LimitedVehicle: lock/unlock movement input voor dit voertuig alleen.
+    /// </summary>
+    public void SetLimitedVehicleLocked(bool locked)
+    {
+        isLimitedVehicleLocked = locked;
     }
 
     /// <summary>
@@ -582,7 +630,7 @@ public class VehicleController : MonoBehaviour
         }
 
         mainCamera = Camera.main;
-        audioManager = FindFirstObjectByType<AudioManager>();
+        audioManager = FindAnyObjectByType<AudioManager>();
 
         // Zorg dat we meteen exact op de juiste gridpositie staan.
         transform.position = GetWorldPosition(gridPosition);
@@ -601,6 +649,11 @@ public class VehicleController : MonoBehaviour
     private void OnMouseDown()
     {
         if (isExiting)
+        {
+            return;
+        }
+
+        if (isLimitedVehicleLocked)
         {
             return;
         }
@@ -679,7 +732,7 @@ private bool CanPerformExitRight(Vector3 dragDifference)
         // Exit telt als één move (ongeacht eerdere cellen in dezelfde drag).
         if (gameManager != null)
         {
-            gameManager.RegisterMove();
+            gameManager.RegisterMove(this);
         }
 
         NotifyVehicleMoved();
@@ -736,9 +789,10 @@ private bool CanPerformExitRight(Vector3 dragDifference)
         transform.position = endPosition;
 
         // Level pas voltooien als de auto zichtbaar is weggereden.
+        // MultiTargetRescue: CompleteLevel alleen na laatste target.
         if (gameManager != null)
         {
-            gameManager.CompleteLevel();
+            gameManager.NotifyTargetExitFinished(this);
         }
 
         // Zelfde eindresultaat als voorheen: auto van het bord.
@@ -748,6 +802,9 @@ private bool CanPerformExitRight(Vector3 dragDifference)
     private void OnMouseDrag()
     {
         if (isExiting || gridManager == null)
+            return;
+
+        if (isLimitedVehicleLocked)
             return;
 
         if (gameManager != null && !gameManager.CanAcceptVehicleInput)
@@ -1050,6 +1107,11 @@ private bool CanPerformExitRight(Vector3 dragDifference)
             return;
         }
 
+        if (isLimitedVehicleLocked)
+        {
+            return;
+        }
+
         if (gameManager != null && !gameManager.CanAcceptVehicleInput)
         {
             return;
@@ -1068,7 +1130,7 @@ private bool CanPerformExitRight(Vector3 dragDifference)
         {
             if (gameManager != null)
             {
-                gameManager.RegisterMove();
+                gameManager.RegisterMove(this);
             }
 
             NotifyVehicleMoved();

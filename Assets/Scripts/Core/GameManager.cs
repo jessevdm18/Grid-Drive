@@ -55,38 +55,39 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        audioManager = FindFirstObjectByType<AudioManager>();
+        audioManager = FindAnyObjectByType<AudioManager>();
 
         if (gameplayUI == null)
         {
-            gameplayUI = FindFirstObjectByType<GameplayUI>();
+            gameplayUI = FindAnyObjectByType<GameplayUI>();
         }
 
         if (levelManager == null)
         {
-            levelManager = FindFirstObjectByType<LevelManager>();
+            levelManager = FindAnyObjectByType<LevelManager>();
         }
 
         if (saveManager == null)
         {
-            saveManager = FindFirstObjectByType<SaveManager>();
+            saveManager = FindAnyObjectByType<SaveManager>();
         }
 
         if (hintManager == null)
         {
-            hintManager = FindFirstObjectByType<HintManager>();
+            hintManager = FindAnyObjectByType<HintManager>();
         }
 
         if (levelObjectiveController == null)
         {
-            levelObjectiveController = FindFirstObjectByType<LevelObjectiveController>();
+            levelObjectiveController = FindAnyObjectByType<LevelObjectiveController>();
         }
     }
 
     /// <summary>
     /// Registreert één move (één drag naar een andere gridpositie, of exit).
+    /// vehicle: het voertuig dat de geldige move uitvoerde (voor NoTouchChallenge).
     /// </summary>
-    public void RegisterMove()
+    public void RegisterMove(VehicleController vehicle)
     {
         currentMoves++;
         Debug.Log("Move registered. Total moves: " + currentMoves);
@@ -98,10 +99,10 @@ public class GameManager : MonoBehaviour
 
         if (levelObjectiveController == null)
         {
-            levelObjectiveController = FindFirstObjectByType<LevelObjectiveController>();
+            levelObjectiveController = FindAnyObjectByType<LevelObjectiveController>();
         }
 
-        levelObjectiveController?.NotifyValidMove();
+        levelObjectiveController?.NotifyValidMove(vehicle);
     }
 
     /// <summary>
@@ -137,6 +138,37 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Einde exit-animatie. Classic/Timed/MoveLimit → CompleteLevel.
+    /// MultiTargetRescue → CompleteLevel alleen na laatste target.
+    /// </summary>
+    public void NotifyTargetExitFinished(VehicleController vehicle)
+    {
+        if (levelCompleted || levelFailed)
+        {
+            return;
+        }
+
+        if (levelObjectiveController == null)
+        {
+            levelObjectiveController = FindAnyObjectByType<LevelObjectiveController>();
+        }
+
+        if (levelObjectiveController != null &&
+            levelObjectiveController.IsMultiTargetRescueLevel)
+        {
+            bool allRescued = levelObjectiveController.NotifyTargetRescued(vehicle);
+            if (!allRescued)
+            {
+                // Tussentijdse rescue: gameplay gaat door.
+                targetExitInProgress = false;
+                return;
+            }
+        }
+
+        CompleteLevel();
+    }
+
+    /// <summary>
     /// Wordt aangeroepen wanneer de doelauto succesvol via de exit ontsnapt.
     /// </summary>
     public void CompleteLevel()
@@ -158,7 +190,7 @@ public class GameManager : MonoBehaviour
 
         if (levelObjectiveController == null)
         {
-            levelObjectiveController = FindFirstObjectByType<LevelObjectiveController>();
+            levelObjectiveController = FindAnyObjectByType<LevelObjectiveController>();
         }
 
         levelObjectiveController?.NotifyLevelCompleted();

@@ -63,6 +63,9 @@ public class HintManager : MonoBehaviour
     [SerializeField] private Color highlightColor = new Color(1f, 0.95f, 0.35f, 1f);
 
     [SerializeField] private Sprite directionArrowSprite;
+
+    // Legacy Inspector value (arrow spacing). Niet gebruikt sinds HintDirection
+    // transform op de prefab de positie bepaalt — behouden voor serialization.
     [SerializeField] private float directionOffset = 0.85f;
 
     private Coroutine hintPulseCoroutine;
@@ -90,17 +93,17 @@ public class HintManager : MonoBehaviour
     {
         if (levelManager == null)
         {
-            levelManager = FindFirstObjectByType<LevelManager>();
+            levelManager = FindAnyObjectByType<LevelManager>();
         }
 
         if (gameManager == null)
         {
-            gameManager = FindFirstObjectByType<GameManager>();
+            gameManager = FindAnyObjectByType<GameManager>();
         }
 
         if (audioManager == null)
         {
-            audioManager = FindFirstObjectByType<AudioManager>();
+            audioManager = FindAnyObjectByType<AudioManager>();
         }
 
         if (hintStatusText != null)
@@ -669,7 +672,7 @@ public class HintManager : MonoBehaviour
             Debug.LogWarning(
                 "HintManager: ActiveVehicles leeg — fallback FindObjectsByType."
             );
-            runtimeVehicles = FindObjectsByType<VehicleController>(FindObjectsSortMode.None);
+            runtimeVehicles = FindObjectsByType<VehicleController>();
         }
 
         for (int i = 0; i < runtimeVehicles.Count; i++)

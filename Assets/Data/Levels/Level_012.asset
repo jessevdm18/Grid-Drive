@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   levelNumber: 27
   difficulty: 2
-  objectiveType: 0
+  objectiveType: 3
   timeLimitSeconds: 0
   moveLimit: 0
   specialTargetSprite: {fileID: 0}
@@ -62,7 +62,7 @@ MonoBehaviour:
     orientation: 0
     lengthInCells: 2
     gridPosition: {x: 0, y: 5}
-    canExitRight: 0
+    canExitRight: 1
     vehicleSprite: {fileID: 0}
   - vehicleName: G
     orientation: 1

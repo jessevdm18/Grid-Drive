@@ -19,7 +19,7 @@ public class UIButtonSound : MonoBehaviour, IPointerDownHandler
     private void Awake()
     {
         button = GetComponent<Button>();
-        audioManager = FindFirstObjectByType<AudioManager>();
+        audioManager = FindAnyObjectByType<AudioManager>();
     }
 
     public void OnPointerDown(PointerEventData eventData)

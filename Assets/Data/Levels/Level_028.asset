@@ -38,7 +38,7 @@ MonoBehaviour:
     orientation: 0
     lengthInCells: 2
     gridPosition: {x: 3, y: 2}
-    canExitRight: 0
+    canExitRight: 1
     vehicleSprite: {fileID: 0}
   - vehicleName: C
     orientation: 0

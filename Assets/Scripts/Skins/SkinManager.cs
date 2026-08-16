@@ -38,12 +38,12 @@ public class SkinManager : MonoBehaviour
     {
         if (coinManager == null)
         {
-            coinManager = FindFirstObjectByType<CoinManager>();
+            coinManager = FindAnyObjectByType<CoinManager>();
         }
 
         if (audioManager == null)
         {
-            audioManager = FindFirstObjectByType<AudioManager>();
+            audioManager = FindAnyObjectByType<AudioManager>();
         }
 
         Load();

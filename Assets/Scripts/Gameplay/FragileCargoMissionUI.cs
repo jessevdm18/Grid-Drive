@@ -3,28 +3,33 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// UI-bridge voor MoveLimit: remaining-HUD + MissionFailedLimitPanel.
+/// UI-bridge voor FragileCargo: cargo-moves HUD + MissionFailedFragileCargoPanel.
 /// Maakt geen GameObjects — alles Inspector-gekoppeld. Alleen presentation.
+/// Geen warning-SFX/haptic in v1. Failure SFX/haptic via OnFragileCargoMissionFailed.
+/// Failure panel uitsluitend via OnFragileCargoMissionFailed (remaining==0 ≠ fail).
 /// </summary>
-public class MoveLimitMissionUI : MonoBehaviour
+public class FragileCargoMissionUI : MonoBehaviour
 {
     [Header("Refs")]
     [SerializeField] private LevelObjectiveController objectiveController;
     [SerializeField] private LevelManager levelManager;
     [SerializeField] private AudioManager audioManager;
 
-    [Header("Move Limit HUD")]
-    [SerializeField] private GameObject moveLimitHudRoot;
-    [SerializeField] private TextMeshProUGUI movesRemainingText;
+    [Header("Fragile Cargo HUD")]
+    [SerializeField] private GameObject fragileCargoHudRoot;
     [SerializeField] private TextMeshProUGUI missionLabel;
+    [SerializeField] private TextMeshProUGUI movesText;
 
-    [SerializeField] private string moveLimitMissionLabel = "MOVE LIMIT";
+    [Tooltip("Uit = MissionLabel-tekst die jij handmatig zette blijft staan.")]
+    [SerializeField] private bool applyMissionLabel = false;
+
+    [SerializeField] private string fragileCargoMissionLabel = "FRAGILE CARGO";
 
     [Header("Failure panel")]
     [SerializeField] private GameObject missionFailedPanel;
     [SerializeField] private Button restartButton;
     [SerializeField] private Button levelSelectButton;
-    [SerializeField] private Button backButton;
+    [SerializeField] private Button menuButton;
 
     [Header("Failure copy (optioneel)")]
     [Tooltip("Uit = TMP-tekst die jij handmatig zette blijft staan.")]
@@ -33,28 +38,29 @@ public class MoveLimitMissionUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI missionFailedTitle;
     [SerializeField] private TextMeshProUGUI missionFailedDescription;
 
-    [SerializeField] private string failureTitle = "OUT OF MOVES!";
+    [SerializeField] private string failureTitle = "MISSION FAILED";
     [SerializeField] private string failureDescription =
-        "TRY AGAIN AND FIND A SHORTER ROUTE";
+        "CARGO MOVE LIMIT EXCEEDED";
 
-    [Header("Move Limit Urgency")]
-    [SerializeField, Range(1, 20)] private int warningMoves = 3;
-    [SerializeField, Range(1, 20)] private int dangerMoves = 2;
+    [Header("Cargo Move Urgency")]
+    [SerializeField, Range(1, 20)] private int warningMoves = 2;
     [SerializeField, Range(1, 20)] private int criticalMoves = 1;
 
     [SerializeField] private Color normalColor = Color.white;
     [SerializeField] private Color warningColor = new Color(1f, 0.78f, 0.15f, 1f);
-    [SerializeField] private Color dangerColor = new Color(1f, 0.45f, 0.18f, 1f);
     [SerializeField] private Color criticalColor = new Color(1f, 0.28f, 0.22f, 1f);
 
     [SerializeField, Range(0.1f, 8f)] private float criticalPulseSpeed = 2f;
     [SerializeField, Range(1f, 1.25f)] private float criticalPulseScale = 1.08f;
 
-    private Vector3 originalRemainingScale = Vector3.one;
-    private Color originalRemainingColor = Color.white;
+    private bool lastKnownFragileCargo;
+    private LevelObjectiveController.RuntimeState lastKnownState =
+        LevelObjectiveController.RuntimeState.Inactive;
+
+    private Vector3 originalMovesScale = Vector3.one;
+    private Color originalMovesColor = Color.white;
     private bool visualsCached;
     private bool pulseActive;
-    private bool warningSfxPlayed;
     private bool failurePresentationPlayed;
 
     private void Awake()
@@ -79,8 +85,10 @@ public class MoveLimitMissionUI : MonoBehaviour
             missionFailedPanel.SetActive(false);
         }
 
-        CacheRemainingVisualsIfNeeded();
-        SetMoveLimitHudVisible(false);
+        CacheMovesVisualsIfNeeded();
+        SetFragileCargoHudVisible(false);
+        lastKnownFragileCargo = false;
+        lastKnownState = LevelObjectiveController.RuntimeState.Inactive;
     }
 
     private void OnEnable()
@@ -97,17 +105,18 @@ public class MoveLimitMissionUI : MonoBehaviour
             levelSelectButton.onClick.AddListener(OnLevelSelectClicked);
         }
 
-        if (backButton != null)
+        if (menuButton != null)
         {
-            backButton.onClick.RemoveListener(OnBackClicked);
-            backButton.onClick.AddListener(OnBackClicked);
+            menuButton.onClick.RemoveListener(OnMenuClicked);
+            menuButton.onClick.AddListener(OnMenuClicked);
         }
 
         if (objectiveController != null)
         {
-            objectiveController.OnMovesRemainingChanged += OnMovesRemainingChanged;
-            objectiveController.OnMoveLimitMissionFailed += OnMoveLimitMissionFailed;
+            objectiveController.OnCargoMovesRemainingChanged += OnCargoMovesRemainingChanged;
+            objectiveController.OnFragileCargoMissionFailed += OnFragileCargoMissionFailed;
             RefreshFromController();
+            CacheObjectiveSnapshot();
         }
     }
 
@@ -123,15 +132,15 @@ public class MoveLimitMissionUI : MonoBehaviour
             levelSelectButton.onClick.RemoveListener(OnLevelSelectClicked);
         }
 
-        if (backButton != null)
+        if (menuButton != null)
         {
-            backButton.onClick.RemoveListener(OnBackClicked);
+            menuButton.onClick.RemoveListener(OnMenuClicked);
         }
 
         if (objectiveController != null)
         {
-            objectiveController.OnMovesRemainingChanged -= OnMovesRemainingChanged;
-            objectiveController.OnMoveLimitMissionFailed -= OnMoveLimitMissionFailed;
+            objectiveController.OnCargoMovesRemainingChanged -= OnCargoMovesRemainingChanged;
+            objectiveController.OnFragileCargoMissionFailed -= OnFragileCargoMissionFailed;
         }
 
         StopPulseAndResetScale();
@@ -139,13 +148,13 @@ public class MoveLimitMissionUI : MonoBehaviour
 
     private void Update()
     {
-        if (!pulseActive || movesRemainingText == null)
+        if (!pulseActive || movesText == null)
         {
             return;
         }
 
         if (objectiveController == null ||
-            !objectiveController.IsMoveLimitLevel ||
+            !objectiveController.IsFragileCargoLevel ||
             objectiveController.State == LevelObjectiveController.RuntimeState.Completed ||
             objectiveController.State == LevelObjectiveController.RuntimeState.Failed ||
             objectiveController.State == LevelObjectiveController.RuntimeState.Inactive)
@@ -154,7 +163,7 @@ public class MoveLimitMissionUI : MonoBehaviour
             return;
         }
 
-        // Pause: freeze mid-pulse (zelfde patroon als TimedMissionUI).
+        // Pause: freeze mid-pulse (zelfde patroon als MoveLimit/Timed).
         if (Time.timeScale <= 0f)
         {
             return;
@@ -162,15 +171,38 @@ public class MoveLimitMissionUI : MonoBehaviour
 
         float wave = (Mathf.Sin(Time.unscaledTime * criticalPulseSpeed * Mathf.PI * 2f) + 1f) * 0.5f;
         float scaleMul = Mathf.Lerp(1f, criticalPulseScale, wave);
-        movesRemainingText.rectTransform.localScale = originalRemainingScale * scaleMul;
+        movesText.rectTransform.localScale = originalMovesScale * scaleMul;
     }
 
-    private void OnMovesRemainingChanged(int remaining)
+    /// <summary>
+    /// Sync HUD visibility bij Completed/Failed/restart zonder gameplay te wijzigen.
+    /// Counter-updates komen via OnCargoMovesRemainingChanged.
+    /// </summary>
+    private void LateUpdate()
     {
-        RefreshFromController(remaining);
+        if (objectiveController == null)
+        {
+            return;
+        }
+
+        bool fragileCargo = objectiveController.IsFragileCargoLevel;
+        LevelObjectiveController.RuntimeState state = objectiveController.State;
+
+        if (fragileCargo == lastKnownFragileCargo && state == lastKnownState)
+        {
+            return;
+        }
+
+        CacheObjectiveSnapshot();
+        RefreshFromController();
     }
 
-    private void OnMoveLimitMissionFailed()
+    private void OnCargoMovesRemainingChanged(int remaining, int total)
+    {
+        RefreshFromController(remaining, total);
+    }
+
+    private void OnFragileCargoMissionFailed()
     {
         StopPulseAndResetScale();
 
@@ -185,7 +217,7 @@ public class MoveLimitMissionUI : MonoBehaviour
 
             if (audioManager != null)
             {
-                audioManager.PlayMoveLimitFailed();
+                audioManager.PlayFragileCargoFailed();
             }
 
             HapticManager.PlayMediumImpact();
@@ -196,6 +228,8 @@ public class MoveLimitMissionUI : MonoBehaviour
             ApplyFailureCopy();
         }
 
+        SetFragileCargoHudVisible(false);
+
         if (missionFailedPanel != null)
         {
             missionFailedPanel.SetActive(true);
@@ -205,8 +239,8 @@ public class MoveLimitMissionUI : MonoBehaviour
     private void OnRestartClicked()
     {
         StopPulseAndResetScale();
-        ApplyRemainingColor(normalColor);
-        ResetAudioPresentationState();
+        ApplyMovesColor(normalColor);
+        failurePresentationPlayed = false;
 
         if (missionFailedPanel != null)
         {
@@ -226,7 +260,7 @@ public class MoveLimitMissionUI : MonoBehaviour
         }
         else
         {
-            Debug.LogError("MoveLimitMissionUI: geen LevelManager voor RestartLevel.");
+            Debug.LogError("FragileCargoMissionUI: geen LevelManager voor RestartLevel.");
         }
     }
 
@@ -244,9 +278,9 @@ public class MoveLimitMissionUI : MonoBehaviour
     }
 
     /// <summary>
-    /// Zelfde Back-doel als PauseManager / GameplayUI: MainMenu.
+    /// Zelfde Menu-doel als NoTouchMissionUI / MoveLimitMissionUI: MainMenu.
     /// </summary>
-    private void OnBackClicked()
+    private void OnMenuClicked()
     {
         StopPulseAndResetScale();
 
@@ -262,17 +296,20 @@ public class MoveLimitMissionUI : MonoBehaviour
     private void RefreshFromController()
     {
         int remaining = objectiveController != null
-            ? objectiveController.MovesRemaining
+            ? objectiveController.CargoMovesRemaining
             : 0;
-        RefreshFromController(remaining);
+        int total = objectiveController != null
+            ? objectiveController.CargoMoveLimit
+            : 0;
+        RefreshFromController(remaining, total);
     }
 
-    private void RefreshFromController(int remaining)
+    private void RefreshFromController(int remaining, int total)
     {
-        bool moveLimit = objectiveController != null &&
-                         objectiveController.IsMoveLimitLevel;
+        bool fragileCargo = objectiveController != null &&
+                            objectiveController.IsFragileCargoLevel;
 
-        if (!moveLimit)
+        if (!fragileCargo)
         {
             if (missionFailedPanel != null)
             {
@@ -280,13 +317,13 @@ public class MoveLimitMissionUI : MonoBehaviour
             }
 
             StopPulseAndResetScale();
-            ApplyRemainingColor(normalColor);
-            ResetAudioPresentationState();
-            SetMoveLimitHudVisible(false);
+            ApplyMovesColor(normalColor);
+            failurePresentationPlayed = false;
+            SetFragileCargoHudVisible(false);
             return;
         }
 
-        // Nieuw/restart MoveLimit: failure panel dicht tenzij Failed.
+        // Nieuw/restart FragileCargo: failure panel dicht tenzij Failed.
         if (objectiveController.State != LevelObjectiveController.RuntimeState.Failed &&
             missionFailedPanel != null &&
             missionFailedPanel.activeSelf)
@@ -294,68 +331,57 @@ public class MoveLimitMissionUI : MonoBehaviour
             missionFailedPanel.SetActive(false);
         }
 
-        // Volledige limiet weer zichtbaar → warning opnieuw toestaan.
-        if (remaining > warningMoves &&
-            objectiveController.State == LevelObjectiveController.RuntimeState.Running)
+        // Running na restart: failure feedback opnieuw toestaan.
+        if (objectiveController.State == LevelObjectiveController.RuntimeState.Running)
         {
-            warningSfxPlayed = false;
             failurePresentationPlayed = false;
         }
 
-        SetMoveLimitHudVisible(true);
-
-        if (missionLabel != null)
+        // Win: HUD uit, failure panel blijft uit. Geen failure visuals.
+        if (objectiveController.State == LevelObjectiveController.RuntimeState.Completed)
         {
-            missionLabel.text = moveLimitMissionLabel;
+            if (missionFailedPanel != null)
+            {
+                missionFailedPanel.SetActive(false);
+            }
+
+            StopPulseAndResetScale();
+            ApplyMovesColor(normalColor);
+            SetFragileCargoHudVisible(false);
+            return;
         }
 
-        if (movesRemainingText != null)
+        // Fail: HUD uit; panel wordt alleen via OnFragileCargoMissionFailed geopend.
+        if (objectiveController.State == LevelObjectiveController.RuntimeState.Failed)
         {
-            movesRemainingText.text = remaining.ToString();
+            StopPulseAndResetScale();
+            SetFragileCargoHudVisible(false);
+            return;
+        }
+
+        SetFragileCargoHudVisible(true);
+
+        if (applyMissionLabel && missionLabel != null)
+        {
+            missionLabel.text = fragileCargoMissionLabel;
+        }
+
+        if (movesText != null)
+        {
+            movesText.text = remaining.ToString();
         }
 
         ApplyUrgencyVisuals(remaining);
-        ProcessWarningSfx(remaining);
     }
 
-    private void ProcessWarningSfx(int remaining)
-    {
-        if (objectiveController == null ||
-            !objectiveController.IsMoveLimitLevel ||
-            objectiveController.State != LevelObjectiveController.RuntimeState.Running)
-        {
-            return;
-        }
-
-        if (remaining != warningMoves || warningSfxPlayed)
-        {
-            return;
-        }
-
-        warningSfxPlayed = true;
-
-        if (audioManager == null)
-        {
-            audioManager = FindAnyObjectByType<AudioManager>();
-        }
-
-        if (audioManager != null)
-        {
-            audioManager.PlayMoveLimitWarning();
-        }
-    }
-
-    private void ResetAudioPresentationState()
-    {
-        warningSfxPlayed = false;
-        failurePresentationPlayed = false;
-    }
-
+    /// <summary>
+    /// remaining==0 ≠ failure. Alleen pulse/scale stoppen; panel via failure-event.
+    /// </summary>
     private void ApplyUrgencyVisuals(int remaining)
     {
-        CacheRemainingVisualsIfNeeded();
+        CacheMovesVisualsIfNeeded();
 
-        if (movesRemainingText == null)
+        if (movesText == null)
         {
             return;
         }
@@ -364,74 +390,68 @@ public class MoveLimitMissionUI : MonoBehaviour
             objectiveController.State == LevelObjectiveController.RuntimeState.Completed)
         {
             StopPulseAndResetScale();
-            ApplyRemainingColor(normalColor);
+            ApplyMovesColor(normalColor);
             return;
         }
 
+        // Last-move exit of budget op: geen pulse, geen failure-forcening.
         if (remaining <= 0)
         {
             StopPulseAndResetScale();
-            ApplyRemainingColor(criticalColor);
             return;
         }
 
         if (remaining <= criticalMoves)
         {
-            ApplyRemainingColor(criticalColor);
+            ApplyMovesColor(criticalColor);
             pulseActive = true;
             return;
         }
 
         StopPulseAndResetScale();
 
-        if (remaining <= dangerMoves)
-        {
-            ApplyRemainingColor(dangerColor);
-            return;
-        }
-
         if (remaining <= warningMoves)
         {
-            ApplyRemainingColor(warningColor);
+            ApplyMovesColor(warningColor);
             return;
         }
 
-        ApplyRemainingColor(normalColor);
+        ApplyMovesColor(normalColor);
     }
 
-    private void CacheRemainingVisualsIfNeeded()
+    private void CacheMovesVisualsIfNeeded()
     {
-        if (visualsCached || movesRemainingText == null)
+        if (visualsCached || movesText == null)
         {
             return;
         }
 
-        originalRemainingScale = movesRemainingText.rectTransform.localScale;
-        originalRemainingColor = movesRemainingText.color;
+        originalMovesScale = movesText.rectTransform.localScale;
+        originalMovesColor = movesText.color;
         visualsCached = true;
     }
 
-    private void ApplyRemainingColor(Color color)
+    private void ApplyMovesColor(Color color)
     {
-        if (movesRemainingText == null)
+        if (movesText == null)
         {
             return;
         }
 
-        movesRemainingText.color = color;
+        movesText.color = color;
     }
 
     private void StopPulseAndResetScale()
     {
         pulseActive = false;
 
-        if (movesRemainingText == null)
+        if (movesText == null)
         {
             return;
         }
 
-        CacheRemainingVisualsIfNeeded();
-        movesRemainingText.rectTransform.localScale = originalRemainingScale;
+        CacheMovesVisualsIfNeeded();
+        movesText.rectTransform.localScale = originalMovesScale;
     }
 
     private void ApplyFailureCopy()
@@ -447,11 +467,20 @@ public class MoveLimitMissionUI : MonoBehaviour
         }
     }
 
-    private void SetMoveLimitHudVisible(bool visible)
+    private void SetFragileCargoHudVisible(bool visible)
     {
-        if (moveLimitHudRoot != null)
+        if (fragileCargoHudRoot != null)
         {
-            moveLimitHudRoot.SetActive(visible);
+            fragileCargoHudRoot.SetActive(visible);
         }
+    }
+
+    private void CacheObjectiveSnapshot()
+    {
+        lastKnownFragileCargo = objectiveController != null &&
+                                objectiveController.IsFragileCargoLevel;
+        lastKnownState = objectiveController != null
+            ? objectiveController.State
+            : LevelObjectiveController.RuntimeState.Inactive;
     }
 }

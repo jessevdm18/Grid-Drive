@@ -66,7 +66,7 @@ public class SceneTransition : MonoBehaviour
             return instance;
         }
 
-        SceneTransition existing = FindFirstObjectByType<SceneTransition>();
+        SceneTransition existing = FindAnyObjectByType<SceneTransition>();
         if (existing != null)
         {
             instance = existing;

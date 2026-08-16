@@ -40,12 +40,12 @@ public class ShopUIController : MonoBehaviour
     {
         if (skinManager == null)
         {
-            skinManager = FindFirstObjectByType<SkinManager>();
+            skinManager = FindAnyObjectByType<SkinManager>();
         }
 
         if (audioManager == null)
         {
-            audioManager = FindFirstObjectByType<AudioManager>();
+            audioManager = FindAnyObjectByType<AudioManager>();
         }
 
         WireButtons();
@@ -145,7 +145,7 @@ public class ShopUIController : MonoBehaviour
     {
         if (skinManager == null)
         {
-            skinManager = FindFirstObjectByType<SkinManager>();
+            skinManager = FindAnyObjectByType<SkinManager>();
         }
 
         if (skinManager == null || string.IsNullOrWhiteSpace(skinId))
@@ -165,7 +165,7 @@ public class ShopUIController : MonoBehaviour
     {
         if (skinManager == null)
         {
-            skinManager = FindFirstObjectByType<SkinManager>();
+            skinManager = FindAnyObjectByType<SkinManager>();
         }
 
         if (skinManager == null || string.IsNullOrWhiteSpace(skinId))
@@ -180,8 +180,7 @@ public class ShopUIController : MonoBehaviour
     private void RefreshSkinCards()
     {
         SkinShopCardUI[] cards = FindObjectsByType<SkinShopCardUI>(
-            FindObjectsInactive.Include,
-            FindObjectsSortMode.None
+            FindObjectsInactive.Include
         );
 
         for (int i = 0; i < cards.Length; i++)

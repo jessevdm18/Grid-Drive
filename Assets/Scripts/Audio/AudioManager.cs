@@ -25,6 +25,10 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioClip timedMissionFailedClip;
     [SerializeField] private AudioClip moveLimitWarningClip;
     [SerializeField] private AudioClip moveLimitFailedClip;
+    [SerializeField] private AudioClip multiTargetRescueClip;
+    [SerializeField] private AudioClip noTouchFailedClip;
+    [SerializeField] private AudioClip fragileCargoFailedClip;
+    [SerializeField] private AudioClip limitedVehicleLockedClip;
 
     [Header("SFX Volumes")]
     [SerializeField, Range(0f, 1f)] private float buttonVolume = 0.7f;
@@ -45,6 +49,10 @@ public class AudioManager : MonoBehaviour
     [SerializeField, Range(0f, 1f)] private float timedMissionFailedVolume = 0.75f;
     [SerializeField, Range(0f, 1f)] private float moveLimitWarningVolume = 0.55f;
     [SerializeField, Range(0f, 1f)] private float moveLimitFailedVolume = 0.75f;
+    [SerializeField, Range(0f, 1f)] private float multiTargetRescueVolume = 0.65f;
+    [SerializeField, Range(0f, 1f)] private float noTouchFailedVolume = 0.75f;
+    [SerializeField, Range(0f, 1f)] private float fragileCargoFailedVolume = 0.75f;
+    [SerializeField, Range(0f, 1f)] private float limitedVehicleLockedVolume = 0.65f;
 
     [Header("SFX Pitch (repeating gameplay)")]
     [SerializeField, Range(0.8f, 1.2f)] private float movePitchMin = 0.96f;
@@ -282,6 +290,39 @@ public class AudioManager : MonoBehaviour
     public void PlayMoveLimitFailed()
     {
         PlaySfx(moveLimitFailedClip, moveLimitFailedVolume);
+    }
+
+    /// <summary>
+    /// MultiTargetRescue: niet-laatste target gered. Pitch vast 1.0.
+    /// </summary>
+    public void PlayMultiTargetRescue()
+    {
+        PlaySfx(multiTargetRescueClip, multiTargetRescueVolume);
+    }
+
+    /// <summary>
+    /// NoTouchChallenge: protected vehicle bewogen / mission failed. Pitch vast 1.0.
+    /// </summary>
+    public void PlayNoTouchFailed()
+    {
+        PlaySfx(noTouchFailedClip, noTouchFailedVolume);
+    }
+
+    /// <summary>
+    /// FragileCargo: cargo movebudget op zonder exit / mission failed. Pitch vast 1.0.
+    /// </summary>
+    public void PlayFragileCargoFailed()
+    {
+        PlaySfx(fragileCargoFailedClip, fragileCargoFailedVolume);
+    }
+
+    /// <summary>
+    /// LimitedVehicle: limited blocker budget op / vehicle locked. Pitch vast 1.0.
+    /// Geen mission failure — alleen lock-bevestiging.
+    /// </summary>
+    public void PlayLimitedVehicleLocked()
+    {
+        PlaySfx(limitedVehicleLockedClip, limitedVehicleLockedVolume);
     }
 
     private void PlaySfx(

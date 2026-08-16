@@ -27,7 +27,7 @@ public class PauseManager : MonoBehaviour
     {
         if (audioManager == null)
         {
-            audioManager = FindFirstObjectByType<AudioManager>();
+            audioManager = FindAnyObjectByType<AudioManager>();
         }
 
         UpdateAudioIcons();

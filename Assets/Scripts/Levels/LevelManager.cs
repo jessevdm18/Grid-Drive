@@ -277,7 +277,7 @@ public class LevelManager : MonoBehaviour
 
         if (levelObjectiveController == null)
         {
-            levelObjectiveController = FindFirstObjectByType<LevelObjectiveController>();
+            levelObjectiveController = FindAnyObjectByType<LevelObjectiveController>();
         }
 
         // Na spawn: Classic = no-op, TimedAmbulance = wacht op fade → start timer.
@@ -311,7 +311,7 @@ public class LevelManager : MonoBehaviour
         }
 
         // Fallback: zoek alle VehicleControllers in de scene.
-        VehicleController[] vehicles = FindObjectsByType<VehicleController>(FindObjectsSortMode.None);
+        VehicleController[] vehicles = FindObjectsByType<VehicleController>();
 
         foreach (VehicleController vehicle in vehicles)
         {
@@ -369,7 +369,10 @@ public class LevelManager : MonoBehaviour
             data.lengthInCells,
             data.gridPosition,
             data.canExitRight,
-            levelData.exitRow
+            levelData.exitRow,
+            data.isProtectedVehicle,
+            data.isFragileCargo,
+            data.isLimitedVehicle
         );
 
         ApplyVehicleSprite(vehicle, ResolveVehicleSprite(data, levelData));
@@ -396,7 +399,7 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     private VehicleSpriteLibrary ResolveActiveSpriteLibrary()
     {
-        SkinManager skinManager = FindFirstObjectByType<SkinManager>();
+        SkinManager skinManager = FindAnyObjectByType<SkinManager>();
         if (skinManager != null)
         {
             VehicleSpriteLibrary fromSkin = skinManager.GetActiveSpriteLibrary();
@@ -415,14 +418,22 @@ public class LevelManager : MonoBehaviour
             ? activeVehicleSpriteLibrary
             : vehicleSpriteLibrary;
 
-        // 1) Target car: TimedAmbulance override, anders library TargetCarSprite.
+        // 1) Target car: specialTargetSprite override (TimedAmbulance / FragileCargo),
+        //    anders library TargetCarSprite.
         if (data.canExitRight)
         {
-            if (levelData != null &&
-                levelData.objectiveType == LevelObjectiveType.TimedAmbulance &&
-                levelData.specialTargetSprite != null)
+            if (levelData != null && levelData.specialTargetSprite != null)
             {
-                return levelData.specialTargetSprite;
+                if (levelData.objectiveType == LevelObjectiveType.TimedAmbulance)
+                {
+                    return levelData.specialTargetSprite;
+                }
+
+                if (levelData.objectiveType == LevelObjectiveType.FragileCargo &&
+                    data.isFragileCargo)
+                {
+                    return levelData.specialTargetSprite;
+                }
             }
 
             if (library != null && library.TargetCarSprite != null)

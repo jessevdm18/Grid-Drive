@@ -54,17 +54,17 @@ public class TimedMissionUI : MonoBehaviour
     {
         if (objectiveController == null)
         {
-            objectiveController = FindFirstObjectByType<LevelObjectiveController>();
+            objectiveController = FindAnyObjectByType<LevelObjectiveController>();
         }
 
         if (levelManager == null)
         {
-            levelManager = FindFirstObjectByType<LevelManager>();
+            levelManager = FindAnyObjectByType<LevelManager>();
         }
 
         if (audioManager == null)
         {
-            audioManager = FindFirstObjectByType<AudioManager>();
+            audioManager = FindAnyObjectByType<AudioManager>();
         }
 
         if (missionFailedPanel != null)
@@ -160,7 +160,7 @@ public class TimedMissionUI : MonoBehaviour
 
         if (audioManager == null)
         {
-            audioManager = FindFirstObjectByType<AudioManager>();
+            audioManager = FindAnyObjectByType<AudioManager>();
         }
 
         if (audioManager != null)
@@ -186,7 +186,7 @@ public class TimedMissionUI : MonoBehaviour
 
             if (audioManager == null)
             {
-                audioManager = FindFirstObjectByType<AudioManager>();
+                audioManager = FindAnyObjectByType<AudioManager>();
             }
 
             if (audioManager != null)
@@ -219,7 +219,7 @@ public class TimedMissionUI : MonoBehaviour
 
         if (levelManager == null)
         {
-            levelManager = FindFirstObjectByType<LevelManager>();
+            levelManager = FindAnyObjectByType<LevelManager>();
         }
 
         if (levelManager != null)
@@ -388,7 +388,7 @@ public class TimedMissionUI : MonoBehaviour
 
         if (audioManager == null)
         {
-            audioManager = FindFirstObjectByType<AudioManager>();
+            audioManager = FindAnyObjectByType<AudioManager>();
         }
 
         if (audioManager == null)

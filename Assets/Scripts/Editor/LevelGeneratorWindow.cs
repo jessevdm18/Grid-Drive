@@ -95,6 +95,11 @@ public class LevelGeneratorWindow : EditorWindow
     private List<MainLevelDatabaseDifficultyOrderUtility.OrderRow> difficultyOrderPreview;
     private Vector2 difficultyOrderPreviewScroll;
 
+    // --- MultiTarget suitability ---
+    private List<MultiTargetSuitabilityAnalyzer.Result> multiTargetResults;
+    private Vector2 multiTargetResultsScroll;
+    private bool multiTargetShowOnlyGood;
+
     private int BoardArea => gridWidth * gridHeight;
     private float AreaScale => BoardArea / (float)BaselineBoardArea;
 
@@ -104,12 +109,14 @@ public class LevelGeneratorWindow : EditorWindow
     public static void OpenWindow()
     {
         LevelGeneratorWindow window = GetWindow<LevelGeneratorWindow>("Generate Levels");
-        window.minSize = new Vector2(440f, 640f);
+        window.minSize = new Vector2(700f, 700f);
         window.Show();
     }
 
     private void OnEnable()
     {
+        minSize = new Vector2(700f, 700f);
+
         specialMissionSettings =
             SpecialMissionProgressionUtility.Settings.LoadFromEditorPrefs();
         specialMissionSettingsLoaded = true;
@@ -372,6 +379,7 @@ public class LevelGeneratorWindow : EditorWindow
         }
 
         DrawDifficultyOrderSection();
+        DrawMultiTargetSuitabilitySection();
     }
 
     private void DrawDifficultyOrderSection()
@@ -435,7 +443,7 @@ public class LevelGeneratorWindow : EditorWindow
         EditorGUILayout.LabelField("Preview (read-only)", EditorStyles.boldLabel);
         difficultyOrderPreviewScroll = EditorGUILayout.BeginScrollView(
             difficultyOrderPreviewScroll,
-            GUILayout.MaxHeight(200f)
+            GUILayout.Height(Mathf.Clamp(position.height * 0.22f, 180f, 280f))
         );
 
         for (int i = 0; i < difficultyOrderPreview.Count; i++)
@@ -460,6 +468,130 @@ public class LevelGeneratorWindow : EditorWindow
         EditorGUILayout.EndScrollView();
     }
 
+    private void DrawMultiTargetSuitabilitySection()
+    {
+        EditorGUILayout.Space(14f);
+        EditorGUILayout.LabelField("MULTI TARGET SUITABILITY", EditorStyles.boldLabel);
+        EditorGUILayout.HelpBox(
+            "Editor-only, read-only heuristiek (geen solver).\n" +
+            "Zoekt length-2 horizontals op exitRow als tweede target-kandidaat.\n" +
+            "Immediate exit na first rescue = zware penalty. Wijzigt geen LevelData.",
+            MessageType.None
+        );
+
+        multiTargetShowOnlyGood = EditorGUILayout.Toggle(
+            "Show Only Good Candidates",
+            multiTargetShowOnlyGood
+        );
+
+        if (GUILayout.Button("Analyze MultiTarget Candidates", GUILayout.Height(28f)))
+        {
+            multiTargetResults = MultiTargetSuitabilityAnalyzer.AnalyzeMainLevelDatabase();
+            Debug.Log(
+                MultiTargetSuitabilityAnalyzer.FormatResultsLog(
+                    multiTargetResults,
+                    multiTargetShowOnlyGood
+                )
+            );
+        }
+
+        DrawMultiTargetSuitabilityResults();
+    }
+
+    private void DrawMultiTargetSuitabilityResults()
+    {
+        if (multiTargetResults == null || multiTargetResults.Count == 0)
+        {
+            EditorGUILayout.HelpBox(
+                "Klik Analyze MultiTarget Candidates voor resultaten.",
+                MessageType.Info
+            );
+            return;
+        }
+
+        // Vaste Height i.p.v. MaxHeight: nested scroll inklappen voorkómen.
+        // Groeit mee met window, min 280 / max 520.
+        float resultsHeight = Mathf.Clamp(position.height * 0.48f, 280f, 520f);
+
+        multiTargetResultsScroll = EditorGUILayout.BeginScrollView(
+            multiTargetResultsScroll,
+            GUILayout.Height(resultsHeight)
+        );
+
+        int shown = 0;
+        for (int i = 0; i < multiTargetResults.Count; i++)
+        {
+            MultiTargetSuitabilityAnalyzer.Result r = multiTargetResults[i];
+            if (multiTargetShowOnlyGood &&
+                r.category != MultiTargetSuitabilityAnalyzer.Category.Good)
+            {
+                continue;
+            }
+
+            shown++;
+
+            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+            EditorGUILayout.Space(4f);
+
+            EditorGUILayout.LabelField(
+                "Level " + r.levelNumber + " — " + r.category +
+                " — Score " + r.score,
+                EditorStyles.boldLabel
+            );
+            EditorGUILayout.LabelField(
+                r.assetName + "  |  " +
+                r.gridWidth + "x" + r.gridHeight +
+                "  |  exitRow " + r.exitRow +
+                "  |  minMoves " + r.minimumMoves
+            );
+
+            EditorGUILayout.Space(2f);
+            EditorGUILayout.LabelField(
+                "Second: " + r.bestCandidateName + " @ " + r.bestCandidatePos
+            );
+            EditorGUILayout.LabelField(
+                "Blockers: " + r.blockersAfterFirstRescue +
+                "    Immediate Exit: " + (r.immediateExit ? "Yes" : "No")
+            );
+            EditorGUILayout.LabelField(
+                "Primary: " + r.primaryTargetName + " @ " + r.primaryTargetPos
+            );
+
+            if (r.reasons != null && r.reasons.Count > 0)
+            {
+                EditorGUILayout.Space(4f);
+                for (int j = 0; j < r.reasons.Count; j++)
+                {
+                    EditorGUILayout.LabelField(r.reasons[j]);
+                }
+            }
+
+            EditorGUILayout.Space(4f);
+            using (new EditorGUI.DisabledScope(r.level == null))
+            {
+                if (GUILayout.Button("Select Level", GUILayout.Width(120f)))
+                {
+                    Selection.activeObject = r.level;
+                    EditorGUIUtility.PingObject(r.level);
+                }
+            }
+
+            EditorGUILayout.Space(4f);
+            EditorGUILayout.EndVertical();
+            EditorGUILayout.Space(6f);
+        }
+
+        if (shown == 0)
+        {
+            EditorGUILayout.HelpBox(
+                "Geen GOOD kandidaten — zet filter uit of analyseer opnieuw.",
+                MessageType.Info
+            );
+        }
+
+        EditorGUILayout.EndScrollView();
+    }
+
     private void DrawSpecialMissionPreview()
     {
         List<SpecialMissionProgressionUtility.AssignmentResult> preview =
@@ -476,7 +608,7 @@ public class LevelGeneratorWindow : EditorWindow
 
         specialMissionPreviewScroll = EditorGUILayout.BeginScrollView(
             specialMissionPreviewScroll,
-            GUILayout.MaxHeight(160f)
+            GUILayout.Height(Mathf.Clamp(position.height * 0.18f, 140f, 220f))
         );
 
         for (int i = 0; i < preview.Count; i++)

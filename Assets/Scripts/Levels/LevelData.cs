@@ -18,7 +18,11 @@ public enum LevelObjectiveType
 {
     Classic = 0,
     TimedAmbulance = 1,
-    MoveLimit = 2
+    MoveLimit = 2,
+    MultiTargetRescue = 3,
+    NoTouchChallenge = 4,
+    FragileCargo = 5,
+    LimitedVehicle = 6
 }
 
 [CreateAssetMenu(
@@ -38,7 +42,7 @@ public class LevelData : ScriptableObject
     public LevelDifficulty difficulty = LevelDifficulty.Medium;
 
     [Header("Objective")]
-    [Tooltip("Classic = target exit. TimedAmbulance = exit + timer. MoveLimit = exit within N moves.")]
+    [Tooltip("Classic / TimedAmbulance / MoveLimit / MultiTargetRescue / NoTouchChallenge / FragileCargo / LimitedVehicle.")]
     public LevelObjectiveType objectiveType = LevelObjectiveType.Classic;
 
     [Tooltip("Alleen voor TimedAmbulance. 0 = geen bruikbare timer.")]
@@ -47,7 +51,13 @@ public class LevelData : ScriptableObject
     [Tooltip("Alleen voor MoveLimit. 0 = geen bruikbare move-limit.")]
     public int moveLimit = 0;
 
-    [Tooltip("Optioneel. TimedAmbulance target visual; null = normale TargetCarSprite.")]
+    [Tooltip("Alleen voor FragileCargo. Max geldige moves van de cargo-target. 0 = ongeldig.")]
+    public int fragileCargoMoveLimit = 0;
+
+    [Tooltip("Alleen voor LimitedVehicle. Max geldige moves van de limited blocker. 0 = ongeldig.")]
+    public int limitedVehicleMoveLimit = 0;
+
+    [Tooltip("Optioneel. TimedAmbulance / FragileCargo target visual; null = normale TargetCarSprite.")]
     public Sprite specialTargetSprite;
 
     [Header("Grid")]
@@ -107,6 +117,8 @@ public class LevelData : ScriptableObject
         gridHeight = Mathf.Clamp(gridHeight, MinGridSize, MaxGridSize);
         exitRow = Mathf.Clamp(exitRow, 0, Mathf.Max(0, gridHeight - 1));
         timeLimitSeconds = Mathf.Max(0f, timeLimitSeconds);
+        fragileCargoMoveLimit = Mathf.Max(0, fragileCargoMoveLimit);
+        limitedVehicleMoveLimit = Mathf.Max(0, limitedVehicleMoveLimit);
     }
 }
 
@@ -122,6 +134,15 @@ public class VehicleData
     public Vector2Int gridPosition;
 
     public bool canExitRight = false;
+
+    [Tooltip("Alleen NoTouchChallenge: dit voertuig mag niet van gridpositie veranderen. Classic/andere objectives negeren dit.")]
+    public bool isProtectedVehicle = false;
+
+    [Tooltip("Alleen FragileCargo: dit is de cargo-target met eigen movebudget. Moet canExitRight zijn.")]
+    public bool isFragileCargo = false;
+
+    [Tooltip("Alleen LimitedVehicle: blocker met eigen movebudget. Mag geen target/protected/fragile zijn.")]
+    public bool isLimitedVehicle = false;
 
     [Tooltip("Optioneel. Leeg = behoud de standaard sprite van de Car_Player prefab.")]
     public Sprite vehicleSprite;

@@ -104,6 +104,16 @@ public class LevelButtonUI : MonoBehaviour
 
                 break;
 
+            case LevelObjectiveType.MultiTargetRescue:
+                specialMissionBadge.SetActive(true);
+
+                if (specialMissionLabel != null)
+                {
+                    specialMissionLabel.text = timedAmbulanceLabel;
+                }
+
+                break;
+
             case LevelObjectiveType.Classic:
             default:
                 specialMissionBadge.SetActive(false);

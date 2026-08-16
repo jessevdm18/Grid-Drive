@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 /// <summary>
 /// Subtiele press/pop-schaalanimatie voor UI Buttons.
-/// Schaalt alleen visualTransform — de Button hitbox blijft ongewijzigd.
+/// Schaalt bij voorkeur child "Visual"; anders (bewust) de Button-root.
 /// </summary>
 [RequireComponent(typeof(Button))]
 public class UIButtonPressAnimation : MonoBehaviour,
@@ -13,7 +13,7 @@ public class UIButtonPressAnimation : MonoBehaviour,
     IPointerUpHandler,
     IPointerExitHandler
 {
-    [Tooltip("Child die visueel schaalt. Root Button (hitbox) blijft onaangeroerd.")]
+    [Tooltip("Child die visueel schaalt (bijv. Visual). Leeg = Find(\"Visual\") of root.")]
     [SerializeField] private Transform visualTransform;
 
     [SerializeField] private float pressedScale = 0.94f;
@@ -28,17 +28,45 @@ public class UIButtonPressAnimation : MonoBehaviour,
     private void Awake()
     {
         button = GetComponent<Button>();
+        ResolveVisualTransform();
+        originalScale = visualTransform.localScale;
+    }
 
+#if UNITY_EDITOR
+    private void OnValidate()
+    {
+        // Helpt Inspector/prefab setup: koppel Visual-child als die bestaat.
         if (visualTransform == null)
         {
-            visualTransform = transform;
-            Debug.LogWarning(
-                "UIButtonPressAnimation: visualTransform niet gekoppeld op " +
-                name + " — fallback naar root transform (hitbox schaalt mee)."
-            );
+            Transform visualChild = transform.Find("Visual");
+            if (visualChild != null)
+            {
+                visualTransform = visualChild;
+            }
+        }
+    }
+#endif
+
+    /// <summary>
+    /// 1) serialized ref
+    /// 2) child genaamd "Visual"
+    /// 3) root (hitbox schaalt mee — ondersteunde fallback, geen warning spam)
+    /// </summary>
+    private void ResolveVisualTransform()
+    {
+        if (visualTransform != null)
+        {
+            return;
         }
 
-        originalScale = visualTransform.localScale;
+        Transform visualChild = transform.Find("Visual");
+        if (visualChild != null)
+        {
+            visualTransform = visualChild;
+            return;
+        }
+
+        visualTransform = transform;
     }
 
     public void OnPointerDown(PointerEventData eventData)

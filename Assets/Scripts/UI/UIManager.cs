@@ -61,7 +61,7 @@ public class UIManager : MonoBehaviour
 
     private void Awake()
     {
-        audioManager = FindFirstObjectByType<AudioManager>();
+        audioManager = FindAnyObjectByType<AudioManager>();
 
         if (rewardTextRect != null)
         {

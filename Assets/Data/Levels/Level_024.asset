@@ -14,9 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   levelNumber: 2
   difficulty: 0
-  objectiveType: 0
+  objectiveType: 6
   timeLimitSeconds: 0
   moveLimit: 0
+  fragileCargoMoveLimit: 0
+  limitedVehicleMoveLimit: 2
   specialTargetSprite: {fileID: 0}
   gridWidth: 5
   gridHeight: 5
@@ -27,30 +29,45 @@ MonoBehaviour:
     lengthInCells: 2
     gridPosition: {x: 0, y: 4}
     canExitRight: 1
+    isProtectedVehicle: 0
+    isFragileCargo: 0
+    isLimitedVehicle: 0
     vehicleSprite: {fileID: 0}
   - vehicleName: A
     orientation: 1
     lengthInCells: 2
     gridPosition: {x: 3, y: 3}
     canExitRight: 0
+    isProtectedVehicle: 0
+    isFragileCargo: 0
+    isLimitedVehicle: 0
     vehicleSprite: {fileID: 0}
   - vehicleName: B
     orientation: 0
     lengthInCells: 3
     gridPosition: {x: 2, y: 2}
     canExitRight: 0
+    isProtectedVehicle: 0
+    isFragileCargo: 0
+    isLimitedVehicle: 0
     vehicleSprite: {fileID: 0}
   - vehicleName: C
     orientation: 0
     lengthInCells: 2
     gridPosition: {x: 0, y: 1}
     canExitRight: 0
+    isProtectedVehicle: 0
+    isFragileCargo: 0
+    isLimitedVehicle: 1
     vehicleSprite: {fileID: 0}
   - vehicleName: D
     orientation: 0
     lengthInCells: 2
     gridPosition: {x: 0, y: 3}
     canExitRight: 0
+    isProtectedVehicle: 0
+    isFragileCargo: 0
+    isLimitedVehicle: 0
     vehicleSprite: {fileID: 0}
   minimumMoves: 3
   statesExplored: 19

@@ -24,7 +24,7 @@ public class MainMenuSettingsUI : MonoBehaviour
     {
         if (audioManager == null)
         {
-            audioManager = FindFirstObjectByType<AudioManager>();
+            audioManager = FindAnyObjectByType<AudioManager>();
         }
 
         // SettingsPanel start standaard dicht.
