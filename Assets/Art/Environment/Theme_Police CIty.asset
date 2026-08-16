@@ -12,8 +12,44 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a3d69fd3ca8b7c4b89d3508349118de, type: 3}
   m_Name: Theme_Police CIty
   m_EditorClassIdentifier: Assembly-CSharp::GameplayBackgroundThemeData
-  themeId: default_city
-  displayName: Default City
-  baseBackground: {fileID: 0}
-  backgroundDimAlpha: 0.22
-  animatedLayers: []
+  themeId: police_city
+  displayName: Police CIty
+  baseBackground: {fileID: 21300000, guid: 64f848f929f43444b8374dea26567699, type: 3}
+  backgroundDimAlpha: 0.458
+  animatedLayers:
+  - sprite: {fileID: 0}
+    animationMode: 0
+    alsoPulseAlpha: 0
+    alsoPulseScale: 0
+    movementDirection: {x: 0, y: 0}
+    movementSpeed: 0
+    movementDistance: 0
+    pulseSpeed: 0
+    minAlpha: 0
+    maxAlpha: 0
+    scalePulseAmount: 0
+    loop: 0
+  - sprite: {fileID: 21300000, guid: 7cc1539d06bdb7045a829c15749ef5a2, type: 3}
+    animationMode: 3
+    alsoPulseAlpha: 0
+    alsoPulseScale: 0
+    movementDirection: {x: 0, y: 0}
+    movementSpeed: 0
+    movementDistance: 0
+    pulseSpeed: 2
+    minAlpha: 0
+    maxAlpha: 1
+    scalePulseAmount: 0
+    loop: 0
+  - sprite: {fileID: 21300000, guid: c268dbeb741e7424cbd304663dc3fc04, type: 3}
+    animationMode: 1
+    alsoPulseAlpha: 0
+    alsoPulseScale: 0
+    movementDirection: {x: -1, y: -0.3}
+    movementSpeed: 5
+    movementDistance: 10
+    pulseSpeed: 0
+    minAlpha: 0
+    maxAlpha: 0
+    scalePulseAmount: 0
+    loop: 0

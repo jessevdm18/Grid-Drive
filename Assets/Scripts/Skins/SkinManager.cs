@@ -22,6 +22,9 @@ public class SkinManager : MonoBehaviour
     [Header("Economy")]
     [SerializeField] private CoinManager coinManager;
 
+    [Header("Audio (optioneel)")]
+    [SerializeField] private AudioManager audioManager;
+
     public event Action<VehicleSkinData> OnSkinPurchased;
     public event Action<VehicleSkinData> OnSkinSelected;
     public event Action OnSkinsChanged;
@@ -36,6 +39,11 @@ public class SkinManager : MonoBehaviour
         if (coinManager == null)
         {
             coinManager = FindFirstObjectByType<CoinManager>();
+        }
+
+        if (audioManager == null)
+        {
+            audioManager = FindFirstObjectByType<AudioManager>();
         }
 
         Load();
@@ -122,6 +130,11 @@ public class SkinManager : MonoBehaviour
 
         ownedSkinIds.Add(skin.SkinId);
         SaveOwned();
+
+        // Exact één keer per succesvolle aankoop (niet bij select / mislukte buy).
+        audioManager?.PlayUpgrade();
+        HapticManager.PlayMediumImpact();
+
         OnSkinPurchased?.Invoke(skin);
         OnSkinsChanged?.Invoke();
         return true;
@@ -140,8 +153,17 @@ public class SkinManager : MonoBehaviour
             return false;
         }
 
+        // Geen audio/save als dezelfde skin al selected is.
+        if (string.Equals(selectedSkinId, skin.SkinId, StringComparison.Ordinal))
+        {
+            return false;
+        }
+
         selectedSkinId = skin.SkinId;
         SaveSelected();
+
+        audioManager?.PlaySkinSelect();
+
         OnSkinSelected?.Invoke(skin);
         OnSkinsChanged?.Invoke();
         return true;
@@ -170,6 +192,29 @@ public class SkinManager : MonoBehaviour
         }
 
         return fallbackSpriteLibrary;
+    }
+
+    /// <summary>
+    /// Debug: reset alleen skin ownership/selectie. Raakt RushOut_Coins niet.
+    /// </summary>
+    [ContextMenu("Debug Reset Skins")]
+    private void DebugResetSkins()
+    {
+        PlayerPrefs.DeleteKey(OwnedSkinsKey);
+        PlayerPrefs.DeleteKey(SelectedSkinKey);
+        PlayerPrefs.Save();
+
+        ownedSkinIds.Clear();
+        selectedSkinId = ClassicSkinId;
+
+        Load();
+        EnsureDefaults();
+        OnSkinsChanged?.Invoke();
+
+        Debug.Log(
+            "SkinManager: Debug Reset Skins — owned/selected keys gewist. " +
+            "Classic restored via EnsureDefaults. RushOut_Coins ongewijzigd."
+        );
     }
 
     private void EnsureDefaults()

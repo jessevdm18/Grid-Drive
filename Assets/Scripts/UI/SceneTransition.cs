@@ -22,6 +22,12 @@ public class SceneTransition : MonoBehaviour
     private bool isTransitioning;
 
     /// <summary>
+    /// True tijdens fade-out / load / fade-in.
+    /// </summary>
+    public static bool IsTransitioning =>
+        instance != null && instance.isTransitioning;
+
+    /// <summary>
     /// Start een fade-out → scene load → fade-in.
     /// Extra calls tijdens een actieve transition worden genegeerd.
     /// </summary>

@@ -40,6 +40,9 @@ public class LevelManager : MonoBehaviour
     [Tooltip("Optionele sprite-library voor automatische voertuig-visuals.")]
     [SerializeField] private VehicleSpriteLibrary vehicleSpriteLibrary;
 
+    [Tooltip("Timed/special objectives (optioneel).")]
+    [SerializeField] private LevelObjectiveController levelObjectiveController;
+
     // Actieve library voor deze load (skin overlay of inspector-default).
     private VehicleSpriteLibrary activeVehicleSpriteLibrary;
 
@@ -271,6 +274,14 @@ public class LevelManager : MonoBehaviour
         {
             gameplayUI.UpdateLevelText();
         }
+
+        if (levelObjectiveController == null)
+        {
+            levelObjectiveController = FindFirstObjectByType<LevelObjectiveController>();
+        }
+
+        // Na spawn: Classic = no-op, TimedAmbulance = wacht op fade → start timer.
+        levelObjectiveController?.BeginForLevel(levelData);
     }
 
     /// <summary>
@@ -361,7 +372,7 @@ public class LevelManager : MonoBehaviour
             levelData.exitRow
         );
 
-        ApplyVehicleSprite(vehicle, ResolveVehicleSprite(data));
+        ApplyVehicleSprite(vehicle, ResolveVehicleSprite(data, levelData));
 
         // Sprite kan net gezet zijn — herbereken uniforme visual scale.
         vehicle.UpdateVisualSize();
@@ -398,15 +409,22 @@ public class LevelManager : MonoBehaviour
         return vehicleSpriteLibrary;
     }
 
-    private Sprite ResolveVehicleSprite(VehicleData data)
+    private Sprite ResolveVehicleSprite(VehicleData data, LevelData levelData)
     {
         VehicleSpriteLibrary library = activeVehicleSpriteLibrary != null
             ? activeVehicleSpriteLibrary
             : vehicleSpriteLibrary;
 
-        // 1) Target car altijd de target-sprite.
+        // 1) Target car: TimedAmbulance override, anders library TargetCarSprite.
         if (data.canExitRight)
         {
+            if (levelData != null &&
+                levelData.objectiveType == LevelObjectiveType.TimedAmbulance &&
+                levelData.specialTargetSprite != null)
+            {
+                return levelData.specialTargetSprite;
+            }
+
             if (library != null && library.TargetCarSprite != null)
             {
                 return library.TargetCarSprite;
@@ -429,7 +447,7 @@ public class LevelManager : MonoBehaviour
             return data.vehicleSprite;
         }
 
-        // 3) Automatisch uit library op orientation + length.
+        // 3) Automatisch uit library op orientation + length (selected skin).
         if (library == null)
         {
             return null;

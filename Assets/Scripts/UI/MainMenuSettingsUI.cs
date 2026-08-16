@@ -45,7 +45,13 @@ public class MainMenuSettingsUI : MonoBehaviour
             return;
         }
 
+        if (settingsPanel.activeSelf)
+        {
+            return;
+        }
+
         settingsPanel.SetActive(true);
+        audioManager?.PlayPanelOpen();
         UpdateIcons();
     }
 
@@ -60,7 +66,13 @@ public class MainMenuSettingsUI : MonoBehaviour
             return;
         }
 
+        if (!settingsPanel.activeSelf)
+        {
+            return;
+        }
+
         settingsPanel.SetActive(false);
+        audioManager?.PlayPanelClose();
     }
 
     /// <summary>

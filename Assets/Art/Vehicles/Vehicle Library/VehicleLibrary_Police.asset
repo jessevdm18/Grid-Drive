@@ -14,32 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VehicleSpriteLibrary
   targetCarSprite: {fileID: 21300000, guid: d11c7a16a92270342b5854e18dd6512a, type: 3}
   horizontalLength2Sprites:
-  - {fileID: 21300000, guid: a60fd6b4e6fa27d45acc69211d5def01, type: 3}
-  - {fileID: 21300000, guid: 48cdc45f9e9308446b235fc4f5225a6f, type: 3}
-  - {fileID: 21300000, guid: 75f93fbf83167cf4d9e0586fa98d5e22, type: 3}
-  - {fileID: 21300000, guid: 7e7e71b42e748574dbd8a1c57117ceac, type: 3}
+  - {fileID: 21300000, guid: 0d359198865cc51449942712e5e6d776, type: 3}
   horizontalLength3Sprites:
-  - {fileID: 21300000, guid: 754fc96c7e8c3ac448ed4d3a07f21942, type: 3}
-  - {fileID: 21300000, guid: 52ab84013f3135b4db5e0b9df08b37ec, type: 3}
-  - {fileID: 21300000, guid: f9b0407c46af7ff448bc56b870f8bc52, type: 3}
-  - {fileID: 21300000, guid: 82af8bb33cc16834eb1baf2209a6601a, type: 3}
+  - {fileID: 21300000, guid: 6d69f2f276499aa4787a02d36f605f01, type: 3}
   horizontalLength4Sprites:
-  - {fileID: 21300000, guid: 20bcfe04935ef194db80be11e9d2fc7d, type: 3}
-  - {fileID: 21300000, guid: 9edcbde7e4a55cb4184d79c7de8b9a71, type: 3}
-  - {fileID: 21300000, guid: 230c42433fe3afc4ab3cbf190ca087f9, type: 3}
-  - {fileID: 21300000, guid: 004549a6381829f488a7b1769ff609ff, type: 3}
+  - {fileID: 21300000, guid: 68973e33073ff8442b7fe2c83083e9a3, type: 3}
   verticalLength2Sprites:
-  - {fileID: 21300000, guid: 7e7e71b42e748574dbd8a1c57117ceac, type: 3}
-  - {fileID: 21300000, guid: 48cdc45f9e9308446b235fc4f5225a6f, type: 3}
-  - {fileID: 21300000, guid: 75f93fbf83167cf4d9e0586fa98d5e22, type: 3}
-  - {fileID: 21300000, guid: a60fd6b4e6fa27d45acc69211d5def01, type: 3}
+  - {fileID: 21300000, guid: 0d359198865cc51449942712e5e6d776, type: 3}
   verticalLength3Sprites:
-  - {fileID: 21300000, guid: 754fc96c7e8c3ac448ed4d3a07f21942, type: 3}
-  - {fileID: 21300000, guid: 52ab84013f3135b4db5e0b9df08b37ec, type: 3}
-  - {fileID: 21300000, guid: f9b0407c46af7ff448bc56b870f8bc52, type: 3}
-  - {fileID: 21300000, guid: 82af8bb33cc16834eb1baf2209a6601a, type: 3}
+  - {fileID: 21300000, guid: 6d69f2f276499aa4787a02d36f605f01, type: 3}
   verticalLength4Sprites:
-  - {fileID: 21300000, guid: 20bcfe04935ef194db80be11e9d2fc7d, type: 3}
-  - {fileID: 21300000, guid: 9edcbde7e4a55cb4184d79c7de8b9a71, type: 3}
-  - {fileID: 21300000, guid: 230c42433fe3afc4ab3cbf190ca087f9, type: 3}
-  - {fileID: 21300000, guid: 004549a6381829f488a7b1769ff609ff, type: 3}
+  - {fileID: 21300000, guid: 68973e33073ff8442b7fe2c83083e9a3, type: 3}

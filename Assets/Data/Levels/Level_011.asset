@@ -14,6 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   levelNumber: 11
   difficulty: 2
+  objectiveType: 2
+  timeLimitSeconds: 0
+  moveLimit: 10
+  specialTargetSprite: {fileID: 0}
   gridWidth: 8
   gridHeight: 8
   exitRow: 2

@@ -12,8 +12,44 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a3d69fd3ca8b7c4b89d3508349118de, type: 3}
   m_Name: Theme_Candy City
   m_EditorClassIdentifier: Assembly-CSharp::GameplayBackgroundThemeData
-  themeId: default_city
-  displayName: Default City
-  baseBackground: {fileID: 0}
-  backgroundDimAlpha: 0.22
-  animatedLayers: []
+  themeId: candy_city
+  displayName: Candy City
+  baseBackground: {fileID: 21300000, guid: 93fcaab34123d8149ab148073b58079e, type: 3}
+  backgroundDimAlpha: 0.578
+  animatedLayers:
+  - sprite: {fileID: 21300000, guid: e3837e0d4e72d8f4da74af6de74418d0, type: 3}
+    animationMode: 1
+    alsoPulseAlpha: 0
+    alsoPulseScale: 0
+    movementDirection: {x: 0.3, y: -0.5}
+    movementSpeed: 10
+    movementDistance: 10
+    pulseSpeed: 0
+    minAlpha: 0
+    maxAlpha: 0
+    scalePulseAmount: 0
+    loop: 0
+  - sprite: {fileID: 21300000, guid: 6fd34fbce951fa242adf34238f2d9c24, type: 3}
+    animationMode: 1
+    alsoPulseAlpha: 0
+    alsoPulseScale: 0
+    movementDirection: {x: 1, y: 0}
+    movementSpeed: 5
+    movementDistance: 30
+    pulseSpeed: 0
+    minAlpha: 0
+    maxAlpha: 0
+    scalePulseAmount: 0
+    loop: 0
+  - sprite: {fileID: 21300000, guid: 0ed48e96497cf284e9676faf9e6c52aa, type: 3}
+    animationMode: 1
+    alsoPulseAlpha: 0
+    alsoPulseScale: 0
+    movementDirection: {x: 1, y: 0}
+    movementSpeed: 10
+    movementDistance: 10
+    pulseSpeed: 0
+    minAlpha: 0
+    maxAlpha: 0
+    scalePulseAmount: 0
+    loop: 0

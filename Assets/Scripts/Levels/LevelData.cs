@@ -11,6 +11,16 @@ public enum LevelDifficulty
     Hard
 }
 
+/// <summary>
+/// Runtime win-condition type. Classic = alleen target-exit.
+/// </summary>
+public enum LevelObjectiveType
+{
+    Classic = 0,
+    TimedAmbulance = 1,
+    MoveLimit = 2
+}
+
 [CreateAssetMenu(
     fileName = "LevelData",
     menuName = "RushOut/Level Data"
@@ -26,6 +36,19 @@ public class LevelData : ScriptableObject
 
     [Tooltip("Handmatige / generator difficulty-tier (Easy / Medium / Hard).")]
     public LevelDifficulty difficulty = LevelDifficulty.Medium;
+
+    [Header("Objective")]
+    [Tooltip("Classic = target exit. TimedAmbulance = exit + timer. MoveLimit = exit within N moves.")]
+    public LevelObjectiveType objectiveType = LevelObjectiveType.Classic;
+
+    [Tooltip("Alleen voor TimedAmbulance. 0 = geen bruikbare timer.")]
+    public float timeLimitSeconds = 0f;
+
+    [Tooltip("Alleen voor MoveLimit. 0 = geen bruikbare move-limit.")]
+    public int moveLimit = 0;
+
+    [Tooltip("Optioneel. TimedAmbulance target visual; null = normale TargetCarSprite.")]
+    public Sprite specialTargetSprite;
 
     [Header("Grid")]
     [Tooltip("Breedte in cellen. Ontbrekende/oude assets (0) → 6.")]
@@ -83,6 +106,7 @@ public class LevelData : ScriptableObject
         gridWidth = Mathf.Clamp(gridWidth, MinGridSize, MaxGridSize);
         gridHeight = Mathf.Clamp(gridHeight, MinGridSize, MaxGridSize);
         exitRow = Mathf.Clamp(exitRow, 0, Mathf.Max(0, gridHeight - 1));
+        timeLimitSeconds = Mathf.Max(0f, timeLimitSeconds);
     }
 }
 

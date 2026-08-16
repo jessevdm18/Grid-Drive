@@ -1,9 +1,18 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
+/// <summary>
+/// Speelt de standaard UI button-SFX bij PointerDown (niet bij onClick/release),
+/// zodat het geluid synchroon voelt met de press-animatie.
+/// Button.onClick blijft ongemoeid voor de echte actie.
+/// </summary>
 [RequireComponent(typeof(Button))]
-public class UIButtonSound : MonoBehaviour
+public class UIButtonSound : MonoBehaviour, IPointerDownHandler
 {
+    [Tooltip("Uit zetten voor knoppen met eigen success-SFX (bijv. Hint).")]
+    [SerializeField] private bool playDefaultClickSound = true;
+
     private Button button;
     private AudioManager audioManager;
 
@@ -11,26 +20,30 @@ public class UIButtonSound : MonoBehaviour
     {
         button = GetComponent<Button>();
         audioManager = FindFirstObjectByType<AudioManager>();
-        button.onClick.AddListener(PlayClickSound);
-
-        Debug.Log(
-            "UIButtonSound " + gameObject.name +
-            " | Button=" + (button != null) +
-            " | AudioManager=" + (audioManager != null)
-        );
     }
 
-    private void OnDestroy()
+    public void OnPointerDown(PointerEventData eventData)
     {
-        if (button != null)
+        if (!playDefaultClickSound)
         {
-            button.onClick.RemoveListener(PlayClickSound);
+            return;
         }
-    }
 
-    private void PlayClickSound()
-    {
-        Debug.Log("UIButtonSound " + gameObject.name + " clicked");
+        if (!isActiveAndEnabled)
+        {
+            return;
+        }
+
+        if (button == null || !button.interactable)
+        {
+            return;
+        }
+
+        if (!gameObject.activeInHierarchy)
+        {
+            return;
+        }
+
         audioManager?.PlayButton();
     }
 }

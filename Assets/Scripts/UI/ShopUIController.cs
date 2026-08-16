@@ -33,11 +33,19 @@ public class ShopUIController : MonoBehaviour
     [Header("Skins (optioneel)")]
     [SerializeField] private SkinManager skinManager;
 
+    [Header("Audio (optioneel)")]
+    [SerializeField] private AudioManager audioManager;
+
     private void Awake()
     {
         if (skinManager == null)
         {
             skinManager = FindFirstObjectByType<SkinManager>();
+        }
+
+        if (audioManager == null)
+        {
+            audioManager = FindFirstObjectByType<AudioManager>();
         }
 
         WireButtons();
@@ -77,17 +85,26 @@ public class ShopUIController : MonoBehaviour
             return;
         }
 
+        if (shopPanel.activeSelf)
+        {
+            return;
+        }
+
         shopPanel.SetActive(true);
+        audioManager?.PlayPanelOpen();
         ShowCoinsTab();
         RefreshCoinBalance();
     }
 
     public void CloseShop()
     {
-        if (shopPanel != null)
+        if (shopPanel == null || !shopPanel.activeSelf)
         {
-            shopPanel.SetActive(false);
+            return;
         }
+
+        shopPanel.SetActive(false);
+        audioManager?.PlayPanelClose();
     }
 
     public void ShowCoinsTab()

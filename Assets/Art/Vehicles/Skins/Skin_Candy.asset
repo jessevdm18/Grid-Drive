@@ -18,4 +18,4 @@ MonoBehaviour:
   previewSprite: {fileID: 21300000, guid: 7a696ba940a0d6a42ba6f7da0a90c575, type: 3}
   unlockedByDefault: 0
   spriteLibrary: {fileID: 11400000, guid: cae7d83fac17f4b4ebd524acac18ec9c, type: 2}
-  backgroundTheme: {fileID: 0}
+  backgroundTheme: {fileID: 11400000, guid: 1baf190a4d513bf4f8653666956d0747, type: 2}

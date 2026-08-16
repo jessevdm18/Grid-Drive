@@ -1127,6 +1127,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f22450c7ce46b5418ac08f20eab6b67, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIButtonSound
+  playDefaultClickSound: 1
 --- !u!114 &1331594146
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1174,12 +1175,44 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 12fb1471c37f55f4f8b30a18a183b05d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AudioManager
+  buttonClip: {fileID: 8300000, guid: a0d18c1bb51879448969ec728cbc419b, type: 3}
   moveClip: {fileID: 0}
   blockedClip: {fileID: 0}
-  winClip: {fileID: 0}
   coinClip: {fileID: 0}
-  buttonClip: {fileID: 8300000, guid: ed6d82d427e63d24abfb3cf51bddca8a, type: 3}
+  winClip: {fileID: 0}
+  upgradeClip: {fileID: 0}
+  vehicleExitClip: {fileID: 0}
+  coinSpendClip: {fileID: 0}
+  hintClip: {fileID: 0}
+  skinSelectClip: {fileID: 0}
+  panelOpenClip: {fileID: 0}
+  panelCloseClip: {fileID: 0}
+  insufficientCoinsClip: {fileID: 0}
+  ambulanceMissionStartClip: {fileID: 0}
+  countdownBeepClip: {fileID: 0}
+  timedMissionFailedClip: {fileID: 0}
+  buttonVolume: 0.5
+  moveVolume: 0.8
+  blockedVolume: 0.8
+  coinVolume: 0.8
+  winVolume: 0.9
+  upgradeVolume: 0.8
+  vehicleExitVolume: 0.8
+  coinSpendVolume: 0.7
+  hintVolume: 0.75
+  skinSelectVolume: 0.65
+  panelOpenVolume: 0.55
+  panelCloseVolume: 0.5
+  insufficientCoinsVolume: 1
+  ambulanceMissionStartVolume: 0.65
+  countdownBeepVolume: 0.55
+  timedMissionFailedVolume: 0.75
+  movePitchMin: 0.96
+  movePitchMax: 1.04
+  blockedPitchMin: 0.98
+  blockedPitchMax: 1.02
   sfxVolume: 1
+  musicVolume: 0.4
   musicSource: {fileID: 0}
 --- !u!82 &1487426063
 AudioSource:

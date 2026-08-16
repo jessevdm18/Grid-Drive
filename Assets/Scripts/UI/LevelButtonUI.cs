@@ -5,6 +5,7 @@ using TMPro;
 /// <summary>
 /// UI-state voor één LevelButton-prefab (Background, nummer, sterren, lock).
 /// Unlock-bepaling blijft in LevelSelectUI / SaveManager.
+/// Special-mission badge = presentation only (LevelData.objectiveType).
 /// </summary>
 public class LevelButtonUI : MonoBehaviour
 {
@@ -20,24 +21,38 @@ public class LevelButtonUI : MonoBehaviour
 
     [SerializeField] private Color lockedColor = new Color(0.55f, 0.55f, 0.55f, 1f);
 
+    [Header("Special Mission (optioneel — zelf in prefab toevoegen)")]
+    [Tooltip("Root van de special badge. Standaard inactive in prefab.")]
+    [SerializeField] private GameObject specialMissionBadge;
+
+    [SerializeField] private Image specialMissionIcon;
+    [SerializeField] private TMP_Text specialMissionLabel;
+
+    [Tooltip("Icoon voor TimedAmbulance. Leeg = bestaande Image-sprite laten.")]
+    [SerializeField] private Sprite ambulanceMissionIcon;
+
+    [SerializeField] private string timedAmbulanceLabel = "SPECIAL";
+
     /// <summary>
     /// Button op deze prefab (voor OnClick in LevelSelectUI).
     /// </summary>
     public Button Button => button;
 
     /// <summary>
-    /// Zet nummer, unlocked/locked visuals en sterren.
+    /// Zet nummer, unlocked/locked visuals, sterren en special-mission badge.
     /// </summary>
     public void Setup(
         int displayNumber,
         bool isUnlocked,
         int earnedStars,
         Sprite filledStarSprite,
-        Sprite emptyStarSprite)
+        Sprite emptyStarSprite,
+        LevelObjectiveType objectiveType = LevelObjectiveType.Classic)
     {
         SetLevelNumber(displayNumber);
         ApplyLockState(isUnlocked);
         ApplyStars(isUnlocked ? earnedStars : 0, filledStarSprite, emptyStarSprite);
+        ApplySpecialMissionVisual(objectiveType);
     }
 
     /// <summary>
@@ -48,6 +63,51 @@ public class LevelButtonUI : MonoBehaviour
         if (levelNumberText != null)
         {
             levelNumberText.text = displayNumber.ToString();
+        }
+    }
+
+    /// <summary>
+    /// Toont/verbergt special badge op basis van LevelData.objectiveType.
+    /// Onafhankelijk van lock/stars/completed.
+    /// </summary>
+    public void ApplySpecialMissionVisual(LevelObjectiveType objectiveType)
+    {
+        if (specialMissionBadge == null)
+        {
+            return;
+        }
+
+        switch (objectiveType)
+        {
+            case LevelObjectiveType.TimedAmbulance:
+                specialMissionBadge.SetActive(true);
+
+                if (specialMissionLabel != null)
+                {
+                    specialMissionLabel.text = timedAmbulanceLabel;
+                }
+
+                if (specialMissionIcon != null && ambulanceMissionIcon != null)
+                {
+                    specialMissionIcon.sprite = ambulanceMissionIcon;
+                }
+
+                break;
+
+            case LevelObjectiveType.MoveLimit:
+                specialMissionBadge.SetActive(true);
+
+                if (specialMissionLabel != null)
+                {
+                    specialMissionLabel.text = timedAmbulanceLabel;
+                }
+
+                break;
+
+            case LevelObjectiveType.Classic:
+            default:
+                specialMissionBadge.SetActive(false);
+                break;
         }
     }
 

@@ -605,6 +605,11 @@ public class VehicleController : MonoBehaviour
             return;
         }
 
+        if (gameManager != null && !gameManager.CanAcceptVehicleInput)
+        {
+            return;
+        }
+
         if (gridManager == null)
         {
             Debug.LogError("Geen GridManager gekoppeld aan " + name);
@@ -689,6 +694,14 @@ private bool CanPerformExitRight(Vector3 dragDifference)
     {
         isExiting = true;
 
+        if (gameManager != null)
+        {
+            gameManager.NotifyTargetExitStarted();
+        }
+
+        // Exact één keer: definitieve geaccepteerde exit (niet Move).
+        audioManager?.PlayVehicleExit();
+
         // Stop movement/blocked-animaties; Visual zit vast op de root.
         StopAllVisualCoroutines();
 
@@ -735,6 +748,9 @@ private bool CanPerformExitRight(Vector3 dragDifference)
     private void OnMouseDrag()
     {
         if (isExiting || gridManager == null)
+            return;
+
+        if (gameManager != null && !gameManager.CanAcceptVehicleInput)
             return;
 
         Vector3 currentMouseWorld = GetMouseWorldPosition();
@@ -855,9 +871,7 @@ private bool CanPerformExitRight(Vector3 dragDifference)
 
         nextBlockedFeedbackTime = Time.time + blockedFeedbackCooldown;
         audioManager?.PlayBlocked();
-#if UNITY_ANDROID || UNITY_IOS
-        Handheld.Vibrate();
-#endif
+        HapticManager.PlayLightImpact();
         blockedShakeCoroutine = StartCoroutine(AnimateBlockedShake(localPeak));
     }
 
@@ -1032,6 +1046,11 @@ private bool CanPerformExitRight(Vector3 dragDifference)
     private void OnMouseUp()
     {
         if (isExiting)
+        {
+            return;
+        }
+
+        if (gameManager != null && !gameManager.CanAcceptVehicleInput)
         {
             return;
         }

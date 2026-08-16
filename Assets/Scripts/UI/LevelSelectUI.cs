@@ -92,12 +92,18 @@ public class LevelSelectUI : MonoBehaviour
                 stars = saveManager.GetStarsForLevel(index);
             }
 
+            LevelData levelData = levelDatabase.GetLevel(index);
+            LevelObjectiveType objectiveType = levelData != null
+                ? levelData.objectiveType
+                : LevelObjectiveType.Classic;
+
             buttonUI.Setup(
                 index + 1,
                 isUnlocked,
                 stars,
                 filledStarSprite,
-                emptyStarSprite
+                emptyStarSprite,
+                objectiveType
             );
 
             Button button = buttonUI.Button != null

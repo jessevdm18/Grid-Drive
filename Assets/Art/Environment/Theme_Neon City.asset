@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a3d69fd3ca8b7c4b89d3508349118de, type: 3}
   m_Name: Theme_Neon City
   m_EditorClassIdentifier: Assembly-CSharp::GameplayBackgroundThemeData
-  themeId: default_city
-  displayName: Default City
+  themeId: neon_city
+  displayName: Neon CIty
   baseBackground: {fileID: 21300000, guid: 00a9c3c1f7ced4642a86e15dc519c077, type: 3}
   backgroundDimAlpha: 0.408
   animatedLayers:

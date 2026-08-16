@@ -27,6 +27,7 @@ public class HintManager : MonoBehaviour
     [SerializeField] private AdsManager adsManager;
     [SerializeField] private LevelManager levelManager;
     [SerializeField] private GameManager gameManager;
+    [SerializeField] private AudioManager audioManager;
 
     [SerializeField] private int hintCost = 100;
 
@@ -97,6 +98,11 @@ public class HintManager : MonoBehaviour
             gameManager = FindFirstObjectByType<GameManager>();
         }
 
+        if (audioManager == null)
+        {
+            audioManager = FindFirstObjectByType<AudioManager>();
+        }
+
         if (hintStatusText != null)
         {
             hintStatusText.gameObject.SetActive(false);
@@ -141,6 +147,7 @@ public class HintManager : MonoBehaviour
                 paidHint: true
             );
             Debug.Log("Not enough coins");
+            audioManager?.PlayInsufficientCoins();
             ShowHintStatus(notEnoughCoinsMessage);
             return;
         }
@@ -178,6 +185,9 @@ public class HintManager : MonoBehaviour
                 );
                 return;
             }
+
+            // Alleen na echte afschrijving (niet bij shop — die gebruikt PlayUpgrade).
+            audioManager?.PlayCoinSpend();
 
             LogHintRequest(
                 HintResult.Success,
@@ -443,6 +453,9 @@ public class HintManager : MonoBehaviour
         {
             return;
         }
+
+        // Succesvolle hint-presentatie (paid of rewarded).
+        audioManager?.PlayHint();
 
         highlightedVehicle = vehicle;
         highlightedVehicleIndex = vehicleIndex;

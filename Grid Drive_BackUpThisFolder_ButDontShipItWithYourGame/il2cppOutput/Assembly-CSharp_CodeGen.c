@@ -36,13 +36,35 @@ extern void AudioManager_ToggleMusic_mD0EACBEBC2046F8D1943A7B7DBB849132AB2CB34 (
 extern void AudioManager_ToggleSfx_mB1FA1202E500528C3F57130DF24F040EF9E9DBD3 (void);
 extern void AudioManager_LoadAudioSettings_m8C87309621369730CF3E386EAE0AB9A8A394F582 (void);
 extern void AudioManager_ApplyMusicSetting_m36D8A97CD4F1DCA77C271A9015DC5B8CAD11EB11 (void);
+extern void AudioManager_PlayButton_m044B22F53AFC4E2662F3FF095997BD7646034BAA (void);
 extern void AudioManager_PlayMove_m234E42F9D2ACAB531406952A354ADCEEF38FDEF6 (void);
 extern void AudioManager_PlayBlocked_mFBECEC40EA2DF6818FBB4297A549D62EE28F5DD3 (void);
-extern void AudioManager_PlayWin_mB22688AE26138C52411D4276FD281D7284428B6C (void);
 extern void AudioManager_PlayCoin_m92D56B4382711FBD2CFEA83FE32066F7E407B652 (void);
-extern void AudioManager_PlayButton_m044B22F53AFC4E2662F3FF095997BD7646034BAA (void);
-extern void AudioManager_PlaySfx_m90C88E94095C516F23BB3AEEB5F698ACFB4216AC (void);
+extern void AudioManager_PlayWin_mB22688AE26138C52411D4276FD281D7284428B6C (void);
+extern void AudioManager_PlayUpgrade_mB279A6BEC12CBC5C93BA96D79A5FF34145130AC5 (void);
+extern void AudioManager_PlayVehicleExit_mF75CB5FBEDC09955967F9521DF198466354C2A5F (void);
+extern void AudioManager_PlayCoinSpend_m001226352AF34AE5F55CDC2DB797B7773B14E8A4 (void);
+extern void AudioManager_PlayHint_mCC1BE5D053181511D297CE9B2B1CCC59C93025F8 (void);
+extern void AudioManager_PlaySkinSelect_mB71261C9D33BAD250B2D768B810A0F4DC019EC90 (void);
+extern void AudioManager_PlayPanelOpen_m3E75F616144E6C2603D45A19DB3628ED1E6F0FAA (void);
+extern void AudioManager_PlayPanelClose_mFD176CED9A6CEFF2A5BD6D747A7A791E4EAD2C48 (void);
+extern void AudioManager_PlayInsufficientCoins_mDEA5CFE26AFA04C4A5628FD37FAC2FBF681B2BC4 (void);
+extern void AudioManager_PlaySfx_m23DCB11CEE5463020F8831F30DA0AC6BEE0F491D (void);
+extern void AudioManager_ResolvePitch_mA1875D6D6803D18AE8CF6D06C3E817F86905E544 (void);
+extern void AudioManager_EnsurePitchedSfxSource_m23DA04A4E5FA0B711673931D61BE48B93D446AF9 (void);
 extern void AudioManager__ctor_mA793A9DF6B975D03690B7C953972EFE41AE4D5E6 (void);
+extern void MusicManager_get_Instance_m8B881550B0A9F934A5A3EEC53927C086595149C9 (void);
+extern void MusicManager_set_Instance_m7BAFA2520E1EC5640909AC959B359A29FCB3F29A (void);
+extern void MusicManager_get_MusicEnabled_m13BBDD67E8165679EA308618306ECF6BDA31F8DB (void);
+extern void MusicManager_set_MusicEnabled_m9F590DD2C19F0E66722FCD836693B0D58ADF98F8 (void);
+extern void MusicManager_Awake_mF45ED3B2ACB2D4A6F3EBCB74D93B9329F001A99C (void);
+extern void MusicManager_OnDestroy_m989A1490F1352A5B7756359972C02C0CDFF4A744 (void);
+extern void MusicManager_ToggleMusic_m3E27A9318E1420B85FED3FE921D7CF5694E9CB65 (void);
+extern void MusicManager_SetMusicEnabled_m7CF0A35B4979252A8929159D1FC9C3860ABEF911 (void);
+extern void MusicManager_LoadMusicSetting_m4FB4580D0DB3FED013B7B8471C3C5180AE95481C (void);
+extern void MusicManager_ApplyMusicSetting_m55E881A2D1408A225A987EB41CCFED457C07287C (void);
+extern void MusicManager_EnsureMusicPlaying_mCB509CDFD20F51FD916B47C4938FCE38BEA56841 (void);
+extern void MusicManager__ctor_m41A178D621B3011F8901EE68A91A5850A5E59904 (void);
 extern void GameplayBackgroundController_Awake_m750A26BBAED7DB77A507F5F0E0DDC7A779058450 (void);
 extern void GameplayBackgroundController_Start_mAC47C24AD631E90FFF88FA29FAC4853AE18119AF (void);
 extern void GameplayBackgroundController_Update_m90A74DAFEA37F0BB4E8DF05A2A28D9F987A33A0D (void);
@@ -186,24 +208,33 @@ extern void HintManager_ShowHintDirection_m2B6782F722C1F9B578F44BB1AA6E09FE75A36
 extern void HintManager_ApplyHintArrowFacing_m629B89433CD2B3E058D45920CBE8F31B997EFDFD (void);
 extern void HintManager_HideHintDirection_m0594347C90CA6D5704607ED779E996AAEFD514B7 (void);
 extern void HintManager__ctor_m5E95D9CFDB3A870703D384B238B06B9494379325 (void);
-extern void U3CHintFallbackTimeoutRoutineU3Ed__47__ctor_m65B67AA7F4CB7A6137F57C4E4D97334FB25A87A3 (void);
-extern void U3CHintFallbackTimeoutRoutineU3Ed__47_System_IDisposable_Dispose_m16A5A3D67F0D173DACEA79EBDE4F98812CA396E4 (void);
-extern void U3CHintFallbackTimeoutRoutineU3Ed__47_MoveNext_m7C99B6037718BEFF1EE97A586D1356C8A0FBF165 (void);
-extern void U3CHintFallbackTimeoutRoutineU3Ed__47_System_Collections_Generic_IEnumeratorU3CSystem_ObjectU3E_get_Current_m4AE3BC8378DAE782480055024944583022740E2C (void);
-extern void U3CHintFallbackTimeoutRoutineU3Ed__47_System_Collections_IEnumerator_Reset_mAA7C202495945195D86DB0F0F64917622C42E541 (void);
-extern void U3CHintFallbackTimeoutRoutineU3Ed__47_System_Collections_IEnumerator_get_Current_mF908C3FEC4780A7BEF1FFE78210D0C8218D44EAC (void);
-extern void U3CHintPulseRoutineU3Ed__46__ctor_m99C66B71F70966A76DCF0CF93C1543F7726A37D7 (void);
-extern void U3CHintPulseRoutineU3Ed__46_System_IDisposable_Dispose_mA44F943157FEEE0C5084BD83510068C86FEAC358 (void);
-extern void U3CHintPulseRoutineU3Ed__46_MoveNext_mF9D30EE880B2D101693B5D0BBB8E52B5BA7A7C56 (void);
-extern void U3CHintPulseRoutineU3Ed__46_System_Collections_Generic_IEnumeratorU3CSystem_ObjectU3E_get_Current_m5C6187E8C83FB26417F6979F7CF2E732973962A5 (void);
-extern void U3CHintPulseRoutineU3Ed__46_System_Collections_IEnumerator_Reset_mA625DF313DD48C9FE45D07CBDD260F7A2DBB86F8 (void);
-extern void U3CHintPulseRoutineU3Ed__46_System_Collections_IEnumerator_get_Current_mDD0100DDCE54291618215F3ECBF6C492B8337F90 (void);
-extern void U3CShowHintStatusRoutineU3Ed__52__ctor_m97A96AAD5A216799539BC7A3CC3AC0F1D42629C7 (void);
-extern void U3CShowHintStatusRoutineU3Ed__52_System_IDisposable_Dispose_m29E3DC3C72D287BAFDDC4A2E527FDF1261D959A2 (void);
-extern void U3CShowHintStatusRoutineU3Ed__52_MoveNext_m793EF328E232F9BE7ADFE88D3EC9956164532792 (void);
-extern void U3CShowHintStatusRoutineU3Ed__52_System_Collections_Generic_IEnumeratorU3CSystem_ObjectU3E_get_Current_m4C17655F6D6FFFE22B829B9E197ED856982C86DE (void);
-extern void U3CShowHintStatusRoutineU3Ed__52_System_Collections_IEnumerator_Reset_mB7EED98E542D1B428C98ABC863D5FDB713BF2302 (void);
-extern void U3CShowHintStatusRoutineU3Ed__52_System_Collections_IEnumerator_get_Current_m55AF11F60653AAE1C4C14551F01FDE22DBD487F7 (void);
+extern void U3CHintFallbackTimeoutRoutineU3Ed__48__ctor_mD28B0B68A9B4344AE8E6BB78DFA605EC5C94596E (void);
+extern void U3CHintFallbackTimeoutRoutineU3Ed__48_System_IDisposable_Dispose_m0D9F515F7AA5901BEE3E244ACD33861E8E7A3265 (void);
+extern void U3CHintFallbackTimeoutRoutineU3Ed__48_MoveNext_mE651D2150E64DCDF73CC8BB1CA7403F38FA22499 (void);
+extern void U3CHintFallbackTimeoutRoutineU3Ed__48_System_Collections_Generic_IEnumeratorU3CSystem_ObjectU3E_get_Current_mF55B417CC4DC95530CB1BBE8106626FAE28D2081 (void);
+extern void U3CHintFallbackTimeoutRoutineU3Ed__48_System_Collections_IEnumerator_Reset_m5C407ADE030CFB86C7FB420B2CED865A9986F6FB (void);
+extern void U3CHintFallbackTimeoutRoutineU3Ed__48_System_Collections_IEnumerator_get_Current_m9248F14D0B305C11AB257A24A33E88E16A78937D (void);
+extern void U3CHintPulseRoutineU3Ed__47__ctor_m86E88440EB4850E71CB7F0228DD0C70852A9918E (void);
+extern void U3CHintPulseRoutineU3Ed__47_System_IDisposable_Dispose_m5CB32E50C283E50522DCAB72B160293209DABF93 (void);
+extern void U3CHintPulseRoutineU3Ed__47_MoveNext_m72D6F5A844845BED7BB3E0233D29A1CAF9F68B70 (void);
+extern void U3CHintPulseRoutineU3Ed__47_System_Collections_Generic_IEnumeratorU3CSystem_ObjectU3E_get_Current_m889DB30A748E1254F2409F7F122CF989EA1FC19A (void);
+extern void U3CHintPulseRoutineU3Ed__47_System_Collections_IEnumerator_Reset_m6E7D75AEF1505EF4925029303295B3BD2F2A1D2B (void);
+extern void U3CHintPulseRoutineU3Ed__47_System_Collections_IEnumerator_get_Current_m796FC4689C3FCA0E6815F4E157DF71450802F845 (void);
+extern void U3CShowHintStatusRoutineU3Ed__53__ctor_mB7E803C92EDE5F25CB77F1E01DC068E8343E8117 (void);
+extern void U3CShowHintStatusRoutineU3Ed__53_System_IDisposable_Dispose_m74A6B59362637A59399E972A4B707531CAC5A509 (void);
+extern void U3CShowHintStatusRoutineU3Ed__53_MoveNext_mDAF75FCC8A572C8A186AFF6F69228F88C7C52DF7 (void);
+extern void U3CShowHintStatusRoutineU3Ed__53_System_Collections_Generic_IEnumeratorU3CSystem_ObjectU3E_get_Current_m8C0FADE56046725CFCA202B7B10CFF96EF4C9A0F (void);
+extern void U3CShowHintStatusRoutineU3Ed__53_System_Collections_IEnumerator_Reset_m2C69FC46C2C7B445A5D7B850A75AE69DFC8C5927 (void);
+extern void U3CShowHintStatusRoutineU3Ed__53_System_Collections_IEnumerator_get_Current_mC2FE650FDBA91E34A62CD10CD0828B7BCAFA6FC9 (void);
+extern void HapticManager_get_Enabled_m483B3E6589833821911CC3E70B0B5E1CE3569D69 (void);
+extern void HapticManager_set_Enabled_m803E7D24A2ECB88A624EEB0D7C0A4E785C7F28DE (void);
+extern void HapticManager_PlayLightImpact_mA79145F333EA9A5EAB724F8A680B1B0F6A9FA4A9 (void);
+extern void HapticManager_PlayMediumImpact_mA6E5ED0989CA4BDE10FFE40CAA259C26CDDF11A9 (void);
+extern void HapticManager_PlaySuccess_m7EB4151C5DA03A12231E4FFF0352A5D92D2751BF (void);
+extern void HapticManager_PlayNative_m2EA9B9C77D8CC69A04059823C5ABFE82CBCFAA13 (void);
+extern void HapticManager_PlayAndroid_m1A62195843A5E41B3F2A8AC0259A62919EEF4764 (void);
+extern void HapticManager_GetVibrator_m532BBEE7EB515E5B2E0FE9B4741D0DB516E9A667 (void);
+extern void HapticManager__cctor_m3D4C45820A6E570D9D047211DF39A639A0AB1CB7 (void);
 extern void ExitZone_OnTriggerEnter2D_mE0EB46BECEBB4E15E1948F957B96DD2391A4B9E8 (void);
 extern void ExitZone__ctor_m32EC6081319FDCE817BFDFF9BD7470079A206C1D (void);
 extern void LevelData_get_ResolvedGridWidth_mDDA9DC11D2B2879957847B43465BC59BDF45A8E5 (void);
@@ -305,6 +336,7 @@ extern void SkinManager_TryPurchaseSkin_m79B899779CDF517BB8821CBC55B0456E72048B3
 extern void SkinManager_SelectSkin_m737B2D29AC6577172C399CA45632F741307CE3D1 (void);
 extern void SkinManager_GetSelectedSkin_m74AD999A3143344758A8DBDC22C492E16405D2C1 (void);
 extern void SkinManager_GetActiveSpriteLibrary_mA1A8C1DB6A3395C58E0EC3C15EDD8CFA0093A7AD (void);
+extern void SkinManager_DebugResetSkins_mD39E5E59C9D4517FECD6C967073EA070BD5A2BE7 (void);
 extern void SkinManager_EnsureDefaults_m551E47A9A388681A661C574B550347517488A87D (void);
 extern void SkinManager_Load_m2029F199F7C83CEC7996B0CBB7F1F4A59EEFF9D0 (void);
 extern void SkinManager_SaveOwned_m8C45EF6A194EA1E71FE070793ADCF61D91C504A0 (void);
@@ -477,8 +509,7 @@ extern void U3CAnimateScaleU3Ed__14_System_Collections_Generic_IEnumeratorU3CSys
 extern void U3CAnimateScaleU3Ed__14_System_Collections_IEnumerator_Reset_mB2B399B79787A5F864166A15418FE6CF1E8B6D3B (void);
 extern void U3CAnimateScaleU3Ed__14_System_Collections_IEnumerator_get_Current_m0F62D4B13CBB33C02C011EE66114DA92E1D570D4 (void);
 extern void UIButtonSound_Awake_m65FFF3FB6D3B37873524394220F6F1C8DF12D2D8 (void);
-extern void UIButtonSound_OnDestroy_m85CE583D21A164B9D25D626FE10108AEDFF5CAB6 (void);
-extern void UIButtonSound_PlayClickSound_m6E6C82442CB07A55CDB4AA96BACA9C005DDD3912 (void);
+extern void UIButtonSound_OnPointerDown_mD80CB98C2AD3A6C7C84C00C3D453312F087C8371 (void);
 extern void UIButtonSound__ctor_m36BD96AE51A66D84733546C2E8C0AB7925823858 (void);
 extern void UIManager_Awake_m7EC364BDD53CE056E998BAB28F79998608BB16DF (void);
 extern void UIManager_Start_m113F392674AB08A26877728CD36F06332E869080 (void);
@@ -635,7 +666,7 @@ extern void VehicleShadow_ResolveReferencesIfNeeded_m6C2AC6988EBC46607DB2EEB6845
 extern void VehicleShadow__ctor_mC23A01632F44F0EBD8274E79B34B3C9DD03593CE (void);
 extern void UnitySourceGeneratedAssemblyMonoScriptTypes_v1_Get_mBEB95BEB954BB63E9710BBC7AD5E78C4CB0A0033 (void);
 extern void UnitySourceGeneratedAssemblyMonoScriptTypes_v1__ctor_mE70FB23ACC1EA12ABC948AA22C2E78B2D0AA39B1 (void);
-static Il2CppMethodPointer s_methodPointers[628] = 
+static Il2CppMethodPointer s_methodPointers[659] = 
 {
 	AdsManager_Start_m00CAFF84B03355B41A941006E80DB2F1D49E3EF3,
 	AdsManager_LoadRewardedAd_mE3146CFBC04D0B44A52F456A694011574B0A7164,
@@ -666,13 +697,35 @@ static Il2CppMethodPointer s_methodPointers[628] =
 	AudioManager_ToggleSfx_mB1FA1202E500528C3F57130DF24F040EF9E9DBD3,
 	AudioManager_LoadAudioSettings_m8C87309621369730CF3E386EAE0AB9A8A394F582,
 	AudioManager_ApplyMusicSetting_m36D8A97CD4F1DCA77C271A9015DC5B8CAD11EB11,
+	AudioManager_PlayButton_m044B22F53AFC4E2662F3FF095997BD7646034BAA,
 	AudioManager_PlayMove_m234E42F9D2ACAB531406952A354ADCEEF38FDEF6,
 	AudioManager_PlayBlocked_mFBECEC40EA2DF6818FBB4297A549D62EE28F5DD3,
-	AudioManager_PlayWin_mB22688AE26138C52411D4276FD281D7284428B6C,
 	AudioManager_PlayCoin_m92D56B4382711FBD2CFEA83FE32066F7E407B652,
-	AudioManager_PlayButton_m044B22F53AFC4E2662F3FF095997BD7646034BAA,
-	AudioManager_PlaySfx_m90C88E94095C516F23BB3AEEB5F698ACFB4216AC,
+	AudioManager_PlayWin_mB22688AE26138C52411D4276FD281D7284428B6C,
+	AudioManager_PlayUpgrade_mB279A6BEC12CBC5C93BA96D79A5FF34145130AC5,
+	AudioManager_PlayVehicleExit_mF75CB5FBEDC09955967F9521DF198466354C2A5F,
+	AudioManager_PlayCoinSpend_m001226352AF34AE5F55CDC2DB797B7773B14E8A4,
+	AudioManager_PlayHint_mCC1BE5D053181511D297CE9B2B1CCC59C93025F8,
+	AudioManager_PlaySkinSelect_mB71261C9D33BAD250B2D768B810A0F4DC019EC90,
+	AudioManager_PlayPanelOpen_m3E75F616144E6C2603D45A19DB3628ED1E6F0FAA,
+	AudioManager_PlayPanelClose_mFD176CED9A6CEFF2A5BD6D747A7A791E4EAD2C48,
+	AudioManager_PlayInsufficientCoins_mDEA5CFE26AFA04C4A5628FD37FAC2FBF681B2BC4,
+	AudioManager_PlaySfx_m23DCB11CEE5463020F8831F30DA0AC6BEE0F491D,
+	AudioManager_ResolvePitch_mA1875D6D6803D18AE8CF6D06C3E817F86905E544,
+	AudioManager_EnsurePitchedSfxSource_m23DA04A4E5FA0B711673931D61BE48B93D446AF9,
 	AudioManager__ctor_mA793A9DF6B975D03690B7C953972EFE41AE4D5E6,
+	MusicManager_get_Instance_m8B881550B0A9F934A5A3EEC53927C086595149C9,
+	MusicManager_set_Instance_m7BAFA2520E1EC5640909AC959B359A29FCB3F29A,
+	MusicManager_get_MusicEnabled_m13BBDD67E8165679EA308618306ECF6BDA31F8DB,
+	MusicManager_set_MusicEnabled_m9F590DD2C19F0E66722FCD836693B0D58ADF98F8,
+	MusicManager_Awake_mF45ED3B2ACB2D4A6F3EBCB74D93B9329F001A99C,
+	MusicManager_OnDestroy_m989A1490F1352A5B7756359972C02C0CDFF4A744,
+	MusicManager_ToggleMusic_m3E27A9318E1420B85FED3FE921D7CF5694E9CB65,
+	MusicManager_SetMusicEnabled_m7CF0A35B4979252A8929159D1FC9C3860ABEF911,
+	MusicManager_LoadMusicSetting_m4FB4580D0DB3FED013B7B8471C3C5180AE95481C,
+	MusicManager_ApplyMusicSetting_m55E881A2D1408A225A987EB41CCFED457C07287C,
+	MusicManager_EnsureMusicPlaying_mCB509CDFD20F51FD916B47C4938FCE38BEA56841,
+	MusicManager__ctor_m41A178D621B3011F8901EE68A91A5850A5E59904,
 	GameplayBackgroundController_Awake_m750A26BBAED7DB77A507F5F0E0DDC7A779058450,
 	GameplayBackgroundController_Start_mAC47C24AD631E90FFF88FA29FAC4853AE18119AF,
 	GameplayBackgroundController_Update_m90A74DAFEA37F0BB4E8DF05A2A28D9F987A33A0D,
@@ -816,24 +869,33 @@ static Il2CppMethodPointer s_methodPointers[628] =
 	HintManager_ApplyHintArrowFacing_m629B89433CD2B3E058D45920CBE8F31B997EFDFD,
 	HintManager_HideHintDirection_m0594347C90CA6D5704607ED779E996AAEFD514B7,
 	HintManager__ctor_m5E95D9CFDB3A870703D384B238B06B9494379325,
-	U3CHintFallbackTimeoutRoutineU3Ed__47__ctor_m65B67AA7F4CB7A6137F57C4E4D97334FB25A87A3,
-	U3CHintFallbackTimeoutRoutineU3Ed__47_System_IDisposable_Dispose_m16A5A3D67F0D173DACEA79EBDE4F98812CA396E4,
-	U3CHintFallbackTimeoutRoutineU3Ed__47_MoveNext_m7C99B6037718BEFF1EE97A586D1356C8A0FBF165,
-	U3CHintFallbackTimeoutRoutineU3Ed__47_System_Collections_Generic_IEnumeratorU3CSystem_ObjectU3E_get_Current_m4AE3BC8378DAE782480055024944583022740E2C,
-	U3CHintFallbackTimeoutRoutineU3Ed__47_System_Collections_IEnumerator_Reset_mAA7C202495945195D86DB0F0F64917622C42E541,
-	U3CHintFallbackTimeoutRoutineU3Ed__47_System_Collections_IEnumerator_get_Current_mF908C3FEC4780A7BEF1FFE78210D0C8218D44EAC,
-	U3CHintPulseRoutineU3Ed__46__ctor_m99C66B71F70966A76DCF0CF93C1543F7726A37D7,
-	U3CHintPulseRoutineU3Ed__46_System_IDisposable_Dispose_mA44F943157FEEE0C5084BD83510068C86FEAC358,
-	U3CHintPulseRoutineU3Ed__46_MoveNext_mF9D30EE880B2D101693B5D0BBB8E52B5BA7A7C56,
-	U3CHintPulseRoutineU3Ed__46_System_Collections_Generic_IEnumeratorU3CSystem_ObjectU3E_get_Current_m5C6187E8C83FB26417F6979F7CF2E732973962A5,
-	U3CHintPulseRoutineU3Ed__46_System_Collections_IEnumerator_Reset_mA625DF313DD48C9FE45D07CBDD260F7A2DBB86F8,
-	U3CHintPulseRoutineU3Ed__46_System_Collections_IEnumerator_get_Current_mDD0100DDCE54291618215F3ECBF6C492B8337F90,
-	U3CShowHintStatusRoutineU3Ed__52__ctor_m97A96AAD5A216799539BC7A3CC3AC0F1D42629C7,
-	U3CShowHintStatusRoutineU3Ed__52_System_IDisposable_Dispose_m29E3DC3C72D287BAFDDC4A2E527FDF1261D959A2,
-	U3CShowHintStatusRoutineU3Ed__52_MoveNext_m793EF328E232F9BE7ADFE88D3EC9956164532792,
-	U3CShowHintStatusRoutineU3Ed__52_System_Collections_Generic_IEnumeratorU3CSystem_ObjectU3E_get_Current_m4C17655F6D6FFFE22B829B9E197ED856982C86DE,
-	U3CShowHintStatusRoutineU3Ed__52_System_Collections_IEnumerator_Reset_mB7EED98E542D1B428C98ABC863D5FDB713BF2302,
-	U3CShowHintStatusRoutineU3Ed__52_System_Collections_IEnumerator_get_Current_m55AF11F60653AAE1C4C14551F01FDE22DBD487F7,
+	U3CHintFallbackTimeoutRoutineU3Ed__48__ctor_mD28B0B68A9B4344AE8E6BB78DFA605EC5C94596E,
+	U3CHintFallbackTimeoutRoutineU3Ed__48_System_IDisposable_Dispose_m0D9F515F7AA5901BEE3E244ACD33861E8E7A3265,
+	U3CHintFallbackTimeoutRoutineU3Ed__48_MoveNext_mE651D2150E64DCDF73CC8BB1CA7403F38FA22499,
+	U3CHintFallbackTimeoutRoutineU3Ed__48_System_Collections_Generic_IEnumeratorU3CSystem_ObjectU3E_get_Current_mF55B417CC4DC95530CB1BBE8106626FAE28D2081,
+	U3CHintFallbackTimeoutRoutineU3Ed__48_System_Collections_IEnumerator_Reset_m5C407ADE030CFB86C7FB420B2CED865A9986F6FB,
+	U3CHintFallbackTimeoutRoutineU3Ed__48_System_Collections_IEnumerator_get_Current_m9248F14D0B305C11AB257A24A33E88E16A78937D,
+	U3CHintPulseRoutineU3Ed__47__ctor_m86E88440EB4850E71CB7F0228DD0C70852A9918E,
+	U3CHintPulseRoutineU3Ed__47_System_IDisposable_Dispose_m5CB32E50C283E50522DCAB72B160293209DABF93,
+	U3CHintPulseRoutineU3Ed__47_MoveNext_m72D6F5A844845BED7BB3E0233D29A1CAF9F68B70,
+	U3CHintPulseRoutineU3Ed__47_System_Collections_Generic_IEnumeratorU3CSystem_ObjectU3E_get_Current_m889DB30A748E1254F2409F7F122CF989EA1FC19A,
+	U3CHintPulseRoutineU3Ed__47_System_Collections_IEnumerator_Reset_m6E7D75AEF1505EF4925029303295B3BD2F2A1D2B,
+	U3CHintPulseRoutineU3Ed__47_System_Collections_IEnumerator_get_Current_m796FC4689C3FCA0E6815F4E157DF71450802F845,
+	U3CShowHintStatusRoutineU3Ed__53__ctor_mB7E803C92EDE5F25CB77F1E01DC068E8343E8117,
+	U3CShowHintStatusRoutineU3Ed__53_System_IDisposable_Dispose_m74A6B59362637A59399E972A4B707531CAC5A509,
+	U3CShowHintStatusRoutineU3Ed__53_MoveNext_mDAF75FCC8A572C8A186AFF6F69228F88C7C52DF7,
+	U3CShowHintStatusRoutineU3Ed__53_System_Collections_Generic_IEnumeratorU3CSystem_ObjectU3E_get_Current_m8C0FADE56046725CFCA202B7B10CFF96EF4C9A0F,
+	U3CShowHintStatusRoutineU3Ed__53_System_Collections_IEnumerator_Reset_m2C69FC46C2C7B445A5D7B850A75AE69DFC8C5927,
+	U3CShowHintStatusRoutineU3Ed__53_System_Collections_IEnumerator_get_Current_mC2FE650FDBA91E34A62CD10CD0828B7BCAFA6FC9,
+	HapticManager_get_Enabled_m483B3E6589833821911CC3E70B0B5E1CE3569D69,
+	HapticManager_set_Enabled_m803E7D24A2ECB88A624EEB0D7C0A4E785C7F28DE,
+	HapticManager_PlayLightImpact_mA79145F333EA9A5EAB724F8A680B1B0F6A9FA4A9,
+	HapticManager_PlayMediumImpact_mA6E5ED0989CA4BDE10FFE40CAA259C26CDDF11A9,
+	HapticManager_PlaySuccess_m7EB4151C5DA03A12231E4FFF0352A5D92D2751BF,
+	HapticManager_PlayNative_m2EA9B9C77D8CC69A04059823C5ABFE82CBCFAA13,
+	HapticManager_PlayAndroid_m1A62195843A5E41B3F2A8AC0259A62919EEF4764,
+	HapticManager_GetVibrator_m532BBEE7EB515E5B2E0FE9B4741D0DB516E9A667,
+	HapticManager__cctor_m3D4C45820A6E570D9D047211DF39A639A0AB1CB7,
 	ExitZone_OnTriggerEnter2D_mE0EB46BECEBB4E15E1948F957B96DD2391A4B9E8,
 	ExitZone__ctor_m32EC6081319FDCE817BFDFF9BD7470079A206C1D,
 	LevelData_get_ResolvedGridWidth_mDDA9DC11D2B2879957847B43465BC59BDF45A8E5,
@@ -935,6 +997,7 @@ static Il2CppMethodPointer s_methodPointers[628] =
 	SkinManager_SelectSkin_m737B2D29AC6577172C399CA45632F741307CE3D1,
 	SkinManager_GetSelectedSkin_m74AD999A3143344758A8DBDC22C492E16405D2C1,
 	SkinManager_GetActiveSpriteLibrary_mA1A8C1DB6A3395C58E0EC3C15EDD8CFA0093A7AD,
+	SkinManager_DebugResetSkins_mD39E5E59C9D4517FECD6C967073EA070BD5A2BE7,
 	SkinManager_EnsureDefaults_m551E47A9A388681A661C574B550347517488A87D,
 	SkinManager_Load_m2029F199F7C83CEC7996B0CBB7F1F4A59EEFF9D0,
 	SkinManager_SaveOwned_m8C45EF6A194EA1E71FE070793ADCF61D91C504A0,
@@ -1107,8 +1170,7 @@ static Il2CppMethodPointer s_methodPointers[628] =
 	U3CAnimateScaleU3Ed__14_System_Collections_IEnumerator_Reset_mB2B399B79787A5F864166A15418FE6CF1E8B6D3B,
 	U3CAnimateScaleU3Ed__14_System_Collections_IEnumerator_get_Current_m0F62D4B13CBB33C02C011EE66114DA92E1D570D4,
 	UIButtonSound_Awake_m65FFF3FB6D3B37873524394220F6F1C8DF12D2D8,
-	UIButtonSound_OnDestroy_m85CE583D21A164B9D25D626FE10108AEDFF5CAB6,
-	UIButtonSound_PlayClickSound_m6E6C82442CB07A55CDB4AA96BACA9C005DDD3912,
+	UIButtonSound_OnPointerDown_mD80CB98C2AD3A6C7C84C00C3D453312F087C8371,
 	UIButtonSound__ctor_m36BD96AE51A66D84733546C2E8C0AB7925823858,
 	UIManager_Awake_m7EC364BDD53CE056E998BAB28F79998608BB16DF,
 	UIManager_Start_m113F392674AB08A26877728CD36F06332E869080,
@@ -1270,10 +1332,10 @@ extern void QueueItem__ctor_m265AF9F492D4CD9BA8B8D329BD312700874A981B_AdjustorTh
 extern void ParentLink__ctor_m5417891B0F6986FA20B17EA4BAD3BE9F0869DB61_AdjustorThunk (void);
 static Il2CppTokenAdjustorThunkPair s_adjustorThunks[2] = 
 {
-	{ 0x06000112, QueueItem__ctor_m265AF9F492D4CD9BA8B8D329BD312700874A981B_AdjustorThunk },
-	{ 0x06000113, ParentLink__ctor_m5417891B0F6986FA20B17EA4BAD3BE9F0869DB61_AdjustorThunk },
+	{ 0x06000131, QueueItem__ctor_m265AF9F492D4CD9BA8B8D329BD312700874A981B_AdjustorThunk },
+	{ 0x06000132, ParentLink__ctor_m5417891B0F6986FA20B17EA4BAD3BE9F0869DB61_AdjustorThunk },
 };
-static const int32_t s_InvokerIndices[628] = 
+static const int32_t s_InvokerIndices[659] = 
 {
 	10993,
 	10993,
@@ -1309,7 +1371,29 @@ static const int32_t s_InvokerIndices[628] =
 	10993,
 	10993,
 	10993,
-	8012,
+	10993,
+	10993,
+	10993,
+	10993,
+	10993,
+	10993,
+	10993,
+	10993,
+	1556,
+	15159,
+	10993,
+	10993,
+	16663,
+	16412,
+	10530,
+	8045,
+	10993,
+	10993,
+	10993,
+	8045,
+	10993,
+	10993,
+	10993,
 	10993,
 	10993,
 	10993,
@@ -1324,7 +1408,7 @@ static const int32_t s_InvokerIndices[628] =
 	8012,
 	10993,
 	15378,
-	16379,
+	16380,
 	10993,
 	10500,
 	10672,
@@ -1358,12 +1442,12 @@ static const int32_t s_InvokerIndices[628] =
 	10993,
 	10500,
 	10500,
-	15798,
+	15799,
 	2431,
-	15846,
+	15847,
 	15348,
 	13972,
-	15761,
+	15762,
 	14688,
 	10993,
 	10993,
@@ -1447,7 +1531,7 @@ static const int32_t s_InvokerIndices[628] =
 	817,
 	201,
 	154,
-	16006,
+	16007,
 	8012,
 	10993,
 	3430,
@@ -1472,6 +1556,15 @@ static const int32_t s_InvokerIndices[628] =
 	10500,
 	10993,
 	10500,
+	16675,
+	16413,
+	16843,
+	16843,
+	16843,
+	16425,
+	16425,
+	14455,
+	16843,
 	8012,
 	10993,
 	10672,
@@ -1507,13 +1600,13 @@ static const int32_t s_InvokerIndices[628] =
 	3409,
 	3964,
 	1653,
-	16190,
+	16191,
 	1981,
 	872,
-	16411,
+	16412,
 	15363,
 	10993,
-	16411,
+	16412,
 	10993,
 	10993,
 	11493,
@@ -1527,14 +1620,14 @@ static const int32_t s_InvokerIndices[628] =
 	12626,
 	13169,
 	14479,
-	16351,
+	16352,
 	13113,
 	11538,
 	11816,
 	11549,
 	11653,
 	13536,
-	16006,
+	16007,
 	10530,
 	10993,
 	8012,
@@ -1544,17 +1637,17 @@ static const int32_t s_InvokerIndices[628] =
 	5387,
 	5387,
 	10672,
-	15761,
-	16006,
+	15762,
+	16007,
 	822,
 	10993,
 	3493,
 	1543,
-	16842,
+	16843,
 	10500,
 	1696,
 	2336,
-	15846,
+	15847,
 	14449,
 	10993,
 	8012,
@@ -1573,6 +1666,7 @@ static const int32_t s_InvokerIndices[628] =
 	5387,
 	10500,
 	10500,
+	10993,
 	10993,
 	10993,
 	10993,
@@ -1656,9 +1750,9 @@ static const int32_t s_InvokerIndices[628] =
 	10530,
 	10993,
 	10993,
-	16411,
-	16411,
-	16662,
+	16412,
+	16412,
+	16663,
 	10993,
 	10993,
 	10993,
@@ -1694,12 +1788,12 @@ static const int32_t s_InvokerIndices[628] =
 	10993,
 	8188,
 	10993,
-	16842,
+	16843,
 	10993,
 	10993,
 	10500,
 	2346,
-	16204,
+	16205,
 	10993,
 	10993,
 	8369,
@@ -1745,8 +1839,7 @@ static const int32_t s_InvokerIndices[628] =
 	10993,
 	10500,
 	10993,
-	10993,
-	10993,
+	8012,
 	10993,
 	10993,
 	10993,
@@ -1901,14 +1994,14 @@ static const int32_t s_InvokerIndices[628] =
 	10993,
 	10993,
 	10993,
-	16865,
+	16866,
 	10993,
 };
 IL2CPP_EXTERN_C const Il2CppCodeGenModule g_AssemblyU2DCSharp_CodeGenModule;
 const Il2CppCodeGenModule g_AssemblyU2DCSharp_CodeGenModule = 
 {
 	"Assembly-CSharp.dll",
-	628,
+	659,
 	s_methodPointers,
 	2,
 	s_adjustorThunks,

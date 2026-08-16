@@ -11,9 +11,16 @@ public class GameManager : MonoBehaviour
     [SerializeField] private HintManager hintManager;
 
     private AudioManager audioManager;
+    private LevelObjectiveController levelObjectiveController;
 
     // Voorkomt dat CompleteLevel meerdere keren voor hetzelfde level draait.
     private bool levelCompleted;
+
+    // Timed mission failure (geen rewards / unlock).
+    private bool levelFailed;
+
+    // Target-exit animatie gestart — fail mag niet meer winnen van win.
+    private bool targetExitInProgress;
 
     // Telt voltooide levels sinds de laatste interstitial.
     private int completedLevelsSinceAd = 0;
@@ -22,6 +29,14 @@ public class GameManager : MonoBehaviour
     private int currentMoves = 0;
 
     public int CurrentMoves => currentMoves;
+    public bool IsLevelCompleted => levelCompleted;
+    public bool IsLevelFailed => levelFailed;
+    public bool IsTargetExitInProgress => targetExitInProgress;
+
+    /// <summary>
+    /// False bij completed/failed — blokkeert nieuwe vehicle-input.
+    /// </summary>
+    public bool CanAcceptVehicleInput => !levelCompleted && !levelFailed;
 
     /// <summary>
     /// Coin-beloning bij level completion (één bron van waarheid voor UI + uitbetaling).
@@ -61,6 +76,11 @@ public class GameManager : MonoBehaviour
         {
             hintManager = FindFirstObjectByType<HintManager>();
         }
+
+        if (levelObjectiveController == null)
+        {
+            levelObjectiveController = FindFirstObjectByType<LevelObjectiveController>();
+        }
     }
 
     /// <summary>
@@ -75,6 +95,13 @@ public class GameManager : MonoBehaviour
         {
             gameplayUI.UpdateMovesText(currentMoves);
         }
+
+        if (levelObjectiveController == null)
+        {
+            levelObjectiveController = FindFirstObjectByType<LevelObjectiveController>();
+        }
+
+        levelObjectiveController?.NotifyValidMove();
     }
 
     /// <summary>
@@ -96,6 +123,20 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Markeert dat de target-exit-animatie is gestart (vóór CompleteLevel).
+    /// Voorkomt timed-fail tijdens wegrijden.
+    /// </summary>
+    public void NotifyTargetExitStarted()
+    {
+        if (levelFailed || levelCompleted)
+        {
+            return;
+        }
+
+        targetExitInProgress = true;
+    }
+
+    /// <summary>
     /// Wordt aangeroepen wanneer de doelauto succesvol via de exit ontsnapt.
     /// </summary>
     public void CompleteLevel()
@@ -105,7 +146,22 @@ public class GameManager : MonoBehaviour
             return;
         }
 
+        // Fail vóór exit-start blokkeert win. Exit-in-progress wint de race.
+        if (levelFailed && !targetExitInProgress)
+        {
+            return;
+        }
+
         levelCompleted = true;
+        levelFailed = false;
+        targetExitInProgress = true;
+
+        if (levelObjectiveController == null)
+        {
+            levelObjectiveController = FindFirstObjectByType<LevelObjectiveController>();
+        }
+
+        levelObjectiveController?.NotifyLevelCompleted();
 
         if (hintManager != null)
         {
@@ -165,6 +221,26 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Special mission failed: geen win, unlock, stars of reward.
+    /// </summary>
+    public void FailLevel()
+    {
+        if (levelCompleted || levelFailed || targetExitInProgress)
+        {
+            return;
+        }
+
+        levelFailed = true;
+
+        if (hintManager != null)
+        {
+            hintManager.ClearCurrentHint();
+        }
+
+        Debug.Log("LEVEL FAILED (special mission).");
+    }
+
+    /// <summary>
     /// 3★ ≤ par, 2★ ≤ par+2, anders 1★.
     /// </summary>
     private int CalculateStars(out int parMoves)
@@ -213,5 +289,7 @@ public class GameManager : MonoBehaviour
     public void ResetLevelCompleted()
     {
         levelCompleted = false;
+        levelFailed = false;
+        targetExitInProgress = false;
     }
 }

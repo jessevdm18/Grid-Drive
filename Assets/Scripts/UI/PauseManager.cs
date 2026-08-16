@@ -38,9 +38,17 @@ public class PauseManager : MonoBehaviour
     /// </summary>
     public void OpenPauseMenu()
     {
-        if (pausePanel != null)
+        bool opened = false;
+
+        if (pausePanel != null && !pausePanel.activeSelf)
         {
             pausePanel.SetActive(true);
+            opened = true;
+        }
+
+        if (opened)
+        {
+            audioManager?.PlayPanelOpen();
         }
 
         UpdateAudioIcons();
@@ -52,9 +60,17 @@ public class PauseManager : MonoBehaviour
     /// </summary>
     public void ResumeGame()
     {
-        if (pausePanel != null)
+        bool closed = false;
+
+        if (pausePanel != null && pausePanel.activeSelf)
         {
             pausePanel.SetActive(false);
+            closed = true;
+        }
+
+        if (closed)
+        {
+            audioManager?.PlayPanelClose();
         }
 
         Time.timeScale = 1f;
