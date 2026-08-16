@@ -84,6 +84,17 @@ public class LevelGeneratorWindow : EditorWindow
 
     private Vector2 scroll;
 
+    // --- Special Mission Progression (EditorPrefs) ---
+    private SpecialMissionProgressionUtility.Settings specialMissionSettings =
+        SpecialMissionProgressionUtility.Settings.CreateDefaults();
+
+    private bool specialMissionSettingsLoaded;
+    private Vector2 specialMissionPreviewScroll;
+
+    // --- Difficulty order preview ---
+    private List<MainLevelDatabaseDifficultyOrderUtility.OrderRow> difficultyOrderPreview;
+    private Vector2 difficultyOrderPreviewScroll;
+
     private int BoardArea => gridWidth * gridHeight;
     private float AreaScale => BoardArea / (float)BaselineBoardArea;
 
@@ -97,8 +108,30 @@ public class LevelGeneratorWindow : EditorWindow
         window.Show();
     }
 
+    private void OnEnable()
+    {
+        specialMissionSettings =
+            SpecialMissionProgressionUtility.Settings.LoadFromEditorPrefs();
+        specialMissionSettingsLoaded = true;
+    }
+
+    private void OnDisable()
+    {
+        if (specialMissionSettingsLoaded)
+        {
+            specialMissionSettings.SaveToEditorPrefs();
+        }
+    }
+
     private void OnGUI()
     {
+        if (!specialMissionSettingsLoaded)
+        {
+            specialMissionSettings =
+                SpecialMissionProgressionUtility.Settings.LoadFromEditorPrefs();
+            specialMissionSettingsLoaded = true;
+        }
+
         scroll = EditorGUILayout.BeginScrollView(scroll);
 
         EditorGUILayout.LabelField("Grid Drive — Level Generator", EditorStyles.boldLabel);
@@ -218,6 +251,8 @@ public class LevelGeneratorWindow : EditorWindow
             MessageType.Info
         );
 
+        DrawSpecialMissionProgressionSection();
+
         EditorGUILayout.Space(8f);
         EditorGUILayout.BeginHorizontal();
         if (GUILayout.Button("Generate Levels", GUILayout.Height(36f)))
@@ -233,6 +268,242 @@ public class LevelGeneratorWindow : EditorWindow
         }
 
         EditorGUILayout.EndHorizontal();
+        EditorGUILayout.EndScrollView();
+    }
+
+    private void DrawSpecialMissionProgressionSection()
+    {
+        EditorGUILayout.Space(12f);
+        EditorGUILayout.LabelField("SPECIAL MISSION PROGRESSION", EditorStyles.boldLabel);
+        EditorGUILayout.HelpBox(
+            "Editor-only balancing. Preview herberekent live; LevelData wordt pas " +
+            "gewijzigd bij Apply. Waarden blijven bewaard via EditorPrefs.\n" +
+            "Regel: level % 10 == 0 → special (10/30 Ambulance, 20/40 MoveLimit).",
+            MessageType.None
+        );
+
+        EditorGUI.BeginChangeCheck();
+
+        EditorGUILayout.LabelField("Ambulance", EditorStyles.boldLabel);
+        specialMissionSettings.ambulanceSecondsPerMoveStart = EditorGUILayout.FloatField(
+            "Start Seconds Per Move",
+            specialMissionSettings.ambulanceSecondsPerMoveStart
+        );
+        specialMissionSettings.ambulanceSecondsPerMoveReduction = EditorGUILayout.FloatField(
+            "Seconds Per Move Reduction",
+            specialMissionSettings.ambulanceSecondsPerMoveReduction
+        );
+        specialMissionSettings.ambulanceSecondsPerMoveMin = EditorGUILayout.FloatField(
+            "Minimum Seconds Per Move",
+            specialMissionSettings.ambulanceSecondsPerMoveMin
+        );
+        specialMissionSettings.ambulanceBufferStart = EditorGUILayout.FloatField(
+            "Start Buffer Seconds",
+            specialMissionSettings.ambulanceBufferStart
+        );
+        specialMissionSettings.ambulanceBufferReduction = EditorGUILayout.FloatField(
+            "Buffer Reduction",
+            specialMissionSettings.ambulanceBufferReduction
+        );
+        specialMissionSettings.ambulanceBufferMin = EditorGUILayout.FloatField(
+            "Minimum Buffer Seconds",
+            specialMissionSettings.ambulanceBufferMin
+        );
+        specialMissionSettings.ambulanceTimeLimitMin = EditorGUILayout.FloatField(
+            "Minimum Total Time",
+            specialMissionSettings.ambulanceTimeLimitMin
+        );
+
+        EditorGUILayout.Space(6f);
+        EditorGUILayout.LabelField("Move Limit", EditorStyles.boldLabel);
+        specialMissionSettings.moveLimitExtraStart = EditorGUILayout.IntField(
+            "Start Extra Moves",
+            specialMissionSettings.moveLimitExtraStart
+        );
+        specialMissionSettings.moveLimitExtraReduction = EditorGUILayout.IntField(
+            "Extra Moves Reduction",
+            specialMissionSettings.moveLimitExtraReduction
+        );
+        specialMissionSettings.moveLimitExtraMin = EditorGUILayout.IntField(
+            "Minimum Extra Moves",
+            specialMissionSettings.moveLimitExtraMin
+        );
+
+        if (EditorGUI.EndChangeCheck())
+        {
+            specialMissionSettings.SaveToEditorPrefs();
+        }
+
+        EditorGUILayout.Space(8f);
+        EditorGUILayout.LabelField("Preview (read-only)", EditorStyles.boldLabel);
+        DrawSpecialMissionPreview();
+
+        EditorGUILayout.Space(6f);
+        if (GUILayout.Button("Apply Special Mission Progression", GUILayout.Height(32f)))
+        {
+            if (EditorUtility.DisplayDialog(
+                    "Apply Special Mission Progression",
+                    "Schrijft objectiveType / timeLimitSeconds / moveLimit op alle levels " +
+                    "in MainLevelDatabase met de huidige balancing-waarden.\n\n" +
+                    "Handmatige overrides op die velden worden overschreven. Doorgaan?",
+                    "Apply",
+                    "Cancel"))
+            {
+                specialMissionSettings.SaveToEditorPrefs();
+                SpecialMissionProgressionUtility.ApplyToMainLevelDatabase(
+                    specialMissionSettings
+                );
+            }
+        }
+
+        if (GUILayout.Button("Reset Balancing To Defaults", GUILayout.Height(22f)))
+        {
+            if (EditorUtility.DisplayDialog(
+                    "Reset Balancing",
+                    "Zet Special Mission formula-waarden terug naar defaults?\n" +
+                    "(Wijzigt nog geen LevelData.)",
+                    "Reset",
+                    "Cancel"))
+            {
+                specialMissionSettings =
+                    SpecialMissionProgressionUtility.Settings.CreateDefaults();
+                specialMissionSettings.SaveToEditorPrefs();
+            }
+        }
+
+        DrawDifficultyOrderSection();
+    }
+
+    private void DrawDifficultyOrderSection()
+    {
+        EditorGUILayout.Space(14f);
+        EditorGUILayout.LabelField("DIFFICULTY ORDER (MainLevelDatabase)", EditorStyles.boldLabel);
+        EditorGUILayout.HelpBox(
+            "Editor-only. Ranking: board area → minimumMoves → difficultyScore.\n" +
+            "5x5 komt vóór 6x6. Preview wijzigt niets. Apply herschikt list + levelNumber " +
+            "(geen asset rename).\n" +
+            "Workflow: Accept levels → Preview → Apply Difficulty Order → " +
+            "Apply Special Mission Progression.\n" +
+            "Save (Unlocked/Stars) is INDEX-gebaseerd — test-progressie matcht content niet meer na Apply.\n" +
+            "Alternatief (re-solve + difficultyScore): RushOut → Analyze And Sort Levels By Difficulty.",
+            MessageType.None
+        );
+
+        EditorGUILayout.BeginHorizontal();
+        if (GUILayout.Button("Preview Difficulty Order", GUILayout.Height(28f)))
+        {
+            List<MainLevelDatabaseDifficultyOrderUtility.OrderRow> rows =
+                MainLevelDatabaseDifficultyOrderUtility.BuildPreview();
+            difficultyOrderPreview = rows;
+            Debug.Log(MainLevelDatabaseDifficultyOrderUtility.FormatPreviewLog(rows));
+        }
+
+        if (GUILayout.Button("Apply Difficulty Order", GUILayout.Height(28f)))
+        {
+            if (EditorUtility.DisplayDialog(
+                    "Apply Difficulty Order",
+                    "Herschikt MainLevelDatabase (area → minMoves) en zet levelNumber = 1..N.\n\n" +
+                    "Assetnamen blijven gelijk. Save/test-progressie is index-gebaseerd.\n" +
+                    "Daarna Special Mission Progression opnieuw toepassen.\n\nDoorgaan?",
+                    "Apply",
+                    "Cancel"))
+            {
+                if (MainLevelDatabaseDifficultyOrderUtility.ApplyDifficultyOrder())
+                {
+                    difficultyOrderPreview =
+                        MainLevelDatabaseDifficultyOrderUtility.BuildPreview();
+                }
+            }
+        }
+
+        EditorGUILayout.EndHorizontal();
+
+        DrawDifficultyOrderPreview();
+    }
+
+    private void DrawDifficultyOrderPreview()
+    {
+        if (difficultyOrderPreview == null || difficultyOrderPreview.Count == 0)
+        {
+            EditorGUILayout.HelpBox(
+                "Klik Preview Difficulty Order om de voorgestelde volgorde te zien.",
+                MessageType.Info
+            );
+            return;
+        }
+
+        EditorGUILayout.LabelField("Preview (read-only)", EditorStyles.boldLabel);
+        difficultyOrderPreviewScroll = EditorGUILayout.BeginScrollView(
+            difficultyOrderPreviewScroll,
+            GUILayout.MaxHeight(200f)
+        );
+
+        for (int i = 0; i < difficultyOrderPreview.Count; i++)
+        {
+            MainLevelDatabaseDifficultyOrderUtility.OrderRow row = difficultyOrderPreview[i];
+            string moved = row.currentIndex == row.proposedIndex
+                ? "(same)"
+                : "#" + (row.currentIndex + 1) + " → #" + (row.proposedIndex + 1);
+
+            EditorGUILayout.HelpBox(
+                moved + " | " + row.assetName + "\n" +
+                row.gridWidth + "x" + row.gridHeight +
+                " | minMoves " + row.minimumMoves +
+                " | score " + row.difficultyScore +
+                " | " + row.objectiveType +
+                " | levelNumber " + row.currentLevelNumber +
+                " → " + row.proposedLevelNumber,
+                MessageType.None
+            );
+        }
+
+        EditorGUILayout.EndScrollView();
+    }
+
+    private void DrawSpecialMissionPreview()
+    {
+        List<SpecialMissionProgressionUtility.AssignmentResult> preview =
+            SpecialMissionProgressionUtility.BuildSpecialPreview(specialMissionSettings);
+
+        if (preview == null || preview.Count == 0)
+        {
+            EditorGUILayout.HelpBox(
+                "Geen special levels (levelNumber % 10 == 0) in MainLevelDatabase.",
+                MessageType.Info
+            );
+            return;
+        }
+
+        specialMissionPreviewScroll = EditorGUILayout.BeginScrollView(
+            specialMissionPreviewScroll,
+            GUILayout.MaxHeight(160f)
+        );
+
+        for (int i = 0; i < preview.Count; i++)
+        {
+            SpecialMissionProgressionUtility.AssignmentResult row = preview[i];
+            string body;
+
+            if (row.objectiveType == LevelObjectiveType.TimedAmbulance)
+            {
+                body =
+                    "Level " + row.levelNumber + "\n" +
+                    "Timed Ambulance\n" +
+                    "Minimum Moves: " + row.minimumMoves + "\n" +
+                    "Calculated Time: " + row.timeLimitSeconds.ToString("0.#") + " sec";
+            }
+            else
+            {
+                body =
+                    "Level " + row.levelNumber + "\n" +
+                    "Move Limit\n" +
+                    "Minimum Moves: " + row.minimumMoves + "\n" +
+                    "Calculated Limit: " + row.moveLimit + " moves";
+            }
+
+            EditorGUILayout.HelpBox(body, MessageType.None);
+        }
+
         EditorGUILayout.EndScrollView();
     }
 

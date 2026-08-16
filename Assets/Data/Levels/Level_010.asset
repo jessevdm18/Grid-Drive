@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e98a2ca1400bdfc4896e8c352e3628b7, type: 3}
   m_Name: Level_010
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
-  levelNumber: 10
+  levelNumber: 25
   difficulty: 1
-  objectiveType: 1
-  timeLimitSeconds: 20
+  objectiveType: 0
+  timeLimitSeconds: 0
+  moveLimit: 0
   specialTargetSprite: {fileID: 21300000, guid: 862f2efb1411bc84eab907a08cd8327a, type: 3}
   gridWidth: 7
   gridHeight: 7
