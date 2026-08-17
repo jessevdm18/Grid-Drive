@@ -329,7 +329,9 @@
           },
           {
             "name": "MeshRenderer",
-            "scenes": [],
+            "scenes": [
+              "Assets/Scenes/Gameplay.unity"
+            ],
             "dependencyType": 0,
             "icon": null
           },

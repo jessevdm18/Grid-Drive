@@ -18,6 +18,10 @@ public class NoTouchMissionUI : MonoBehaviour
     [Header("No Touch HUD")]
     [SerializeField] private GameObject noTouchHudRoot;
     [SerializeField] private TextMeshProUGUI missionLabel;
+
+    /// <summary>Bestaande MissionLabel RectTransform voor SpecialMissionIntro.</summary>
+    public RectTransform MissionLabelRect =>
+        missionLabel != null ? missionLabel.rectTransform : null;
     [SerializeField] private TextMeshProUGUI ruleText;
 
     [Tooltip("Uit = MissionLabel-tekst die jij handmatig zette blijft staan.")]
@@ -68,6 +72,17 @@ public class NoTouchMissionUI : MonoBehaviour
 
     [SerializeField, Range(0f, 0.25f)] private float pulseScaleAmount = 0.08f;
 
+    [Header("Protected Vehicle Pulse")]
+    [SerializeField] private bool protectedVehiclePulseEnabled = true;
+
+    [Tooltip("Zachte rode tint. Lerp met originele skin-kleur.")]
+    [SerializeField] private Color protectedVehiclePulseColor =
+        new Color(1f, 0.28f, 0.22f, 1f);
+
+    [SerializeField, Range(0.1f, 8f)] private float protectedVehiclePulseSpeed = 1.5f;
+
+    [SerializeField, Range(0f, 1f)] private float protectedVehiclePulseStrength = 0.35f;
+
     private bool lastKnownNoTouch;
     private LevelObjectiveController.RuntimeState lastKnownState =
         LevelObjectiveController.RuntimeState.Inactive;
@@ -79,6 +94,11 @@ public class NoTouchMissionUI : MonoBehaviour
     private bool markerVisible;
     private VehicleController lastBoundProtectedVehicle;
     private bool failurePresentationPlayed;
+
+    private SpriteRenderer protectedVehicleRenderer;
+    private Color originalProtectedVehicleColor = Color.white;
+    private bool protectedVehicleColorCached;
+    private bool protectedVehiclePulseActive;
 
     /// <summary>
     /// Authoritative protected vehicle (voor marker / debug).
@@ -167,6 +187,7 @@ public class NoTouchMissionUI : MonoBehaviour
         }
 
         ResetMarkerPulseScale();
+        RestoreProtectedVehicleColor();
     }
 
     /// <summary>
@@ -189,6 +210,7 @@ public class NoTouchMissionUI : MonoBehaviour
         }
 
         UpdateMarkerPresentation();
+        UpdateProtectedVehiclePulse();
     }
 
     private void OnNoTouchMissionFailed()
@@ -220,6 +242,7 @@ public class NoTouchMissionUI : MonoBehaviour
             missionFailedPanel.SetActive(true);
         }
 
+        RestoreProtectedVehicleColor();
         SetMarkerVisible(false);
     }
 
@@ -289,6 +312,7 @@ public class NoTouchMissionUI : MonoBehaviour
             }
 
             failurePresentationPlayed = false;
+            RestoreProtectedVehicleColor();
             SetNoTouchHudVisible(false);
             SetMarkerVisible(false);
             return;
@@ -316,6 +340,7 @@ public class NoTouchMissionUI : MonoBehaviour
                 missionFailedPanel.SetActive(false);
             }
 
+            RestoreProtectedVehicleColor();
             SetNoTouchHudVisible(false);
             SetMarkerVisible(false);
             return;
@@ -323,6 +348,7 @@ public class NoTouchMissionUI : MonoBehaviour
 
         if (objectiveController.State == LevelObjectiveController.RuntimeState.Failed)
         {
+            RestoreProtectedVehicleColor();
             SetMarkerVisible(false);
             return;
         }
@@ -342,6 +368,15 @@ public class NoTouchMissionUI : MonoBehaviour
         // Running / Waiting: marker aan als protected vehicle beschikbaar is.
         VehicleController protectedVehicle = objectiveController.ProtectedVehicle;
         SetMarkerVisible(protectedVehicle != null);
+        if (protectedVehicle != null)
+        {
+            BindProtectedVehiclePresentation(protectedVehicle);
+            protectedVehiclePulseActive = protectedVehiclePulseEnabled;
+        }
+        else
+        {
+            RestoreProtectedVehicleColor();
+        }
     }
 
     private void UpdateMarkerPresentation()
@@ -375,7 +410,7 @@ public class NoTouchMissionUI : MonoBehaviour
 
         if (protectedVehicle != lastBoundProtectedVehicle)
         {
-            BindMarkerToVehicle(protectedVehicle);
+            BindProtectedVehiclePresentation(protectedVehicle);
         }
 
         resolvedMarkerTransform.position =
@@ -384,10 +419,45 @@ public class NoTouchMissionUI : MonoBehaviour
         UpdateMarkerPulse();
     }
 
-    private void BindMarkerToVehicle(VehicleController vehicle)
+    private void BindProtectedVehiclePresentation(VehicleController vehicle)
     {
+        if (vehicle == null)
+        {
+            RestoreProtectedVehicleColor();
+            lastBoundProtectedVehicle = null;
+            return;
+        }
+
+        if (vehicle == lastBoundProtectedVehicle &&
+            protectedVehicleRenderer != null &&
+            protectedVehicleColorCached)
+        {
+            BindMarkerSorting(vehicle);
+            return;
+        }
+
+        RestoreProtectedVehicleColor();
         lastBoundProtectedVehicle = vehicle;
 
+        protectedVehicleRenderer = vehicle.VisualSpriteRenderer;
+        if (protectedVehicleRenderer == null)
+        {
+            protectedVehicleRenderer =
+                vehicle.GetComponentInChildren<SpriteRenderer>(true);
+        }
+
+        protectedVehicleColorCached = false;
+        if (protectedVehicleRenderer != null)
+        {
+            originalProtectedVehicleColor = protectedVehicleRenderer.color;
+            protectedVehicleColorCached = true;
+        }
+
+        BindMarkerSorting(vehicle);
+    }
+
+    private void BindMarkerSorting(VehicleController vehicle)
+    {
         if (!matchVehicleSorting || markerSpriteRenderer == null || vehicle == null)
         {
             return;
@@ -396,12 +466,73 @@ public class NoTouchMissionUI : MonoBehaviour
         SpriteRenderer vehicleSprite = vehicle.VisualSpriteRenderer;
         if (vehicleSprite == null)
         {
+            vehicleSprite = protectedVehicleRenderer;
+        }
+
+        if (vehicleSprite == null)
+        {
             return;
         }
 
         markerSpriteRenderer.sortingLayerID = vehicleSprite.sortingLayerID;
         markerSpriteRenderer.sortingOrder =
             vehicleSprite.sortingOrder + sortingOrderOffset;
+    }
+
+    private void UpdateProtectedVehiclePulse()
+    {
+        if (!protectedVehiclePulseActive ||
+            !protectedVehiclePulseEnabled ||
+            protectedVehicleRenderer == null ||
+            !protectedVehicleColorCached)
+        {
+            return;
+        }
+
+        if (objectiveController == null ||
+            !objectiveController.IsNoTouchChallengeLevel ||
+            objectiveController.State != LevelObjectiveController.RuntimeState.Running)
+        {
+            RestoreProtectedVehicleColor();
+            return;
+        }
+
+        // Pause: freeze mid-pulse.
+        if (Time.timeScale <= 0f)
+        {
+            return;
+        }
+
+        float wave =
+            (Mathf.Sin(Time.unscaledTime * protectedVehiclePulseSpeed * Mathf.PI * 2f) + 1f) *
+            0.5f;
+        float t = wave * Mathf.Clamp01(protectedVehiclePulseStrength);
+
+        Color pulsed = Color.Lerp(
+            originalProtectedVehicleColor,
+            protectedVehiclePulseColor,
+            t
+        );
+        pulsed.a = originalProtectedVehicleColor.a;
+        protectedVehicleRenderer.color = pulsed;
+    }
+
+    private void RestoreProtectedVehicleColor()
+    {
+        protectedVehiclePulseActive = false;
+
+        if (protectedVehicleRenderer != null && protectedVehicleColorCached)
+        {
+            protectedVehicleRenderer.color = originalProtectedVehicleColor;
+        }
+
+        protectedVehicleRenderer = null;
+        protectedVehicleColorCached = false;
+    }
+
+    private void BindMarkerToVehicle(VehicleController vehicle)
+    {
+        BindProtectedVehiclePresentation(vehicle);
     }
 
     private void UpdateMarkerPulse()
@@ -499,6 +630,7 @@ public class NoTouchMissionUI : MonoBehaviour
 
         if (!visible)
         {
+            RestoreProtectedVehicleColor();
             lastBoundProtectedVehicle = null;
             ResetMarkerPulseScale();
         }

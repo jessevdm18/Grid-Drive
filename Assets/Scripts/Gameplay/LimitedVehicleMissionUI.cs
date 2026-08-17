@@ -19,6 +19,10 @@ public class LimitedVehicleMissionUI : MonoBehaviour
     [Header("Limited Vehicle HUD")]
     [SerializeField] private GameObject limitedVehicleHudRoot;
     [SerializeField] private TextMeshProUGUI missionLabel;
+
+    /// <summary>Bestaande MissionLabel RectTransform voor SpecialMissionIntro.</summary>
+    public RectTransform MissionLabelRect =>
+        missionLabel != null ? missionLabel.rectTransform : null;
     [SerializeField] private TextMeshProUGUI movesText;
 
     [Tooltip("Uit = MissionLabel-tekst die jij handmatig zette blijft staan.")]
@@ -60,6 +64,17 @@ public class LimitedVehicleMissionUI : MonoBehaviour
     [SerializeField, Range(1f, 1.5f)] private float lockPopScale = 1.18f;
     [SerializeField, Range(0.05f, 0.6f)] private float lockPopDuration = 0.22f;
 
+    [Header("Limited Vehicle Pulse")]
+    [SerializeField] private bool limitedVehiclePulseEnabled = true;
+
+    [Tooltip("Warm amber / geel-oranje tint. Lerp met originele skin-kleur.")]
+    [SerializeField] private Color limitedVehiclePulseColor =
+        new Color(1f, 0.71f, 0.18f, 1f);
+
+    [SerializeField, Range(0.1f, 8f)] private float limitedVehiclePulseSpeed = 1.25f;
+
+    [SerializeField, Range(0f, 1f)] private float limitedVehiclePulseStrength = 0.30f;
+
     private bool lastKnownLimitedVehicle;
     private LevelObjectiveController.RuntimeState lastKnownState =
         LevelObjectiveController.RuntimeState.Inactive;
@@ -81,6 +96,11 @@ public class LimitedVehicleMissionUI : MonoBehaviour
     private bool lockVisualsCached;
     private Coroutine lockPopCoroutine;
     private bool lockPresentationPlayed;
+
+    private SpriteRenderer limitedVehicleRenderer;
+    private Color originalLimitedVehicleColor = Color.white;
+    private bool limitedVehicleColorCached;
+    private bool limitedVehiclePulseActive;
 
     public VehicleController LimitedVehicle =>
         objectiveController != null ? objectiveController.LimitedVehicle : null;
@@ -115,6 +135,7 @@ public class LimitedVehicleMissionUI : MonoBehaviour
             objectiveController.OnLimitedVehicleMovesRemainingChanged +=
                 OnLimitedVehicleMovesRemainingChanged;
             objectiveController.OnLimitedVehicleLocked += OnLimitedVehicleLocked;
+            objectiveController.OnLimitedVehicleUnlocked += OnLimitedVehicleUnlocked;
             RefreshFromController();
             CacheObjectiveSnapshot();
         }
@@ -127,10 +148,12 @@ public class LimitedVehicleMissionUI : MonoBehaviour
             objectiveController.OnLimitedVehicleMovesRemainingChanged -=
                 OnLimitedVehicleMovesRemainingChanged;
             objectiveController.OnLimitedVehicleLocked -= OnLimitedVehicleLocked;
+            objectiveController.OnLimitedVehicleUnlocked -= OnLimitedVehicleUnlocked;
         }
 
         StopRemainingPulseAndResetScale();
         StopLockPopAndResetScale();
+        RestoreLimitedVehicleColor();
     }
 
     private void Update()
@@ -183,6 +206,7 @@ public class LimitedVehicleMissionUI : MonoBehaviour
         }
 
         UpdateMarkerFollow();
+        UpdateLimitedVehiclePulse();
     }
 
     private void OnLimitedVehicleMovesRemainingChanged(int remaining, int total)
@@ -193,6 +217,7 @@ public class LimitedVehicleMissionUI : MonoBehaviour
     private void OnLimitedVehicleLocked()
     {
         StopRemainingPulseAndResetScale();
+        RestoreLimitedVehicleColor();
         ApplyHudMovesDisplay(locked: true, remaining: 0);
         // Event-transition: éénmalige lock-pop.
         ApplyMarkerContent(locked: true, remaining: 0, playLockPop: true);
@@ -217,6 +242,13 @@ public class LimitedVehicleMissionUI : MonoBehaviour
         }
     }
 
+    private void OnLimitedVehicleUnlocked()
+    {
+        lockPresentationPlayed = false;
+        RefreshFromController();
+        CacheObjectiveSnapshot();
+    }
+
     private void RefreshFromController()
     {
         int remaining = objectiveController != null
@@ -237,6 +269,7 @@ public class LimitedVehicleMissionUI : MonoBehaviour
         {
             StopRemainingPulseAndResetScale();
             StopLockPopAndResetScale();
+            RestoreLimitedVehicleColor();
             lockPresentationPlayed = false;
             SetLimitedVehicleHudVisible(false);
             SetMarkerVisible(false);
@@ -247,6 +280,7 @@ public class LimitedVehicleMissionUI : MonoBehaviour
         {
             StopRemainingPulseAndResetScale();
             StopLockPopAndResetScale();
+            RestoreLimitedVehicleColor();
             SetLimitedVehicleHudVisible(false);
             SetMarkerVisible(false);
             return;
@@ -272,8 +306,14 @@ public class LimitedVehicleMissionUI : MonoBehaviour
         SetMarkerVisible(vehicle != null);
         if (vehicle != null)
         {
+            BindLimitedVehiclePresentation(vehicle);
             // Refresh terwijl al locked: lock zichtbaar zonder pop-replay.
             ApplyMarkerContent(locked, remaining, playLockPop: false);
+            SyncLimitedVehiclePulseActive(locked, remaining);
+        }
+        else
+        {
+            RestoreLimitedVehicleColor();
         }
     }
 
@@ -301,6 +341,7 @@ public class LimitedVehicleMissionUI : MonoBehaviour
         if (locked)
         {
             StopRemainingPulseAndResetScale();
+            limitedVehiclePulseActive = false;
             SetMarkerRemainingVisible(false);
             SetMarkerLockVisible(true);
 
@@ -334,6 +375,148 @@ public class LimitedVehicleMissionUI : MonoBehaviour
 
         StopRemainingPulseAndResetScale();
         ApplyRemainingColor(normalNumberColor);
+    }
+
+    private void SyncLimitedVehiclePulseActive(bool locked, int remaining)
+    {
+        if (!limitedVehiclePulseEnabled || locked || remaining <= 0)
+        {
+            limitedVehiclePulseActive = false;
+
+            // Locked / exhausted: snap tint back (no lingering amber).
+            if (locked || remaining <= 0)
+            {
+                RestoreLimitedVehicleColor();
+            }
+
+            return;
+        }
+
+        limitedVehiclePulseActive = limitedVehicleColorCached;
+    }
+
+    private void BindLimitedVehiclePresentation(VehicleController vehicle)
+    {
+        if (vehicle == null)
+        {
+            RestoreLimitedVehicleColor();
+            lastBoundLimitedVehicle = null;
+            return;
+        }
+
+        if (vehicle == lastBoundLimitedVehicle &&
+            limitedVehicleRenderer != null &&
+            limitedVehicleColorCached)
+        {
+            BindMarkerSorting(vehicle);
+            return;
+        }
+
+        RestoreLimitedVehicleColor();
+        lastBoundLimitedVehicle = vehicle;
+
+        limitedVehicleRenderer = vehicle.VisualSpriteRenderer;
+        if (limitedVehicleRenderer == null)
+        {
+            limitedVehicleRenderer =
+                vehicle.GetComponentInChildren<SpriteRenderer>(true);
+        }
+
+        limitedVehicleColorCached = false;
+        if (limitedVehicleRenderer != null)
+        {
+            originalLimitedVehicleColor = limitedVehicleRenderer.color;
+            limitedVehicleColorCached = true;
+        }
+
+        BindMarkerSorting(vehicle);
+    }
+
+    private void BindMarkerSorting(VehicleController vehicle)
+    {
+        if (!matchVehicleSorting || vehicle == null)
+        {
+            return;
+        }
+
+        SpriteRenderer vehicleSprite = vehicle.VisualSpriteRenderer;
+        if (vehicleSprite == null)
+        {
+            vehicleSprite = limitedVehicleRenderer;
+        }
+
+        if (vehicleSprite == null)
+        {
+            return;
+        }
+
+        int order = vehicleSprite.sortingOrder + sortingOrderOffset;
+        int layerId = vehicleSprite.sortingLayerID;
+
+        if (resolvedLockRenderer != null)
+        {
+            resolvedLockRenderer.sortingLayerID = layerId;
+            resolvedLockRenderer.sortingOrder = order;
+        }
+
+        if (markerRemainingRenderer != null)
+        {
+            markerRemainingRenderer.sortingLayerID = layerId;
+            markerRemainingRenderer.sortingOrder = order;
+        }
+    }
+
+    private void UpdateLimitedVehiclePulse()
+    {
+        if (!limitedVehiclePulseActive ||
+            !limitedVehiclePulseEnabled ||
+            limitedVehicleRenderer == null ||
+            !limitedVehicleColorCached)
+        {
+            return;
+        }
+
+        if (objectiveController == null ||
+            !objectiveController.IsLimitedVehicleLevel ||
+            objectiveController.IsLimitedVehicleLocked ||
+            objectiveController.LimitedVehicleMovesRemaining <= 0 ||
+            objectiveController.State != LevelObjectiveController.RuntimeState.Running)
+        {
+            RestoreLimitedVehicleColor();
+            return;
+        }
+
+        // Pause: freeze mid-pulse.
+        if (Time.timeScale <= 0f)
+        {
+            return;
+        }
+
+        float wave =
+            (Mathf.Sin(Time.unscaledTime * limitedVehiclePulseSpeed * Mathf.PI * 2f) + 1f) *
+            0.5f;
+        float t = wave * Mathf.Clamp01(limitedVehiclePulseStrength);
+
+        Color pulsed = Color.Lerp(
+            originalLimitedVehicleColor,
+            limitedVehiclePulseColor,
+            t
+        );
+        pulsed.a = originalLimitedVehicleColor.a;
+        limitedVehicleRenderer.color = pulsed;
+    }
+
+    private void RestoreLimitedVehicleColor()
+    {
+        limitedVehiclePulseActive = false;
+
+        if (limitedVehicleRenderer != null && limitedVehicleColorCached)
+        {
+            limitedVehicleRenderer.color = originalLimitedVehicleColor;
+        }
+
+        limitedVehicleRenderer = null;
+        limitedVehicleColorCached = false;
     }
 
     private void StartLockPop()
@@ -437,33 +620,7 @@ public class LimitedVehicleMissionUI : MonoBehaviour
 
     private void BindMarkerToVehicle(VehicleController vehicle)
     {
-        lastBoundLimitedVehicle = vehicle;
-
-        if (!matchVehicleSorting || vehicle == null)
-        {
-            return;
-        }
-
-        SpriteRenderer vehicleSprite = vehicle.VisualSpriteRenderer;
-        if (vehicleSprite == null)
-        {
-            return;
-        }
-
-        int order = vehicleSprite.sortingOrder + sortingOrderOffset;
-        int layerId = vehicleSprite.sortingLayerID;
-
-        if (resolvedLockRenderer != null)
-        {
-            resolvedLockRenderer.sortingLayerID = layerId;
-            resolvedLockRenderer.sortingOrder = order;
-        }
-
-        if (markerRemainingRenderer != null)
-        {
-            markerRemainingRenderer.sortingLayerID = layerId;
-            markerRemainingRenderer.sortingOrder = order;
-        }
+        BindLimitedVehiclePresentation(vehicle);
     }
 
     private void ResolveMarkerRefs()
@@ -599,6 +756,7 @@ public class LimitedVehicleMissionUI : MonoBehaviour
             lastBoundLimitedVehicle = null;
             StopRemainingPulseAndResetScale();
             StopLockPopAndResetScale();
+            RestoreLimitedVehicleColor();
         }
 
         if (limitedVehicleMarker != null)

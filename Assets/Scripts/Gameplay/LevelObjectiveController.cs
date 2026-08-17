@@ -92,6 +92,8 @@ public class LevelObjectiveController : MonoBehaviour
     public int LimitedVehicleMovesUsed => limitedVehicleMovesUsed;
     public int LimitedVehicleMovesRemaining => limitedVehicleMovesRemaining;
     public bool IsLimitedVehicleLocked => limitedVehicleLocked;
+    public bool IsWaitingForSpecialIntro => waitingForSpecialIntro;
+    public int SpecialIntroSessionId => specialIntroSessionId;
 
     public event Action<float> OnTimerChanged;
     public event Action OnTimedMissionFailed;
@@ -135,6 +137,15 @@ public class LevelObjectiveController : MonoBehaviour
     /// </summary>
     public event Action OnLimitedVehicleLocked;
 
+    /// <summary>
+    /// LimitedVehicle: lock opgeheven (undo van de locking move). Presentation-only.
+    /// </summary>
+    public event Action OnLimitedVehicleUnlocked;
+
+    // Special mission intro gate (presentation): Timed wacht hierop vóór Running.
+    private bool waitingForSpecialIntro;
+    private int specialIntroSessionId;
+
     private void Awake()
     {
         if (levelManager == null)
@@ -159,6 +170,7 @@ public class LevelObjectiveController : MonoBehaviour
         ClearNoTouchState();
         ClearFragileCargoState();
         ClearLimitedVehicleState();
+        ClearSpecialIntroGate();
 
         isTimedLevel = false;
         timeLimit = 0f;
@@ -178,6 +190,7 @@ public class LevelObjectiveController : MonoBehaviour
 
         if (levelData.objectiveType == LevelObjectiveType.TimedAmbulance)
         {
+            BeginSpecialIntroGate();
             isTimedLevel = true;
             timeLimit = Mathf.Max(0f, levelData.timeLimitSeconds);
             remainingTime = timeLimit;
@@ -212,6 +225,7 @@ public class LevelObjectiveController : MonoBehaviour
             moveLimit = configuredLimit;
             movesUsed = 0;
             movesRemaining = moveLimit;
+            BeginSpecialIntroGate();
             state = RuntimeState.Running;
             OnMovesRemainingChanged?.Invoke(movesRemaining);
             return;
@@ -245,6 +259,7 @@ public class LevelObjectiveController : MonoBehaviour
             targetsTotal = targetCount;
             targetsRescued = 0;
             targetsRemaining = targetsTotal;
+            BeginSpecialIntroGate();
             state = RuntimeState.Running;
             OnTargetsRemainingChanged?.Invoke(targetsRemaining, targetsTotal);
             return;
@@ -263,6 +278,7 @@ public class LevelObjectiveController : MonoBehaviour
 
             isNoTouchChallengeLevel = true;
             noTouchViolated = false;
+            BeginSpecialIntroGate();
             state = RuntimeState.Running;
             return;
         }
@@ -294,6 +310,7 @@ public class LevelObjectiveController : MonoBehaviour
             cargoMovesUsed = 0;
             cargoMovesRemaining = cargoMoveLimit;
             pendingFragileCargoFailCheck = false;
+            BeginSpecialIntroGate();
             state = RuntimeState.Running;
             OnCargoMovesRemainingChanged?.Invoke(cargoMovesRemaining, cargoMoveLimit);
             return;
@@ -339,6 +356,7 @@ public class LevelObjectiveController : MonoBehaviour
                 );
             }
 
+            BeginSpecialIntroGate();
             state = RuntimeState.Running;
             OnLimitedVehicleMovesRemainingChanged?.Invoke(
                 limitedVehicleMovesRemaining,
@@ -368,6 +386,7 @@ public class LevelObjectiveController : MonoBehaviour
         StopStartRoutine();
         pendingMoveLimitFailCheck = false;
         pendingFragileCargoFailCheck = false;
+        ClearSpecialIntroGate();
         state = RuntimeState.Completed;
     }
 
@@ -508,6 +527,82 @@ public class LevelObjectiveController : MonoBehaviour
         pendingMoveLimitFailCheck = true;
     }
 
+    /// <summary>
+    /// Draait objective-side effects van één geldige board-move terug.
+    /// Alleen tijdens Running (of Inactive Classic — no-op). Geen reinitialize.
+    /// </summary>
+    public void UndoValidMove(VehicleController vehicle)
+    {
+        if (state == RuntimeState.Completed || state == RuntimeState.Failed)
+        {
+            return;
+        }
+
+        if (isFragileCargoLevel && state == RuntimeState.Running)
+        {
+            if (vehicle == null || !vehicle.IsFragileCargo)
+            {
+                return;
+            }
+
+            pendingFragileCargoFailCheck = false;
+
+            if (cargoMovesUsed <= 0)
+            {
+                return;
+            }
+
+            cargoMovesUsed--;
+            cargoMovesRemaining = Mathf.Max(0, cargoMoveLimit - cargoMovesUsed);
+            OnCargoMovesRemainingChanged?.Invoke(cargoMovesRemaining, cargoMoveLimit);
+            return;
+        }
+
+        if (isLimitedVehicleLevel && state == RuntimeState.Running)
+        {
+            if (vehicle == null || !vehicle.IsLimitedVehicle)
+            {
+                return;
+            }
+
+            if (limitedVehicleMovesUsed <= 0)
+            {
+                return;
+            }
+
+            limitedVehicleMovesUsed--;
+            limitedVehicleMovesRemaining =
+                Mathf.Max(0, limitedVehicleMoveLimit - limitedVehicleMovesUsed);
+
+            if (limitedVehicleLocked && limitedVehicleMovesRemaining > 0)
+            {
+                UnlockLimitedVehicle();
+            }
+
+            OnLimitedVehicleMovesRemainingChanged?.Invoke(
+                limitedVehicleMovesRemaining,
+                limitedVehicleMoveLimit
+            );
+            return;
+        }
+
+        if (!isMoveLimitLevel || state != RuntimeState.Running)
+        {
+            return;
+        }
+
+        pendingMoveLimitFailCheck = false;
+
+        if (movesUsed <= 0)
+        {
+            return;
+        }
+
+        movesUsed--;
+        movesRemaining = Mathf.Max(0, moveLimit - movesUsed);
+        OnMovesRemainingChanged?.Invoke(movesRemaining);
+    }
+
     private void LateUpdate()
     {
         if (pendingMoveLimitFailCheck)
@@ -561,9 +656,14 @@ public class LevelObjectiveController : MonoBehaviour
 
     private IEnumerator StartTimerWhenGameplayReady()
     {
-        // Wacht tot SceneTransition-fade klaar is (unscaled), zodat timer
-        // geen seconden verliest tijdens load/fade-in.
+        // 1) Scene fade klaar (unscaled).
         while (SceneTransition.IsTransitioning)
+        {
+            yield return null;
+        }
+
+        // 2) Special mission intro klaar (unscaled) — timer verliest geen tijd.
+        while (waitingForSpecialIntro)
         {
             yield return null;
         }
@@ -588,6 +688,41 @@ public class LevelObjectiveController : MonoBehaviour
         state = RuntimeState.Running;
         OnTimedMissionStarted?.Invoke();
         OnTimerChanged?.Invoke(remainingTime);
+    }
+
+    /// <summary>
+    /// Presentation: special mission intro is klaar — Timed mag Running worden;
+    /// vehicle-input gate gaat open.
+    /// </summary>
+    public void NotifySpecialMissionIntroCompleted()
+    {
+        if (!waitingForSpecialIntro)
+        {
+            return;
+        }
+
+        ClearSpecialIntroGate();
+    }
+
+    private void BeginSpecialIntroGate()
+    {
+        waitingForSpecialIntro = true;
+        specialIntroSessionId++;
+
+        if (gameManager != null)
+        {
+            gameManager.SetSpecialMissionIntroBlocked(true);
+        }
+    }
+
+    private void ClearSpecialIntroGate()
+    {
+        waitingForSpecialIntro = false;
+
+        if (gameManager != null)
+        {
+            gameManager.SetSpecialMissionIntroBlocked(false);
+        }
     }
 
     private void Update()
@@ -713,6 +848,26 @@ public class LevelObjectiveController : MonoBehaviour
         }
 
         OnLimitedVehicleLocked?.Invoke();
+    }
+
+    /// <summary>
+    /// LimitedVehicle: unlock na undo van de locking move. Geen FailLevel-herstel.
+    /// </summary>
+    private void UnlockLimitedVehicle()
+    {
+        if (!limitedVehicleLocked)
+        {
+            return;
+        }
+
+        limitedVehicleLocked = false;
+
+        if (limitedVehicle != null)
+        {
+            limitedVehicle.SetLimitedVehicleLocked(false);
+        }
+
+        OnLimitedVehicleUnlocked?.Invoke();
     }
 
     /// <summary>

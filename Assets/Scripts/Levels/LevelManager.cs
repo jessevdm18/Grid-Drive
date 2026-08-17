@@ -40,6 +40,9 @@ public class LevelManager : MonoBehaviour
     [Tooltip("Optionele sprite-library voor automatische voertuig-visuals.")]
     [SerializeField] private VehicleSpriteLibrary vehicleSpriteLibrary;
 
+    [Tooltip("Centrale special-mission target sprites (TimedAmbulance / FragileCargo).")]
+    [SerializeField] private SpecialMissionSpriteLibrary specialMissionSpriteLibrary;
+
     [Tooltip("Timed/special objectives (optioneel).")]
     [SerializeField] private LevelObjectiveController levelObjectiveController;
 
@@ -418,22 +421,16 @@ public class LevelManager : MonoBehaviour
             ? activeVehicleSpriteLibrary
             : vehicleSpriteLibrary;
 
-        // 1) Target car: specialTargetSprite override (TimedAmbulance / FragileCargo),
-        //    anders library TargetCarSprite.
+        // Target car:
+        // 1) LevelData.specialTargetSprite (explicit override)
+        // 2) SpecialMissionSpriteLibrary (TimedAmbulance / FragileCargo)
+        // 3) selected skin TargetCarSprite
         if (data.canExitRight)
         {
-            if (levelData != null && levelData.specialTargetSprite != null)
+            Sprite specialTarget = ResolveSpecialTargetSprite(data, levelData);
+            if (specialTarget != null)
             {
-                if (levelData.objectiveType == LevelObjectiveType.TimedAmbulance)
-                {
-                    return levelData.specialTargetSprite;
-                }
-
-                if (levelData.objectiveType == LevelObjectiveType.FragileCargo &&
-                    data.isFragileCargo)
-                {
-                    return levelData.specialTargetSprite;
-                }
+                return specialTarget;
             }
 
             if (library != null && library.TargetCarSprite != null)
@@ -482,6 +479,53 @@ public class LevelManager : MonoBehaviour
 
         lastAutoAssignedSprite = chosen;
         return chosen;
+    }
+
+    /// <summary>
+    /// TimedAmbulance / FragileCargo target visual.
+    /// Priority: LevelData.specialTargetSprite → SpecialMissionSpriteLibrary → null.
+    /// </summary>
+    private Sprite ResolveSpecialTargetSprite(VehicleData data, LevelData levelData)
+    {
+        if (levelData == null || data == null)
+        {
+            return null;
+        }
+
+        LevelObjectiveType objective = levelData.objectiveType;
+
+        bool usesSpecialTarget =
+            objective == LevelObjectiveType.TimedAmbulance ||
+            (objective == LevelObjectiveType.FragileCargo && data.isFragileCargo);
+
+        if (!usesSpecialTarget)
+        {
+            return null;
+        }
+
+        // Priority 1: explicit per-level override.
+        if (levelData.specialTargetSprite != null)
+        {
+            return levelData.specialTargetSprite;
+        }
+
+        // Priority 2: central special-mission library.
+        if (specialMissionSpriteLibrary == null)
+        {
+            return null;
+        }
+
+        if (objective == LevelObjectiveType.TimedAmbulance)
+        {
+            return specialMissionSpriteLibrary.TimedAmbulanceTargetSprite;
+        }
+
+        if (objective == LevelObjectiveType.FragileCargo && data.isFragileCargo)
+        {
+            return specialMissionSpriteLibrary.FragileCargoTargetSprite;
+        }
+
+        return null;
     }
 
     /// <summary>

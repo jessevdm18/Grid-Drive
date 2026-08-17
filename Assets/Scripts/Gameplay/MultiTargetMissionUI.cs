@@ -15,6 +15,10 @@ public class MultiTargetMissionUI : MonoBehaviour
     [Header("Multi Target HUD")]
     [SerializeField] private GameObject multiTargetHudRoot;
     [SerializeField] private TextMeshProUGUI missionLabel;
+
+    /// <summary>Bestaande MissionLabel RectTransform voor SpecialMissionIntro.</summary>
+    public RectTransform MissionLabelRect =>
+        missionLabel != null ? missionLabel.rectTransform : null;
     [SerializeField] private TextMeshProUGUI targetsText;
 
     [Tooltip("Uit = MissionLabel-tekst die jij handmatig zette blijft staan.")]

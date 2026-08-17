@@ -18,6 +18,10 @@ public class FragileCargoMissionUI : MonoBehaviour
     [Header("Fragile Cargo HUD")]
     [SerializeField] private GameObject fragileCargoHudRoot;
     [SerializeField] private TextMeshProUGUI missionLabel;
+
+    /// <summary>Bestaande MissionLabel RectTransform voor SpecialMissionIntro.</summary>
+    public RectTransform MissionLabelRect =>
+        missionLabel != null ? missionLabel.rectTransform : null;
     [SerializeField] private TextMeshProUGUI movesText;
 
     [Tooltip("Uit = MissionLabel-tekst die jij handmatig zette blijft staan.")]

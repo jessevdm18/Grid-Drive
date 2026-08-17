@@ -18,6 +18,10 @@ public class MoveLimitMissionUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI movesRemainingText;
     [SerializeField] private TextMeshProUGUI missionLabel;
 
+    /// <summary>Bestaande MissionLabel RectTransform voor SpecialMissionIntro.</summary>
+    public RectTransform MissionLabelRect =>
+        missionLabel != null ? missionLabel.rectTransform : null;
+
     [SerializeField] private string moveLimitMissionLabel = "MOVE LIMIT";
 
     [Header("Failure panel")]

@@ -14,9 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   levelNumber: 36
   difficulty: 2
-  objectiveType: 0
+  objectiveType: 5
   timeLimitSeconds: 0
   moveLimit: 0
+  fragileCargoMoveLimit: 5
+  limitedVehicleMoveLimit: 0
   specialTargetSprite: {fileID: 0}
   gridWidth: 8
   gridHeight: 8
@@ -27,96 +29,144 @@ MonoBehaviour:
     lengthInCells: 2
     gridPosition: {x: 2, y: 4}
     canExitRight: 1
+    isProtectedVehicle: 0
+    isFragileCargo: 1
+    isLimitedVehicle: 0
     vehicleSprite: {fileID: 0}
   - vehicleName: A
     orientation: 1
     lengthInCells: 2
     gridPosition: {x: 5, y: 3}
     canExitRight: 0
+    isProtectedVehicle: 0
+    isFragileCargo: 0
+    isLimitedVehicle: 0
     vehicleSprite: {fileID: 0}
   - vehicleName: B
     orientation: 1
     lengthInCells: 3
     gridPosition: {x: 6, y: 3}
     canExitRight: 0
+    isProtectedVehicle: 0
+    isFragileCargo: 0
+    isLimitedVehicle: 0
     vehicleSprite: {fileID: 0}
   - vehicleName: C
     orientation: 0
     lengthInCells: 3
     gridPosition: {x: 0, y: 6}
     canExitRight: 0
+    isProtectedVehicle: 0
+    isFragileCargo: 0
+    isLimitedVehicle: 0
     vehicleSprite: {fileID: 0}
   - vehicleName: D
     orientation: 0
     lengthInCells: 3
     gridPosition: {x: 5, y: 6}
     canExitRight: 0
+    isProtectedVehicle: 0
+    isFragileCargo: 0
+    isLimitedVehicle: 0
     vehicleSprite: {fileID: 0}
   - vehicleName: E
     orientation: 1
     lengthInCells: 3
     gridPosition: {x: 1, y: 3}
     canExitRight: 0
+    isProtectedVehicle: 0
+    isFragileCargo: 0
+    isLimitedVehicle: 0
     vehicleSprite: {fileID: 0}
   - vehicleName: F
     orientation: 1
     lengthInCells: 2
     gridPosition: {x: 7, y: 3}
     canExitRight: 0
+    isProtectedVehicle: 0
+    isFragileCargo: 0
+    isLimitedVehicle: 0
     vehicleSprite: {fileID: 0}
   - vehicleName: G
     orientation: 0
     lengthInCells: 2
     gridPosition: {x: 4, y: 2}
     canExitRight: 0
+    isProtectedVehicle: 0
+    isFragileCargo: 0
+    isLimitedVehicle: 0
     vehicleSprite: {fileID: 0}
   - vehicleName: H
     orientation: 0
     lengthInCells: 2
     gridPosition: {x: 5, y: 7}
     canExitRight: 0
+    isProtectedVehicle: 0
+    isFragileCargo: 0
+    isLimitedVehicle: 0
     vehicleSprite: {fileID: 0}
   - vehicleName: I
     orientation: 1
     lengthInCells: 3
     gridPosition: {x: 1, y: 0}
     canExitRight: 0
+    isProtectedVehicle: 0
+    isFragileCargo: 0
+    isLimitedVehicle: 0
     vehicleSprite: {fileID: 0}
   - vehicleName: J
     orientation: 1
     lengthInCells: 3
     gridPosition: {x: 4, y: 4}
     canExitRight: 0
+    isProtectedVehicle: 0
+    isFragileCargo: 0
+    isLimitedVehicle: 0
     vehicleSprite: {fileID: 0}
   - vehicleName: K
     orientation: 1
     lengthInCells: 2
     gridPosition: {x: 3, y: 0}
     canExitRight: 0
+    isProtectedVehicle: 0
+    isFragileCargo: 0
+    isLimitedVehicle: 0
     vehicleSprite: {fileID: 0}
   - vehicleName: L
     orientation: 0
     lengthInCells: 2
     gridPosition: {x: 2, y: 5}
     canExitRight: 0
+    isProtectedVehicle: 0
+    isFragileCargo: 0
+    isLimitedVehicle: 0
     vehicleSprite: {fileID: 0}
   - vehicleName: M
     orientation: 0
     lengthInCells: 2
     gridPosition: {x: 2, y: 7}
     canExitRight: 0
+    isProtectedVehicle: 0
+    isFragileCargo: 0
+    isLimitedVehicle: 0
     vehicleSprite: {fileID: 0}
   - vehicleName: N
     orientation: 1
     lengthInCells: 2
     gridPosition: {x: 3, y: 2}
     canExitRight: 0
+    isProtectedVehicle: 0
+    isFragileCargo: 0
+    isLimitedVehicle: 0
     vehicleSprite: {fileID: 0}
   - vehicleName: O
     orientation: 0
     lengthInCells: 2
     gridPosition: {x: 6, y: 2}
     canExitRight: 0
+    isProtectedVehicle: 0
+    isFragileCargo: 0
+    isLimitedVehicle: 0
     vehicleSprite: {fileID: 0}
   minimumMoves: 20
   statesExplored: 13678

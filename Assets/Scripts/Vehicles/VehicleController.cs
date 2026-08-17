@@ -23,6 +23,10 @@ public class VehicleController : MonoBehaviour
 [SerializeField] private int exitRow = 2;
 [SerializeField] private GameManager gameManager;
 
+    [Header("Exit Assist")]
+    [Tooltip("Max cellen vóór de normale exit-positie waarbij release alsnog exit mag triggeren. 0 = uit.")]
+    [SerializeField, Min(0)] private int targetExitAssistCells = 1;
+
     // Runtime: NoTouchChallenge protected flag (uit VehicleData via Setup).
     private bool isProtectedVehicle;
 
@@ -346,6 +350,27 @@ public class VehicleController : MonoBehaviour
     public void SetLimitedVehicleLocked(bool locked)
     {
         isLimitedVehicleLocked = locked;
+    }
+
+    /// <summary>
+    /// Zet dit voertuig veilig terug op een gridpositie (logica + world + occupancy).
+    /// Gebruikt door Undo — geen scale/collider-wijziging.
+    /// </summary>
+    public bool TryRestoreGridPosition(Vector2Int position)
+    {
+        if (isExiting || !isActiveAndEnabled)
+        {
+            return false;
+        }
+
+        if (gridManager == null)
+        {
+            return false;
+        }
+
+        MoveRootToGridPosition(position, animateVisual: false);
+        gridManager.RegisterVehicle(this, GetOccupiedCells(gridPosition));
+        return true;
     }
 
     /// <summary>
@@ -722,12 +747,81 @@ private bool CanPerformExitRight(Vector3 dragDifference)
             return false;
         }
 
+        BeginTargetExit("ExitBoard");
+        return true;
+    }
+
+    /// <summary>
+    /// UX: target 0..N cellen vóór exit-positie loslaten mag alsnog exit starten,
+    /// alleen bij rightward drag + volledig vrije corridor. Zelfde exit-flow als normaal.
+    /// </summary>
+    private bool TryAssistedExitRight()
+    {
+        if (isExiting)
+        {
+            return true;
+        }
+
+        if (targetExitAssistCells <= 0 ||
+            !canExitRight ||
+            orientation != VehicleOrientation.Horizontal ||
+            gridManager == null)
+        {
+            return false;
+        }
+
+        if (gridPosition.y != exitRow)
+        {
+            return false;
+        }
+
+        // Speler moet daadwerkelijk naar rechts hebben bewogen (geen tap / links).
+        if (gridPosition.x <= dragStartGridPosition.x)
+        {
+            return false;
+        }
+
+        int rightMostValidX = gridManager.GridWidth - lengthInCells;
+        int cellsToNormalExit = rightMostValidX - gridPosition.x;
+
+        if (cellsToNormalExit < 0 || cellsToNormalExit > targetExitAssistCells)
+        {
+            return false;
+        }
+
+        // Corridor vanaf huidige cel tot normale exit-startpositie moet volledig vrij zijn.
+        Vector2Int exitStartPosition = new Vector2Int(rightMostValidX, exitRow);
+        Vector2Int farthest = FindFarthestValidPosition(gridPosition, exitStartPosition);
+        if (farthest != exitStartPosition)
+        {
+            return false;
+        }
+
+#if UNITY_EDITOR
         Debug.Log(
-            "ExitBoard: " + name +
+            "[ExitAssist] Assisted target exit, cellsRemaining=" + cellsToNormalExit +
+            ", vehicle=" + name
+        );
+#endif
+
+        BeginTargetExit("ExitAssist");
+        return true;
+    }
+
+    /// <summary>
+    /// Gedeelde exit-start: exact één RegisterMove + bestaande exit-animatie/win-flow.
+    /// </summary>
+    private void BeginTargetExit(string reason)
+    {
+        Debug.Log(
+            reason + ": " + name +
             ", canExitRight=" + canExitRight +
             ", gridPosition=" + gridPosition +
             ", exitRow=" + exitRow
         );
+
+        // Exit moves zijn niet undoable in v1 — history wissen vóór RegisterMove.
+        GameplayUndoManager.ClearHistoryStatic();
 
         // Exit telt als één move (ongeacht eerdere cellen in dezelfde drag).
         if (gameManager != null)
@@ -737,7 +831,6 @@ private bool CanPerformExitRight(Vector3 dragDifference)
 
         NotifyVehicleMoved();
         StartCoroutine(PlayExitAnimation());
-        return true;
     }
 
     /// <summary>
@@ -1125,13 +1218,25 @@ private bool CanPerformExitRight(Vector3 dragDifference)
             GetOccupiedCells(gridPosition)
         );
 
+        // Target Exit Assist: vóór normale move-registratie (één move = deze exit).
+        if (TryAssistedExitRight())
+        {
+            return;
+        }
+
         // Eén move per drag, alleen als de gridpositie echt veranderde.
         if (gridPosition != dragStartGridPosition)
         {
+            Vector2Int fromPosition = dragStartGridPosition;
+            Vector2Int toPosition = gridPosition;
+
             if (gameManager != null)
             {
                 gameManager.RegisterMove(this);
             }
+
+            // Alleen normale board-moves (geen exit): record ná RegisterMove.
+            GameplayUndoManager.RecordValidBoardMoveStatic(this, fromPosition, toPosition);
 
             NotifyVehicleMoved();
         }

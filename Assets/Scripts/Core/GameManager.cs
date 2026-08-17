@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private LevelManager levelManager;
     [SerializeField] private SaveManager saveManager;
     [SerializeField] private HintManager hintManager;
+    [SerializeField] private GameplayUndoManager undoManager;
 
     private AudioManager audioManager;
     private LevelObjectiveController levelObjectiveController;
@@ -32,11 +33,16 @@ public class GameManager : MonoBehaviour
     public bool IsLevelCompleted => levelCompleted;
     public bool IsLevelFailed => levelFailed;
     public bool IsTargetExitInProgress => targetExitInProgress;
+    public bool IsSpecialMissionIntroPlaying => specialMissionIntroBlocked;
 
     /// <summary>
-    /// False bij completed/failed — blokkeert nieuwe vehicle-input.
+    /// False bij completed/failed/special-intro — blokkeert nieuwe vehicle-input.
     /// </summary>
-    public bool CanAcceptVehicleInput => !levelCompleted && !levelFailed;
+    public bool CanAcceptVehicleInput =>
+        !levelCompleted && !levelFailed && !specialMissionIntroBlocked;
+
+    // Special mission label-intro: tijdelijke input-gate (naast fail/complete).
+    private bool specialMissionIntroBlocked;
 
     /// <summary>
     /// Coin-beloning bij level completion (één bron van waarheid voor UI + uitbetaling).
@@ -81,6 +87,11 @@ public class GameManager : MonoBehaviour
         {
             levelObjectiveController = FindAnyObjectByType<LevelObjectiveController>();
         }
+
+        if (undoManager == null)
+        {
+            undoManager = FindAnyObjectByType<GameplayUndoManager>();
+        }
     }
 
     /// <summary>
@@ -106,6 +117,24 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Draait één eerder geregistreerde geldige move terug (geen nieuwe move).
+    /// </summary>
+    public void UndoRegisteredMove()
+    {
+        currentMoves = Mathf.Max(0, currentMoves - 1);
+
+        if (gameplayUI != null)
+        {
+            gameplayUI.UpdateMovesText(currentMoves);
+        }
+
+        if (hintManager != null)
+        {
+            hintManager.ClearCurrentHint();
+        }
+    }
+
+    /// <summary>
     /// Reset de move-teller (restart / nieuw level).
     /// </summary>
     public void ResetMoves()
@@ -121,6 +150,8 @@ public class GameManager : MonoBehaviour
         {
             hintManager.ClearCurrentHint();
         }
+
+        ClearUndoHistory();
     }
 
     /// <summary>
@@ -135,6 +166,7 @@ public class GameManager : MonoBehaviour
         }
 
         targetExitInProgress = true;
+        ClearUndoHistory();
     }
 
     /// <summary>
@@ -199,6 +231,8 @@ public class GameManager : MonoBehaviour
         {
             hintManager.ClearCurrentHint();
         }
+
+        ClearUndoHistory();
 
         Debug.Log("LEVEL COMPLETED!");
 
@@ -269,7 +303,19 @@ public class GameManager : MonoBehaviour
             hintManager.ClearCurrentHint();
         }
 
+        ClearUndoHistory();
+
         Debug.Log("LEVEL FAILED (special mission).");
+    }
+
+    private void ClearUndoHistory()
+    {
+        if (undoManager == null)
+        {
+            undoManager = FindAnyObjectByType<GameplayUndoManager>();
+        }
+
+        undoManager?.ClearHistory();
     }
 
     /// <summary>
@@ -315,6 +361,15 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Special mission intro: blokkeer/deblokkeer vehicle-input.
+    /// Vervangt Failed/Completed/Pause niet — werkt ernaast.
+    /// </summary>
+    public void SetSpecialMissionIntroBlocked(bool blocked)
+    {
+        specialMissionIntroBlocked = blocked;
+    }
+
+    /// <summary>
     /// Reset de win-vlag zodat een nieuw/herstart level opnieuw gewonnen kan worden.
     /// Wordt aangeroepen bij level load/restart via VehicleController.Setup.
     /// </summary>
@@ -323,5 +378,6 @@ public class GameManager : MonoBehaviour
         levelCompleted = false;
         levelFailed = false;
         targetExitInProgress = false;
+        specialMissionIntroBlocked = false;
     }
 }

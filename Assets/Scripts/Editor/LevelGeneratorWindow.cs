@@ -100,6 +100,13 @@ public class LevelGeneratorWindow : EditorWindow
     private Vector2 multiTargetResultsScroll;
     private bool multiTargetShowOnlyGood;
 
+    // --- Special Mission suitability (NoTouch / FragileCargo / LimitedVehicle) ---
+    private List<SpecialMissionSuitabilityAnalyzer.Result> specialMissionSuitabilityResults;
+    private Vector2 specialMissionSuitabilityScroll;
+    private bool specialMissionSuitabilityShowOnlyGood;
+    private int specialMissionSuitabilityTab; // 0 NoTouch, 1 Fragile, 2 Limited
+
+
     private int BoardArea => gridWidth * gridHeight;
     private float AreaScale => BoardArea / (float)BaselineBoardArea;
 
@@ -380,6 +387,7 @@ public class LevelGeneratorWindow : EditorWindow
 
         DrawDifficultyOrderSection();
         DrawMultiTargetSuitabilitySection();
+        DrawSpecialMissionSuitabilitySection();
     }
 
     private void DrawDifficultyOrderSection()
@@ -590,6 +598,174 @@ public class LevelGeneratorWindow : EditorWindow
         }
 
         EditorGUILayout.EndScrollView();
+    }
+
+    private void DrawSpecialMissionSuitabilitySection()
+    {
+        EditorGUILayout.Space(14f);
+        EditorGUILayout.LabelField("SPECIAL MISSION SUITABILITY", EditorStyles.boldLabel);
+        EditorGUILayout.HelpBox(
+            "Editor-only, read-only. Analyze NoTouch / FragileCargo / LimitedVehicle.\n" +
+            "One RushOutSolver solve per level (solution path heuristics — not a guarantee).\n" +
+            "Wijzigt geen LevelData / flags / objectiveType / database.",
+            MessageType.None
+        );
+
+        specialMissionSuitabilityTab = GUILayout.Toolbar(
+            specialMissionSuitabilityTab,
+            new[] { "NO TOUCH", "FRAGILE CARGO", "LIMITED VEHICLE" }
+        );
+
+        specialMissionSuitabilityShowOnlyGood = EditorGUILayout.Toggle(
+            "Show Only Good Candidates",
+            specialMissionSuitabilityShowOnlyGood
+        );
+
+        if (GUILayout.Button("Analyze Special Mission Candidates", GUILayout.Height(28f)))
+        {
+            specialMissionSuitabilityResults =
+                SpecialMissionSuitabilityAnalyzer.AnalyzeMainLevelDatabase();
+            Debug.Log(
+                SpecialMissionSuitabilityAnalyzer.FormatResultsLog(
+                    specialMissionSuitabilityResults,
+                    filterKind: null,
+                    onlyGood: false
+                )
+            );
+        }
+
+        DrawSpecialMissionSuitabilityResults();
+    }
+
+    private void DrawSpecialMissionSuitabilityResults()
+    {
+        if (specialMissionSuitabilityResults == null ||
+            specialMissionSuitabilityResults.Count == 0)
+        {
+            EditorGUILayout.HelpBox(
+                "Klik Analyze Special Mission Candidates voor resultaten.",
+                MessageType.Info
+            );
+            return;
+        }
+
+        SpecialMissionSuitabilityAnalyzer.MissionKind filterKind =
+            (SpecialMissionSuitabilityAnalyzer.MissionKind)specialMissionSuitabilityTab;
+
+        float resultsHeight = Mathf.Clamp(position.height * 0.48f, 280f, 520f);
+        specialMissionSuitabilityScroll = EditorGUILayout.BeginScrollView(
+            specialMissionSuitabilityScroll,
+            GUILayout.Height(resultsHeight)
+        );
+
+        int shown = 0;
+        for (int i = 0; i < specialMissionSuitabilityResults.Count; i++)
+        {
+            SpecialMissionSuitabilityAnalyzer.Result r = specialMissionSuitabilityResults[i];
+            if (r.missionKind != filterKind)
+            {
+                continue;
+            }
+
+            if (specialMissionSuitabilityShowOnlyGood &&
+                r.category != SpecialMissionSuitabilityAnalyzer.Category.Good)
+            {
+                continue;
+            }
+
+            shown++;
+
+            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+            EditorGUILayout.Space(4f);
+
+            EditorGUILayout.LabelField(
+                "LEVEL " + r.levelNumber + " — " +
+                SpecialMissionSuitabilityAnalyzer.MissionKindLabel(r.missionKind) +
+                " — " + r.category + " — " + r.score,
+                EditorStyles.boldLabel
+            );
+            EditorGUILayout.LabelField(
+                r.assetName + "  |  " +
+                r.gridWidth + "x" + r.gridHeight +
+                "  |  exitRow " + r.exitRow +
+                "  |  minMoves " + r.minimumMoves +
+                " (stored " + r.storedMinimumMoves + ")"
+            );
+
+            EditorGUILayout.Space(2f);
+            EditorGUILayout.LabelField(
+                "Recommended Vehicle: " + r.vehicleName
+            );
+            EditorGUILayout.LabelField(
+                "@ " + r.vehiclePos +
+                ", " + r.vehicleOrientation +
+                ", Length " + r.vehicleLength
+            );
+            EditorGUILayout.LabelField(
+                "Solution moves: " + r.vehicleMovesInSolution +
+                "    First: " + FormatSolutionMoveIndex(r.firstMoveIndex) +
+                "    Last: " + FormatSolutionMoveIndex(r.lastMoveIndex)
+            );
+
+            if (r.missionKind == SpecialMissionSuitabilityAnalyzer.MissionKind.FragileCargo)
+            {
+                EditorGUILayout.LabelField(
+                    "Target moves in solution: " + r.targetMovesInSolution +
+                    "    Recommended Cargo Limit: " + r.recommendedCargoLimit
+                );
+            }
+
+            if (r.missionKind == SpecialMissionSuitabilityAnalyzer.MissionKind.LimitedVehicle)
+            {
+                EditorGUILayout.LabelField(
+                    "Recommended Limited Limit: " + r.recommendedLimitedLimit
+                );
+            }
+
+            EditorGUILayout.LabelField(
+                "Best match on level: " +
+                SpecialMissionSuitabilityAnalyzer.MissionKindLabel(r.bestMatchKind) +
+                " (" + r.bestMatchScore + ")"
+            );
+
+            if (r.reasons != null && r.reasons.Count > 0)
+            {
+                EditorGUILayout.Space(4f);
+                for (int j = 0; j < r.reasons.Count; j++)
+                {
+                    EditorGUILayout.LabelField(r.reasons[j]);
+                }
+            }
+
+            EditorGUILayout.Space(4f);
+            using (new EditorGUI.DisabledScope(r.level == null))
+            {
+                if (GUILayout.Button("Select Level", GUILayout.Width(120f)))
+                {
+                    Selection.activeObject = r.level;
+                    EditorGUIUtility.PingObject(r.level);
+                }
+            }
+
+            EditorGUILayout.Space(4f);
+            EditorGUILayout.EndVertical();
+            EditorGUILayout.Space(6f);
+        }
+
+        if (shown == 0)
+        {
+            EditorGUILayout.HelpBox(
+                "Geen resultaten voor deze filter — zet Show Only Good uit of analyseer opnieuw.",
+                MessageType.Info
+            );
+        }
+
+        EditorGUILayout.EndScrollView();
+    }
+
+    private static string FormatSolutionMoveIndex(int index)
+    {
+        return index < 0 ? "-" : (index + 1).ToString();
     }
 
     private void DrawSpecialMissionPreview()

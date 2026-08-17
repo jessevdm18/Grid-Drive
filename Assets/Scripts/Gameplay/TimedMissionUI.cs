@@ -19,6 +19,10 @@ public class TimedMissionUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI timerText;
     [SerializeField] private TextMeshProUGUI missionLabel;
 
+    /// <summary>Bestaande MissionLabel RectTransform voor SpecialMissionIntro.</summary>
+    public RectTransform MissionLabelRect =>
+        missionLabel != null ? missionLabel.rectTransform : null;
+
     [Header("Refs")]
     [SerializeField] private LevelObjectiveController objectiveController;
     [SerializeField] private LevelManager levelManager;

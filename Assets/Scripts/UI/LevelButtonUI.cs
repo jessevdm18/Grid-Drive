@@ -28,10 +28,14 @@ public class LevelButtonUI : MonoBehaviour
     [SerializeField] private Image specialMissionIcon;
     [SerializeField] private TMP_Text specialMissionLabel;
 
-    [Tooltip("Icoon voor TimedAmbulance. Leeg = bestaande Image-sprite laten.")]
+    [Tooltip("Legacy. Niet meer gebruikt voor badge-logica; prefab-icon blijft generiek. Veilig later leegmaken.")]
     [SerializeField] private Sprite ambulanceMissionIcon;
 
+    [Tooltip("Labeltekst voor special badge wanneer Apply Special Mission Label aan staat.")]
     [SerializeField] private string timedAmbulanceLabel = "SPECIAL";
+
+    [Tooltip("Uit = SpecialMissionLabel-tekst die jij handmatig zette blijft staan.")]
+    [SerializeField] private bool applySpecialMissionLabel = false;
 
     /// <summary>
     /// Button op deze prefab (voor OnClick in LevelSelectUI).
@@ -67,8 +71,16 @@ public class LevelButtonUI : MonoBehaviour
     }
 
     /// <summary>
+    /// Alle non-Classic objectives zijn special missions (future-proof).
+    /// </summary>
+    public static bool IsSpecialObjective(LevelObjectiveType objectiveType)
+    {
+        return objectiveType != LevelObjectiveType.Classic;
+    }
+
+    /// <summary>
     /// Toont/verbergt special badge op basis van LevelData.objectiveType.
-    /// Onafhankelijk van lock/stars/completed.
+    /// Generiek icoon uit prefab; onafhankelijk van lock/stars/completed.
     /// </summary>
     public void ApplySpecialMissionVisual(LevelObjectiveType objectiveType)
     {
@@ -77,48 +89,21 @@ public class LevelButtonUI : MonoBehaviour
             return;
         }
 
-        switch (objectiveType)
+        if (!IsSpecialObjective(objectiveType))
         {
-            case LevelObjectiveType.TimedAmbulance:
-                specialMissionBadge.SetActive(true);
-
-                if (specialMissionLabel != null)
-                {
-                    specialMissionLabel.text = timedAmbulanceLabel;
-                }
-
-                if (specialMissionIcon != null && ambulanceMissionIcon != null)
-                {
-                    specialMissionIcon.sprite = ambulanceMissionIcon;
-                }
-
-                break;
-
-            case LevelObjectiveType.MoveLimit:
-                specialMissionBadge.SetActive(true);
-
-                if (specialMissionLabel != null)
-                {
-                    specialMissionLabel.text = timedAmbulanceLabel;
-                }
-
-                break;
-
-            case LevelObjectiveType.MultiTargetRescue:
-                specialMissionBadge.SetActive(true);
-
-                if (specialMissionLabel != null)
-                {
-                    specialMissionLabel.text = timedAmbulanceLabel;
-                }
-
-                break;
-
-            case LevelObjectiveType.Classic:
-            default:
-                specialMissionBadge.SetActive(false);
-                break;
+            specialMissionBadge.SetActive(false);
+            return;
         }
+
+        specialMissionBadge.SetActive(true);
+
+        if (applySpecialMissionLabel && specialMissionLabel != null)
+        {
+            specialMissionLabel.text = timedAmbulanceLabel;
+        }
+
+        // specialMissionIcon: laat prefab-sprite staan (één generiek special-icoon).
+        // ambulanceMissionIcon wordt bewust niet meer toegepast.
     }
 
     private void ApplyLockState(bool isUnlocked)

@@ -57,7 +57,7 @@ public class LevelData : ScriptableObject
     [Tooltip("Alleen voor LimitedVehicle. Max geldige moves van de limited blocker. 0 = ongeldig.")]
     public int limitedVehicleMoveLimit = 0;
 
-    [Tooltip("Optioneel. TimedAmbulance / FragileCargo target visual; null = normale TargetCarSprite.")]
+    [Tooltip("Optioneel per-level override. TimedAmbulance / FragileCargo: null = SpecialMissionSpriteLibrary.")]
     public Sprite specialTargetSprite;
 
     [Header("Grid")]
