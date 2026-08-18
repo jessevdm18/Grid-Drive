@@ -33,6 +33,38 @@ public class SkinShopCardUI : MonoBehaviour
 
     private CardState currentState = CardState.Unavailable;
 
+    public CardState CurrentState => currentState;
+
+    /// <summary>True als deze card een unowned skin toont (Buy of Unavailable).</summary>
+    public bool IsUnowned
+    {
+        get
+        {
+            ResolveManagers();
+            return skinData != null &&
+                   skinData.HasValidId &&
+                   skinManager != null &&
+                   !skinManager.IsOwned(skinData.SkinId);
+        }
+    }
+
+    /// <summary>True als unowned én speler kan betalen (Buy-state).</summary>
+    public bool IsBuyableAffordable => currentState == CardState.Buy;
+
+    /// <summary>Spotlight target: Buy/action button indien aanwezig, anders card root.</summary>
+    public RectTransform SpotlightRect
+    {
+        get
+        {
+            if (actionButton != null)
+            {
+                return actionButton.transform as RectTransform;
+            }
+
+            return transform as RectTransform;
+        }
+    }
+
     private void Awake()
     {
         ResolveManagers();

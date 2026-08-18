@@ -3,12 +3,13 @@ using UnityEngine;
 
 /// <summary>
 /// Difficulty-tier voor level-progressie / metadata (niet de solver-score).
+/// Onafhankelijk van <see cref="LevelObjectiveType"/>.
 /// </summary>
 public enum LevelDifficulty
 {
-    Easy,
-    Medium,
-    Hard
+    Easy = 0,
+    Medium = 1,
+    Hard = 2
 }
 
 /// <summary>
@@ -38,11 +39,11 @@ public class LevelData : ScriptableObject
     [Header("Level Info")]
     public int levelNumber = 1;
 
-    [Tooltip("Handmatige / generator difficulty-tier (Easy / Medium / Hard).")]
-    public LevelDifficulty difficulty = LevelDifficulty.Medium;
+    [Header("Difficulty & Objective")]
+    [Tooltip("Progressie-tier (Easy / Medium / Hard). Onafhankelijk van Objective Type.")]
+    public LevelDifficulty difficulty = LevelDifficulty.Easy;
 
-    [Header("Objective")]
-    [Tooltip("Classic / TimedAmbulance / MoveLimit / MultiTargetRescue / NoTouchChallenge / FragileCargo / LimitedVehicle.")]
+    [Tooltip("Classic / TimedAmbulance / MoveLimit / MultiTargetRescue / NoTouchChallenge / FragileCargo / LimitedVehicle. Onafhankelijk van Difficulty.")]
     public LevelObjectiveType objectiveType = LevelObjectiveType.Classic;
 
     [Tooltip("Alleen voor TimedAmbulance. 0 = geen bruikbare timer.")]

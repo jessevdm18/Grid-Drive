@@ -11,6 +11,26 @@ public class SaveManager : MonoBehaviour
     private const string CurrentLevelKey = "RushOut_CurrentLevel";
     private const string StarsKeyPrefix = "LevelStars_";
     private const string StarsMaxIndexKey = "LevelStars_MaxIndex";
+    private const string ThreeStarCoinClaimedPrefix = "RushOut_ThreeStarCoinRewardClaimed_";
+    private const string ThreeStarCoinClaimedMaxIndexKey =
+        "RushOut_ThreeStarCoinRewardClaimed_MaxIndex";
+    /// <summary>Eenmalige legacy migration (alleen levels die al 3★ hadden vóór deze feature).</summary>
+    private const string ThreeStarRewardMigrationCompletedKey =
+        "RushOut_ThreeStarRewardMigrationCompleted";
+    /// <summary>Legacy key — alleen gelezen om migratie niet opnieuw te draaien.</summary>
+    private const string ThreeStarCoinClaimMigrationLegacyKey =
+        "RushOut_ThreeStarCoinClaimMigrationV1";
+    private const string FirstLaunchCompletedKey = "RushOut_FirstLaunchCompleted";
+    private const string CoinsKey = "RushOut_Coins";
+    /// <summary>Laatst gekozen LevelSelect difficulty-tab (int = LevelDifficulty).</summary>
+    private const string LastSelectedDifficultyKey = "RushOut_LastSelectedDifficulty";
+
+#if UNITY_EDITOR
+    /// <summary>
+    /// Editor-only: één-shot force first-launch route (Splash → Gameplay index 0).
+    /// </summary>
+    public const string EditorForceFirstLaunchKey = "RushOut_EditorForceFirstLaunch";
+#endif
 
     /// <summary>
     /// Slaat de hoogste unlocked level-index op.
@@ -54,6 +74,176 @@ public class SaveManager : MonoBehaviour
     {
         return PlayerPrefs.GetInt(CurrentLevelKey, 0);
     }
+
+    /// <summary>
+    /// Slaat de laatst gekozen LevelSelect difficulty-tab op.
+    /// </summary>
+    public void SaveLastSelectedDifficulty(LevelDifficulty difficulty)
+    {
+        PlayerPrefs.SetInt(LastSelectedDifficultyKey, (int)difficulty);
+        PlayerPrefs.Save();
+    }
+
+    /// <summary>
+    /// Laatst gekozen LevelSelect difficulty. Default = Easy.
+    /// Ongeldige waarden → Easy.
+    /// </summary>
+    public LevelDifficulty GetLastSelectedDifficulty()
+    {
+        int raw = PlayerPrefs.GetInt(
+            LastSelectedDifficultyKey,
+            (int)LevelDifficulty.Easy
+        );
+
+        if (raw < (int)LevelDifficulty.Easy || raw > (int)LevelDifficulty.Hard)
+        {
+            return LevelDifficulty.Easy;
+        }
+
+        return (LevelDifficulty)raw;
+    }
+
+    /// <summary>
+    /// True als first-launch routing al afgerond is (of gemigreerd voor bestaande installs).
+    /// </summary>
+    public bool HasCompletedFirstLaunch()
+    {
+        ResolveFirstLaunchMigration();
+        return PlayerPrefs.GetInt(FirstLaunchCompletedKey, 0) == 1;
+    }
+
+    /// <summary>
+    /// Markeert first-launch als afgerond (idempotent).
+    /// </summary>
+    public void MarkFirstLaunchCompleted()
+    {
+        MarkFirstLaunchCompletedStatic();
+    }
+
+    /// <summary>
+    /// Splash/startup: true → direct Gameplay Level 1 (index 0), geen MainMenu.
+    /// Roept migratie aan voor bestaande spelers zonder FirstLaunchCompleted-key.
+    /// </summary>
+    public static bool ShouldRouteFirstLaunchToGameplay()
+    {
+        ResolveFirstLaunchMigrationStatic();
+
+#if UNITY_EDITOR
+        if (PlayerPrefs.GetInt(EditorForceFirstLaunchKey, 0) == 1)
+        {
+            PlayerPrefs.DeleteKey(EditorForceFirstLaunchKey);
+            // Zelfde pad als LevelSelect button index 0.
+            PlayerPrefs.SetInt(CurrentLevelKey, 0);
+            PlayerPrefs.Save();
+            return true;
+        }
+#endif
+
+        return PlayerPrefs.GetInt(FirstLaunchCompletedKey, 0) != 1;
+    }
+
+    /// <summary>
+    /// Instance-wrapper: migratie voor bestaande progress vóór first-launch checks.
+    /// </summary>
+    public void ResolveFirstLaunchMigration()
+    {
+        ResolveFirstLaunchMigrationStatic();
+    }
+
+    /// <summary>
+    /// Zet current level op index 0 (LEVEL 1) — zelfde als LevelSelect eerste knop.
+    /// </summary>
+    public static void PrepareFirstLaunchGameplayLevelStatic()
+    {
+        PlayerPrefs.SetInt(CurrentLevelKey, 0);
+        PlayerPrefs.Save();
+    }
+
+    /// <summary>
+    /// Zet FirstLaunchCompleted=1. Statisch zodat Splash/LevelManager geen race hebben.
+    /// </summary>
+    public static void MarkFirstLaunchCompletedStatic()
+    {
+        if (PlayerPrefs.GetInt(FirstLaunchCompletedKey, 0) == 1)
+        {
+            return;
+        }
+
+        PlayerPrefs.SetInt(FirstLaunchCompletedKey, 1);
+        PlayerPrefs.Save();
+    }
+
+    /// <summary>
+    /// Bestaande installs zonder FirstLaunchCompleted-key → returning player.
+    /// </summary>
+    public static void ResolveFirstLaunchMigrationStatic()
+    {
+        if (PlayerPrefs.GetInt(FirstLaunchCompletedKey, 0) == 1)
+        {
+            return;
+        }
+
+        if (HasExistingProgressEvidenceStatic())
+        {
+            MarkFirstLaunchCompletedStatic();
+        }
+    }
+
+    /// <summary>
+    /// Bewijs dat iemand al eerder gespeeld/geüpdatet heeft (niet alleen missing first-launch key).
+    /// </summary>
+    public static bool HasExistingProgressEvidenceStatic()
+    {
+        if (PlayerPrefs.HasKey(UnlockedLevelKey))
+        {
+            return true;
+        }
+
+        if (PlayerPrefs.HasKey(CurrentLevelKey))
+        {
+            return true;
+        }
+
+        if (PlayerPrefs.HasKey(StarsMaxIndexKey))
+        {
+            int maxIndex = PlayerPrefs.GetInt(StarsMaxIndexKey, -1);
+            for (int i = 0; i <= maxIndex; i++)
+            {
+                if (PlayerPrefs.GetInt(StarsKeyPrefix + i, 0) > 0)
+                {
+                    return true;
+                }
+            }
+        }
+
+        // CoinManager schrijft pas bij wijziging — key aanwezig ⇒ eerdere sessie.
+        if (PlayerPrefs.HasKey(CoinsKey))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+#if UNITY_EDITOR
+    /// <summary>
+    /// Editor: alleen FirstLaunchCompleted wissen (migratie kan returning herstellen).
+    /// </summary>
+    public static void EditorResetFirstLaunchCompletedKey()
+    {
+        PlayerPrefs.DeleteKey(FirstLaunchCompletedKey);
+        PlayerPrefs.Save();
+    }
+
+    /// <summary>
+    /// Editor: forceer één volgende Splash→Gameplay Level 1 zonder progress te wissen.
+    /// </summary>
+    public static void EditorArmSimulateFreshFirstLaunch()
+    {
+        PlayerPrefs.SetInt(EditorForceFirstLaunchKey, 1);
+        PlayerPrefs.Save();
+    }
+#endif
 
     /// <summary>
     /// Repareert unlocked progress op basis van bestaande sterren.
@@ -148,12 +338,232 @@ public class SaveManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Authoritative completion: ooit voltooid als best stars &gt; 0.
+    /// </summary>
+    public bool IsLevelCompleted(int levelIndex)
+    {
+        return GetStarsForLevel(levelIndex) > 0;
+    }
+
+    /// <summary>
+    /// Unieke completed levels met de huidige <see cref="LevelData.difficulty"/> metadata.
+    /// Geen sticky counter — volgt retags van difficulty op LevelData.
+    /// </summary>
+    public int GetCompletedCount(LevelDifficulty difficulty, LevelDatabase database)
+    {
+        if (database == null)
+        {
+            return 0;
+        }
+
+        int count = 0;
+        int levelCount = database.LevelCount;
+        for (int i = 0; i < levelCount; i++)
+        {
+            LevelData level = database.GetLevel(i);
+            if (level == null)
+            {
+                continue;
+            }
+
+            if (level.difficulty == difficulty && IsLevelCompleted(i))
+            {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+    /// <summary>
+    /// Of de speler deze difficulty mag kiezen (geen UI-logic).
+    /// Null config → built-in defaults (10 / 10+10).
+    /// </summary>
+    public bool IsDifficultyUnlocked(
+        LevelDifficulty difficulty,
+        LevelDatabase database,
+        DifficultyProgressionConfig config)
+    {
+        int easyCompleted = GetCompletedCount(LevelDifficulty.Easy, database);
+        int mediumCompleted = GetCompletedCount(LevelDifficulty.Medium, database);
+
+        if (config != null)
+        {
+            return config.IsDifficultyUnlocked(
+                difficulty,
+                easyCompleted,
+                mediumCompleted
+            );
+        }
+
+        return DifficultyProgressionConfig.IsDifficultyUnlockedWithDefaults(
+            difficulty,
+            easyCompleted,
+            mediumCompleted
+        );
+    }
+
+    /// <summary>
+    /// Speelbaar level: difficulty unlocked + eerste van die tier of vorige same-difficulty completed
+    /// (of dit level zelf al completed — behoudt toegang na retag / replay).
+    /// </summary>
+    public bool IsLevelUnlocked(
+        int levelIndex,
+        LevelDatabase database,
+        DifficultyProgressionConfig config)
+    {
+        if (database == null)
+        {
+            return false;
+        }
+
+        LevelData level = database.GetLevel(levelIndex);
+        if (level == null)
+        {
+            return false;
+        }
+
+        if (!IsDifficultyUnlocked(level.difficulty, database, config))
+        {
+            return false;
+        }
+
+        // Al voltooid → altijd speelbaar binnen unlocked difficulty.
+        if (IsLevelCompleted(levelIndex))
+        {
+            return true;
+        }
+
+        // Zoek vorige level met dezelfde difficulty (database-order).
+        for (int i = levelIndex - 1; i >= 0; i--)
+        {
+            LevelData previous = database.GetLevel(i);
+            if (previous == null || previous.difficulty != level.difficulty)
+            {
+                continue;
+            }
+
+            return IsLevelCompleted(i);
+        }
+
+        // Geen vorige same-difficulty → eerste van deze tier.
+        return true;
+    }
+
+    /// <summary>
+    /// True als dit level zijn eenmalige 3-ster coin reward al heeft uitgekeerd.
+    /// Zelfde index-semantics als LevelStars_*.
+    /// </summary>
+    public bool HasClaimedThreeStarCoinReward(int levelIndex)
+    {
+        MigrateExistingThreeStarClaimsIfNeeded();
+        return PlayerPrefs.GetInt(ThreeStarCoinClaimedPrefix + levelIndex, 0) == 1;
+    }
+
+    /// <summary>
+    /// Markeert de eenmalige 3-ster coin reward als uitbetaald (idempotent).
+    /// </summary>
+    public void MarkThreeStarCoinRewardClaimed(int levelIndex)
+    {
+        MigrateExistingThreeStarClaimsIfNeeded();
+
+        if (PlayerPrefs.GetInt(ThreeStarCoinClaimedPrefix + levelIndex, 0) == 1)
+        {
+            return;
+        }
+
+        PlayerPrefs.SetInt(ThreeStarCoinClaimedPrefix + levelIndex, 1);
+
+        int maxIndex = PlayerPrefs.GetInt(ThreeStarCoinClaimedMaxIndexKey, -1);
+        if (levelIndex > maxIndex)
+        {
+            PlayerPrefs.SetInt(ThreeStarCoinClaimedMaxIndexKey, levelIndex);
+        }
+
+        PlayerPrefs.Save();
+    }
+
+    /// <summary>
+    /// True als de speler ooit minstens één 3-ster coin reward heeft ontvangen.
+    /// </summary>
+    public bool HasClaimedAnyThreeStarCoinReward()
+    {
+        MigrateExistingThreeStarClaimsIfNeeded();
+
+        int maxIndex = PlayerPrefs.GetInt(ThreeStarCoinClaimedMaxIndexKey, -1);
+        for (int i = 0; i <= maxIndex; i++)
+        {
+            if (PlayerPrefs.GetInt(ThreeStarCoinClaimedPrefix + i, 0) == 1)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// True als een 3-ster finish op dit level nog een coin reward zou geven.
+    /// </summary>
+    public bool IsThreeStarCoinRewardAvailable(int levelIndex)
+    {
+        return !HasClaimedThreeStarCoinReward(levelIndex);
+    }
+
+    /// <summary>
+    /// Oude installs: levels die AL 3★ hadden vóór deze feature → claimed.
+    /// Eenmalig. Roept nooit opnieuw aan na completion van nieuwe 3★ saves.
+    /// Los van FirstLaunch-migratie.
+    /// </summary>
+    private void MigrateExistingThreeStarClaimsIfNeeded()
+    {
+        if (PlayerPrefs.GetInt(ThreeStarRewardMigrationCompletedKey, 0) == 1)
+        {
+            return;
+        }
+
+        // Eerdere versie al gedraaid → niet opnieuw (zou net-uitbetaalde 3★ kunnen claimen).
+        if (PlayerPrefs.GetInt(ThreeStarCoinClaimMigrationLegacyKey, 0) == 1)
+        {
+            PlayerPrefs.SetInt(ThreeStarRewardMigrationCompletedKey, 1);
+            PlayerPrefs.Save();
+            return;
+        }
+
+        int maxStarsIndex = PlayerPrefs.GetInt(StarsMaxIndexKey, -1);
+        for (int i = 0; i <= maxStarsIndex; i++)
+        {
+            // Alleen dit level: bestaande best stars >= 3.
+            if (GetStarsForLevel(i) < 3)
+            {
+                continue;
+            }
+
+            if (PlayerPrefs.GetInt(ThreeStarCoinClaimedPrefix + i, 0) == 1)
+            {
+                continue;
+            }
+
+            PlayerPrefs.SetInt(ThreeStarCoinClaimedPrefix + i, 1);
+            int claimedMax = PlayerPrefs.GetInt(ThreeStarCoinClaimedMaxIndexKey, -1);
+            if (i > claimedMax)
+            {
+                PlayerPrefs.SetInt(ThreeStarCoinClaimedMaxIndexKey, i);
+            }
+        }
+
+        PlayerPrefs.SetInt(ThreeStarRewardMigrationCompletedKey, 1);
+        PlayerPrefs.Save();
+    }
+
+    /// <summary>
     /// Wis alle opgeslagen progressie.
     /// </summary>
     public void ResetProgress()
     {
         PlayerPrefs.DeleteKey(UnlockedLevelKey);
         PlayerPrefs.DeleteKey(CurrentLevelKey);
+        PlayerPrefs.DeleteKey(LastSelectedDifficultyKey);
 
         // Verwijder alle LevelStars_X keys die we ooit hebben aangemaakt.
         int maxIndex = PlayerPrefs.GetInt(StarsMaxIndexKey, -1);
@@ -163,6 +573,16 @@ public class SaveManager : MonoBehaviour
         }
 
         PlayerPrefs.DeleteKey(StarsMaxIndexKey);
+
+        int claimedMax = PlayerPrefs.GetInt(ThreeStarCoinClaimedMaxIndexKey, -1);
+        for (int i = 0; i <= claimedMax; i++)
+        {
+            PlayerPrefs.DeleteKey(ThreeStarCoinClaimedPrefix + i);
+        }
+
+        PlayerPrefs.DeleteKey(ThreeStarCoinClaimedMaxIndexKey);
+        PlayerPrefs.DeleteKey(ThreeStarRewardMigrationCompletedKey);
+        PlayerPrefs.DeleteKey(ThreeStarCoinClaimMigrationLegacyKey);
         PlayerPrefs.Save();
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
@@ -59,6 +60,12 @@ public class UIManager : MonoBehaviour
     private Vector2 rewardHomeAnchoredPos;
     private bool hasRewardHomePos;
 
+    /// <summary>
+    /// Fired wanneer sterren + eventuele coin-fly klaar zijn (WinPanel blijft open).
+    /// Feature tutorials (Coins) kunnen hier veilig na openen.
+    /// </summary>
+    public event Action OnWinSequenceFinished;
+
     private void Awake()
     {
         audioManager = FindAnyObjectByType<AudioManager>();
@@ -107,6 +114,19 @@ public class UIManager : MonoBehaviour
 
         int earnedStars = gameManager != null ? gameManager.LastEarnedStars : 0;
         int earnedCoins = gameManager != null ? gameManager.LastEarnedCoins : 0;
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        bool grantedStart =
+            gameManager != null && gameManager.LastThreeStarCoinRewardGranted;
+        Debug.Log(
+            "[CoinsFT]\n" +
+            "Stage=WinSequenceStart\n" +
+            "Session=" + FeatureTutorialController.CoinsFtSessionId + "\n" +
+            "RewardGranted=" + grantedStart + "\n" +
+            "EarnedCoins=" + earnedCoins
+        );
+#endif
+
         winSequenceCoroutine = StartCoroutine(WinSequenceRoutine(earnedStars, earnedCoins));
     }
 
@@ -157,17 +177,39 @@ public class UIManager : MonoBehaviour
     {
         yield return RevealStarsRoutine(earnedStars);
 
-        if (CanPlayRewardAnimation())
+        // Alleen coin-fly + SFX als er daadwerkelijk coins zijn uitgekeerd.
+        if (earnedCoins > 0)
         {
-            yield return RewardFlyRoutine(earnedCoins);
-        }
-        else
-        {
-            // Geen reward-UI: speel coin-SFX alsnog één keer (GameManager speelt hem niet meer direct).
-            audioManager?.PlayCoin();
+            if (CanPlayRewardAnimation())
+            {
+                yield return RewardFlyRoutine(earnedCoins);
+            }
+            else
+            {
+                audioManager?.PlayCoin();
+            }
         }
 
         winSequenceCoroutine = null;
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        bool granted = gameManager != null && gameManager.LastThreeStarCoinRewardGranted;
+        int subscriberCount = OnWinSequenceFinished != null
+            ? OnWinSequenceFinished.GetInvocationList().Length
+            : 0;
+        Debug.Log(
+            "[CoinsFT]\n" +
+            "Stage=WinSequenceFinishedEventFired\n" +
+            "Session=" + FeatureTutorialController.CoinsFtSessionId + "\n" +
+            "RewardGranted=" + granted + "\n" +
+            "EventSubscribers=" + subscriberCount
+        );
+#endif
+
+        OnWinSequenceFinished?.Invoke();
+
+        // Direct notify (werkt ook als controller-event-subscription mist).
+        FeatureTutorialController.NotifyWinSequenceFinished();
     }
 
     private bool CanPlayRewardAnimation()

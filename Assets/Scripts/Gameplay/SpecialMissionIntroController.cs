@@ -25,6 +25,7 @@ public class SpecialMissionIntroController : MonoBehaviour
     [SerializeField] private LevelObjectiveController objectiveController;
     [SerializeField] private GameManager gameManager;
     [SerializeField] private LevelManager levelManager;
+    [SerializeField] private AudioManager audioManager;
 
     [Header("Mission UIs (MissionLabel via public Rect)")]
     [SerializeField] private TimedMissionUI timedMissionUI;
@@ -53,6 +54,7 @@ public class SpecialMissionIntroController : MonoBehaviour
 
     private Coroutine introCoroutine;
     private int handledSessionId = -1;
+    private int ambulanceStartSfxSessionId = -1;
     private RectTransform activeLabel;
     private TextMeshProUGUI activeLabelTmp;
     private LabelHomeState homeState;
@@ -73,6 +75,11 @@ public class SpecialMissionIntroController : MonoBehaviour
         if (levelManager == null)
         {
             levelManager = FindAnyObjectByType<LevelManager>();
+        }
+
+        if (audioManager == null)
+        {
+            audioManager = FindAnyObjectByType<AudioManager>();
         }
     }
 
@@ -131,6 +138,9 @@ public class SpecialMissionIntroController : MonoBehaviour
             introCoroutine = null;
             yield break;
         }
+
+        // TimedAmbulance: mission-start SFX ×1 bij intro (niet bij timer Running).
+        TryPlayTimedAmbulanceStartSfx(sessionId);
 
         RectTransform label = ResolveMissionLabel();
         if (label == null)
@@ -297,6 +307,30 @@ public class SpecialMissionIntroController : MonoBehaviour
         {
             objectiveController.NotifySpecialMissionIntroCompleted();
         }
+    }
+
+    private void TryPlayTimedAmbulanceStartSfx(int sessionId)
+    {
+        if (ambulanceStartSfxSessionId == sessionId)
+        {
+            return;
+        }
+
+        LevelData levelData = levelManager != null ? levelManager.CurrentLevelData : null;
+        if (levelData == null ||
+            levelData.objectiveType != LevelObjectiveType.TimedAmbulance)
+        {
+            return;
+        }
+
+        ambulanceStartSfxSessionId = sessionId;
+
+        if (audioManager == null)
+        {
+            audioManager = FindAnyObjectByType<AudioManager>();
+        }
+
+        audioManager?.PlayAmbulanceMissionStart();
     }
 
     private RectTransform ResolveMissionLabel()
@@ -506,13 +540,19 @@ public class SpecialMissionIntroController : MonoBehaviour
             activeLabelTmp = tmp;
         }
 
-        if (tmp != null)
+        if (tmp == null)
         {
-            bool wasWrapping = tmp.enableWordWrapping;
-            TextOverflowModes overflow = tmp.overflowMode;
+            float rectWidthOnly = label.rect.width;
+            return rectWidthOnly > 0.01f ? rectWidthOnly : 0f;
+        }
 
+        TextWrappingModes originalWrappingMode = tmp.textWrappingMode;
+        TextOverflowModes overflow = tmp.overflowMode;
+
+        try
+        {
             // Tijdelijk unconstrained meten — wrap/overflow niet permanent wijzigen.
-            tmp.enableWordWrapping = false;
+            tmp.textWrappingMode = TextWrappingModes.NoWrap;
             tmp.overflowMode = TextOverflowModes.Overflow;
             tmp.ForceMeshUpdate(ignoreActiveState: true);
 
@@ -530,14 +570,16 @@ public class SpecialMissionIntroController : MonoBehaviour
                 preferred = rendered.x;
             }
 
-            tmp.enableWordWrapping = wasWrapping;
-            tmp.overflowMode = overflow;
-            tmp.ForceMeshUpdate(ignoreActiveState: true);
-
             if (preferred > 0.01f)
             {
                 return preferred;
             }
+        }
+        finally
+        {
+            tmp.textWrappingMode = originalWrappingMode;
+            tmp.overflowMode = overflow;
+            tmp.ForceMeshUpdate(ignoreActiveState: true);
         }
 
         float rectWidth = label.rect.width;

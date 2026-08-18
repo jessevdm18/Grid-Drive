@@ -1,10 +1,13 @@
+using System.Collections;
+using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// Bouwt automatisch levelknoppen in het LevelSelect-scherm.
-/// Unlock/progress blijft via SaveManager; visuals via LevelButtonUI.
-/// LevelGrid zit in een verticale ScrollRect en groeit mee met het aantal levels.
+/// LevelSelect met Easy / Medium / Hard tabs.
+/// Buttons runtime genereren; save identity = database-index.
+/// Display numbering is lokaal per difficulty (1..N).
 /// </summary>
 public class LevelSelectUI : MonoBehaviour
 {
@@ -24,35 +27,296 @@ public class LevelSelectUI : MonoBehaviour
     [SerializeField] private Sprite filledStarSprite;
     [SerializeField] private Sprite emptyStarSprite;
 
+    [Header("Difficulty Tabs")]
+    [SerializeField] private Button easyTabButton;
+    [SerializeField] private Button mediumTabButton;
+    [SerializeField] private Button hardTabButton;
+
+    [Tooltip("Optioneel lock-icoon op Medium-tab (zichtbaar zolang Medium locked).")]
+    [SerializeField] private GameObject mediumLockIcon;
+
+    [Tooltip("Optioneel lock-icoon op Hard-tab.")]
+    [SerializeField] private GameObject hardLockIcon;
+
+    [Tooltip("Optioneel. Bijv. \"7 / 10 EASY\". Verborgen wanneer Medium unlocked.")]
+    [SerializeField] private TMP_Text mediumProgressText;
+
+    [Tooltip("Optioneel. Bijv. \"EASY 7/10 • MEDIUM 3/10\". Verborgen wanneer Hard unlocked.")]
+    [SerializeField] private TMP_Text hardProgressText;
+
+    [Tooltip("Optioneel titel boven de grid (bijv. EASY).")]
+    [SerializeField] private TMP_Text difficultyTitleText;
+
+    [Tooltip("Optioneel. Getoond wanneer de geselecteerde difficulty 0 levels heeft.")]
+    [SerializeField] private TMP_Text emptyStateText;
+
+    [Header("Selected Tab Visual")]
+    [SerializeField] private float selectedTabScale = 1.05f;
+    [SerializeField] private float unselectedTabScale = 1f;
+
+    [Tooltip("Optioneel. Active alleen wanneer Easy geselecteerd is.")]
+    [SerializeField] private GameObject easySelectedIndicator;
+
+    [SerializeField] private GameObject mediumSelectedIndicator;
+    [SerializeField] private GameObject hardSelectedIndicator;
+
+    [Header("Locked Tab Feedback")]
+    [SerializeField] private float lockedTabPunchScale = 1.08f;
+    [SerializeField] private float lockedTabPunchDuration = 0.12f;
+
     [Header("Referenties")]
     [SerializeField] private SaveManager saveManager;
 
     [Tooltip("Centrale database met alle levels.")]
     [SerializeField] private LevelDatabase levelDatabase;
 
+    [Tooltip("Optioneel. Null = built-in unlock defaults (10 Easy / 10 Easy + 10 Medium).")]
+    [SerializeField] private DifficultyProgressionConfig difficultyProgressionConfig;
+
+    private LevelDifficulty selectedDifficulty = LevelDifficulty.Easy;
+    private AudioManager audioManager;
+    private Coroutine lockedTabPunchCoroutine;
+    private Transform lockedTabPunchTarget;
+    private Vector3 lockedTabPunchBaseScale = Vector3.one;
+
     private void Start()
     {
-        // Welk level is al unlocked? (index, dus 0 = level 1)
-        int unlockedLevel = 0;
+        audioManager = FindAnyObjectByType<AudioManager>();
 
-        if (saveManager != null)
+        if (saveManager != null && levelDatabase != null)
         {
-            // Herstel unlocked progress t.o.v. bestaande sterren (geen data wissen).
-            if (levelDatabase != null)
-            {
-                saveManager.RepairUnlockedProgress(levelDatabase.LevelCount);
-            }
-
-            unlockedLevel = saveManager.GetUnlockedLevel();
+            saveManager.RepairUnlockedProgress(levelDatabase.LevelCount);
         }
 
-        CreateLevelButtons(unlockedLevel);
+        WireTabButtons();
+        selectedDifficulty = ResolveInitialDifficulty();
+        RefreshAll();
+    }
+
+    private void OnDisable()
+    {
+        StopLockedTabPunchImmediate();
+    }
+
+    private void WireTabButtons()
+    {
+        if (easyTabButton != null)
+        {
+            easyTabButton.onClick.RemoveListener(OnEasyTabClicked);
+            easyTabButton.onClick.AddListener(OnEasyTabClicked);
+        }
+
+        if (mediumTabButton != null)
+        {
+            mediumTabButton.onClick.RemoveListener(OnMediumTabClicked);
+            mediumTabButton.onClick.AddListener(OnMediumTabClicked);
+        }
+
+        if (hardTabButton != null)
+        {
+            hardTabButton.onClick.RemoveListener(OnHardTabClicked);
+            hardTabButton.onClick.AddListener(OnHardTabClicked);
+        }
+    }
+
+    private LevelDifficulty ResolveInitialDifficulty()
+    {
+        if (saveManager == null || levelDatabase == null)
+        {
+            return LevelDifficulty.Easy;
+        }
+
+        LevelDifficulty last = saveManager.GetLastSelectedDifficulty();
+        if (saveManager.IsDifficultyUnlocked(
+                last,
+                levelDatabase,
+                difficultyProgressionConfig))
+        {
+            return last;
+        }
+
+        return LevelDifficulty.Easy;
+    }
+
+    private void OnEasyTabClicked()
+    {
+        SelectDifficulty(LevelDifficulty.Easy);
+    }
+
+    private void OnMediumTabClicked()
+    {
+        TrySelectDifficulty(LevelDifficulty.Medium, mediumTabButton);
+    }
+
+    private void OnHardTabClicked()
+    {
+        TrySelectDifficulty(LevelDifficulty.Hard, hardTabButton);
+    }
+
+    private void TrySelectDifficulty(LevelDifficulty difficulty, Button tabButton)
+    {
+        if (saveManager == null || levelDatabase == null)
+        {
+            return;
+        }
+
+        if (saveManager.IsDifficultyUnlocked(
+                difficulty,
+                levelDatabase,
+                difficultyProgressionConfig))
+        {
+            SelectDifficulty(difficulty);
+            return;
+        }
+
+        PlayLockedTabFeedback(tabButton != null ? tabButton.transform : null);
     }
 
     /// <summary>
-    /// Maakt één knop per level onder levelGrid.
+    /// Wisselt tab (alleen aanroepen wanneer difficulty unlocked is).
     /// </summary>
-    private void CreateLevelButtons(int unlockedLevel)
+    private void SelectDifficulty(LevelDifficulty difficulty)
+    {
+        selectedDifficulty = difficulty;
+
+        if (saveManager != null)
+        {
+            saveManager.SaveLastSelectedDifficulty(difficulty);
+        }
+
+        RefreshAll();
+    }
+
+    /// <summary>
+    /// Herrekent unlock/progress + rebuildt buttons voor selectedDifficulty.
+    /// Geen cache: altijd live SaveManager counts.
+    /// </summary>
+    private void RefreshAll()
+    {
+        RefreshTabChrome();
+        RebuildLevelButtonsForSelectedDifficulty();
+    }
+
+    private void RefreshTabChrome()
+    {
+        bool mediumUnlocked = IsDifficultyUnlockedSafe(LevelDifficulty.Medium);
+        bool hardUnlocked = IsDifficultyUnlockedSafe(LevelDifficulty.Hard);
+
+        if (mediumLockIcon != null)
+        {
+            mediumLockIcon.SetActive(!mediumUnlocked);
+        }
+
+        if (hardLockIcon != null)
+        {
+            hardLockIcon.SetActive(!hardUnlocked);
+        }
+
+        UpdateMediumProgressText(mediumUnlocked);
+        UpdateHardProgressText(hardUnlocked);
+        UpdateSelectedTabVisual();
+        UpdateDifficultyTitle();
+    }
+
+    private void UpdateMediumProgressText(bool mediumUnlocked)
+    {
+        if (mediumProgressText == null)
+        {
+            return;
+        }
+
+        if (mediumUnlocked)
+        {
+            mediumProgressText.gameObject.SetActive(false);
+            return;
+        }
+
+        int easyCompleted = GetCompletedCountSafe(LevelDifficulty.Easy);
+        int required = GetMediumRequiredEasy();
+        mediumProgressText.gameObject.SetActive(true);
+        mediumProgressText.text = easyCompleted + " / " + required + " EASY";
+    }
+
+    private void UpdateHardProgressText(bool hardUnlocked)
+    {
+        if (hardProgressText == null)
+        {
+            return;
+        }
+
+        if (hardUnlocked)
+        {
+            hardProgressText.gameObject.SetActive(false);
+            return;
+        }
+
+        int easyCompleted = GetCompletedCountSafe(LevelDifficulty.Easy);
+        int mediumCompleted = GetCompletedCountSafe(LevelDifficulty.Medium);
+        int easyRequired = GetHardRequiredEasy();
+        int mediumRequired = GetHardRequiredMedium();
+
+        string easyPart = easyCompleted >= easyRequired
+            ? "EASY ✓"
+            : "EASY " + easyCompleted + "/" + easyRequired;
+
+        string mediumPart = mediumCompleted >= mediumRequired
+            ? "MEDIUM ✓"
+            : "MEDIUM " + mediumCompleted + "/" + mediumRequired;
+
+        hardProgressText.gameObject.SetActive(true);
+        hardProgressText.text = easyPart + " • " + mediumPart;
+    }
+
+    private void UpdateSelectedTabVisual()
+    {
+        ApplyTabScale(easyTabButton, selectedDifficulty == LevelDifficulty.Easy);
+        ApplyTabScale(mediumTabButton, selectedDifficulty == LevelDifficulty.Medium);
+        ApplyTabScale(hardTabButton, selectedDifficulty == LevelDifficulty.Hard);
+
+        if (easySelectedIndicator != null)
+        {
+            easySelectedIndicator.SetActive(selectedDifficulty == LevelDifficulty.Easy);
+        }
+
+        if (mediumSelectedIndicator != null)
+        {
+            mediumSelectedIndicator.SetActive(selectedDifficulty == LevelDifficulty.Medium);
+        }
+
+        if (hardSelectedIndicator != null)
+        {
+            hardSelectedIndicator.SetActive(selectedDifficulty == LevelDifficulty.Hard);
+        }
+    }
+
+    private void ApplyTabScale(Button tabButton, bool selected)
+    {
+        if (tabButton == null)
+        {
+            return;
+        }
+
+        // Niet overschrijven tijdens locked punch.
+        if (lockedTabPunchCoroutine != null && lockedTabPunchTarget == tabButton.transform)
+        {
+            return;
+        }
+
+        float scale = selected ? selectedTabScale : unselectedTabScale;
+        tabButton.transform.localScale = Vector3.one * scale;
+    }
+
+    private void UpdateDifficultyTitle()
+    {
+        if (difficultyTitleText == null)
+        {
+            return;
+        }
+
+        difficultyTitleText.text = selectedDifficulty.ToString().ToUpperInvariant();
+    }
+
+    private void RebuildLevelButtonsForSelectedDifficulty()
     {
         if (levelButtonPrefab == null || levelGrid == null)
         {
@@ -60,19 +324,30 @@ public class LevelSelectUI : MonoBehaviour
             return;
         }
 
-        if (levelDatabase == null || levelDatabase.LevelCount == 0)
+        if (levelDatabase == null)
         {
-            Debug.LogError("LevelSelectUI: levelDatabase ontbreekt of is leeg.");
+            Debug.LogError("LevelSelectUI: levelDatabase ontbreekt.");
             return;
         }
 
         ClearExistingButtons();
 
-        int levelCount = levelDatabase.LevelCount;
-        for (int levelIndex = 0; levelIndex < levelCount; levelIndex++)
+        List<int> indices = levelDatabase.GetLevelIndicesByDifficulty(selectedDifficulty);
+        int visibleCount = indices != null ? indices.Count : 0;
+
+        if (emptyStateText != null)
         {
-            // Lokale kopie voor de knop-callback (voorkomt closure-bugs in de loop).
-            int index = levelIndex;
+            emptyStateText.gameObject.SetActive(visibleCount == 0);
+            if (visibleCount == 0)
+            {
+                emptyStateText.text = "NO LEVELS YET";
+            }
+        }
+
+        for (int i = 0; i < visibleCount; i++)
+        {
+            int databaseIndex = indices[i];
+            int displayNumber = i + 1;
 
             GameObject buttonObject = Instantiate(levelButtonPrefab, levelGrid);
             LevelButtonUI buttonUI = buttonObject.GetComponent<LevelButtonUI>();
@@ -83,22 +358,23 @@ public class LevelSelectUI : MonoBehaviour
                 continue;
             }
 
-            // Bestaande progress/unlock-bepaling (niet wijzigen).
-            bool isUnlocked = index <= unlockedLevel;
+            bool isUnlocked = saveManager != null
+                && saveManager.IsLevelUnlocked(
+                    databaseIndex,
+                    levelDatabase,
+                    difficultyProgressionConfig);
 
-            int stars = 0;
-            if (saveManager != null)
-            {
-                stars = saveManager.GetStarsForLevel(index);
-            }
+            int stars = saveManager != null
+                ? saveManager.GetStarsForLevel(databaseIndex)
+                : 0;
 
-            LevelData levelData = levelDatabase.GetLevel(index);
+            LevelData levelData = levelDatabase.GetLevel(databaseIndex);
             LevelObjectiveType objectiveType = levelData != null
                 ? levelData.objectiveType
                 : LevelObjectiveType.Classic;
 
             buttonUI.Setup(
-                index + 1,
+                displayNumber,
                 isUnlocked,
                 stars,
                 filledStarSprite,
@@ -118,12 +394,13 @@ public class LevelSelectUI : MonoBehaviour
 
             if (isUnlocked)
             {
-                button.onClick.AddListener(() => OnLevelButtonClicked(index));
+                int capturedIndex = databaseIndex;
+                button.onClick.AddListener(() => OnLevelButtonClicked(capturedIndex));
             }
         }
 
         Canvas.ForceUpdateCanvases();
-        UpdateScrollContentHeight(levelCount);
+        UpdateScrollContentHeight(visibleCount);
 
         if (scrollRect != null)
         {
@@ -135,15 +412,17 @@ public class LevelSelectUI : MonoBehaviour
 
     private void ClearExistingButtons()
     {
+        if (levelGrid == null)
+        {
+            return;
+        }
+
         for (int i = levelGrid.childCount - 1; i >= 0; i--)
         {
             Destroy(levelGrid.GetChild(i).gameObject);
         }
     }
 
-    /// <summary>
-    /// Zet LevelGrid-hoogte zodat alle rijen (3 kolommen) erin passen.
-    /// </summary>
     private void UpdateScrollContentHeight(int levelCount)
     {
         RectTransform gridRect = levelGrid as RectTransform;
@@ -159,14 +438,18 @@ public class LevelSelectUI : MonoBehaviour
             return;
         }
 
-        int rows = Mathf.CeilToInt(levelCount / (float)GridColumns);
+        int rows = Mathf.Max(1, Mathf.CeilToInt(levelCount / (float)GridColumns));
+        if (levelCount == 0)
+        {
+            rows = 1;
+        }
+
         float height =
             grid.padding.top +
             grid.padding.bottom +
             rows * grid.cellSize.y +
             Mathf.Max(0, rows - 1) * grid.spacing.y;
 
-        // Stretch X (anchors 0-1), groei in hoogte vanaf de top.
         gridRect.anchorMin = new Vector2(0f, 1f);
         gridRect.anchorMax = new Vector2(1f, 1f);
         gridRect.pivot = new Vector2(0.5f, 1f);
@@ -179,14 +462,11 @@ public class LevelSelectUI : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Slaat het gekozen level op en start Gameplay.
-    /// </summary>
-    private void OnLevelButtonClicked(int levelIndex)
+    private void OnLevelButtonClicked(int databaseLevelIndex)
     {
         if (saveManager != null)
         {
-            saveManager.SaveCurrentLevel(levelIndex);
+            saveManager.SaveCurrentLevel(databaseLevelIndex);
         }
 
         SceneTransition.LoadScene("Gameplay");
@@ -195,5 +475,119 @@ public class LevelSelectUI : MonoBehaviour
     public void OnBackButton()
     {
         SceneTransition.LoadScene("MainMenu");
+    }
+
+    private void PlayLockedTabFeedback(Transform tabTransform)
+    {
+        audioManager?.PlayBlocked();
+
+        if (tabTransform == null)
+        {
+            return;
+        }
+
+        StopLockedTabPunchImmediate();
+        lockedTabPunchTarget = tabTransform;
+        lockedTabPunchBaseScale = tabTransform.localScale;
+        lockedTabPunchCoroutine = StartCoroutine(
+            LockedTabPunchRoutine(tabTransform, lockedTabPunchBaseScale)
+        );
+    }
+
+    private IEnumerator LockedTabPunchRoutine(Transform target, Vector3 baseScale)
+    {
+        float duration = Mathf.Max(0.01f, lockedTabPunchDuration);
+        float half = duration * 0.5f;
+        Vector3 peak = baseScale * GetLockedTabPunchPeakMultiplier();
+
+        float t = 0f;
+        while (t < half)
+        {
+            t += Time.unscaledDeltaTime;
+            float u = Mathf.Clamp01(t / half);
+            target.localScale = Vector3.LerpUnclamped(baseScale, peak, u);
+            yield return null;
+        }
+
+        t = 0f;
+        while (t < half)
+        {
+            t += Time.unscaledDeltaTime;
+            float u = Mathf.Clamp01(t / half);
+            target.localScale = Vector3.LerpUnclamped(peak, baseScale, u);
+            yield return null;
+        }
+
+        target.localScale = baseScale;
+        lockedTabPunchCoroutine = null;
+        lockedTabPunchTarget = null;
+
+        // Herstel selected/unselected scale na punch.
+        UpdateSelectedTabVisual();
+    }
+
+    private float GetLockedTabPunchPeakMultiplier()
+    {
+        return Mathf.Max(1.01f, lockedTabPunchScale);
+    }
+
+    private void StopLockedTabPunchImmediate()
+    {
+        if (lockedTabPunchCoroutine != null)
+        {
+            StopCoroutine(lockedTabPunchCoroutine);
+            lockedTabPunchCoroutine = null;
+        }
+
+        if (lockedTabPunchTarget != null)
+        {
+            lockedTabPunchTarget.localScale = lockedTabPunchBaseScale;
+            lockedTabPunchTarget = null;
+        }
+    }
+
+    private bool IsDifficultyUnlockedSafe(LevelDifficulty difficulty)
+    {
+        if (saveManager == null || levelDatabase == null)
+        {
+            return difficulty == LevelDifficulty.Easy;
+        }
+
+        return saveManager.IsDifficultyUnlocked(
+            difficulty,
+            levelDatabase,
+            difficultyProgressionConfig
+        );
+    }
+
+    private int GetCompletedCountSafe(LevelDifficulty difficulty)
+    {
+        if (saveManager == null || levelDatabase == null)
+        {
+            return 0;
+        }
+
+        return saveManager.GetCompletedCount(difficulty, levelDatabase);
+    }
+
+    private int GetMediumRequiredEasy()
+    {
+        return difficultyProgressionConfig != null
+            ? difficultyProgressionConfig.mediumRequiredEasy
+            : DifficultyProgressionConfig.DefaultMediumRequiredEasy;
+    }
+
+    private int GetHardRequiredEasy()
+    {
+        return difficultyProgressionConfig != null
+            ? difficultyProgressionConfig.hardRequiredEasy
+            : DifficultyProgressionConfig.DefaultHardRequiredEasy;
+    }
+
+    private int GetHardRequiredMedium()
+    {
+        return difficultyProgressionConfig != null
+            ? difficultyProgressionConfig.hardRequiredMedium
+            : DifficultyProgressionConfig.DefaultHardRequiredMedium;
     }
 }

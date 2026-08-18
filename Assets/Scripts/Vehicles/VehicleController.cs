@@ -53,6 +53,13 @@ public class VehicleController : MonoBehaviour
     [Tooltip("Alleen zichtbaar voor de doelauto (canExitRight).")]
     [SerializeField] private GameObject targetIndicator;
 
+    [Tooltip("SpriteRenderer op TargetIndicator. Leeg = auto-resolve.")]
+    [SerializeField] private SpriteRenderer targetIndicatorRenderer;
+
+    [Header("Target Indicator Rendering")]
+    [Tooltip("sortingOrder = hoogste vehicle CarSprite-order + deze offset.")]
+    [SerializeField] private int targetIndicatorSortingOrderOffset = 10;
+
     [Tooltip("Hint-pijl child (standaard inactive). Transform.Find vindt dit NIET als inactive.")]
     [SerializeField] private GameObject hintDirection;
 
@@ -178,6 +185,8 @@ public class VehicleController : MonoBehaviour
     // Prefab-scale van HintDirection (niet wijzigen tijdens show/hide).
     private Vector3 hintDirectionBaseScale = Vector3.one;
 
+    private const int TargetIndicatorSortingFallbackOrder = 100;
+
     private void Awake()
     {
         // Root mag NOOIT length-scaling krijgen — footprint zit in de collider.
@@ -255,6 +264,11 @@ public class VehicleController : MonoBehaviour
             }
         }
 
+        if (targetIndicatorRenderer == null && targetIndicator != null)
+        {
+            targetIndicatorRenderer = targetIndicator.GetComponent<SpriteRenderer>();
+        }
+
         if (hintDirection == null && visualTransform != null)
         {
             Transform hint = FindChildIncludingInactive(visualTransform, "HintDirection");
@@ -324,6 +338,12 @@ public class VehicleController : MonoBehaviour
         if (targetIndicator != null)
         {
             targetIndicator.SetActive(canExitRight);
+            if (canExitRight)
+            {
+                // Voorlopig boven eigen CarSprite; LevelManager refresht na alle spawns
+                // met de hoogste vehicle-order in het level.
+                ApplyTargetIndicatorSorting();
+            }
         }
 
         ApplyTargetSpriteHighlight(canExitRight);
@@ -342,6 +362,49 @@ public class VehicleController : MonoBehaviour
         UpdateVisualSize();
 
         Initialize();
+    }
+
+    /// <summary>
+    /// Zet TargetIndicator sorting boven vehicle sprites.
+    /// Zelfde Sorting Layer als CarSprite; order = baseOrder + offset.
+    /// baseOrder: expliciete highest vehicle-order, anders eigen CarSprite, anders fallback.
+    /// Wijzigt GEEN vehicle sorting.
+    /// </summary>
+    public void ApplyTargetIndicatorSorting(int highestVehicleSortingOrder = int.MinValue)
+    {
+        if (targetIndicatorRenderer == null && targetIndicator != null)
+        {
+            targetIndicatorRenderer = targetIndicator.GetComponent<SpriteRenderer>();
+        }
+
+        if (targetIndicatorRenderer == null ||
+            targetIndicator == null ||
+            !targetIndicator.activeSelf)
+        {
+            return;
+        }
+
+        int baseOrder;
+        if (highestVehicleSortingOrder != int.MinValue)
+        {
+            baseOrder = highestVehicleSortingOrder;
+        }
+        else if (visualSpriteRenderer != null)
+        {
+            baseOrder = visualSpriteRenderer.sortingOrder;
+        }
+        else
+        {
+            baseOrder = TargetIndicatorSortingFallbackOrder;
+        }
+
+        if (visualSpriteRenderer != null)
+        {
+            targetIndicatorRenderer.sortingLayerID = visualSpriteRenderer.sortingLayerID;
+        }
+
+        targetIndicatorRenderer.sortingOrder =
+            baseOrder + Mathf.Max(0, targetIndicatorSortingOrderOffset);
     }
 
     /// <summary>

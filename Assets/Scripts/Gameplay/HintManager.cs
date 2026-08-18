@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
@@ -33,6 +34,14 @@ public class HintManager : MonoBehaviour
 
     [Tooltip("Ruimere search-limiet dan level-generation — mid-game 8x8 states.")]
     [SerializeField] private int hintSolverMaxStates = 200000;
+
+    public int HintCoinCost => hintCost;
+
+    /// <summary>
+    /// Fired wanneer UseHint faalt door onvoldoende coins (bestaande feedback blijft).
+    /// Feature tutorial kan hierna WatchAd-pointer tonen.
+    /// </summary>
+    public event Action OnInsufficientCoinsForHint;
 
     [Header("Status Message")]
     [SerializeField] private TextMeshProUGUI hintStatusText;
@@ -152,6 +161,7 @@ public class HintManager : MonoBehaviour
             Debug.Log("Not enough coins");
             audioManager?.PlayInsufficientCoins();
             ShowHintStatus(notEnoughCoinsMessage);
+            OnInsufficientCoinsForHint?.Invoke();
             return;
         }
 

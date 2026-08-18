@@ -34,15 +34,27 @@ public class GameManager : MonoBehaviour
     public bool IsLevelFailed => levelFailed;
     public bool IsTargetExitInProgress => targetExitInProgress;
     public bool IsSpecialMissionIntroPlaying => specialMissionIntroBlocked;
+    public bool IsObjectiveTutorialPlaying => objectiveTutorialBlocked;
+    public bool IsFeatureTutorialPlaying => featureTutorialBlocked;
 
     /// <summary>
-    /// False bij completed/failed/special-intro — blokkeert nieuwe vehicle-input.
+    /// False bij completed/failed/special-intro/objective/feature tutorial — blokkeert vehicle-input.
     /// </summary>
     public bool CanAcceptVehicleInput =>
-        !levelCompleted && !levelFailed && !specialMissionIntroBlocked;
+        !levelCompleted &&
+        !levelFailed &&
+        !specialMissionIntroBlocked &&
+        !objectiveTutorialBlocked &&
+        !featureTutorialBlocked;
 
     // Special mission label-intro: tijdelijke input-gate (naast fail/complete).
     private bool specialMissionIntroBlocked;
+
+    // First-time objective tutorial: aparte gate naast special intro.
+    private bool objectiveTutorialBlocked;
+
+    // Feature tutorial (Undo/Hint/Coins/Skins): aparte gate naast objective tutorial.
+    private bool featureTutorialBlocked;
 
     /// <summary>
     /// Coin-beloning bij level completion (één bron van waarheid voor UI + uitbetaling).
@@ -56,8 +68,54 @@ public class GameManager : MonoBehaviour
 
     /// <summary>
     /// Coins verdiend bij de laatste CompleteLevel (voor WinPanel-animatie).
+    /// 0 als geen 3★ of reward al eerder geclaimd.
     /// </summary>
     public int LastEarnedCoins { get; private set; }
+
+    /// <summary>
+    /// True als CompleteLevel zojuist de eenmalige 3★ coin reward heeft uitgekeerd.
+    /// Blijft true tot de volgende CompleteLevel (niet gereset vóór win-sequence).
+    /// </summary>
+    public bool LastThreeStarCoinRewardGranted { get; private set; }
+
+    /// <summary>
+    /// Consumable trigger voor Coins feature tutorial (tot queue/consume).
+    /// Los van LastThreeStarCoinRewardGranted zodat UI-timing niet fragiel is.
+    /// </summary>
+    private bool coinsFeatureTutorialTriggerPending;
+
+    public bool HasPendingCoinsFeatureTutorialTrigger => coinsFeatureTutorialTriggerPending;
+
+    /// <summary>
+    /// True als het huidige level bij 3★ nog een coin reward zou geven.
+    /// Voor latere WinPanel-copy ("GET 3 STARS TO EARN COINS").
+    /// </summary>
+    public bool IsThreeStarCoinRewardAvailableForCurrentLevel
+    {
+        get
+        {
+            if (saveManager == null || levelManager == null)
+            {
+                return false;
+            }
+
+            return saveManager.IsThreeStarCoinRewardAvailable(levelManager.CurrentLevelIndex);
+        }
+    }
+
+    /// <summary>
+    /// Consumeert de pending Coins-tutorial trigger (één keer).
+    /// </summary>
+    public bool TryConsumeCoinsFeatureTutorialTrigger()
+    {
+        if (!coinsFeatureTutorialTriggerPending)
+        {
+            return false;
+        }
+
+        coinsFeatureTutorialTriggerPending = false;
+        return true;
+    }
 
     private void Awake()
     {
@@ -243,13 +301,60 @@ public class GameManager : MonoBehaviour
             ". Stars = " + LastEarnedStars
         );
 
-        // Sterren opslaan: één keer per level (beschermd door levelCompleted).
+        LastThreeStarCoinRewardGranted = false;
+        LastEarnedCoins = 0;
+        coinsFeatureTutorialTriggerPending = false;
+
+        FeatureTutorialController.BeginCoinsFtSession();
+
+        // Reward VOORDAT stars worden opgeslagen — anders kan one-shot migration
+        // net-opgeslagen 3★ als "legacy claimed" markeren zonder payout.
         if (saveManager != null && levelManager != null)
         {
             int completedIndex = levelManager.CurrentLevelIndex;
+            int previousBestStars = saveManager.GetStarsForLevel(completedIndex);
+            bool claimedBefore = saveManager.HasClaimedThreeStarCoinReward(completedIndex);
+            bool eligible = LastEarnedStars == 3 && !claimedBefore;
+
+            if (eligible)
+            {
+                LastEarnedCoins = LevelCompleteCoinReward;
+                saveManager.MarkThreeStarCoinRewardClaimed(completedIndex);
+                LastThreeStarCoinRewardGranted = true;
+                coinsFeatureTutorialTriggerPending = true;
+
+                if (coinManager != null)
+                {
+                    coinManager.AddCoins(LastEarnedCoins);
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                    Debug.Log(
+                        "[CoinsFT]\n" +
+                        "Stage=CoinsAdded\n" +
+                        "Session=" + FeatureTutorialController.CoinsFtSessionId + "\n" +
+                        "Amount=" + LastEarnedCoins + "\n" +
+                        "BalanceAfter=" + coinManager.GetCoins()
+                    );
+#endif
+                }
+            }
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            Debug.Log(
+                "[CoinsFT]\n" +
+                "Stage=CompleteLevel\n" +
+                "Session=" + FeatureTutorialController.CoinsFtSessionId + "\n" +
+                "LevelIndex=" + completedIndex + "\n" +
+                "ResultStars=" + LastEarnedStars + "\n" +
+                "PreviousBest=" + previousBestStars + "\n" +
+                "ClaimedBefore=" + claimedBefore + "\n" +
+                "RewardGranted=" + LastThreeStarCoinRewardGranted + "\n" +
+                "LastEarnedCoins=" + LastEarnedCoins + "\n" +
+                "LastThreeStarCoinRewardGranted=" + LastThreeStarCoinRewardGranted
+            );
+#endif
+
             saveManager.SaveStarsForLevel(completedIndex, LastEarnedStars);
 
-            // Unlock volgende level meteen bij completion (niet pas bij Next Level).
             int nextUnlock = completedIndex + 1;
             int maxIndex = Mathf.Max(0, levelManager.LevelCount - 1);
             nextUnlock = Mathf.Clamp(nextUnlock, 0, maxIndex);
@@ -265,14 +370,6 @@ public class GameManager : MonoBehaviour
 #if UNITY_ANDROID || UNITY_IOS
         Handheld.Vibrate();
 #endif
-
-        // Beloning: één keer per level (beschermd door levelCompleted).
-        // Coin-SFX speelt bij aankomst van de WinPanel reward-animatie (geen dubbel geluid).
-        LastEarnedCoins = LevelCompleteCoinReward;
-        if (coinManager != null)
-        {
-            coinManager.AddCoins(LastEarnedCoins);
-        }
 
         audioManager?.PlayWin();
 
@@ -370,6 +467,24 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
+    /// First-time objective tutorial: blokkeer/deblokkeer vehicle-input.
+    /// Aparte gate naast special intro.
+    /// </summary>
+    public void SetObjectiveTutorialBlocked(bool blocked)
+    {
+        objectiveTutorialBlocked = blocked;
+    }
+
+    /// <summary>
+    /// Feature tutorial (Undo/Hint/Coins/Skins): blokkeer/deblokkeer vehicle-input.
+    /// Aparte gate naast objective tutorial / special intro.
+    /// </summary>
+    public void SetFeatureTutorialBlocked(bool blocked)
+    {
+        featureTutorialBlocked = blocked;
+    }
+
+    /// <summary>
     /// Reset de win-vlag zodat een nieuw/herstart level opnieuw gewonnen kan worden.
     /// Wordt aangeroepen bij level load/restart via VehicleController.Setup.
     /// </summary>
@@ -379,5 +494,7 @@ public class GameManager : MonoBehaviour
         levelFailed = false;
         targetExitInProgress = false;
         specialMissionIntroBlocked = false;
+        objectiveTutorialBlocked = false;
+        featureTutorialBlocked = false;
     }
 }

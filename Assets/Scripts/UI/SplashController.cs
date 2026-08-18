@@ -3,12 +3,13 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// Eenvoudige branded splash: fade/scale in → hold → SceneTransition naar MainMenu.
-/// Eigen fade-out is verwijderd om dubbele fade met SceneTransition te voorkomen.
+/// Branded splash: fade/scale in → hold → SceneTransition.
+/// First-launch: Gameplay Level 1. Returning: MainMenu.
 /// </summary>
 public class SplashController : MonoBehaviour
 {
     private const string MainMenuSceneName = "MainMenu";
+    private const string GameplaySceneName = "Gameplay";
 
     [Header("References")]
     [SerializeField] private CanvasGroup canvasGroup;
@@ -24,6 +25,7 @@ public class SplashController : MonoBehaviour
     [SerializeField] private float endScale = 1.00f;
 
     [Header("Scene")]
+    [Tooltip("Returning players. First-launch gaat naar Gameplay (negeert dit veld).")]
     [SerializeField] private string nextSceneName = MainMenuSceneName;
 
     private bool hasStartedLoad;
@@ -92,8 +94,9 @@ public class SplashController : MonoBehaviour
         // Hold
         yield return new WaitForSecondsRealtime(Mathf.Max(0f, holdDuration));
 
-        // SceneTransition doet fade naar donker → MainMenu → fade in.
-        LoadMainMenuOnce();
+        // First-launch: Splash → Gameplay (geen MainMenu-flash).
+        // Returning: Splash → MainMenu.
+        LoadNextSceneOnce();
     }
 
     private IEnumerator Animate(float duration, System.Action<float> onProgress)
@@ -117,7 +120,7 @@ public class SplashController : MonoBehaviour
         return t * t * (3f - 2f * t);
     }
 
-    private void LoadMainMenuOnce()
+    private void LoadNextSceneOnce()
     {
         if (hasStartedLoad)
         {
@@ -125,6 +128,14 @@ public class SplashController : MonoBehaviour
         }
 
         hasStartedLoad = true;
+
+        if (SaveManager.ShouldRouteFirstLaunchToGameplay())
+        {
+            // Zelfde contract als LevelSelect button index 0 = LEVEL 1.
+            SaveManager.PrepareFirstLaunchGameplayLevelStatic();
+            SceneTransition.LoadScene(GameplaySceneName);
+            return;
+        }
 
         string sceneName = string.IsNullOrEmpty(nextSceneName)
             ? MainMenuSceneName

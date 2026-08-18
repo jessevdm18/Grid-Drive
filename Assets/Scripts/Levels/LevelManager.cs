@@ -23,6 +23,9 @@ public class LevelManager : MonoBehaviour
 
     [SerializeField] private SaveManager saveManager;
 
+    [Tooltip("Optioneel. Null = built-in unlock defaults (10 Easy / 10 Easy + 10 Medium).")]
+    [SerializeField] private DifficultyProgressionConfig difficultyProgressionConfig;
+
     [SerializeField] private GameplayUI gameplayUI;
 
     [Tooltip("Onder dit Transform komen alle gespawnde voertuigen.")]
@@ -110,6 +113,17 @@ public class LevelManager : MonoBehaviour
         }
 
         LoadCurrentLevel();
+
+        // First-launch routing is klaar zodra Gameplay level succesvol start.
+        // Classic tutorial blijft eigen seen-state houden.
+        if (saveManager != null)
+        {
+            saveManager.MarkFirstLaunchCompleted();
+        }
+        else
+        {
+            SaveManager.MarkFirstLaunchCompletedStatic();
+        }
     }
 
     /// <summary>
@@ -122,8 +136,8 @@ public class LevelManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Laadt het volgende level. Doet niets als je al op het laatste level bent.
-    /// Alleen hier mag de index omhoog en progressie worden opgeslagen.
+    /// Laadt het volgende level binnen dezelfde difficulty.
+    /// Geen auto-switch naar Medium/Hard. Geen volgend same-difficulty → LevelSelect.
     /// </summary>
     public void LoadNextLevel()
     {
@@ -133,14 +147,36 @@ public class LevelManager : MonoBehaviour
             return;
         }
 
-        // Stop bij het laatste level — voorkom index-out-of-range.
-        if (currentLevelIndex >= levelDatabase.LevelCount - 1)
+        int nextIndex = levelDatabase.FindNextLevelIndexSameDifficulty(currentLevelIndex);
+        if (nextIndex < 0)
         {
-            Debug.Log("LevelManager: dit is het laatste level.");
+            Debug.Log(
+                "LevelManager: geen volgend level binnen difficulty " +
+                (CurrentLevelData != null
+                    ? CurrentLevelData.difficulty.ToString()
+                    : "?") +
+                " — terug naar LevelSelect."
+            );
+            SceneTransition.LoadScene("LevelSelect");
             return;
         }
 
-        currentLevelIndex++;
+        // Alleen laden als difficulty unlocked + sequential unlock binnen tier.
+        if (saveManager != null &&
+            !saveManager.IsLevelUnlocked(
+                nextIndex,
+                levelDatabase,
+                difficultyProgressionConfig))
+        {
+            Debug.Log(
+                "LevelManager: next same-difficulty index " + nextIndex +
+                " is locked — terug naar LevelSelect."
+            );
+            SceneTransition.LoadScene("LevelSelect");
+            return;
+        }
+
+        currentLevelIndex = nextIndex;
 
         Debug.Log("Loading next level index: " + currentLevelIndex);
 
@@ -267,6 +303,9 @@ public class LevelManager : MonoBehaviour
             }
         }
 
+        // TargetIndicator boven alle vehicle CarSprites (één keer na spawn).
+        RefreshTargetIndicatorSorting();
+
         Debug.Log(
             "Level " + levelData.levelNumber +
             " (index " + currentLevelIndex + ") geladen met " +
@@ -285,6 +324,48 @@ public class LevelManager : MonoBehaviour
 
         // Na spawn: Classic = no-op, TimedAmbulance = wacht op fade → start timer.
         levelObjectiveController?.BeginForLevel(levelData);
+    }
+
+    /// <summary>
+    /// Zet actieve TargetIndicators boven de hoogste CarSprite sortingOrder in het level.
+    /// Geen FindObjects — gebruikt ActiveVehicles. Roept geen vehicle sorting om.
+    /// </summary>
+    private void RefreshTargetIndicatorSorting()
+    {
+        int highestVehicleOrder = 0;
+        bool foundVehicleSprite = false;
+
+        for (int i = 0; i < activeVehicles.Count; i++)
+        {
+            VehicleController vehicle = activeVehicles[i];
+            if (vehicle == null)
+            {
+                continue;
+            }
+
+            SpriteRenderer body = vehicle.VisualSpriteRenderer;
+            if (body == null)
+            {
+                continue;
+            }
+
+            if (!foundVehicleSprite || body.sortingOrder > highestVehicleOrder)
+            {
+                highestVehicleOrder = body.sortingOrder;
+                foundVehicleSprite = true;
+            }
+        }
+
+        for (int i = 0; i < activeVehicles.Count; i++)
+        {
+            VehicleController vehicle = activeVehicles[i];
+            if (vehicle == null)
+            {
+                continue;
+            }
+
+            vehicle.ApplyTargetIndicatorSorting(highestVehicleOrder);
+        }
     }
 
     /// <summary>

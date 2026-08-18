@@ -10,6 +10,10 @@ public class GameplayUI : MonoBehaviour
     [SerializeField] private CoinManager coinManager;
     [SerializeField] private TextMeshProUGUI coinText;
 
+    /// <summary>Bestaande coin counter (spotlight target voor Coins feature tutorial).</summary>
+    public RectTransform CoinCounterRect =>
+        coinText != null ? coinText.rectTransform : null;
+
     [SerializeField] private LevelManager levelManager;
 
     [Tooltip("LevelCard/ValueText — alleen het levelnummer, bijv. \"8\".")]

@@ -15,7 +15,7 @@ MonoBehaviour:
   themeId: neon_city
   displayName: Neon CIty
   baseBackground: {fileID: 21300000, guid: 00a9c3c1f7ced4642a86e15dc519c077, type: 3}
-  backgroundDimAlpha: 0.408
+  backgroundDimAlpha: 0.754
   animatedLayers:
   - sprite: {fileID: 0}
     animationMode: 1

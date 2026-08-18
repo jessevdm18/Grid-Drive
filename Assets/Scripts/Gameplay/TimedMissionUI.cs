@@ -162,15 +162,8 @@ public class TimedMissionUI : MonoBehaviour
         failurePresentationPlayed = false;
         countdownAudioActive = true;
 
-        if (audioManager == null)
-        {
-            audioManager = FindAnyObjectByType<AudioManager>();
-        }
-
-        if (audioManager != null)
-        {
-            audioManager.PlayAmbulanceMissionStart();
-        }
+        // Ambulance mission-start SFX speelt bij Special Mission Intro (niet hier),
+        // zodat timer-start en audio ontkoppeld blijven.
 
         // Seed countdown vanaf huidige remaining (bij limiet ≤ 3 meteen juiste beep).
         if (objectiveController != null)

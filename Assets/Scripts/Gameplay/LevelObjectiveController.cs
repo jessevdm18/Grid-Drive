@@ -94,6 +94,8 @@ public class LevelObjectiveController : MonoBehaviour
     public bool IsLimitedVehicleLocked => limitedVehicleLocked;
     public bool IsWaitingForSpecialIntro => waitingForSpecialIntro;
     public int SpecialIntroSessionId => specialIntroSessionId;
+    public bool IsWaitingForObjectiveTutorial => waitingForObjectiveTutorial;
+    public int ObjectiveTutorialSessionId => objectiveTutorialSessionId;
 
     public event Action<float> OnTimerChanged;
     public event Action OnTimedMissionFailed;
@@ -146,6 +148,10 @@ public class LevelObjectiveController : MonoBehaviour
     private bool waitingForSpecialIntro;
     private int specialIntroSessionId;
 
+    // First-time objective tutorial gate: Timed wacht hierop na special intro.
+    private bool waitingForObjectiveTutorial;
+    private int objectiveTutorialSessionId;
+
     private void Awake()
     {
         if (levelManager == null)
@@ -171,6 +177,7 @@ public class LevelObjectiveController : MonoBehaviour
         ClearFragileCargoState();
         ClearLimitedVehicleState();
         ClearSpecialIntroGate();
+        ClearObjectiveTutorialGate();
 
         isTimedLevel = false;
         timeLimit = 0f;
@@ -185,12 +192,14 @@ public class LevelObjectiveController : MonoBehaviour
             OnTargetsRemainingChanged?.Invoke(0, 0);
             OnCargoMovesRemainingChanged?.Invoke(0, 0);
             OnLimitedVehicleMovesRemainingChanged?.Invoke(0, 0);
+            MaybeBeginObjectiveTutorialGate(LevelObjectiveType.Classic);
             return;
         }
 
         if (levelData.objectiveType == LevelObjectiveType.TimedAmbulance)
         {
             BeginSpecialIntroGate();
+            MaybeBeginObjectiveTutorialGate(LevelObjectiveType.TimedAmbulance);
             isTimedLevel = true;
             timeLimit = Mathf.Max(0f, levelData.timeLimitSeconds);
             remainingTime = timeLimit;
@@ -226,6 +235,7 @@ public class LevelObjectiveController : MonoBehaviour
             movesUsed = 0;
             movesRemaining = moveLimit;
             BeginSpecialIntroGate();
+            MaybeBeginObjectiveTutorialGate(LevelObjectiveType.MoveLimit);
             state = RuntimeState.Running;
             OnMovesRemainingChanged?.Invoke(movesRemaining);
             return;
@@ -260,6 +270,7 @@ public class LevelObjectiveController : MonoBehaviour
             targetsRescued = 0;
             targetsRemaining = targetsTotal;
             BeginSpecialIntroGate();
+            MaybeBeginObjectiveTutorialGate(LevelObjectiveType.MultiTargetRescue);
             state = RuntimeState.Running;
             OnTargetsRemainingChanged?.Invoke(targetsRemaining, targetsTotal);
             return;
@@ -279,6 +290,7 @@ public class LevelObjectiveController : MonoBehaviour
             isNoTouchChallengeLevel = true;
             noTouchViolated = false;
             BeginSpecialIntroGate();
+            MaybeBeginObjectiveTutorialGate(LevelObjectiveType.NoTouchChallenge);
             state = RuntimeState.Running;
             return;
         }
@@ -311,6 +323,7 @@ public class LevelObjectiveController : MonoBehaviour
             cargoMovesRemaining = cargoMoveLimit;
             pendingFragileCargoFailCheck = false;
             BeginSpecialIntroGate();
+            MaybeBeginObjectiveTutorialGate(LevelObjectiveType.FragileCargo);
             state = RuntimeState.Running;
             OnCargoMovesRemainingChanged?.Invoke(cargoMovesRemaining, cargoMoveLimit);
             return;
@@ -357,6 +370,7 @@ public class LevelObjectiveController : MonoBehaviour
             }
 
             BeginSpecialIntroGate();
+            MaybeBeginObjectiveTutorialGate(LevelObjectiveType.LimitedVehicle);
             state = RuntimeState.Running;
             OnLimitedVehicleMovesRemainingChanged?.Invoke(
                 limitedVehicleMovesRemaining,
@@ -387,6 +401,7 @@ public class LevelObjectiveController : MonoBehaviour
         pendingMoveLimitFailCheck = false;
         pendingFragileCargoFailCheck = false;
         ClearSpecialIntroGate();
+        ClearObjectiveTutorialGate();
         state = RuntimeState.Completed;
     }
 
@@ -662,8 +677,14 @@ public class LevelObjectiveController : MonoBehaviour
             yield return null;
         }
 
-        // 2) Special mission intro klaar (unscaled) — timer verliest geen tijd.
+        // 2) Special mission intro klaar (unscaled).
         while (waitingForSpecialIntro)
+        {
+            yield return null;
+        }
+
+        // 3) First-time tutorial klaar (of al gezien → gate nooit gezet).
+        while (waitingForObjectiveTutorial)
         {
             yield return null;
         }
@@ -691,8 +712,8 @@ public class LevelObjectiveController : MonoBehaviour
     }
 
     /// <summary>
-    /// Presentation: special mission intro is klaar — Timed mag Running worden;
-    /// vehicle-input gate gaat open.
+    /// Presentation: special mission intro is klaar.
+    /// Tutorial-gate (indien actief) houdt input/timer nog geblokkeerd.
     /// </summary>
     public void NotifySpecialMissionIntroCompleted()
     {
@@ -702,6 +723,19 @@ public class LevelObjectiveController : MonoBehaviour
         }
 
         ClearSpecialIntroGate();
+    }
+
+    /// <summary>
+    /// Presentation: first-time tutorial dismissed (Got It) of al gezien.
+    /// </summary>
+    public void NotifyObjectiveTutorialCompleted()
+    {
+        if (!waitingForObjectiveTutorial)
+        {
+            return;
+        }
+
+        ClearObjectiveTutorialGate();
     }
 
     private void BeginSpecialIntroGate()
@@ -722,6 +756,37 @@ public class LevelObjectiveController : MonoBehaviour
         if (gameManager != null)
         {
             gameManager.SetSpecialMissionIntroBlocked(false);
+        }
+    }
+
+    private void MaybeBeginObjectiveTutorialGate(LevelObjectiveType objectiveType)
+    {
+        if (ObjectiveTutorialPrefs.HasSeenTutorial(objectiveType))
+        {
+            return;
+        }
+
+        BeginObjectiveTutorialGate();
+    }
+
+    private void BeginObjectiveTutorialGate()
+    {
+        waitingForObjectiveTutorial = true;
+        objectiveTutorialSessionId++;
+
+        if (gameManager != null)
+        {
+            gameManager.SetObjectiveTutorialBlocked(true);
+        }
+    }
+
+    private void ClearObjectiveTutorialGate()
+    {
+        waitingForObjectiveTutorial = false;
+
+        if (gameManager != null)
+        {
+            gameManager.SetObjectiveTutorialBlocked(false);
         }
     }
 

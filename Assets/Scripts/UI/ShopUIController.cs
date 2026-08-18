@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -21,6 +22,22 @@ public class ShopUIController : MonoBehaviour
     [SerializeField] private Button closeButton;
     [SerializeField] private Button coinsTabButton;
     [SerializeField] private Button skinsTabButton;
+
+    /// <summary>Bestaande Shop-knop (spotlight voor Skins feature tutorial).</summary>
+    public RectTransform ShopButtonRect =>
+        shopButton != null ? shopButton.transform as RectTransform : null;
+
+    /// <summary>Shop coin-balance tekst (optionele secondary spotlight).</summary>
+    public RectTransform CoinBalanceRect =>
+        coinBalanceText != null ? coinBalanceText.rectTransform : null;
+
+    public bool IsShopOpen => shopPanel != null && shopPanel.activeSelf;
+
+    /// <summary>Fired nadat shopPanel zichtbaar is gezet.</summary>
+    public event Action OnShopOpened;
+
+    /// <summary>Fired nadat shopPanel gesloten is.</summary>
+    public event Action OnShopClosed;
 
     [Header("Tab visuals")]
     [SerializeField] private Image coinsTabImage;
@@ -94,6 +111,7 @@ public class ShopUIController : MonoBehaviour
         audioManager?.PlayPanelOpen();
         ShowCoinsTab();
         RefreshCoinBalance();
+        OnShopOpened?.Invoke();
     }
 
     public void CloseShop()
@@ -105,6 +123,7 @@ public class ShopUIController : MonoBehaviour
 
         shopPanel.SetActive(false);
         audioManager?.PlayPanelClose();
+        OnShopClosed?.Invoke();
     }
 
     public void ShowCoinsTab()
@@ -136,6 +155,52 @@ public class ShopUIController : MonoBehaviour
 
         SetTabVisual(coinsActive: false);
         RefreshSkinCards();
+    }
+
+    /// <summary>
+    /// Zoekt een unowned skin-card voor tutorial spotlight.
+    /// Prefer Buy (affordable), anders unowned Unavailable. Null als geen candidate.
+    /// </summary>
+    public RectTransform FindBuyableSkinSpotlightTarget()
+    {
+        SkinShopCardUI[] cards = FindObjectsByType<SkinShopCardUI>(
+            FindObjectsInactive.Exclude
+        );
+
+        RectTransform affordable = null;
+        RectTransform anyUnowned = null;
+
+        for (int i = 0; i < cards.Length; i++)
+        {
+            SkinShopCardUI card = cards[i];
+            if (card == null || !card.isActiveAndEnabled)
+            {
+                continue;
+            }
+
+            if (!card.IsUnowned)
+            {
+                continue;
+            }
+
+            RectTransform rect = card.SpotlightRect;
+            if (rect == null)
+            {
+                continue;
+            }
+
+            if (card.IsBuyableAffordable && affordable == null)
+            {
+                affordable = rect;
+            }
+
+            if (anyUnowned == null)
+            {
+                anyUnowned = rect;
+            }
+        }
+
+        return affordable != null ? affordable : anyUnowned;
     }
 
     /// <summary>
