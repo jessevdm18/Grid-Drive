@@ -1,0 +1,5849 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36db9cc6fe0217646a18a965a8462c80, type: 3}
+  m_Name: V1CurationState
+  m_EditorClassIdentifier: Assembly-CSharp-Editor::V1CurationState
+  entries:
+  - level: {fileID: 11400000, guid: 03517f1b2c3b6a045b9e42c3c44f1d02, type: 2}
+    assetGuid: 03517f1b2c3b6a045b9e42c3c44f1d02
+    status: 4
+    assignedDifficulty: 0
+    baseQuality: 0.7222
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 1
+    effectiveScore: 0.17219996
+    needsReview: 1
+    reviewReason: high similarity 1.00
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 559aa5faa25da874a87571377593d99a, type: 2}
+    assetGuid: 559aa5faa25da874a87571377593d99a
+    status: 4
+    assignedDifficulty: 0
+    baseQuality: 0.7967714
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 1
+    effectiveScore: 0.2467714
+    needsReview: 1
+    reviewReason: high similarity 1.00
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 5173a4437a17e024ead37b49ded84707, type: 2}
+    assetGuid: 5173a4437a17e024ead37b49ded84707
+    status: 4
+    assignedDifficulty: 0
+    baseQuality: 0.8166
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 1
+    effectiveScore: 0.2666
+    needsReview: 1
+    reviewReason: high similarity 1.00
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: ab2c4a9d8c6a6a84589eb567c0b01b29, type: 2}
+    assetGuid: ab2c4a9d8c6a6a84589eb567c0b01b29
+    status: 4
+    assignedDifficulty: 0
+    baseQuality: 0.834675
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 1
+    effectiveScore: 0.284675
+    needsReview: 1
+    reviewReason: high similarity 1.00
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: d1295969053e5cf4ca5919f0c3b299e9, type: 2}
+    assetGuid: d1295969053e5cf4ca5919f0c3b299e9
+    status: 4
+    assignedDifficulty: 0
+    baseQuality: 0.72220004
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 1
+    effectiveScore: 0.17220002
+    needsReview: 1
+    reviewReason: high similarity 1.00
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 176f8aa451a5f7441b757e64bcd796ba, type: 2}
+    assetGuid: 176f8aa451a5f7441b757e64bcd796ba
+    status: 4
+    assignedDifficulty: 0
+    baseQuality: 0.7934
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 1
+    effectiveScore: 0.24339998
+    needsReview: 1
+    reviewReason: high similarity 1.00
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 62e2683c9cb553749a244b7c32a9c362, type: 2}
+    assetGuid: 62e2683c9cb553749a244b7c32a9c362
+    status: 4
+    assignedDifficulty: 0
+    baseQuality: 0.84073335
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 1
+    effectiveScore: 0.29073334
+    needsReview: 1
+    reviewReason: high similarity 1.00
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: f5d9ee175477d8041a08d19d85df8575, type: 2}
+    assetGuid: f5d9ee175477d8041a08d19d85df8575
+    status: 4
+    assignedDifficulty: 0
+    baseQuality: 0.7727143
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 1
+    effectiveScore: 0.2227143
+    needsReview: 1
+    reviewReason: high similarity 1.00
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 66b377ab3ed5b9949be5bcb4d0bc656d, type: 2}
+    assetGuid: 66b377ab3ed5b9949be5bcb4d0bc656d
+    status: 4
+    assignedDifficulty: 0
+    baseQuality: 0.75703335
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 1
+    effectiveScore: 0.20703334
+    needsReview: 1
+    reviewReason: high similarity 1.00
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 9df84125be559a649988981e164177e6, type: 2}
+    assetGuid: 9df84125be559a649988981e164177e6
+    status: 4
+    assignedDifficulty: 0
+    baseQuality: 0.80194545
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 1
+    effectiveScore: 0.25194544
+    needsReview: 1
+    reviewReason: high similarity 1.00
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: e5ac43dc1253d36458e9da05f2ae84a6, type: 2}
+    assetGuid: e5ac43dc1253d36458e9da05f2ae84a6
+    status: 4
+    assignedDifficulty: 0
+    baseQuality: 0.72477144
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 1
+    effectiveScore: 0.17477143
+    needsReview: 1
+    reviewReason: high similarity 1.00
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 4593deacbaf7b9044815cca4e5ccf833, type: 2}
+    assetGuid: 4593deacbaf7b9044815cca4e5ccf833
+    status: 4
+    assignedDifficulty: 0
+    baseQuality: 0.7641
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 1
+    effectiveScore: 0.2141
+    needsReview: 1
+    reviewReason: high similarity 1.00
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 34be60479f276124aa811cec8d5159fb, type: 2}
+    assetGuid: 34be60479f276124aa811cec8d5159fb
+    status: 4
+    assignedDifficulty: 1
+    baseQuality: 0.81177145
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 1
+    effectiveScore: 0.26177144
+    needsReview: 1
+    reviewReason: high similarity 1.00
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 6f3cca8c16ef107418c832b73c526028, type: 2}
+    assetGuid: 6f3cca8c16ef107418c832b73c526028
+    status: 4
+    assignedDifficulty: 1
+    baseQuality: 0.84290004
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 1
+    effectiveScore: 0.29290003
+    needsReview: 1
+    reviewReason: high similarity 1.00
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: e1594ba22ef9da64391c24ec47972a24, type: 2}
+    assetGuid: e1594ba22ef9da64391c24ec47972a24
+    status: 4
+    assignedDifficulty: 1
+    baseQuality: 0.87313336
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 1
+    effectiveScore: 0.32313335
+    needsReview: 1
+    reviewReason: high similarity 1.00
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: d33a652e7f2577f4894b5ad652f19d99, type: 2}
+    assetGuid: d33a652e7f2577f4894b5ad652f19d99
+    status: 4
+    assignedDifficulty: 1
+    baseQuality: 0.81200004
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 1
+    effectiveScore: 0.26200002
+    needsReview: 1
+    reviewReason: high similarity 1.00
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: f48f681cedeea4945ab26eb981589503, type: 2}
+    assetGuid: f48f681cedeea4945ab26eb981589503
+    status: 4
+    assignedDifficulty: 1
+    baseQuality: 0.8706
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 1
+    effectiveScore: 0.32059997
+    needsReview: 1
+    reviewReason: high similarity 1.00
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 924ed7561c271414f9e4de355df2796e, type: 2}
+    assetGuid: 924ed7561c271414f9e4de355df2796e
+    status: 4
+    assignedDifficulty: 1
+    baseQuality: 0.81717145
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 1
+    effectiveScore: 0.26717144
+    needsReview: 1
+    reviewReason: high similarity 1.00
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: f36313649f2d2ef44b6b1658df451a84, type: 2}
+    assetGuid: f36313649f2d2ef44b6b1658df451a84
+    status: 4
+    assignedDifficulty: 1
+    baseQuality: 0.8128
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 1
+    effectiveScore: 0.26279998
+    needsReview: 1
+    reviewReason: high similarity 1.00
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: a70329de8b0d15940a84f9adbe7af403, type: 2}
+    assetGuid: a70329de8b0d15940a84f9adbe7af403
+    status: 4
+    assignedDifficulty: 1
+    baseQuality: 0.80613333
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 1
+    effectiveScore: 0.25613332
+    needsReview: 1
+    reviewReason: high similarity 1.00
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: fdb668d161dddda41b90faac9cd2807b, type: 2}
+    assetGuid: fdb668d161dddda41b90faac9cd2807b
+    status: 4
+    assignedDifficulty: 1
+    baseQuality: 0.842
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 1
+    effectiveScore: 0.292
+    needsReview: 1
+    reviewReason: high similarity 1.00
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 976a77d62a3f2d64cb295a76688f15c1, type: 2}
+    assetGuid: 976a77d62a3f2d64cb295a76688f15c1
+    status: 4
+    assignedDifficulty: 1
+    baseQuality: 0.8683818
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 1
+    effectiveScore: 0.3183818
+    needsReview: 1
+    reviewReason: high similarity 1.00
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: b00a05a1c3917b8479585f35ced49224, type: 2}
+    assetGuid: b00a05a1c3917b8479585f35ced49224
+    status: 4
+    assignedDifficulty: 1
+    baseQuality: 0.7931667
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 1
+    effectiveScore: 0.24316669
+    needsReview: 1
+    reviewReason: high similarity 1.00
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 53beff4f5040415458847d5057c1fa19, type: 2}
+    assetGuid: 53beff4f5040415458847d5057c1fa19
+    status: 4
+    assignedDifficulty: 1
+    baseQuality: 0.8502333
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 1
+    effectiveScore: 0.3002333
+    needsReview: 1
+    reviewReason: high similarity 1.00
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 35b6fb63ac7692b47b29a478d81773f5, type: 2}
+    assetGuid: 35b6fb63ac7692b47b29a478d81773f5
+    status: 4
+    assignedDifficulty: 1
+    baseQuality: 0.82137144
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 1
+    effectiveScore: 0.27137142
+    needsReview: 1
+    reviewReason: high similarity 1.00
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 964d5b6d24d3bd94ea0773d8ad34508e, type: 2}
+    assetGuid: 964d5b6d24d3bd94ea0773d8ad34508e
+    status: 4
+    assignedDifficulty: 1
+    baseQuality: 0.81153333
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 1
+    effectiveScore: 0.26153332
+    needsReview: 1
+    reviewReason: high similarity 1.00
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 54697c0e0d754524989ee94795ed0999, type: 2}
+    assetGuid: 54697c0e0d754524989ee94795ed0999
+    status: 4
+    assignedDifficulty: 1
+    baseQuality: 0.87798184
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 1
+    effectiveScore: 0.32798183
+    needsReview: 1
+    reviewReason: high similarity 1.00
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 98bad147d43ef514588f4262359446e3, type: 2}
+    assetGuid: 98bad147d43ef514588f4262359446e3
+    status: 4
+    assignedDifficulty: 1
+    baseQuality: 0.8453637
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 1
+    effectiveScore: 0.29536366
+    needsReview: 1
+    reviewReason: high similarity 1.00
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 7c11232b6efab54438e54760c05d4e6e, type: 2}
+    assetGuid: 7c11232b6efab54438e54760c05d4e6e
+    status: 4
+    assignedDifficulty: 1
+    baseQuality: 0.82616365
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 1
+    effectiveScore: 0.27616364
+    needsReview: 1
+    reviewReason: high similarity 1.00
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 4ef549a6ca9cb314fb530bcdbcceb9e8, type: 2}
+    assetGuid: 4ef549a6ca9cb314fb530bcdbcceb9e8
+    status: 4
+    assignedDifficulty: 1
+    baseQuality: 0.8042
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 1
+    effectiveScore: 0.25419998
+    needsReview: 1
+    reviewReason: high similarity 1.00
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 899f885f7ccde604c88256f97c1160d7, type: 2}
+    assetGuid: 899f885f7ccde604c88256f97c1160d7
+    status: 4
+    assignedDifficulty: 1
+    baseQuality: 0.74325454
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 1
+    effectiveScore: 0.19325453
+    needsReview: 1
+    reviewReason: high similarity 1.00
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: cb240553153877b44a7040f94e644db5, type: 2}
+    assetGuid: cb240553153877b44a7040f94e644db5
+    status: 4
+    assignedDifficulty: 1
+    baseQuality: 0.84087145
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 1
+    effectiveScore: 0.29087144
+    needsReview: 1
+    reviewReason: high similarity 1.00
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 9acb1f27fcd432a438d13cbfd5532152, type: 2}
+    assetGuid: 9acb1f27fcd432a438d13cbfd5532152
+    status: 4
+    assignedDifficulty: 1
+    baseQuality: 0.83824617
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 1
+    effectiveScore: 0.28824615
+    needsReview: 1
+    reviewReason: high similarity 1.00
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 08840cd639aa035419aff85b628f63a2, type: 2}
+    assetGuid: 08840cd639aa035419aff85b628f63a2
+    status: 4
+    assignedDifficulty: 1
+    baseQuality: 0.8586429
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 1
+    effectiveScore: 0.30864286
+    needsReview: 1
+    reviewReason: high similarity 1.00
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: cbec9204e633fef40b192293825d3596, type: 2}
+    assetGuid: cbec9204e633fef40b192293825d3596
+    status: 4
+    assignedDifficulty: 1
+    baseQuality: 0.8427333
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 1
+    effectiveScore: 0.2927333
+    needsReview: 1
+    reviewReason: high similarity 1.00
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 764a37a2e0df7534fbd6ed90b586b2dd, type: 2}
+    assetGuid: 764a37a2e0df7534fbd6ed90b586b2dd
+    status: 4
+    assignedDifficulty: 1
+    baseQuality: 0.8318364
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 1
+    effectiveScore: 0.2818364
+    needsReview: 1
+    reviewReason: high similarity 1.00
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: a1965bc3f450e87418e5a3ba9ae6761b, type: 2}
+    assetGuid: a1965bc3f450e87418e5a3ba9ae6761b
+    status: 4
+    assignedDifficulty: 1
+    baseQuality: 0.76098186
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 1
+    effectiveScore: 0.21098185
+    needsReview: 1
+    reviewReason: high similarity 1.00
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 44f9ef09b7a25b141bdbb11dafebc8de, type: 2}
+    assetGuid: 44f9ef09b7a25b141bdbb11dafebc8de
+    status: 4
+    assignedDifficulty: 1
+    baseQuality: 0.78823334
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 1
+    effectiveScore: 0.23823333
+    needsReview: 1
+    reviewReason: high similarity 1.00
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 09880e4d6af14134aba82cc1e4fa351f, type: 2}
+    assetGuid: 09880e4d6af14134aba82cc1e4fa351f
+    status: 4
+    assignedDifficulty: 1
+    baseQuality: 0.80788887
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 1
+    effectiveScore: 0.25788885
+    needsReview: 1
+    reviewReason: high similarity 1.00
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 5ce4b00265f020a4cac676ce03e80bb5, type: 2}
+    assetGuid: 5ce4b00265f020a4cac676ce03e80bb5
+    status: 4
+    assignedDifficulty: 1
+    baseQuality: 0.85983336
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 1
+    effectiveScore: 0.30983335
+    needsReview: 1
+    reviewReason: high similarity 1.00
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 3939bd8c97cfcda4db2a67f873df475f, type: 2}
+    assetGuid: 3939bd8c97cfcda4db2a67f873df475f
+    status: 4
+    assignedDifficulty: 1
+    baseQuality: 0.834
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 1
+    effectiveScore: 0.28399998
+    needsReview: 1
+    reviewReason: high similarity 1.00
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 76306d5a5da78d0479c2426c560a8cc2, type: 2}
+    assetGuid: 76306d5a5da78d0479c2426c560a8cc2
+    status: 4
+    assignedDifficulty: 1
+    baseQuality: 0.82443076
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 1
+    effectiveScore: 0.27443075
+    needsReview: 1
+    reviewReason: high similarity 1.00
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: a13d8123922bef1448c3728117a3198d, type: 2}
+    assetGuid: a13d8123922bef1448c3728117a3198d
+    status: 4
+    assignedDifficulty: 1
+    baseQuality: 0.84608334
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 1
+    effectiveScore: 0.29608333
+    needsReview: 1
+    reviewReason: high similarity 1.00
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 5e68ea79897f1eb49bc98dc20431c3a2, type: 2}
+    assetGuid: 5e68ea79897f1eb49bc98dc20431c3a2
+    status: 4
+    assignedDifficulty: 1
+    baseQuality: 0.8340462
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 1
+    effectiveScore: 0.28404617
+    needsReview: 1
+    reviewReason: high similarity 1.00
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 5c50fe342bcaa4847ab6b549c6cf1a3e, type: 2}
+    assetGuid: 5c50fe342bcaa4847ab6b549c6cf1a3e
+    status: 4
+    assignedDifficulty: 1
+    baseQuality: 0.7283091
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 1
+    effectiveScore: 0.17830908
+    needsReview: 1
+    reviewReason: high similarity 1.00
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: a9c726ca62418ba40adc9ecbab243096, type: 2}
+    assetGuid: a9c726ca62418ba40adc9ecbab243096
+    status: 4
+    assignedDifficulty: 1
+    baseQuality: 0.7240667
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 1
+    effectiveScore: 0.17406666
+    needsReview: 1
+    reviewReason: high similarity 1.00
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 9329c245ea60aaf4698982e6b1a958a5, type: 2}
+    assetGuid: 9329c245ea60aaf4698982e6b1a958a5
+    status: 4
+    assignedDifficulty: 1
+    baseQuality: 0.82986665
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 1
+    effectiveScore: 0.27986664
+    needsReview: 1
+    reviewReason: high similarity 1.00
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: bb632686c923a5447aa49bb47543e8a0, type: 2}
+    assetGuid: bb632686c923a5447aa49bb47543e8a0
+    status: 4
+    assignedDifficulty: 1
+    baseQuality: 0.77533334
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 1
+    effectiveScore: 0.22533333
+    needsReview: 1
+    reviewReason: high similarity 1.00
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: cfac11b1b4e5eb14bbf6e7343300faad, type: 2}
+    assetGuid: cfac11b1b4e5eb14bbf6e7343300faad
+    status: 4
+    assignedDifficulty: 1
+    baseQuality: 0.82616365
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 1
+    effectiveScore: 0.27616364
+    needsReview: 1
+    reviewReason: high similarity 1.00
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: fcffae71d473b6b4aade8a7a803a0e39, type: 2}
+    assetGuid: fcffae71d473b6b4aade8a7a803a0e39
+    status: 4
+    assignedDifficulty: 1
+    baseQuality: 0.75168574
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 1
+    effectiveScore: 0.20168573
+    needsReview: 1
+    reviewReason: high similarity 1.00
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 2a0daedfb8025be41ad0022facc66dd2, type: 2}
+    assetGuid: 2a0daedfb8025be41ad0022facc66dd2
+    status: 4
+    assignedDifficulty: 1
+    baseQuality: 0.8169455
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 1
+    effectiveScore: 0.26694548
+    needsReview: 1
+    reviewReason: high similarity 1.00
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 8b7175e496b076645a6c8078a67806e6, type: 2}
+    assetGuid: 8b7175e496b076645a6c8078a67806e6
+    status: 4
+    assignedDifficulty: 2
+    baseQuality: 0.86314285
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 1
+    effectiveScore: 0.31314284
+    needsReview: 1
+    reviewReason: high similarity 1.00
+    suggestedDifficulty: Hard
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 9a72765d6cbc74946b1b6dad423a6002, type: 2}
+    assetGuid: 9a72765d6cbc74946b1b6dad423a6002
+    status: 4
+    assignedDifficulty: 2
+    baseQuality: 0.84193337
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 1
+    effectiveScore: 0.29193336
+    needsReview: 1
+    reviewReason: high similarity 1.00
+    suggestedDifficulty: Hard
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 027d0ae9003ad0245be07e78af37776f, type: 2}
+    assetGuid: 027d0ae9003ad0245be07e78af37776f
+    status: 4
+    assignedDifficulty: 1
+    baseQuality: 0.8039
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0.95531446
+    effectiveScore: 0.27847704
+    needsReview: 1
+    reviewReason: high similarity 0.96
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 996d0f5ac355296428092631d0e22876, type: 2}
+    assetGuid: 996d0f5ac355296428092631d0e22876
+    status: 4
+    assignedDifficulty: 1
+    baseQuality: 0.8671273
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0.96350485
+    effectiveScore: 0.33719963
+    needsReview: 1
+    reviewReason: high similarity 0.96
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 7e93bca6666819b4da5c62d74a43e977, type: 2}
+    assetGuid: 7e93bca6666819b4da5c62d74a43e977
+    status: 4
+    assignedDifficulty: 1
+    baseQuality: 0.85883635
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0.9424761
+    effectiveScore: 0.3404745
+    needsReview: 1
+    reviewReason: high similarity 0.94
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: b58ad55aaf1af784c81cf7ddeecb1f2e, type: 2}
+    assetGuid: b58ad55aaf1af784c81cf7ddeecb1f2e
+    status: 4
+    assignedDifficulty: 1
+    baseQuality: 0.8633
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0.9789909
+    effectiveScore: 0.324855
+    needsReview: 1
+    reviewReason: high similarity 0.98
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 984fe7e65a55d0f4e8ec194542e8f21a, type: 2}
+    assetGuid: 984fe7e65a55d0f4e8ec194542e8f21a
+    status: 4
+    assignedDifficulty: 1
+    baseQuality: 0.8401846
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0.9668945
+    effectiveScore: 0.30839264
+    needsReview: 1
+    reviewReason: high similarity 0.97
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 2951aada96e63c84dbc60fc952302889, type: 2}
+    assetGuid: 2951aada96e63c84dbc60fc952302889
+    status: 4
+    assignedDifficulty: 1
+    baseQuality: 0.8044
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0.9471918
+    effectiveScore: 0.28344455
+    needsReview: 1
+    reviewReason: high similarity 0.95
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: d22c4b35b2a911d41b79ce9e90a301ad, type: 2}
+    assetGuid: d22c4b35b2a911d41b79ce9e90a301ad
+    status: 4
+    assignedDifficulty: 1
+    baseQuality: 0.80194545
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0.9375402
+    effectiveScore: 0.28629833
+    needsReview: 1
+    reviewReason: high similarity 0.94
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: a446448977310c34cb52d0b1afbb5114, type: 2}
+    assetGuid: a446448977310c34cb52d0b1afbb5114
+    status: 4
+    assignedDifficulty: 1
+    baseQuality: 0.8106667
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0.9356984
+    effectiveScore: 0.29603255
+    needsReview: 1
+    reviewReason: high similarity 0.94
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 9fe10d03675b8b24689044e2892d8ae3, type: 2}
+    assetGuid: 9fe10d03675b8b24689044e2892d8ae3
+    status: 4
+    assignedDifficulty: 1
+    baseQuality: 0.78653336
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0.95139766
+    effectiveScore: 0.26326463
+    needsReview: 1
+    reviewReason: high similarity 0.95
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 891581a77e0330040b47fade35731580, type: 2}
+    assetGuid: 891581a77e0330040b47fade35731580
+    status: 4
+    assignedDifficulty: 1
+    baseQuality: 0.7913714
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0.9167131
+    effectiveScore: 0.28717917
+    needsReview: 1
+    reviewReason: high similarity 0.92
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 06c6e44233835544688e7f2120565446, type: 2}
+    assetGuid: 06c6e44233835544688e7f2120565446
+    status: 4
+    assignedDifficulty: 1
+    baseQuality: 0.8236667
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0.91462475
+    effectiveScore: 0.32062307
+    needsReview: 1
+    reviewReason: high similarity 0.91
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 634cbb86f8865a04f8fbe8f541694f51, type: 2}
+    assetGuid: 634cbb86f8865a04f8fbe8f541694f51
+    status: 3
+    assignedDifficulty: 1
+    baseQuality: 0.83303636
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0.9332886
+    effectiveScore: 0.31972763
+    needsReview: 1
+    reviewReason: high similarity 0.93
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: ae76ab69af965c049bf42ca71c8f891b, type: 2}
+    assetGuid: ae76ab69af965c049bf42ca71c8f891b
+    status: 4
+    assignedDifficulty: 1
+    baseQuality: 0.7643
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0.93637174
+    effectiveScore: 0.24929552
+    needsReview: 1
+    reviewReason: high similarity 0.94
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 15418379e2024da4abe36163285ca1e5, type: 2}
+    assetGuid: 15418379e2024da4abe36163285ca1e5
+    status: 4
+    assignedDifficulty: 1
+    baseQuality: 0.774
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0.9379486
+    effectiveScore: 0.25812826
+    needsReview: 1
+    reviewReason: high similarity 0.94
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 6ef0f67ca6f225e49ba3ded564cdf4e8, type: 2}
+    assetGuid: 6ef0f67ca6f225e49ba3ded564cdf4e8
+    status: 4
+    assignedDifficulty: 1
+    baseQuality: 0.7543
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0.9259406
+    effectiveScore: 0.24503267
+    needsReview: 1
+    reviewReason: high similarity 0.93
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 0fa2e8d18f104b34387a4e79ab2e245b, type: 2}
+    assetGuid: 0fa2e8d18f104b34387a4e79ab2e245b
+    status: 4
+    assignedDifficulty: 1
+    baseQuality: 0.76605713
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0.9646017
+    effectiveScore: 0.23552619
+    needsReview: 1
+    reviewReason: high similarity 0.96
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 5f3724911924ef04384d3a73aeda0e21, type: 2}
+    assetGuid: 5f3724911924ef04384d3a73aeda0e21
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7222
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7222
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 0f825385a5e03684f93ff181b77843cc, type: 2}
+    assetGuid: 0f825385a5e03684f93ff181b77843cc
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.8166
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8166
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 7c5efa001a31db641a443aa041ee259e, type: 2}
+    assetGuid: 7c5efa001a31db641a443aa041ee259e
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.70995003
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.70995003
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 049dc91f28fbea44fb1d44f0261ce10a, type: 2}
+    assetGuid: 049dc91f28fbea44fb1d44f0261ce10a
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7636
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7636
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 56fa51427ec202247a63fef071af6c68, type: 2}
+    assetGuid: 56fa51427ec202247a63fef071af6c68
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7222
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7222
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 16c09834fa195fb418175a052617187d, type: 2}
+    assetGuid: 16c09834fa195fb418175a052617187d
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7486
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7486
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 5e60b25a4bdad03419b959827b3ecdf8, type: 2}
+    assetGuid: 5e60b25a4bdad03419b959827b3ecdf8
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.72995
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.72995
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: b2bb1ec69daefe645961d9b26279f247, type: 2}
+    assetGuid: b2bb1ec69daefe645961d9b26279f247
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.6422
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.6422
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: a0c36f936d8bbbd4fad731518a10c2df, type: 2}
+    assetGuid: a0c36f936d8bbbd4fad731518a10c2df
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7372
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7372
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: b5ed2c45a46175b49bde877cae15c67b, type: 2}
+    assetGuid: b5ed2c45a46175b49bde877cae15c67b
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7636
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7636
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 4d0bd8f6e8f99df4bab08cf4af69649a, type: 2}
+    assetGuid: 4d0bd8f6e8f99df4bab08cf4af69649a
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7486
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7486
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 968cc241072999f47b5258f911a55903, type: 2}
+    assetGuid: 968cc241072999f47b5258f911a55903
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.6742
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.6742
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 9e0a2cb0ac87d854fa3430efe69fddd0, type: 2}
+    assetGuid: 9e0a2cb0ac87d854fa3430efe69fddd0
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.6742
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.6742
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 6470ed281248ec64b8bd4b8870e2ec11, type: 2}
+    assetGuid: 6470ed281248ec64b8bd4b8870e2ec11
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.79
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.79
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: bfea0976d53af334ea6717e798c51561, type: 2}
+    assetGuid: bfea0976d53af334ea6717e798c51561
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7222
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7222
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: fa11f61fea0ad154593e469c586f3530, type: 2}
+    assetGuid: fa11f61fea0ad154593e469c586f3530
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7372
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7372
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 5f05a2174faefa04c9a6a2d13cc6d67e, type: 2}
+    assetGuid: 5f05a2174faefa04c9a6a2d13cc6d67e
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7222
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7222
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: a46f9449bfc902a4ba511c5809527eff, type: 2}
+    assetGuid: a46f9449bfc902a4ba511c5809527eff
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7636
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7636
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: f7b28a27b3c4bb443a70e6254ab7279a, type: 2}
+    assetGuid: f7b28a27b3c4bb443a70e6254ab7279a
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.80160004
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.80160004
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 761bc42ee276f8442ae8cfda2632e0f2, type: 2}
+    assetGuid: 761bc42ee276f8442ae8cfda2632e0f2
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.8166
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8166
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 9833800064da14b4983a5f831ac01fae, type: 2}
+    assetGuid: 9833800064da14b4983a5f831ac01fae
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.66995
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.66995
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 0fe84da0587ba204a8b59dc57e209eb4, type: 2}
+    assetGuid: 0fe84da0587ba204a8b59dc57e209eb4
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.6892
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.6892
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: a1672bb14c7e530459a8fcf687dd2c1d, type: 2}
+    assetGuid: a1672bb14c7e530459a8fcf687dd2c1d
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7636
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7636
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 6adff6abff1b6c243bf7dfcaf88d7ada, type: 2}
+    assetGuid: 6adff6abff1b6c243bf7dfcaf88d7ada
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.6742
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.6742
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: f7d051bf47a39f344a6fe21ba790a5d1, type: 2}
+    assetGuid: f7d051bf47a39f344a6fe21ba790a5d1
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7486
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7486
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 21d5f52ee1c2a7744bd73345e8ea367b, type: 2}
+    assetGuid: 21d5f52ee1c2a7744bd73345e8ea367b
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7486
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7486
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 2d01b156af03721468079ddf703d8ef4, type: 2}
+    assetGuid: 2d01b156af03721468079ddf703d8ef4
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7372
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7372
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 0e7aedd64ebf597469860e1d4196f64d, type: 2}
+    assetGuid: 0e7aedd64ebf597469860e1d4196f64d
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.80097145
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.80097145
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: dcd10a2258811224a95e9fc976490143, type: 2}
+    assetGuid: dcd10a2258811224a95e9fc976490143
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.79073334
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.79073334
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 1affeb6071d10614f8dd4045c1f66728, type: 2}
+    assetGuid: 1affeb6071d10614f8dd4045c1f66728
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.71922857
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.71922857
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 81c4230a1f1e21e4892cf90862985c1f, type: 2}
+    assetGuid: 81c4230a1f1e21e4892cf90862985c1f
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7507334
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7507334
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: cd677c00153f5974a9b34f3e472408ea, type: 2}
+    assetGuid: cd677c00153f5974a9b34f3e472408ea
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7954
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7954
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 2f995e2440c54bf43a45cf688da3483a, type: 2}
+    assetGuid: 2f995e2440c54bf43a45cf688da3483a
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7913714
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7913714
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 59f4aeb75f7b91f40a1d53caecdd9e20, type: 2}
+    assetGuid: 59f4aeb75f7b91f40a1d53caecdd9e20
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.79137146
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.79137146
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 835840d65e541f74ea5ebbc3057e4d40, type: 2}
+    assetGuid: 835840d65e541f74ea5ebbc3057e4d40
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.70995003
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.70995003
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: e18d647562144834eb8538f53e5a4f06, type: 2}
+    assetGuid: e18d647562144834eb8538f53e5a4f06
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.72220004
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.72220004
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: df0acccc02a6b064ca78702d510f89f5, type: 2}
+    assetGuid: df0acccc02a6b064ca78702d510f89f5
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.6742
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.6742
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 1b7f797f0ad24614ca0354dc9fce5009, type: 2}
+    assetGuid: 1b7f797f0ad24614ca0354dc9fce5009
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.69020003
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.69020003
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 1747a9e6f2358ef4f9c93d6937c2614e, type: 2}
+    assetGuid: 1747a9e6f2358ef4f9c93d6937c2614e
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.70995003
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.70995003
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 5ac3947c1a712a14d8b62f37a7966908, type: 2}
+    assetGuid: 5ac3947c1a712a14d8b62f37a7966908
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7636
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7636
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 0a33703e6e08e2d4296049d93a11e1e6, type: 2}
+    assetGuid: 0a33703e6e08e2d4296049d93a11e1e6
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.79
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.79
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: a4b4b454b6a61d645a154f12290d0ac0, type: 2}
+    assetGuid: a4b4b454b6a61d645a154f12290d0ac0
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7222
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7222
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 42b12923134283149894618257167c85, type: 2}
+    assetGuid: 42b12923134283149894618257167c85
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7222
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7222
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: cd38ea1bf4f9b9f4992a9f9ab907be1c, type: 2}
+    assetGuid: cd38ea1bf4f9b9f4992a9f9ab907be1c
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.70995003
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.70995003
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 70be157e7dfb4ee4aabce3f4dd46a591, type: 2}
+    assetGuid: 70be157e7dfb4ee4aabce3f4dd46a591
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.6572
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.6572
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: e4a5f95169f24634eac6773e5f2eea62, type: 2}
+    assetGuid: e4a5f95169f24634eac6773e5f2eea62
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7222
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7222
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 488f756e830b52740a81135404babc0c, type: 2}
+    assetGuid: 488f756e830b52740a81135404babc0c
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.69020003
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.69020003
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 0e2635e622fc4964b99e12d477da081d, type: 2}
+    assetGuid: 0e2635e622fc4964b99e12d477da081d
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.6892
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.6892
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 072ada9056b17784ab9bf8c2493d9221, type: 2}
+    assetGuid: 072ada9056b17784ab9bf8c2493d9221
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.72495
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.72495
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 73cfdd2a30fb7734f96c652bc20139ae, type: 2}
+    assetGuid: 73cfdd2a30fb7734f96c652bc20139ae
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.75615
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.75615
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 6e940d68b0c077a4eb7eedb9e4a7691a, type: 2}
+    assetGuid: 6e940d68b0c077a4eb7eedb9e4a7691a
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.78615004
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.78615004
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 11956bd092a6d4d429efd035d06e721a, type: 2}
+    assetGuid: 11956bd092a6d4d429efd035d06e721a
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.80097145
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.80097145
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 303d10baf88d6814090bf5cef5eea26c, type: 2}
+    assetGuid: 303d10baf88d6814090bf5cef5eea26c
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7858
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7858
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 8d4dfaae5bf4aa64688b1455c0fafcb0, type: 2}
+    assetGuid: 8d4dfaae5bf4aa64688b1455c0fafcb0
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.79653335
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.79653335
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: d41c19e81f07b8f40bbe0592ea477360, type: 2}
+    assetGuid: d41c19e81f07b8f40bbe0592ea477360
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.72615
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.72615
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 052491b095aaea0488b21d756063c75f, type: 2}
+    assetGuid: 052491b095aaea0488b21d756063c75f
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.79906666
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.79906666
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 37607ace2949054478f12607f817d682, type: 2}
+    assetGuid: 37607ace2949054478f12607f817d682
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.77842504
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.77842504
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: e91198687bbe7e443b9642f9e9547c95, type: 2}
+    assetGuid: e91198687bbe7e443b9642f9e9547c95
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.78115004
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.78115004
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: dbb31bf709ac1214ba480b74b99452a0, type: 2}
+    assetGuid: dbb31bf709ac1214ba480b74b99452a0
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7399
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7399
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: b5e8872f2863b674396b03ca74af5f6e, type: 2}
+    assetGuid: b5e8872f2863b674396b03ca74af5f6e
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.8057333
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8057333
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: cd89c567ce1bef14f86d6582a4def446, type: 2}
+    assetGuid: cd89c567ce1bef14f86d6582a4def446
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7222
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7222
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: f4fd2039242cfc04cbca4c443e0ecb20, type: 2}
+    assetGuid: f4fd2039242cfc04cbca4c443e0ecb20
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.76995003
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.76995003
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 5753e1c4285080c4fa2411b3eece35c1, type: 2}
+    assetGuid: 5753e1c4285080c4fa2411b3eece35c1
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.69020003
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.69020003
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 5030900770636c44dabdae17056385ec, type: 2}
+    assetGuid: 5030900770636c44dabdae17056385ec
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.8166
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8166
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 027d94ce65c5f834da73d84526c1404c, type: 2}
+    assetGuid: 027d94ce65c5f834da73d84526c1404c
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.66995
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.66995
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 9c057ae31ca4c3247a00914f93031732, type: 2}
+    assetGuid: 9c057ae31ca4c3247a00914f93031732
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.70995003
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.70995003
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: e14a33f4e6646f74aa59001a394037ec, type: 2}
+    assetGuid: e14a33f4e6646f74aa59001a394037ec
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.72995
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.72995
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: d51c60626b51a534ea782c9dd9841409, type: 2}
+    assetGuid: d51c60626b51a534ea782c9dd9841409
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.72220004
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.72220004
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: a57522984702add4a894bd15215ba85c, type: 2}
+    assetGuid: a57522984702add4a894bd15215ba85c
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.70995003
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.70995003
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 0af2348b3bc42044bb35adcaa2c733bc, type: 2}
+    assetGuid: 0af2348b3bc42044bb35adcaa2c733bc
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.70995003
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.70995003
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: b2f2d095e02ce364b8531217279ed8d3, type: 2}
+    assetGuid: b2f2d095e02ce364b8531217279ed8d3
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7222
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7222
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: c1321b72b36077646b82e12e0599009e, type: 2}
+    assetGuid: c1321b72b36077646b82e12e0599009e
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.78495
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.78495
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: bbb31bec6fe934e40a7a2c546fc9c9f7, type: 2}
+    assetGuid: bbb31bec6fe934e40a7a2c546fc9c9f7
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.775
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.775
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 4fd26da4d134fc34082c01dfbb8b3f17, type: 2}
+    assetGuid: 4fd26da4d134fc34082c01dfbb8b3f17
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7372
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7372
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 386ee075f75399b4ca798ab9e74a588e, type: 2}
+    assetGuid: 386ee075f75399b4ca798ab9e74a588e
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.6742
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.6742
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: d42992672a671b54fb51cc1daffa201c, type: 2}
+    assetGuid: d42992672a671b54fb51cc1daffa201c
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.72220004
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.72220004
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: a6fc67d61ca675441b69974e7e583233, type: 2}
+    assetGuid: a6fc67d61ca675441b69974e7e583233
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.6742
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.6742
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 15ade0b2df8e9c145a7625d7c62c6ac7, type: 2}
+    assetGuid: 15ade0b2df8e9c145a7625d7c62c6ac7
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.78323334
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.78323334
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 8ca8e1cf2d4313949be2ee3d9bbe0953, type: 2}
+    assetGuid: 8ca8e1cf2d4313949be2ee3d9bbe0953
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.80115
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.80115
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 45f1baa8dff478940a3449099a63f902, type: 2}
+    assetGuid: 45f1baa8dff478940a3449099a63f902
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7594
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7594
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 75edb9e884bbd504eac1a9e33018aa07, type: 2}
+    assetGuid: 75edb9e884bbd504eac1a9e33018aa07
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7781143
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7781143
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 6a4eaf7676d4d38478085fcd765d388e, type: 2}
+    assetGuid: 6a4eaf7676d4d38478085fcd765d388e
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7594
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7594
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: a634142a557893e4c966e5f496926c18, type: 2}
+    assetGuid: a634142a557893e4c966e5f496926c18
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7763714
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7763714
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 6ed291f4e29fc624eb73157566176eb0, type: 2}
+    assetGuid: 6ed291f4e29fc624eb73157566176eb0
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.73668575
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.73668575
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 0034133d5f1e9f148b7b7b1eab7a6212, type: 2}
+    assetGuid: 0034133d5f1e9f148b7b7b1eab7a6212
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7170333
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7170333
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 41110adb6d3c39947899105c7e437e78, type: 2}
+    assetGuid: 41110adb6d3c39947899105c7e437e78
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.72495
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.72495
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: cdd06a463723e05459eabf213c6c37f1, type: 2}
+    assetGuid: cdd06a463723e05459eabf213c6c37f1
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7222
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7222
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: a7ef720f3b292374d8079162d7a5b946, type: 2}
+    assetGuid: a7ef720f3b292374d8079162d7a5b946
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.75493336
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.75493336
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: ebcc5d5b665700647baf29f54d785d58, type: 2}
+    assetGuid: ebcc5d5b665700647baf29f54d785d58
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7320333
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7320333
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 48f60299643ec8046a7443258a4a4a48, type: 2}
+    assetGuid: 48f60299643ec8046a7443258a4a4a48
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.75703335
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.75703335
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 20f8d42ae29aaa54795a192a0bb01489, type: 2}
+    assetGuid: 20f8d42ae29aaa54795a192a0bb01489
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.6742
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.6742
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: e4bebad1272c7604ea7afca426c05226, type: 2}
+    assetGuid: e4bebad1272c7604ea7afca426c05226
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.77203333
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.77203333
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 7443478c6a635b348a3484b4b7b8a54b, type: 2}
+    assetGuid: 7443478c6a635b348a3484b4b7b8a54b
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7372
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7372
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 01ebedbf485684948962403d96de7199, type: 2}
+    assetGuid: 01ebedbf485684948962403d96de7199
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7170333
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7170333
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: a5d08198f6858834a9e89b694e9ac0c9, type: 2}
+    assetGuid: a5d08198f6858834a9e89b694e9ac0c9
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.70995003
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.70995003
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: f28f0f5d93f24b84e9da3a9472560ebe, type: 2}
+    assetGuid: f28f0f5d93f24b84e9da3a9472560ebe
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.77203333
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.77203333
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: d62990910d18ec44facbc59edc9c7d19, type: 2}
+    assetGuid: d62990910d18ec44facbc59edc9c7d19
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.77203333
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.77203333
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 6d36d3091bb613844b6e81c6209c8ab1, type: 2}
+    assetGuid: 6d36d3091bb613844b6e81c6209c8ab1
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.73036665
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.73036665
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 249d5a6060ac0794883253b6509c9046, type: 2}
+    assetGuid: 249d5a6060ac0794883253b6509c9046
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7170333
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7170333
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 2cecff5332ede14458875f5e7325f278, type: 2}
+    assetGuid: 2cecff5332ede14458875f5e7325f278
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.74160004
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.74160004
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 907737094e5d4a74aafb8a8983295bda, type: 2}
+    assetGuid: 907737094e5d4a74aafb8a8983295bda
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7486
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7486
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: dcc7a0b1db34e2a47ab00e4e0056a0c7, type: 2}
+    assetGuid: dcc7a0b1db34e2a47ab00e4e0056a0c7
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.76995003
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.76995003
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 23dcf9501bbf2d14189dfbc8eee388c7, type: 2}
+    assetGuid: 23dcf9501bbf2d14189dfbc8eee388c7
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7949333
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7949333
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 7ae2a9808f97faa4daea7e0c3c922679, type: 2}
+    assetGuid: 7ae2a9808f97faa4daea7e0c3c922679
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.6742
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.6742
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 04b5f1c36f14af6429cb8269cea10b66, type: 2}
+    assetGuid: 04b5f1c36f14af6429cb8269cea10b66
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7170333
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7170333
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: e7f84a8e192045441b1911eb754ea71a, type: 2}
+    assetGuid: e7f84a8e192045441b1911eb754ea71a
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7170333
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7170333
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 6ff547466df8ecf4c90bc71b74dbbfaf, type: 2}
+    assetGuid: 6ff547466df8ecf4c90bc71b74dbbfaf
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.70995003
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.70995003
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 1bbdf86d25679cf40b9568db7db49271, type: 2}
+    assetGuid: 1bbdf86d25679cf40b9568db7db49271
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.72220004
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.72220004
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 79d0b34635c5fda4db14678e302569e4, type: 2}
+    assetGuid: 79d0b34635c5fda4db14678e302569e4
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7222
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7222
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 2260ae928ad26f14690327d864c83dae, type: 2}
+    assetGuid: 2260ae928ad26f14690327d864c83dae
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.6742
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.6742
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 6523549e00e6a894a8f6dbe82f317ad0, type: 2}
+    assetGuid: 6523549e00e6a894a8f6dbe82f317ad0
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.78323334
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.78323334
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 54cc44375ae7d0649bfb5361959e9d04, type: 2}
+    assetGuid: 54cc44375ae7d0649bfb5361959e9d04
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7170333
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7170333
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: f762316b73bcb0c41a9ecc8bb3571811, type: 2}
+    assetGuid: f762316b73bcb0c41a9ecc8bb3571811
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7874
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7874
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 5227c3cbdafc0b14d8cae93ba4124abb, type: 2}
+    assetGuid: 5227c3cbdafc0b14d8cae93ba4124abb
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.72220004
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.72220004
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: af824f2f8e1eb4f4a9abd9ac19b61e07, type: 2}
+    assetGuid: af824f2f8e1eb4f4a9abd9ac19b61e07
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7636
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7636
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 12dbc4b7c6f470d49916769e41acd1cb, type: 2}
+    assetGuid: 12dbc4b7c6f470d49916769e41acd1cb
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.73036665
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.73036665
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 2b24ce08de523994aa11473547feb8f4, type: 2}
+    assetGuid: 2b24ce08de523994aa11473547feb8f4
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.69020003
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.69020003
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 6de5a398d1cae1f49a032084039626ec, type: 2}
+    assetGuid: 6de5a398d1cae1f49a032084039626ec
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.8166
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8166
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 0530dc63d2a4d5d46bd182caaf7612ae, type: 2}
+    assetGuid: 0530dc63d2a4d5d46bd182caaf7612ae
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.8376364
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8376364
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 9f999646467428046891af4dfc36a7c6, type: 2}
+    assetGuid: 9f999646467428046891af4dfc36a7c6
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.8208182
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8208182
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: a60a54295768d12468a5badb5861003a, type: 2}
+    assetGuid: a60a54295768d12468a5badb5861003a
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.85218185
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.85218185
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: a0e357afa9862474d96adf27b0aa1f01, type: 2}
+    assetGuid: a0e357afa9862474d96adf27b0aa1f01
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.83474547
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.83474547
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: dade3ac06f402f8439c1d390294a617b, type: 2}
+    assetGuid: dade3ac06f402f8439c1d390294a617b
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.8425818
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8425818
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 3344bd0f7e493b44cb5ea020cfa2e0f9, type: 2}
+    assetGuid: 3344bd0f7e493b44cb5ea020cfa2e0f9
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.76945454
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.76945454
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 7de12697d9b564b43a2486cb06387d66, type: 2}
+    assetGuid: 7de12697d9b564b43a2486cb06387d66
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.8158182
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8158182
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 974ea8a88249b7e4c8a10fa749794ebb, type: 2}
+    assetGuid: 974ea8a88249b7e4c8a10fa749794ebb
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.84803635
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.84803635
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: ecb232b25a9821f40ad89a89e90ef1e8, type: 2}
+    assetGuid: ecb232b25a9821f40ad89a89e90ef1e8
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.8279
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8279
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 7f62577d49308c7409456961aec20cfc, type: 2}
+    assetGuid: 7f62577d49308c7409456961aec20cfc
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.8735
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8735
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: d50fd9fce1589a94c8ddf18214e8063b, type: 2}
+    assetGuid: d50fd9fce1589a94c8ddf18214e8063b
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.8274182
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8274182
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 21444cbd8b32c06489c1922dc226f550, type: 2}
+    assetGuid: 21444cbd8b32c06489c1922dc226f550
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.8302
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8302
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 9874004e70ae70c459015a5bca1417f9, type: 2}
+    assetGuid: 9874004e70ae70c459015a5bca1417f9
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.7934
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7934
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 1334ffee689004e469655bf9d2f69c6e, type: 2}
+    assetGuid: 1334ffee689004e469655bf9d2f69c6e
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.84900004
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.84900004
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 694b071524067a94aa9f51a13153bb42, type: 2}
+    assetGuid: 694b071524067a94aa9f51a13153bb42
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.8765
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8765
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 1b47b654d46d4804086aa0a526f1cdc6, type: 2}
+    assetGuid: 1b47b654d46d4804086aa0a526f1cdc6
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.7970889
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7970889
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 3e094f8d2bd3c2643a0c31673a6dce93, type: 2}
+    assetGuid: 3e094f8d2bd3c2643a0c31673a6dce93
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.8086
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8086
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: afd3a97e065f98a44bef5601bf2389d6, type: 2}
+    assetGuid: afd3a97e065f98a44bef5601bf2389d6
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.80946666
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.80946666
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 62d2bee7198d0894aaac243b0dcdaf2a, type: 2}
+    assetGuid: 62d2bee7198d0894aaac243b0dcdaf2a
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.8074
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8074
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 07c8b639cfda0864ca66ac93bb8e4c98, type: 2}
+    assetGuid: 07c8b639cfda0864ca66ac93bb8e4c98
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7507334
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7507334
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 51ece31e4cf9d3541a805e2d1bc45781, type: 2}
+    assetGuid: 51ece31e4cf9d3541a805e2d1bc45781
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.76695
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.76695
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 9a238894ed0b01e4e95829e55d436ffc, type: 2}
+    assetGuid: 9a238894ed0b01e4e95829e55d436ffc
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.8082333
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8082333
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: d629169e784d7f54db1fddfb69fb0a58, type: 2}
+    assetGuid: d629169e784d7f54db1fddfb69fb0a58
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.80097145
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.80097145
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: c56428c05ee5998458c0962f82f5951a, type: 2}
+    assetGuid: c56428c05ee5998458c0962f82f5951a
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7666857
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7666857
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: e9489fdaa3328954a8a7d4deec9bb2c8, type: 2}
+    assetGuid: e9489fdaa3328954a8a7d4deec9bb2c8
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.800475
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.800475
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 4627f07569ce62a4c8061499801a3f7e, type: 2}
+    assetGuid: 4627f07569ce62a4c8061499801a3f7e
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.8556667
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8556667
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 0df88d3e49ace694ab11be1df9402b68, type: 2}
+    assetGuid: 0df88d3e49ace694ab11be1df9402b68
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.789675
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.789675
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 6e01fc62d6971a5419fad7796e53265b, type: 2}
+    assetGuid: 6e01fc62d6971a5419fad7796e53265b
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.76573336
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.76573336
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 66d7a680992ee2e45bfb3973fdc870f0, type: 2}
+    assetGuid: 66d7a680992ee2e45bfb3973fdc870f0
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.77115
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.77115
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: d6736479a1bcd574fbff2ef0792052eb, type: 2}
+    assetGuid: d6736479a1bcd574fbff2ef0792052eb
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.7561334
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7561334
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: b5c995e43ec6a594ca27b38ba858b7ef, type: 2}
+    assetGuid: b5c995e43ec6a594ca27b38ba858b7ef
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7924
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7924
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 89153383800bde342b11fe602e6d9a43, type: 2}
+    assetGuid: 89153383800bde342b11fe602e6d9a43
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.80115
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.80115
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: de08b26bdaa13664aafd0bb3fec63750, type: 2}
+    assetGuid: de08b26bdaa13664aafd0bb3fec63750
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7924
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7924
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 6d71353141af1c04bbb53e8e7b46c3be, type: 2}
+    assetGuid: 6d71353141af1c04bbb53e8e7b46c3be
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.77113336
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.77113336
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: d7ac12a3fbad81e41a6d5c8192ef901a, type: 2}
+    assetGuid: d7ac12a3fbad81e41a6d5c8192ef901a
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.82573336
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.82573336
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: c8057869c33985e47b35a0fd4310c1fb, type: 2}
+    assetGuid: c8057869c33985e47b35a0fd4310c1fb
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.80097145
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.80097145
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 991a9c59ae0fb7c4da2683387a8ed450, type: 2}
+    assetGuid: 991a9c59ae0fb7c4da2683387a8ed450
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.7324857
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7324857
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: f17e390bcd7d88d4f9bd3ab891974f2b, type: 2}
+    assetGuid: f17e390bcd7d88d4f9bd3ab891974f2b
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.7828
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7828
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 14643a9e960df3c4d8a1fabc9e777886, type: 2}
+    assetGuid: 14643a9e960df3c4d8a1fabc9e777886
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.8586
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8586
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: f5e46030ffa4c6e4296717f5f88e47dc, type: 2}
+    assetGuid: f5e46030ffa4c6e4296717f5f88e47dc
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.75406665
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.75406665
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: b4c5c9b8c8c3b2c448d1b9ce0c21751a, type: 2}
+    assetGuid: b4c5c9b8c8c3b2c448d1b9ce0c21751a
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.78615
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.78615
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: b7f6c500bcbc0e14081b60a2209e374d, type: 2}
+    assetGuid: b7f6c500bcbc0e14081b60a2209e374d
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.8074
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8074
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: aae41aa61abdedc41b567bd96d75657b, type: 2}
+    assetGuid: aae41aa61abdedc41b567bd96d75657b
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.788025
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.788025
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 47ad509590539c74e9a70ae3e5c7fabd, type: 2}
+    assetGuid: 47ad509590539c74e9a70ae3e5c7fabd
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.6742
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.6742
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: bd4cd8bbeddd4954491c325780054ebf, type: 2}
+    assetGuid: bd4cd8bbeddd4954491c325780054ebf
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7170333
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7170333
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 9e8f604933d19524496f2960e4a95b1c, type: 2}
+    assetGuid: 9e8f604933d19524496f2960e4a95b1c
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7372
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7372
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 3b2845a3c9b5256439d934902d183344, type: 2}
+    assetGuid: 3b2845a3c9b5256439d934902d183344
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7486
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7486
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 14d75ba1581335345ac0f1e70a10b7c0, type: 2}
+    assetGuid: 14d75ba1581335345ac0f1e70a10b7c0
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.6676286
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.6676286
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 978e613c6e5f1cc48b36502aa7ca07e4, type: 2}
+    assetGuid: 978e613c6e5f1cc48b36502aa7ca07e4
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.6742
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.6742
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: ed0ad90c57e6a5649bf746842db71d6c, type: 2}
+    assetGuid: ed0ad90c57e6a5649bf746842db71d6c
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7320333
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7320333
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: b54e053cf1ae4f245b4e82c68f37a5b6, type: 2}
+    assetGuid: b54e053cf1ae4f245b4e82c68f37a5b6
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.72477144
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.72477144
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: ee1cb991c6858384791bc5d9dc7218eb, type: 2}
+    assetGuid: ee1cb991c6858384791bc5d9dc7218eb
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.76283336
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.76283336
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 368bef253d97a4a4abd207cea6686178, type: 2}
+    assetGuid: 368bef253d97a4a4abd207cea6686178
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.75703335
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.75703335
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 7b78290807ba82649ba56fca7219a9f0, type: 2}
+    assetGuid: 7b78290807ba82649ba56fca7219a9f0
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7320333
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7320333
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: fe980cd1a8667664283f3c1e3ee90fb0, type: 2}
+    assetGuid: fe980cd1a8667664283f3c1e3ee90fb0
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.8706333
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8706333
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 0c1ba9ac5931dd94aa7df342ac4acf85, type: 2}
+    assetGuid: 0c1ba9ac5931dd94aa7df342ac4acf85
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.8425818
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8425818
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 00660acba5ab685468289fd4efaf27c8, type: 2}
+    assetGuid: 00660acba5ab685468289fd4efaf27c8
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.84103334
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.84103334
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 5ff11d5851453d54da41e1bc682a2707, type: 2}
+    assetGuid: 5ff11d5851453d54da41e1bc682a2707
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.76525
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.76525
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: d51d65ce0017c24449751eb2a45ae6eb, type: 2}
+    assetGuid: d51d65ce0017c24449751eb2a45ae6eb
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.8234909
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8234909
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 46599add7d5eea440a9e1e147dd4141a, type: 2}
+    assetGuid: 46599add7d5eea440a9e1e147dd4141a
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.8135833
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8135833
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: e382205eca422ac4c9605b0172655b4c, type: 2}
+    assetGuid: e382205eca422ac4c9605b0172655b4c
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.8112182
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8112182
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: e5cda36dc111de346bd930ee781db2bc, type: 2}
+    assetGuid: e5cda36dc111de346bd930ee781db2bc
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7694
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7694
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: a870279135a31b0479828fd53ce1864b, type: 2}
+    assetGuid: a870279135a31b0479828fd53ce1864b
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7214
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7214
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 787b497ee1afde84c82939bf7e59b0ce, type: 2}
+    assetGuid: 787b497ee1afde84c82939bf7e59b0ce
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7240667
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7240667
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: a37fd110fac65ea46a5957a6a9920a11, type: 2}
+    assetGuid: a37fd110fac65ea46a5957a6a9920a11
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.76573336
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.76573336
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 00b64de694493db4c9d7339d974a2e45, type: 2}
+    assetGuid: 00b64de694493db4c9d7339d974a2e45
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7844
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7844
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 0c72ff05ad481d84bafd7653b60c7309, type: 2}
+    assetGuid: 0c72ff05ad481d84bafd7653b60c7309
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.7491556
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7491556
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 8a296cc5902a07f438062e02827ea91a, type: 2}
+    assetGuid: 8a296cc5902a07f438062e02827ea91a
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.77115
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.77115
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: ea66f669e27686941ad40b3b8db69fa6, type: 2}
+    assetGuid: ea66f669e27686941ad40b3b8db69fa6
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.77030003
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.77030003
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 00b7f18e02052d345afa3c24eed687c6, type: 2}
+    assetGuid: 00b7f18e02052d345afa3c24eed687c6
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.78073335
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.78073335
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 1cce6f3da5a3a6a4d96dc35a94686a91, type: 2}
+    assetGuid: 1cce6f3da5a3a6a4d96dc35a94686a91
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.74120003
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.74120003
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 4ea3c710fb4944141981b315fe00e4de, type: 2}
+    assetGuid: 4ea3c710fb4944141981b315fe00e4de
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.72477144
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.72477144
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 8d199b17258f83b4496a6a67f9b160a1, type: 2}
+    assetGuid: 8d199b17258f83b4496a6a67f9b160a1
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.6903667
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.6903667
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 9e460cd546e5d0041ada35bc83ef9913, type: 2}
+    assetGuid: 9e460cd546e5d0041ada35bc83ef9913
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.72220004
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.72220004
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 08a0264d6b310754f81dea778447759f, type: 2}
+    assetGuid: 08a0264d6b310754f81dea778447759f
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.77783334
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.77783334
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: b6b2d5606f435bc47a55d2ff2ef69f07, type: 2}
+    assetGuid: b6b2d5606f435bc47a55d2ff2ef69f07
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.6880286
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.6880286
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 9f0a99ee7ce72574e89b9bf49137679c, type: 2}
+    assetGuid: 9f0a99ee7ce72574e89b9bf49137679c
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7170333
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7170333
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 7ff6a362cdc596e4695c91e7a46ee14b, type: 2}
+    assetGuid: 7ff6a362cdc596e4695c91e7a46ee14b
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7397714
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7397714
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 29355409a155beb46aab23ef4caabec0, type: 2}
+    assetGuid: 29355409a155beb46aab23ef4caabec0
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.78057146
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.78057146
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: e4849c42765e8a340b1aa19390268b6f, type: 2}
+    assetGuid: e4849c42765e8a340b1aa19390268b6f
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7399334
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7399334
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: adc2271eaee39384ab3989bb0bf31771, type: 2}
+    assetGuid: adc2271eaee39384ab3989bb0bf31771
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7486
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7486
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: ecb5060b88b8dc449a0344388853f266, type: 2}
+    assetGuid: ecb5060b88b8dc449a0344388853f266
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.85803634
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.85803634
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 55fd675d27b1e2a4eb3ce78de5e94470, type: 2}
+    assetGuid: 55fd675d27b1e2a4eb3ce78de5e94470
+    status: 0
+    assignedDifficulty: 2
+    baseQuality: 0.8405833
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8405833
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Hard
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 28b787569d0f07d4ab3621e63deeaa5f, type: 2}
+    assetGuid: 28b787569d0f07d4ab3621e63deeaa5f
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.8227
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8227
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 0d49f9fe3b0ffc74da184b76c0a98365, type: 2}
+    assetGuid: 0d49f9fe3b0ffc74da184b76c0a98365
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.8362182
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8362182
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 169669956806a2d4ab20e25f228e7775, type: 2}
+    assetGuid: 169669956806a2d4ab20e25f228e7775
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.8399091
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8399091
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 1180d7166c1b89940835c02772f7bc2b, type: 2}
+    assetGuid: 1180d7166c1b89940835c02772f7bc2b
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.78733337
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.78733337
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 45bc6f0c2cae7e1498a4a378e60117f0, type: 2}
+    assetGuid: 45bc6f0c2cae7e1498a4a378e60117f0
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.83648336
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.83648336
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 882db2f5a7877eb4ea3d20cea3a5b84a, type: 2}
+    assetGuid: 882db2f5a7877eb4ea3d20cea3a5b84a
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.8082333
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8082333
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 544ad42dbfa163a40b10f70557c91af7, type: 2}
+    assetGuid: 544ad42dbfa163a40b10f70557c91af7
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.728425
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.728425
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: c79e417fbc2dc8640b570a466fb44b8a, type: 2}
+    assetGuid: c79e417fbc2dc8640b570a466fb44b8a
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7694
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7694
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 3a5db4cd1a648cd43a9247a69f3cb476, type: 2}
+    assetGuid: 3a5db4cd1a648cd43a9247a69f3cb476
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.73906666
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.73906666
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: cc1f9cc9fd3bf6d46b3b7ed3e376d2bb, type: 2}
+    assetGuid: cc1f9cc9fd3bf6d46b3b7ed3e376d2bb
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.78002226
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.78002226
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: aa95219572fb31c4090c8083bd110fb0, type: 2}
+    assetGuid: aa95219572fb31c4090c8083bd110fb0
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.8243
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8243
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 2eb9f7e445f55bc41a555391193c8381, type: 2}
+    assetGuid: 2eb9f7e445f55bc41a555391193c8381
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.8502667
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8502667
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 4770b37bde8948b4db6d0fe835aaf33d, type: 2}
+    assetGuid: 4770b37bde8948b4db6d0fe835aaf33d
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.75168574
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.75168574
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: bb8ed98a9597be04a9e79143aa526526, type: 2}
+    assetGuid: bb8ed98a9597be04a9e79143aa526526
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.8615
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8615
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 3221fe3b5aad2174a9ea6ae02e6ea5a6, type: 2}
+    assetGuid: 3221fe3b5aad2174a9ea6ae02e6ea5a6
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7694
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7694
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: bd27e6e4f169d954ea0509b703764c33, type: 2}
+    assetGuid: bd27e6e4f169d954ea0509b703764c33
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.80115
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.80115
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 6898d465ecb42fb48a7c27f474443e0d, type: 2}
+    assetGuid: 6898d465ecb42fb48a7c27f474443e0d
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.788025
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.788025
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 46823a9740086fb4987ff4f16c153066, type: 2}
+    assetGuid: 46823a9740086fb4987ff4f16c153066
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.7922
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7922
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 394a4e3bb3df88244bff161535d03204, type: 2}
+    assetGuid: 394a4e3bb3df88244bff161535d03204
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.72588575
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.72588575
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: a0f5ee8cf13ccab4695e44e6c017a44b, type: 2}
+    assetGuid: a0f5ee8cf13ccab4695e44e6c017a44b
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.6903667
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.6903667
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 70a0ba9cee2c90d4bb3b99b4ed3caa46, type: 2}
+    assetGuid: 70a0ba9cee2c90d4bb3b99b4ed3caa46
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7397714
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7397714
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 46e8e9108aa8a7b46b1292e7ff3fcd69, type: 2}
+    assetGuid: 46e8e9108aa8a7b46b1292e7ff3fcd69
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7451714
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7451714
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 077ab6869edcb934a867878a83441401, type: 2}
+    assetGuid: 077ab6869edcb934a867878a83441401
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7451714
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7451714
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 84b831e47dfefd5479046af15ec61383, type: 2}
+    assetGuid: 84b831e47dfefd5479046af15ec61383
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7053667
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7053667
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: d4a8f452b8b525843a6e5376943f9ac1, type: 2}
+    assetGuid: d4a8f452b8b525843a6e5376943f9ac1
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.77783334
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.77783334
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: e94bbbbaf21c5d44cb1b1ed6babdd082, type: 2}
+    assetGuid: e94bbbbaf21c5d44cb1b1ed6babdd082
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7486
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7486
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: d7257e933fb1746458eafa9a445d1d9b, type: 2}
+    assetGuid: d7257e933fb1746458eafa9a445d1d9b
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7601714
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7601714
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 548e5e39840d21e4b93c5ee2d1b4a4a9, type: 2}
+    assetGuid: 548e5e39840d21e4b93c5ee2d1b4a4a9
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.72588575
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.72588575
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: f1b15d0771004174098a74e4637be6c5, type: 2}
+    assetGuid: f1b15d0771004174098a74e4637be6c5
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.72220004
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.72220004
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 77c22d28f9db7e54c81735add723fa41, type: 2}
+    assetGuid: 77c22d28f9db7e54c81735add723fa41
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.81200004
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.81200004
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: f7da37dadc642814d87e1b50d12f66d2, type: 2}
+    assetGuid: f7da37dadc642814d87e1b50d12f66d2
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.8334909
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8334909
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 93da40538d938794888df72c6de8a020, type: 2}
+    assetGuid: 93da40538d938794888df72c6de8a020
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.8610333
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8610333
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 5ec7603df4d620c40b340a33ba09933e, type: 2}
+    assetGuid: 5ec7603df4d620c40b340a33ba09933e
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.84826154
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.84826154
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: ea12a27dd2d5e6849bac70552f5c319a, type: 2}
+    assetGuid: ea12a27dd2d5e6849bac70552f5c319a
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.84643334
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.84643334
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: dccd9c815e04f1d439f435fb8887b53e, type: 2}
+    assetGuid: dccd9c815e04f1d439f435fb8887b53e
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.8466923
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8466923
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 2e72aa0c41971b24bae5688a3bf12f4e, type: 2}
+    assetGuid: 2e72aa0c41971b24bae5688a3bf12f4e
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.86718184
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.86718184
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 6c7c59681f3108844ab59f5d87244fb8, type: 2}
+    assetGuid: 6c7c59681f3108844ab59f5d87244fb8
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.7763077
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7763077
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: a6a53aa2cfee66b4f96b94e87c1d1e18, type: 2}
+    assetGuid: a6a53aa2cfee66b4f96b94e87c1d1e18
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.86188334
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.86188334
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 4924485d1800e604e88d2b54dc73a859, type: 2}
+    assetGuid: 4924485d1800e604e88d2b54dc73a859
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.8090308
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8090308
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: a646911cafb8b1a459f650926736496a, type: 2}
+    assetGuid: a646911cafb8b1a459f650926736496a
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.79747695
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.79747695
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: f8dd0520ea7a3df46916f423545e3ec4, type: 2}
+    assetGuid: f8dd0520ea7a3df46916f423545e3ec4
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.8171077
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8171077
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 2879688b4e136c447ac409196f9bbb5a, type: 2}
+    assetGuid: 2879688b4e136c447ac409196f9bbb5a
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.80188334
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.80188334
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 5d01a11106b5bb6438f801abbdd86971, type: 2}
+    assetGuid: 5d01a11106b5bb6438f801abbdd86971
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.8652
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8652
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 001b0160732bc3f4f9179d63ced80de6, type: 2}
+    assetGuid: 001b0160732bc3f4f9179d63ced80de6
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.80950004
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.80950004
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 4d2401cb2fe4cb54080c7ffedc8cfa0a, type: 2}
+    assetGuid: 4d2401cb2fe4cb54080c7ffedc8cfa0a
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.8467273
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8467273
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: d2f3240864b7bb04bbaa77894e184f5c, type: 2}
+    assetGuid: d2f3240864b7bb04bbaa77894e184f5c
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.7769
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7769
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 145812300ca53454599ee5ea460f0844, type: 2}
+    assetGuid: 145812300ca53454599ee5ea460f0844
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.8213077
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8213077
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 9fb3d124c5ff5b943a3454c223d8cf90, type: 2}
+    assetGuid: 9fb3d124c5ff5b943a3454c223d8cf90
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.7927334
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7927334
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: a567b4f5dd44db34585791b3b081e1c2, type: 2}
+    assetGuid: a567b4f5dd44db34585791b3b081e1c2
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.82747275
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.82747275
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: ef9caa02353f3194b89f45e1d4988116, type: 2}
+    assetGuid: ef9caa02353f3194b89f45e1d4988116
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.82093847
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.82093847
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: bb78e42653e6abe4086f45e3e80aeb26, type: 2}
+    assetGuid: bb78e42653e6abe4086f45e3e80aeb26
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.80167276
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.80167276
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: ea71f8bfb0438a74ea4851f6fd452d36, type: 2}
+    assetGuid: ea71f8bfb0438a74ea4851f6fd452d36
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.83108336
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.83108336
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 7a08ca3a445ea8842912bc663a7e1d1b, type: 2}
+    assetGuid: 7a08ca3a445ea8842912bc663a7e1d1b
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.8402
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8402
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 27552a8cd60ab7c4d9e5b64fc79b57bc, type: 2}
+    assetGuid: 27552a8cd60ab7c4d9e5b64fc79b57bc
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.8214833
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8214833
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: ef6ea8ac12ee88a4aad40f713e79795d, type: 2}
+    assetGuid: ef6ea8ac12ee88a4aad40f713e79795d
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.8577333
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8577333
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 9a46bf009ce2fd748b4984ea5d74e6d3, type: 2}
+    assetGuid: 9a46bf009ce2fd748b4984ea5d74e6d3
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.8533818
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8533818
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 2039c200a7ee0b44b954ff6dd8d04359, type: 2}
+    assetGuid: 2039c200a7ee0b44b954ff6dd8d04359
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.83976924
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.83976924
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 9e4ee0829aa2ac647928b3a031f64b55, type: 2}
+    assetGuid: 9e4ee0829aa2ac647928b3a031f64b55
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.81228334
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.81228334
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: ba8183b10db610d4e9f0a09057122999, type: 2}
+    assetGuid: ba8183b10db610d4e9f0a09057122999
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.81667274
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.81667274
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: ee7bb64d0ccf1334ea0d32872d5fece4, type: 2}
+    assetGuid: ee7bb64d0ccf1334ea0d32872d5fece4
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7733091
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7733091
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: bf8f40c59d8c8924f902185012faa0e4, type: 2}
+    assetGuid: bf8f40c59d8c8924f902185012faa0e4
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.76573336
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.76573336
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 0d9b5e5330b266b41bc4f3d24988587f, type: 2}
+    assetGuid: 0d9b5e5330b266b41bc4f3d24988587f
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.8128
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8128
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 193ad12681316354e987c4665c5bb89f, type: 2}
+    assetGuid: 193ad12681316354e987c4665c5bb89f
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7596222
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7596222
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 208f5a456ffaf274fbc1e500ada300b3, type: 2}
+    assetGuid: 208f5a456ffaf274fbc1e500ada300b3
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.7978
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7978
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 5f4d9ca27d738bd40991a64667ca9453, type: 2}
+    assetGuid: 5f4d9ca27d738bd40991a64667ca9453
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.8402
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8402
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: b13ddcb53f58e1c40a61060125b12c5f, type: 2}
+    assetGuid: b13ddcb53f58e1c40a61060125b12c5f
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.8032
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8032
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 2d498ff8181636a47bfc9e7ae6fab3fe, type: 2}
+    assetGuid: 2d498ff8181636a47bfc9e7ae6fab3fe
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.8371818
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8371818
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: bf41ea43006ee5a4cbe0a9f3732f4eac, type: 2}
+    assetGuid: bf41ea43006ee5a4cbe0a9f3732f4eac
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.6969455
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.6969455
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: f74be51c6b513f04b82659d6d18454a8, type: 2}
+    assetGuid: f74be51c6b513f04b82659d6d18454a8
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.80740005
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.80740005
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: da827744cf0e1284b811688078f4be5d, type: 2}
+    assetGuid: da827744cf0e1284b811688078f4be5d
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.78694546
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.78694546
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 7761113f4b2eb2f43bc1bf2e84451fc7, type: 2}
+    assetGuid: 7761113f4b2eb2f43bc1bf2e84451fc7
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7924
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7924
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 20aed380f141180429844929973388c7, type: 2}
+    assetGuid: 20aed380f141180429844929973388c7
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.7544
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7544
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: d874c9aa0f158744c9f2836b90603963, type: 2}
+    assetGuid: d874c9aa0f158744c9f2836b90603963
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.78323334
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.78323334
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 459f69b8dd83dfe458a8d52190fd2e52, type: 2}
+    assetGuid: 459f69b8dd83dfe458a8d52190fd2e52
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.7694
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7694
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 51f92724f9cc508429d6728faa5b0462, type: 2}
+    assetGuid: 51f92724f9cc508429d6728faa5b0462
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.8074
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8074
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 3e3e297bae2a12849ab0460cba89558e, type: 2}
+    assetGuid: 3e3e297bae2a12849ab0460cba89558e
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7651273
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7651273
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: dbbfa6cd1085aec458b7dd2318be53da, type: 2}
+    assetGuid: dbbfa6cd1085aec458b7dd2318be53da
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7694
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7694
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 01952b7254430e244a669b521d183c64, type: 2}
+    assetGuid: 01952b7254430e244a669b521d183c64
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.78290004
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.78290004
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 33c9b397c0057504cb37ac080d846850, type: 2}
+    assetGuid: 33c9b397c0057504cb37ac080d846850
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.8072909
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8072909
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 659c4f88c0eb65a4eaeb1b3bdc86e7d3, type: 2}
+    assetGuid: 659c4f88c0eb65a4eaeb1b3bdc86e7d3
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7934
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7934
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: c2d6ea3fc1c676048a8ca4b8719c5215, type: 2}
+    assetGuid: c2d6ea3fc1c676048a8ca4b8719c5215
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.7744667
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7744667
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 859b04e710a4647488b01a156b1a8811, type: 2}
+    assetGuid: 859b04e710a4647488b01a156b1a8811
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.85218185
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.85218185
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: cf68c5e2f811f1c4c9682e08da747cb5, type: 2}
+    assetGuid: cf68c5e2f811f1c4c9682e08da747cb5
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.80234545
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.80234545
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: a4e61d0ffbbfbaf4ca98af5c473274c7, type: 2}
+    assetGuid: a4e61d0ffbbfbaf4ca98af5c473274c7
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.7772
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7772
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 220ca507cf3611c4e9fc86bc04575fcd, type: 2}
+    assetGuid: 220ca507cf3611c4e9fc86bc04575fcd
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.7813273
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7813273
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: f0a1d77d5097f6943aab0a3b7bae81fb, type: 2}
+    assetGuid: f0a1d77d5097f6943aab0a3b7bae81fb
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.8072909
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8072909
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: f6c74f1b82e542f4782a67c858970c99, type: 2}
+    assetGuid: f6c74f1b82e542f4782a67c858970c99
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.8243
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8243
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 754a87de004240942aeefe4355603603, type: 2}
+    assetGuid: 754a87de004240942aeefe4355603603
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.7222
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7222
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 61e44bea5d69af540bae65dbacf475f2, type: 2}
+    assetGuid: 61e44bea5d69af540bae65dbacf475f2
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.65557504
+    difficultyFit: 1
+    trivialityPenalty: 0.2
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.65557504
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: e8a9be1515e62a24f95504d7c7d4cf6b, type: 2}
+    assetGuid: e8a9be1515e62a24f95504d7c7d4cf6b
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.774
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.774
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 638cea4ba3b89884b8868d119e276b9a, type: 2}
+    assetGuid: 638cea4ba3b89884b8868d119e276b9a
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.8160834
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8160834
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 6858b667924dfb14babb8b9f21bcf3b0, type: 2}
+    assetGuid: 6858b667924dfb14babb8b9f21bcf3b0
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.82815
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.82815
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 1577f21b71259cd4f97e1899d9341d78, type: 2}
+    assetGuid: 1577f21b71259cd4f97e1899d9341d78
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.78900003
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.78900003
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 9ed471644ffbdab42bd4eaf7010c51bb, type: 2}
+    assetGuid: 9ed471644ffbdab42bd4eaf7010c51bb
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.84516925
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.84516925
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: d19fc39585271af408405e1e99c89fdf, type: 2}
+    assetGuid: d19fc39585271af408405e1e99c89fdf
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.77169234
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.77169234
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: d99efbcd97fe4c047a43e97ba0820361, type: 2}
+    assetGuid: d99efbcd97fe4c047a43e97ba0820361
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.8072572
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8072572
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: e8a25ce8dccf9ee4daa3a969e083ac86, type: 2}
+    assetGuid: e8a25ce8dccf9ee4daa3a969e083ac86
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.77709234
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.77709234
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 4e8f229291cf9f14ca6873efd23ddfd0, type: 2}
+    assetGuid: 4e8f229291cf9f14ca6873efd23ddfd0
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.8330909
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8330909
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 3240456755b94344cbb7c8902720b11b, type: 2}
+    assetGuid: 3240456755b94344cbb7c8902720b11b
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.82114285
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.82114285
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: b8696743aa5169843ab338db294e85cf, type: 2}
+    assetGuid: b8696743aa5169843ab338db294e85cf
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.83169234
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.83169234
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 7f9562daa30302d4fba27ada51a3f181, type: 2}
+    assetGuid: 7f9562daa30302d4fba27ada51a3f181
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.80653334
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.80653334
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 38855e5705e175449af66d194b1c64f7, type: 2}
+    assetGuid: 38855e5705e175449af66d194b1c64f7
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.74448335
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.74448335
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 9b75dbbb788b2254fb6a9fbad7fc8969, type: 2}
+    assetGuid: 9b75dbbb788b2254fb6a9fbad7fc8969
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.7749
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7749
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 1b9b189b4033d054ab743e3e8bb11d9e, type: 2}
+    assetGuid: 1b9b189b4033d054ab743e3e8bb11d9e
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.7544
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7544
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 02a186c0e1fa7e2498232fc1e074f3ae, type: 2}
+    assetGuid: 02a186c0e1fa7e2498232fc1e074f3ae
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.7715667
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7715667
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: fb08f1f542d14f94ba9f85834dfaf0e6, type: 2}
+    assetGuid: fb08f1f542d14f94ba9f85834dfaf0e6
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.76030004
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.76030004
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 131684dabbc2e0d42acae193e457970a, type: 2}
+    assetGuid: 131684dabbc2e0d42acae193e457970a
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.7694
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7694
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: c5cb8a7097b18a543a987efb015999ad, type: 2}
+    assetGuid: c5cb8a7097b18a543a987efb015999ad
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.73410004
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.73410004
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: b8533c427b1ecca4a8ab4896a2e0fdd3, type: 2}
+    assetGuid: b8533c427b1ecca4a8ab4896a2e0fdd3
+    status: 0
+    assignedDifficulty: 0
+    baseQuality: 0.6904857
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.6904857
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Easy
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: a50c85e1c9e5f8c409d3b6b9d59f1563, type: 2}
+    assetGuid: a50c85e1c9e5f8c409d3b6b9d59f1563
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.82354546
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.82354546
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: b8db689c4820cc44ca5555e5d1d388ca, type: 2}
+    assetGuid: b8db689c4820cc44ca5555e5d1d388ca
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.81154287
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.81154287
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 1d170b0d27e19014881fb17daa7f55aa, type: 2}
+    assetGuid: 1d170b0d27e19014881fb17daa7f55aa
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.83614284
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.83614284
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: fffc4678f7fb52541bd18dd6c1f1776a, type: 2}
+    assetGuid: fffc4678f7fb52541bd18dd6c1f1776a
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.8577
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8577
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 4592799ddf8833940b3bf92a707da4ed, type: 2}
+    assetGuid: 4592799ddf8833940b3bf92a707da4ed
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.82114285
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.82114285
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: fd9eecd29d0ed124686cb373106fd78e, type: 2}
+    assetGuid: fd9eecd29d0ed124686cb373106fd78e
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.85212725
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.85212725
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: dc95f9b768035df4faca58cd950a6c8a, type: 2}
+    assetGuid: dc95f9b768035df4faca58cd950a6c8a
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.8097693
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8097693
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: fbf5cbbadc683cf48a322774a237df60, type: 2}
+    assetGuid: fbf5cbbadc683cf48a322774a237df60
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.7694
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7694
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 4d8afd45d30ebfb43a31e4389f906d27, type: 2}
+    assetGuid: 4d8afd45d30ebfb43a31e4389f906d27
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.78694546
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.78694546
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 6dbf3e1eaeccd79439a41c359ab55566, type: 2}
+    assetGuid: 6dbf3e1eaeccd79439a41c359ab55566
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.8032333
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8032333
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 983f69159adf89c4a990456ecba99779, type: 2}
+    assetGuid: 983f69159adf89c4a990456ecba99779
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.7650222
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7650222
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: c343c5ac20f36b94dbe768b67c7eb35e, type: 2}
+    assetGuid: c343c5ac20f36b94dbe768b67c7eb35e
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.76823336
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.76823336
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: d0832892c769d2249a79b939fc6feda2, type: 2}
+    assetGuid: d0832892c769d2249a79b939fc6feda2
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.7934
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7934
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 73aca92fc2460914ba8ad4f9975507ee, type: 2}
+    assetGuid: 73aca92fc2460914ba8ad4f9975507ee
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.7943572
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7943572
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 79234fbd00472434482cbfc7db902929, type: 2}
+    assetGuid: 79234fbd00472434482cbfc7db902929
+    status: 0
+    assignedDifficulty: 2
+    baseQuality: 0.84193337
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.84193337
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Hard
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 757689e7f5a65a4498a13457a75d5240, type: 2}
+    assetGuid: 757689e7f5a65a4498a13457a75d5240
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.8069
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8069
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: d8ee4a3d5c2356b43bb6e24f9529a20e, type: 2}
+    assetGuid: d8ee4a3d5c2356b43bb6e24f9529a20e
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.85324615
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.85324615
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 99fe2c579d03ade479da635a6bf8acd8, type: 2}
+    assetGuid: 99fe2c579d03ade479da635a6bf8acd8
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.79473335
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.79473335
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: c5dda751a552d2945b897b0f9056b22b, type: 2}
+    assetGuid: c5dda751a552d2945b897b0f9056b22b
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.8274923
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8274923
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 411f596ab9e674a4cb6f40f221e7fd4e, type: 2}
+    assetGuid: 411f596ab9e674a4cb6f40f221e7fd4e
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.85398334
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.85398334
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 71fe53a2f216a75448e7761c858803a0, type: 2}
+    assetGuid: 71fe53a2f216a75448e7761c858803a0
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.8262727
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8262727
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: f69633eef3f8c9f4da6d15287d11aacf, type: 2}
+    assetGuid: f69633eef3f8c9f4da6d15287d11aacf
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.8355333
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.8355333
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 52d3ff2d3b9d72e4db8e1d335f3d7e6e, type: 2}
+    assetGuid: 52d3ff2d3b9d72e4db8e1d335f3d7e6e
+    status: 0
+    assignedDifficulty: 2
+    baseQuality: 0.84793335
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.84793335
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Hard
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 26d4f0ad9dbac634dbbff05a4660a319, type: 2}
+    assetGuid: 26d4f0ad9dbac634dbbff05a4660a319
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.7978154
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7978154
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: e946b1f8f36f6ed488e86205834544ba, type: 2}
+    assetGuid: e946b1f8f36f6ed488e86205834544ba
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.7924
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7924
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 165de52282d07e8408bfad00afa6df5a, type: 2}
+    assetGuid: 165de52282d07e8408bfad00afa6df5a
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.7988
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7988
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 4a22d9295c615ed48a290120f1d19425, type: 2}
+    assetGuid: 4a22d9295c615ed48a290120f1d19425
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.80238336
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.80238336
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: dacf4ae1fae1b4b49862b595bf7702df, type: 2}
+    assetGuid: dacf4ae1fae1b4b49862b595bf7702df
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.7583091
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.7583091
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: a3c07a266821bfd46a1d75a801071df5, type: 2}
+    assetGuid: a3c07a266821bfd46a1d75a801071df5
+    status: 0
+    assignedDifficulty: 1
+    baseQuality: 0.79738337
+    difficultyFit: 1
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0.79738337
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: Medium
+    playtestNote: 
+    rejectReason: 0
+  - level: {fileID: 11400000, guid: 1e0228f48a3480e438e15d775710bba8, type: 2}
+    assetGuid: 1e0228f48a3480e438e15d775710bba8
+    status: 3
+    assignedDifficulty: 0
+    baseQuality: 0
+    difficultyFit: 0
+    trivialityPenalty: 0
+    nearDuplicatePenalty: 0
+    effectiveScore: 0
+    needsReview: 0
+    reviewReason: 
+    suggestedDifficulty: 
+    playtestNote: 
+    rejectReason: 0
+  lastCurateUtc: 2026-08-19 18:09:04Z
+  lastReport: '=== V1 Auto Curate ===
+
+    Scanned candidates: 408
+
+    Eligible
+    (excl. rejected): 408
+
+    SHORTAGE Final Easy: have 12 / target 50
+
+    SHORTAGE
+    Reserve Easy: have 0 / target 10
+
+    SHORTAGE Final Medium: have 39 / target
+    50
+
+    SHORTAGE Reserve Medium: have 0 / target 10
+
+    SHORTAGE Final Hard:
+    have 18 / target 50
+
+    SHORTAGE Reserve Hard: have 0 / target 10
+
+    Easy
+    closest pair similarity=0.90 (V1_7x6_Easy_002 vs V1_7x6_Easy_006)
+
+    Medium
+    closest pair similarity=0.97 (V1_8x7_Medium_002 vs V1_8x7_Medium_005)
+
+    Hard
+    closest pair similarity=0.90 (V1_8x7_Hard_006 vs V1_8x7_Hard_004)
+
+    
+
+    FINAL
+    COUNTS:
+
+    Easy 12/50
+
+    Medium 39/50
+
+    Hard 18/50
+
+    RESERVES:
+    E0 M0 H0
+
+    
+
+    GRID DRIFT (final vs target):
+
+    Easy 5x5: 0 / target
+    12
+
+    Easy 5x6: 2 / target 6
+
+    Easy 6x5: 2 / target 6
+
+    Easy 6x6:
+    0 / target 12
+
+    Easy 6x7: 3 / target 4
+
+    Easy 7x6: 2 / target 4
+
+    Easy
+    7x7: 1 / target 4
+
+    Medium 5x5: 1 / target 3
+
+    Medium 5x6: 2 / target
+    4
+
+    Medium 6x6: 2 / target 10
+
+    Medium 6x7: 6 / target 5
+
+    Medium
+    7x6: 4 / target 5
+
+    Medium 7x7: 1 / target 10
+
+    Medium 7x8: 7 / target
+    4
+
+    Medium 8x7: 9 / target 3
+
+    Medium 8x8: 4 / target 3
+
+    Hard 5x5:
+    1 / target 0
+
+    Hard 6x6: 0 / target 5
+
+    Hard 6x7: 2 / target 4
+
+    Hard
+    7x6: 3 / target 4
+
+    Hard 7x7: 0 / target 10
+
+    Hard 7x8: 3 / target 6
+
+    Hard
+    8x7: 3 / target 6
+
+    Hard 8x8: 4 / target 13
+
+'

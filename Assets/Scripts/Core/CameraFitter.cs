@@ -7,6 +7,9 @@ using UnityEngine;
 /// Enige eigenaar van gameplay orthographic framing.
 /// Camera X = boardBounds.center.x (nooit exit).
 /// ExitArrow telt volledig mee; ExitRoad alleen tot maxExitExtensionBeyondBoard.
+///
+/// Belangrijk: iedere FitToGrid zet orthographicSize ABSOLUUT (geen Mathf.Max op vorige size).
+/// Board visuals moeten inactive/destroyed zijn vóór fit bij size-change (zie ParkingGridVisual).
 /// </summary>
 public class CameraFitter : MonoBehaviour
 {
@@ -48,6 +51,7 @@ public class CameraFitter : MonoBehaviour
     [Header("Debug")]
     [SerializeField] private bool drawBoundsGizmo = true;
     [SerializeField] private bool verifyNoOverrideNextFrame = true;
+    [SerializeField] private bool logVerboseFit = false;
 
     private int lastGridWidth = 6;
     private int lastGridHeight = 6;
@@ -63,7 +67,16 @@ public class CameraFitter : MonoBehaviour
 
     private float lastAppliedOrthoSize;
     private float lastAppliedCameraX;
+    private Vector3 lastAppliedCameraPos;
+    private Vector3 lastBoardCenter;
+
+    private float baselineOrthographicSize;
+    private Vector3 baselineCameraPosition;
+    private bool hasBaseline;
+
+    private int fitGeneration;
     private Coroutine verifyOverrideRoutine;
+    private Coroutine deferredRefitRoutine;
 
     private void Awake()
     {
@@ -71,6 +84,8 @@ public class CameraFitter : MonoBehaviour
         {
             targetCamera = Camera.main;
         }
+
+        CacheBaselineIfNeeded();
     }
 
     private void Start()
@@ -80,8 +95,27 @@ public class CameraFitter : MonoBehaviour
             targetCamera = Camera.main;
         }
 
+        CacheBaselineIfNeeded();
+
         // Fallback als LevelManager later fit; voorkomt Start-order races niet als primary.
         StartCoroutine(FitAfterFirstFrameFallback());
+    }
+
+    private void OnDisable()
+    {
+        StopFitCoroutines();
+    }
+
+    private void CacheBaselineIfNeeded()
+    {
+        if (hasBaseline || targetCamera == null)
+        {
+            return;
+        }
+
+        baselineOrthographicSize = targetCamera.orthographicSize;
+        baselineCameraPosition = targetCamera.transform.position;
+        hasBaseline = true;
     }
 
     private IEnumerator FitAfterFirstFrameFallback()
@@ -114,7 +148,32 @@ public class CameraFitter : MonoBehaviour
         lastGridWidth = Mathf.Max(1, gridWidth);
         lastGridHeight = Mathf.Max(1, gridHeight);
         lastCellSize = Mathf.Max(0.01f, cellSize);
-        FitToCurrentBoard();
+
+        fitGeneration++;
+        int generation = fitGeneration;
+
+        // Immediate fit (ParkingGridVisual deactivates old tiles first).
+        FitToVisualBounds();
+
+        // End-of-frame refit after Destroy() completes — belt-and-suspenders for size changes.
+        if (deferredRefitRoutine != null)
+        {
+            StopCoroutine(deferredRefitRoutine);
+        }
+
+        deferredRefitRoutine = StartCoroutine(DeferredRefitAfterDestroy(generation));
+    }
+
+    private IEnumerator DeferredRefitAfterDestroy(int generation)
+    {
+        yield return null;
+        if (generation != fitGeneration)
+        {
+            yield break;
+        }
+
+        FitToVisualBounds();
+        deferredRefitRoutine = null;
     }
 
     public void SetExitVisualRoot(Transform root)
@@ -151,50 +210,44 @@ public class CameraFitter : MonoBehaviour
             return;
         }
 
-        StringBuilder log = new StringBuilder(2048);
-        log.AppendLine("--- CAMERA FIT START ---");
-        log.AppendLine("Screen = " + Screen.width + "x" + Screen.height);
-        log.AppendLine("Camera aspect = " + targetCamera.aspect.ToString("0.0000"));
-        log.AppendLine("Camera rect = " + targetCamera.rect);
-        log.AppendLine("Camera pixelRect = " + targetCamera.pixelRect);
-        log.AppendLine("Screen.safeArea = " + Screen.safeArea);
+        CacheBaselineIfNeeded();
+
+        StringBuilder log = logVerboseFit ? new StringBuilder(2048) : null;
+        if (log != null)
+        {
+            log.AppendLine("--- CAMERA FIT START ---");
+            log.AppendLine("Screen = " + Screen.width + "x" + Screen.height);
+            log.AppendLine("Camera aspect = " + targetCamera.aspect.ToString("0.0000"));
+            log.AppendLine("Camera rect = " + targetCamera.rect);
+            log.AppendLine("Camera pixelRect = " + targetCamera.pixelRect);
+            log.AppendLine("Screen.safeArea = " + Screen.safeArea);
+        }
 
         if (!TryBuildBoardBounds(out Bounds boardBounds, out int boardRendererCount))
         {
-            log.AppendLine("ERROR: geen board bounds (boardVisualRoot leeg/ontbreekt).");
-            Debug.LogWarning(log.ToString());
+            Debug.LogWarning(
+                "CameraFitter: geen board bounds (boardVisualRoot leeg/ontbreekt)."
+            );
             return;
         }
 
         lastBoardBounds = boardBounds;
         hasBoardBounds = true;
+        lastBoardCenter = boardBounds.center;
 
-        log.AppendLine("Board renderer count = " + boardRendererCount);
-        log.AppendLine("Board bounds min = " + boardBounds.min);
-        log.AppendLine("Board bounds max = " + boardBounds.max);
-        log.AppendLine("Board bounds center = " + boardBounds.center);
-        log.AppendLine("Board bounds size = " + boardBounds.size);
+        if (log != null)
+        {
+            log.AppendLine("Board renderer count = " + boardRendererCount);
+            log.AppendLine("Board bounds min = " + boardBounds.min);
+            log.AppendLine("Board bounds max = " + boardBounds.max);
+            log.AppendLine("Board bounds center = " + boardBounds.center);
+            log.AppendLine("Board bounds size = " + boardBounds.size);
 
-        LogSingleRenderer(log, "Exit renderer (road)", exitRenderer);
-        LogSingleRenderer(log, "Exit arrow renderer", exitArrowRenderer);
+            LogSingleRenderer(log, "Exit renderer (road)", exitRenderer);
+            LogSingleRenderer(log, "Exit arrow renderer", exitArrowRenderer);
+        }
 
         List<Renderer> exitRootRenderers = CollectExitRootRenderers();
-        log.AppendLine("ExitVisualRoot renderer count = " + exitRootRenderers.Count);
-        for (int i = 0; i < exitRootRenderers.Count; i++)
-        {
-            Renderer r = exitRootRenderers[i];
-            if (r == null)
-            {
-                continue;
-            }
-
-            log.AppendLine(
-                "  Exit[" + i + "] path=" + GetHierarchyPath(r.transform) +
-                " type=" + r.GetType().Name +
-                " min.x=" + r.bounds.min.x.ToString("0.000") +
-                " max.x=" + r.bounds.max.x.ToString("0.000")
-            );
-        }
 
         float boardCenterX = boardBounds.center.x;
         float boardHalfWidth = boardBounds.extents.x;
@@ -231,14 +284,9 @@ public class CameraFitter : MonoBehaviour
                 continue;
             }
 
-            if (r == exitArrowRenderer)
+            if (r == exitArrowRenderer || r == exitRenderer)
             {
                 continue;
-            }
-
-            if (r == exitRenderer)
-            {
-                continue; // al verwerkt
             }
 
             float actualRight = r.bounds.max.x;
@@ -262,7 +310,7 @@ public class CameraFitter : MonoBehaviour
         float requiredHalfWidth = Mathf.Max(leftRequirement, rightRequirement);
         requiredHalfWidth += exitPadding;
 
-        // Exact één keer: visibleHalfWidth = orthoSize * camera.aspect
+        // Width + height: limiting axis wins (rectangular-safe).
         float availableAspect = Mathf.Max(0.01f, targetCamera.aspect);
         float requiredForWidth = requiredHalfWidth / availableAspect;
 
@@ -285,20 +333,26 @@ public class CameraFitter : MonoBehaviour
             );
         }
 
+        // ABSOLUTE per-level size — never Mathf.Max(currentOrtho, required).
         float finalOrthographicSize = Mathf.Clamp(
             requiredSizeBeforeClamp,
             minOrthographicSize,
             maxOrthographicSize
         );
 
-        targetCamera.orthographicSize = finalOrthographicSize;
-
         float playCenterOffsetY =
             finalOrthographicSize * (bottomReservedFraction - topReservedFraction);
 
         Vector3 camPos = targetCamera.transform.position;
-        camPos.x = boardCenterX; // ABSOLUTE: nooit exit/combined center
+        camPos.x = boardCenterX;
         camPos.y = boardBounds.center.y - playCenterOffsetY;
+        // Keep baseline Z if available.
+        if (hasBaseline)
+        {
+            camPos.z = baselineCameraPosition.z;
+        }
+
+        targetCamera.orthographicSize = finalOrthographicSize;
         targetCamera.transform.position = camPos;
 
         lastScreenWidth = Screen.width;
@@ -307,25 +361,42 @@ public class CameraFitter : MonoBehaviour
         hasFit = true;
         lastAppliedOrthoSize = targetCamera.orthographicSize;
         lastAppliedCameraX = targetCamera.transform.position.x;
+        lastAppliedCameraPos = targetCamera.transform.position;
 
-        log.AppendLine("Board Right X = " + boardRight.ToString("0.000"));
-        log.AppendLine("ExitArrow Right X = " + FormatOptional(exitArrowRightX));
-        log.AppendLine("ExitRoad Actual Right X = " + FormatOptional(exitRoadActualRightX));
-        log.AppendLine("ExitRoad Limited Right X = " + FormatOptional(exitRoadLimitedRightX));
-        log.AppendLine("Final Relevant Right X = " + exitVisualRight.ToString("0.000"));
-        log.AppendLine("boardCenterX = " + boardCenterX.ToString("0.000"));
-        log.AppendLine("boardHalfWidth = " + boardHalfWidth.ToString("0.000"));
-        log.AppendLine("Required Half Width = " + requiredHalfWidth.ToString("0.000"));
-        log.AppendLine("Available Aspect = " + availableAspect.ToString("0.0000"));
-        log.AppendLine("Required For Width = " + requiredForWidth.ToString("0.000"));
-        log.AppendLine("Required For Height = " + requiredForHeight.ToString("0.000"));
-        log.AppendLine(
-            "Required Size Before Clamp = " + requiredSizeBeforeClamp.ToString("0.000")
+        Debug.Log(
+            "[LevelFraming]\n" +
+            "Grid=" + lastGridWidth + "x" + lastGridHeight + "\n" +
+            "BaseOrtho=" +
+            (hasBaseline ? baselineOrthographicSize.ToString("0.000") : "n/a") + "\n" +
+            "RequiredOrtho=" + requiredSizeBeforeClamp.ToString("0.000") + "\n" +
+            "AppliedOrtho=" + finalOrthographicSize.ToString("0.000") + "\n" +
+            "BoardCenter=" + boardBounds.center + "\n" +
+            "BoardSize=" + boardBounds.size + "\n" +
+            "BoardRenderers=" + boardRendererCount + "\n" +
+            "CameraPos=" + camPos
         );
-        log.AppendLine("Final Orthographic Size = " + finalOrthographicSize.ToString("0.000"));
-        log.AppendLine("cameraXAfter = " + camPos.x.ToString("0.000"));
-        log.AppendLine("--- CAMERA FIT END ---");
-        Debug.Log(log.ToString());
+
+        if (log != null)
+        {
+            log.AppendLine("Board Right X = " + boardRight.ToString("0.000"));
+            log.AppendLine("ExitArrow Right X = " + FormatOptional(exitArrowRightX));
+            log.AppendLine("ExitRoad Actual Right X = " + FormatOptional(exitRoadActualRightX));
+            log.AppendLine("ExitRoad Limited Right X = " + FormatOptional(exitRoadLimitedRightX));
+            log.AppendLine("Final Relevant Right X = " + exitVisualRight.ToString("0.000"));
+            log.AppendLine("boardCenterX = " + boardCenterX.ToString("0.000"));
+            log.AppendLine("boardHalfWidth = " + boardHalfWidth.ToString("0.000"));
+            log.AppendLine("Required Half Width = " + requiredHalfWidth.ToString("0.000"));
+            log.AppendLine("Available Aspect = " + availableAspect.ToString("0.0000"));
+            log.AppendLine("Required For Width = " + requiredForWidth.ToString("0.000"));
+            log.AppendLine("Required For Height = " + requiredForHeight.ToString("0.000"));
+            log.AppendLine(
+                "Required Size Before Clamp = " + requiredSizeBeforeClamp.ToString("0.000")
+            );
+            log.AppendLine("Final Orthographic Size = " + finalOrthographicSize.ToString("0.000"));
+            log.AppendLine("cameraXAfter = " + camPos.x.ToString("0.000"));
+            log.AppendLine("--- CAMERA FIT END ---");
+            Debug.Log(log.ToString());
+        }
 
         if (verifyNoOverrideNextFrame)
         {
@@ -334,30 +405,39 @@ public class CameraFitter : MonoBehaviour
                 StopCoroutine(verifyOverrideRoutine);
             }
 
-            verifyOverrideRoutine = StartCoroutine(VerifyNoOverrideNextFrame());
+            verifyOverrideRoutine = StartCoroutine(VerifyNoOverrideNextFrame(fitGeneration));
         }
     }
 
-    private IEnumerator VerifyNoOverrideNextFrame()
+    private void StopFitCoroutines()
+    {
+        fitGeneration++;
+        if (verifyOverrideRoutine != null)
+        {
+            StopCoroutine(verifyOverrideRoutine);
+            verifyOverrideRoutine = null;
+        }
+
+        if (deferredRefitRoutine != null)
+        {
+            StopCoroutine(deferredRefitRoutine);
+            deferredRefitRoutine = null;
+        }
+    }
+
+    private IEnumerator VerifyNoOverrideNextFrame(int generation)
     {
         float appliedSize = lastAppliedOrthoSize;
         float appliedX = lastAppliedCameraX;
         yield return null;
 
-        if (targetCamera == null)
+        if (generation != fitGeneration || targetCamera == null)
         {
             yield break;
         }
 
         float sizeNow = targetCamera.orthographicSize;
         float xNow = targetCamera.transform.position.x;
-
-        Debug.Log(
-            "Camera size one frame after fit: " + sizeNow.ToString("0.000") +
-            " (applied " + appliedSize.ToString("0.000") + ")" +
-            "\nCamera X one frame after fit: " + xNow.ToString("0.000") +
-            " (applied " + appliedX.ToString("0.000") + ")"
-        );
 
         if (!Mathf.Approximately(sizeNow, appliedSize))
         {
@@ -410,6 +490,8 @@ public class CameraFitter : MonoBehaviour
             return false;
         }
 
+        // includeInactive=true so we find objects, but IsValidRenderer skips inactive
+        // (critical after ClearGeneratedVisuals deactivates old tiles pending Destroy).
         Renderer[] found = boardVisualRoot.GetComponentsInChildren<Renderer>(true);
         bool initialized = false;
 
@@ -476,24 +558,6 @@ public class CameraFitter : MonoBehaviour
         log.AppendLine("  bounds min = " + r.bounds.min);
         log.AppendLine("  bounds max = " + r.bounds.max);
         log.AppendLine("  bounds size = " + r.bounds.size);
-    }
-
-    private static string GetHierarchyPath(Transform t)
-    {
-        if (t == null)
-        {
-            return "(null)";
-        }
-
-        string path = t.name;
-        Transform p = t.parent;
-        while (p != null)
-        {
-            path = p.name + "/" + path;
-            p = p.parent;
-        }
-
-        return path;
     }
 
     private static bool ApproximatelyRect(Rect a, Rect b)

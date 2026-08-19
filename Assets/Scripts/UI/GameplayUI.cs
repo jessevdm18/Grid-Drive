@@ -75,7 +75,7 @@ public class GameplayUI : MonoBehaviour
             return;
         }
 
-        int displayNumber = levelManager.CurrentLevelIndex + 1;
+        int displayNumber = levelManager.GetDisplayLevelNumber();
         levelValueText.text = displayNumber.ToString();
     }
 

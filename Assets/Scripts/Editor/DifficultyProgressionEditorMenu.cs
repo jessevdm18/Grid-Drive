@@ -9,6 +9,14 @@ public static class DifficultyProgressionEditorMenu
 {
     private const string DatabaseFilter = "MainLevelDatabase t:LevelDatabase";
 
+    [MenuItem("RushOut/Levels/Report V1 Grid Distribution Targets")]
+    public static void ReportV1GridDistributionTargets()
+    {
+        string table = V1ReleaseContentPlan.FormatDistributionTable();
+        Debug.Log(table);
+        EditorUtility.DisplayDialog("V1 Grid Distribution Targets", table, "OK");
+    }
+
     [MenuItem("RushOut/Levels/Report Difficulty Composition")]
     public static void ReportDifficultyComposition()
     {

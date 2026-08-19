@@ -59,10 +59,19 @@ public class LevelManager : MonoBehaviour
     // HintManager / solver gebruiken deze lijst — nooit her-sorteren op positie.
     private readonly List<VehicleController> activeVehicles = new List<VehicleController>();
 
+    // Editor V1 playtest: direct LevelData (niet via MainLevelDatabase index).
+    private LevelData editorPlaytestLevel;
+
     /// <summary>
     /// Zero-based index van het actieve level (0 = LEVEL 1).
+    /// -1 tijdens Editor V1 candidate playtest (geen DB index).
     /// </summary>
     public int CurrentLevelIndex => currentLevelIndex;
+
+    /// <summary>
+    /// Editor-only: true wanneer Gameplay via V1 direct-candidate override is geladen.
+    /// </summary>
+    public bool IsV1CandidatePlaytest => editorPlaytestLevel != null;
 
     /// <summary>
     /// Actieve voertuigen in LevelData-spawnvolgorde (stabiele solver-indices).
@@ -81,6 +90,11 @@ public class LevelManager : MonoBehaviour
     {
         get
         {
+            if (editorPlaytestLevel != null)
+            {
+                return editorPlaytestLevel;
+            }
+
             if (levelDatabase == null)
             {
                 return null;
@@ -90,8 +104,33 @@ public class LevelManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// UI display number. Candidate playtest: LevelData.levelNumber (fallback 0).
+    /// Normal: index + 1.
+    /// </summary>
+    public int GetDisplayLevelNumber()
+    {
+        if (editorPlaytestLevel != null)
+        {
+            return editorPlaytestLevel.levelNumber;
+        }
+
+        return currentLevelIndex + 1;
+    }
+
     private void Start()
     {
+#if UNITY_EDITOR
+        if (V1PlaytestOverride.TryConsumePendingLevel(out LevelData overrideLevel))
+        {
+            editorPlaytestLevel = overrideLevel;
+            currentLevelIndex = -1;
+            LoadLevelData(overrideLevel);
+            MarkFirstLaunchDone();
+            return;
+        }
+#endif
+
         // Laad voortgang uit save (default = 0).
         if (saveManager != null)
         {
@@ -113,7 +152,11 @@ public class LevelManager : MonoBehaviour
         }
 
         LoadCurrentLevel();
+        MarkFirstLaunchDone();
+    }
 
+    private void MarkFirstLaunchDone()
+    {
         // First-launch routing is klaar zodra Gameplay level succesvol start.
         // Classic tutorial blijft eigen seen-state houden.
         if (saveManager != null)
@@ -141,6 +184,15 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     public void LoadNextLevel()
     {
+        if (IsV1CandidatePlaytest)
+        {
+            Debug.Log(
+                "LevelManager: V1 candidate playtest — Next Level disabled (no DB identity)."
+            );
+            SceneTransition.LoadScene("LevelSelect");
+            return;
+        }
+
         if (levelDatabase == null || levelDatabase.LevelCount == 0)
         {
             Debug.LogError("LevelManager: geen levels in LevelDatabase.");
@@ -195,6 +247,13 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     public void RestartLevel()
     {
+        if (editorPlaytestLevel != null)
+        {
+            Debug.Log("Restarting V1 playtest level: " + editorPlaytestLevel.name);
+            LoadLevelData(editorPlaytestLevel);
+            return;
+        }
+
         // Bewaar de index lokaal — Restart mag currentLevelIndex nooit wijzigen.
         int indexToReload = currentLevelIndex;
 
@@ -210,6 +269,12 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     public void LoadLevel()
     {
+        if (editorPlaytestLevel != null)
+        {
+            LoadLevelData(editorPlaytestLevel);
+            return;
+        }
+
         if (levelDatabase == null || levelDatabase.LevelCount == 0)
         {
             Debug.LogError("LevelManager: geen levels in LevelDatabase.");
@@ -222,13 +287,24 @@ public class LevelManager : MonoBehaviour
             return;
         }
 
-        activeVehicleSpriteLibrary = ResolveActiveSpriteLibrary();
-
         LevelData levelData = levelDatabase.GetLevel(currentLevelIndex);
-
         if (levelData == null)
         {
             Debug.LogError("LevelManager: level op index " + currentLevelIndex + " is leeg.");
+            return;
+        }
+
+        LoadLevelData(levelData);
+    }
+
+    /// <summary>
+    /// Shared load pipeline for DB levels and Editor V1 candidate override.
+    /// </summary>
+    private void LoadLevelData(LevelData levelData)
+    {
+        if (levelData == null)
+        {
+            Debug.LogError("LevelManager: levelData is null.");
             return;
         }
 
@@ -243,6 +319,8 @@ public class LevelManager : MonoBehaviour
             Debug.LogError("LevelManager: geen GridManager gekoppeld.");
             return;
         }
+
+        activeVehicleSpriteLibrary = ResolveActiveSpriteLibrary();
 
         // Hint tint eerst herstellen, daarna voertuigen vernietigen.
         if (gameManager != null)
@@ -277,6 +355,8 @@ public class LevelManager : MonoBehaviour
         UpdateExitVisualPosition(levelData.exitRow);
 
         // Camera framing nadat parking + exit visuals klaar zijn.
+        // ParkingGridVisual deactiveert oude tiles vóór Destroy (voorkomt stale 8x8 bounds).
+        // CameraFitter past orthographicSize ABSOLUUT toe + end-of-frame refit.
         if (cameraFitter != null)
         {
             if (parkingGridVisual != null)
@@ -308,7 +388,9 @@ public class LevelManager : MonoBehaviour
 
         Debug.Log(
             "Level " + levelData.levelNumber +
-            " (index " + currentLevelIndex + ") geladen met " +
+            " (index " + currentLevelIndex +
+            (editorPlaytestLevel != null ? ", V1 playtest override" : string.Empty) +
+            ") geladen met " +
             levelData.vehicles.Count + " voertuigen."
         );
 

@@ -106,6 +106,49 @@ public class LevelGeneratorWindow : EditorWindow
     private bool specialMissionSuitabilityShowOnlyGood;
     private int specialMissionSuitabilityTab; // 0 NoTouch, 1 Fragile, 2 Limited
 
+    // --- V1 release candidate generation ---
+    private int v1CandidateMultiplier = V1ReleaseContentPlan.DefaultCandidateMultiplier;
+    private bool enforceV1GridRules = false;
+
+    // --- Difficulty candidate batch (separate from V1 release) ---
+    private enum DifficultyCandidateGridMode
+    {
+        CurrentGrid = 0,
+        AllowedV1Mix = 1
+    }
+
+    private LevelDifficulty difficultyCandidateBucket = LevelDifficulty.Easy;
+    private int difficultyCandidateCount = 10;
+    private DifficultyCandidateGridMode difficultyCandidateGridMode =
+        DifficultyCandidateGridMode.CurrentGrid;
+
+    private struct ManualGeneratorSnapshot
+    {
+        public DifficultyPreset difficultyPreset;
+        public int gridWidth;
+        public int gridHeight;
+        public int numberOfLevels;
+        public string batchName;
+        public string outputFolder;
+        public int randomSeed;
+        public int minVehicles;
+        public int maxVehicles;
+        public int minMinimumMoves;
+        public int maxMinimumMoves;
+        public int maxAttemptsPerLevel;
+        public int placementAttemptsPerVehicle;
+        public int maxPlacementIterationsPerCandidate;
+        public int maxSolverStatesPerCandidate;
+        public float maxGenerationSecondsPerLevel;
+        public int minVehiclesUsedInSolution;
+        public int minDirectBlockers;
+        public float minBoardOccupancy;
+        public float maxBoardOccupancy;
+        public float minMovableRatio;
+        public float maxMovableRatio;
+        public bool allowLength4Vehicles;
+        public int maxLength4Vehicles;
+    }
 
     private int BoardArea => gridWidth * gridHeight;
     private float AreaScale => BoardArea / (float)BaselineBoardArea;
@@ -149,10 +192,43 @@ public class LevelGeneratorWindow : EditorWindow
         scroll = EditorGUILayout.BeginScrollView(scroll);
 
         EditorGUILayout.LabelField("Grid Drive — Level Generator", EditorStyles.boldLabel);
+        EditorGUILayout.Space(4f);
+        if (GUILayout.Button("Open Level Content Planner", GUILayout.Height(26f)))
+        {
+            LevelContentPlannerWindow.OpenWindow();
+        }
+
         EditorGUILayout.Space(6f);
+        EditorGUILayout.HelpBox(
+            "Drie aparte workflows — niet gekoppeld:\n" +
+            "A) MANUAL GENERATION — jouw grid + count + filters\n" +
+            "B) DIFFICULTY CANDIDATES — Easy/Medium/Hard filter-preset + count\n" +
+            "C) V1 RELEASE BATCH — volledige 150×multiplier candidate pool\n\n" +
+            "V1 start NOOIT automatisch. Alleen GeneratedLevels (geen MainLevelDatabase).",
+            MessageType.Info
+        );
+
+        DrawManualGenerationSection();
+        DrawDifficultyCandidatesSection();
+        DrawV1ReleaseBatchSection();
+
+        DrawSpecialMissionProgressionSection();
+
+        EditorGUILayout.EndScrollView();
+    }
+
+    private void DrawManualGenerationSection()
+    {
+        EditorGUILayout.Space(8f);
+        EditorGUILayout.LabelField("A. MANUAL GENERATION", EditorStyles.boldLabel);
+        EditorGUILayout.HelpBox(
+            "Genereert ALLEEN jouw huidige grid × count.\n" +
+            "Geen V1 distribution, geen multiplier, geen andere grids.",
+            MessageType.None
+        );
 
         DifficultyPreset newPreset = (DifficultyPreset)EditorGUILayout.EnumPopup(
-            "Difficulty Preset",
+            "Difficulty Preset (filters only)",
             difficultyPreset
         );
         if (newPreset != difficultyPreset)
@@ -164,30 +240,41 @@ public class LevelGeneratorWindow : EditorWindow
         batchName = EditorGUILayout.TextField("Batch Name", batchName);
         outputFolder = EditorGUILayout.TextField("Output Folder", outputFolder);
 
-        EditorGUILayout.Space(8f);
+        EditorGUILayout.Space(6f);
         EditorGUILayout.HelpBox(
             "Pipeline: Random placement → cheap filters → solver → minimumMoves → " +
             "basic quality → duplicate check → accept.",
             MessageType.Info
         );
 
-        EditorGUILayout.Space(8f);
-        EditorGUILayout.LabelField("Basics", EditorStyles.boldLabel);
+        EditorGUILayout.Space(6f);
+        EditorGUILayout.LabelField("Grid / Count", EditorStyles.boldLabel);
+
+        enforceV1GridRules = EditorGUILayout.Toggle(
+            "Enforce V1 Grid Rules (optional: 5–8, |w-h|≤1)",
+            enforceV1GridRules
+        );
+        EditorGUILayout.LabelField(
+            "Dit valideert alleen dimensions — start GEEN V1 release batch.",
+            EditorStyles.miniLabel
+        );
 
         int prevW = gridWidth;
         int prevH = gridHeight;
-        gridWidth = EditorGUILayout.IntSlider(
-            "Grid Width",
-            gridWidth,
-            LevelData.MinGridSize,
-            LevelData.MaxGridSize
-        );
-        gridHeight = EditorGUILayout.IntSlider(
-            "Grid Height",
-            gridHeight,
-            LevelData.MinGridSize,
-            LevelData.MaxGridSize
-        );
+        int minDim = enforceV1GridRules
+            ? V1ReleaseContentPlan.MinDimension
+            : LevelData.MinGridSize;
+        int maxDim = enforceV1GridRules
+            ? V1ReleaseContentPlan.MaxDimension
+            : LevelData.MaxGridSize;
+
+        gridWidth = EditorGUILayout.IntSlider("Grid Width", gridWidth, minDim, maxDim);
+        gridHeight = EditorGUILayout.IntSlider("Grid Height", gridHeight, minDim, maxDim);
+
+        if (enforceV1GridRules)
+        {
+            ClampGridToV1Rules();
+        }
 
         if ((gridWidth != prevW || gridHeight != prevH) &&
             difficultyPreset != DifficultyPreset.Custom)
@@ -195,9 +282,25 @@ public class LevelGeneratorWindow : EditorWindow
             ApplyDifficultyPreset(difficultyPreset);
         }
 
+        if (enforceV1GridRules &&
+            !V1ReleaseContentPlan.IsAllowedDimension(gridWidth, gridHeight))
+        {
+            EditorGUILayout.HelpBox(
+                "Grid " + gridWidth + "x" + gridHeight +
+                " is outside V1 rules (5–8 and |width-height| ≤ 1).",
+                MessageType.Warning
+            );
+        }
+
         DrawEffectiveGridSummary();
 
         numberOfLevels = EditorGUILayout.IntField("Number Of Levels To Generate", numberOfLevels);
+        EditorGUILayout.LabelField(
+            "Manual run will attempt exactly " + Mathf.Max(1, numberOfLevels) +
+            " accepted level(s) on " + gridWidth + "x" + gridHeight + ".",
+            EditorStyles.miniLabel
+        );
+
         minVehicles = EditorGUILayout.IntField("Min Vehicles", minVehicles);
         maxVehicles = EditorGUILayout.IntField("Max Vehicles", maxVehicles);
         minMinimumMoves = EditorGUILayout.IntField("Min Minimum Moves", minMinimumMoves);
@@ -254,25 +357,17 @@ public class LevelGeneratorWindow : EditorWindow
         EditorGUILayout.HelpBox(
             "Almost-solved guard geldt alleen als Min Minimum Moves >= 4.\n" +
             "Handmatige wijzigingen na een preset worden gewoon gebruikt.\n" +
-            "Duplicate detection: deze run + GeneratedLevels + MainLevelDatabase.",
+            "Duplicate detection: deze run + GeneratedLevels + MainLevelDatabase.\n" +
+            "Gegenereerde levels worden NIET aan MainLevelDatabase toegevoegd.",
             MessageType.None
         );
 
-        EditorGUILayout.Space(12f);
-        EditorGUILayout.HelpBox(
-            "Gegenereerde levels worden NIET aan MainLevelDatabase toegevoegd. " +
-            "Review ze eerst in de output-map.",
-            MessageType.Info
-        );
-
-        DrawSpecialMissionProgressionSection();
-
         EditorGUILayout.Space(8f);
         EditorGUILayout.BeginHorizontal();
-        if (GUILayout.Button("Generate Levels", GUILayout.Height(36f)))
+        if (GUILayout.Button("Generate Levels (Manual)", GUILayout.Height(36f)))
         {
             cancelGeneration = false;
-            GenerateLevels();
+            GenerateLevels(assignDifficultyFromPreset: true);
         }
 
         if (GUILayout.Button("STOP / CANCEL", GUILayout.Height(36f), GUILayout.Width(140f)))
@@ -282,8 +377,179 @@ public class LevelGeneratorWindow : EditorWindow
         }
 
         EditorGUILayout.EndHorizontal();
-        EditorGUILayout.EndScrollView();
     }
+
+    private void DrawDifficultyCandidatesSection()
+    {
+        EditorGUILayout.Space(14f);
+        EditorGUILayout.LabelField("B. DIFFICULTY CANDIDATES", EditorStyles.boldLabel);
+        EditorGUILayout.HelpBox(
+            "Genereert kandidaten met Easy/Medium/Hard filter-presets.\n" +
+            "LevelData.difficulty wordt NIET definitief gezet (blijft Easy voor planner).\n" +
+            "Los van V1 release batch — alleen jouw Candidate Count.",
+            MessageType.None
+        );
+
+        difficultyCandidateBucket = (LevelDifficulty)EditorGUILayout.EnumPopup(
+            "Planning Bucket",
+            difficultyCandidateBucket
+        );
+        difficultyCandidateCount = Mathf.Max(
+            1,
+            EditorGUILayout.IntField("Candidate Count", difficultyCandidateCount)
+        );
+        difficultyCandidateGridMode = (DifficultyCandidateGridMode)EditorGUILayout.EnumPopup(
+            "Grid Mode",
+            difficultyCandidateGridMode
+        );
+
+        if (difficultyCandidateGridMode == DifficultyCandidateGridMode.CurrentGrid)
+        {
+            EditorGUILayout.LabelField(
+                "Uses current manual grid: " + gridWidth + "x" + gridHeight +
+                " × " + difficultyCandidateCount + " candidates.",
+                EditorStyles.miniLabel
+            );
+        }
+        else
+        {
+            EditorGUILayout.LabelField(
+                "Spreads " + difficultyCandidateCount +
+                " candidates across allowed V1 grids (5–8, |w-h|≤1).",
+                EditorStyles.miniLabel
+            );
+        }
+
+        if (GUILayout.Button("Generate Difficulty Candidates", GUILayout.Height(32f)))
+        {
+            cancelGeneration = false;
+            GenerateDifficultyCandidates();
+        }
+    }
+
+    private void DrawV1ReleaseBatchSection()
+    {
+        EditorGUILayout.Space(14f);
+        EditorGUILayout.LabelField("C. V1 RELEASE BATCH", EditorStyles.boldLabel);
+        EditorGUILayout.HelpBox(
+            "Volledige release candidate pool over ALLE V1 grid-slots.\n" +
+            "Dit is GEEN manual generate. Alleen starten via de knop hieronder.\n" +
+            "Manual settings worden gecached en na de batch hersteld.",
+            MessageType.Warning
+        );
+
+        EditorGUILayout.LabelField(
+            "Target Final Levels = " + V1ReleaseContentPlan.TargetTotal +
+            "  (50 Easy + 50 Medium + 50 Hard content slots)",
+            EditorStyles.boldLabel
+        );
+
+        v1CandidateMultiplier = EditorGUILayout.IntSlider(
+            "Candidate Multiplier",
+            v1CandidateMultiplier,
+            1,
+            8
+        );
+
+        int estimated = V1ReleaseContentPlan.TargetTotal * Mathf.Max(1, v1CandidateMultiplier);
+        EditorGUILayout.HelpBox(
+            "Formula: Target Final Levels × Candidate Multiplier\n" +
+            V1ReleaseContentPlan.TargetTotal + " × " +
+            Mathf.Max(1, v1CandidateMultiplier) + " = " + estimated +
+            " estimated generated candidates\n\n" +
+            "Dit is een candidate pool, NIET de final MainLevelDatabase size.\n" +
+            "Orientation pairs worden ±1 gebalanceerd binnen de 150 slots.",
+            MessageType.Info
+        );
+
+        if (GUILayout.Button("Show V1 Distribution Table", GUILayout.Height(24f)))
+        {
+            Debug.Log(V1ReleaseContentPlan.FormatDistributionTable());
+            EditorUtility.DisplayDialog(
+                "V1 Distribution",
+                V1ReleaseContentPlan.FormatDistributionTable(),
+                "OK"
+            );
+        }
+
+        EditorGUILayout.BeginHorizontal();
+        GUI.backgroundColor = new Color(1f, 0.75f, 0.45f);
+        if (GUILayout.Button(
+                "Generate V1 Release Candidates (~" + estimated + ")",
+                GUILayout.Height(32f)))
+        {
+            cancelGeneration = false;
+            GenerateV1ReleaseCandidates();
+        }
+
+        GUI.backgroundColor = Color.white;
+        if (GUILayout.Button("Test Rectangular Grids", GUILayout.Height(32f), GUILayout.Width(180f)))
+        {
+            TestRectangularGeneration();
+        }
+
+        EditorGUILayout.EndHorizontal();
+    }
+
+    private void DrawEffectiveGridSummary()
+    {
+        ResolveEffectiveSettings();
+
+        EditorGUILayout.HelpBox(
+            "Grid: " + gridWidth + "x" + gridHeight +
+            "\nVehicles: " + effectiveMinVehicles + "-" + effectiveMaxVehicles +
+            "\nMoves: " + effectiveMinMoves + "-" + effectiveMaxMoves +
+            "\nOccupancy: " +
+            effectiveMinOccupancy.ToString("0.00") + "-" +
+            effectiveMaxOccupancy.ToString("0.00") +
+            "\nMovable: " +
+            minMovableRatio.ToString("0.00") + "-" +
+            maxMovableRatio.ToString("0.00") +
+            "\nLength 4: " +
+            (allowLength4Vehicles
+                ? ("on (max " + maxLength4Vehicles + ")")
+                : "off") +
+            "\nArea scale: " + AreaScale.ToString("0.00") +
+            " (baseline 6x6 = 1.00)",
+            MessageType.Info
+        );
+    }
+
+    private void ClampGridToV1Rules()
+    {
+        gridWidth = Mathf.Clamp(
+            gridWidth,
+            V1ReleaseContentPlan.MinDimension,
+            V1ReleaseContentPlan.MaxDimension
+        );
+        gridHeight = Mathf.Clamp(
+            gridHeight,
+            V1ReleaseContentPlan.MinDimension,
+            V1ReleaseContentPlan.MaxDimension
+        );
+
+        if (Mathf.Abs(gridWidth - gridHeight) <= V1ReleaseContentPlan.MaxAspectDelta)
+        {
+            return;
+        }
+
+        if (gridHeight > gridWidth)
+        {
+            gridHeight = gridWidth + 1;
+        }
+        else
+        {
+            gridHeight = gridWidth - 1;
+        }
+
+        gridHeight = Mathf.Clamp(
+            gridHeight,
+            V1ReleaseContentPlan.MinDimension,
+            V1ReleaseContentPlan.MaxDimension
+        );
+    }
+
+    #endregion
 
     private void DrawSpecialMissionProgressionSection()
     {
@@ -815,32 +1081,6 @@ public class LevelGeneratorWindow : EditorWindow
         EditorGUILayout.EndScrollView();
     }
 
-    private void DrawEffectiveGridSummary()
-    {
-        ResolveEffectiveSettings();
-
-        EditorGUILayout.HelpBox(
-            "Grid: " + gridWidth + "x" + gridHeight +
-            "\nVehicles: " + effectiveMinVehicles + "-" + effectiveMaxVehicles +
-            "\nMoves: " + effectiveMinMoves + "-" + effectiveMaxMoves +
-            "\nOccupancy: " +
-            effectiveMinOccupancy.ToString("0.00") + "-" +
-            effectiveMaxOccupancy.ToString("0.00") +
-            "\nMovable: " +
-            minMovableRatio.ToString("0.00") + "-" +
-            maxMovableRatio.ToString("0.00") +
-            "\nLength 4: " +
-            (allowLength4Vehicles
-                ? ("on (max " + maxLength4Vehicles + ")")
-                : "off") +
-            "\nArea scale: " + AreaScale.ToString("0.00") +
-            " (baseline 6x6 = 1.00)",
-            MessageType.Info
-        );
-    }
-
-    #endregion
-
     #region Presets
 
     private void ResolveEffectiveSettings()
@@ -1055,7 +1295,333 @@ public class LevelGeneratorWindow : EditorWindow
 
     #region Generation
 
-    private void GenerateLevels()
+    private ManualGeneratorSnapshot CaptureManualSnapshot()
+    {
+        return new ManualGeneratorSnapshot
+        {
+            difficultyPreset = difficultyPreset,
+            gridWidth = gridWidth,
+            gridHeight = gridHeight,
+            numberOfLevels = numberOfLevels,
+            batchName = batchName,
+            outputFolder = outputFolder,
+            randomSeed = randomSeed,
+            minVehicles = minVehicles,
+            maxVehicles = maxVehicles,
+            minMinimumMoves = minMinimumMoves,
+            maxMinimumMoves = maxMinimumMoves,
+            maxAttemptsPerLevel = maxAttemptsPerLevel,
+            placementAttemptsPerVehicle = placementAttemptsPerVehicle,
+            maxPlacementIterationsPerCandidate = maxPlacementIterationsPerCandidate,
+            maxSolverStatesPerCandidate = maxSolverStatesPerCandidate,
+            maxGenerationSecondsPerLevel = maxGenerationSecondsPerLevel,
+            minVehiclesUsedInSolution = minVehiclesUsedInSolution,
+            minDirectBlockers = minDirectBlockers,
+            minBoardOccupancy = minBoardOccupancy,
+            maxBoardOccupancy = maxBoardOccupancy,
+            minMovableRatio = minMovableRatio,
+            maxMovableRatio = maxMovableRatio,
+            allowLength4Vehicles = allowLength4Vehicles,
+            maxLength4Vehicles = maxLength4Vehicles
+        };
+    }
+
+    private void RestoreManualSnapshot(ManualGeneratorSnapshot snap)
+    {
+        difficultyPreset = snap.difficultyPreset;
+        gridWidth = snap.gridWidth;
+        gridHeight = snap.gridHeight;
+        numberOfLevels = snap.numberOfLevels;
+        batchName = snap.batchName;
+        outputFolder = snap.outputFolder;
+        randomSeed = snap.randomSeed;
+        minVehicles = snap.minVehicles;
+        maxVehicles = snap.maxVehicles;
+        minMinimumMoves = snap.minMinimumMoves;
+        maxMinimumMoves = snap.maxMinimumMoves;
+        maxAttemptsPerLevel = snap.maxAttemptsPerLevel;
+        placementAttemptsPerVehicle = snap.placementAttemptsPerVehicle;
+        maxPlacementIterationsPerCandidate = snap.maxPlacementIterationsPerCandidate;
+        maxSolverStatesPerCandidate = snap.maxSolverStatesPerCandidate;
+        maxGenerationSecondsPerLevel = snap.maxGenerationSecondsPerLevel;
+        minVehiclesUsedInSolution = snap.minVehiclesUsedInSolution;
+        minDirectBlockers = snap.minDirectBlockers;
+        minBoardOccupancy = snap.minBoardOccupancy;
+        maxBoardOccupancy = snap.maxBoardOccupancy;
+        minMovableRatio = snap.minMovableRatio;
+        maxMovableRatio = snap.maxMovableRatio;
+        allowLength4Vehicles = snap.allowLength4Vehicles;
+        maxLength4Vehicles = snap.maxLength4Vehicles;
+        ResolveEffectiveSettings();
+    }
+
+    private void ApplyPlanningBucketPreset(LevelDifficulty bucket)
+    {
+        switch (bucket)
+        {
+            case LevelDifficulty.Easy:
+                difficultyPreset = DifficultyPreset.Easy;
+                break;
+            case LevelDifficulty.Hard:
+                difficultyPreset = DifficultyPreset.Hard;
+                break;
+            default:
+                difficultyPreset = DifficultyPreset.Medium;
+                break;
+        }
+
+        ApplyDifficultyPreset(difficultyPreset);
+    }
+
+    /// <summary>
+    /// Difficulty-candidate batch: uses filter presets only; does not finalize LevelData.difficulty.
+    /// </summary>
+    private void GenerateDifficultyCandidates()
+    {
+        cancelGeneration = false;
+        int count = Mathf.Max(1, difficultyCandidateCount);
+        ManualGeneratorSnapshot snapshot = CaptureManualSnapshot();
+
+        try
+        {
+            ApplyPlanningBucketPreset(difficultyCandidateBucket);
+
+            if (difficultyCandidateGridMode == DifficultyCandidateGridMode.CurrentGrid)
+            {
+                numberOfLevels = count;
+                batchName = "DiffCand_" + difficultyCandidateBucket + "_" +
+                    gridWidth + "x" + gridHeight;
+                outputFolder =
+                    GeneratedRoot + "/DifficultyCandidates/" + difficultyCandidateBucket +
+                    "/" + gridWidth + "x" + gridHeight;
+
+                Debug.Log(
+                    "Difficulty Candidates | bucket=" + difficultyCandidateBucket +
+                    " | grid=" + gridWidth + "x" + gridHeight +
+                    " | count=" + count
+                );
+                GenerateLevels(assignDifficultyFromPreset: false);
+            }
+            else
+            {
+                Vector2Int[] grids = V1ReleaseContentPlan.ExactGrids;
+                int[] perGrid = DistributeCountAcross(count, grids.Length);
+                for (int i = 0; i < grids.Length; i++)
+                {
+                    if (cancelGeneration)
+                    {
+                        break;
+                    }
+
+                    if (perGrid[i] <= 0)
+                    {
+                        continue;
+                    }
+
+                    gridWidth = grids[i].x;
+                    gridHeight = grids[i].y;
+                    numberOfLevels = perGrid[i];
+                    ApplyPlanningBucketPreset(difficultyCandidateBucket);
+                    batchName = "DiffCand_" + difficultyCandidateBucket + "_" +
+                        gridWidth + "x" + gridHeight;
+                    outputFolder =
+                        GeneratedRoot + "/DifficultyCandidates/" + difficultyCandidateBucket +
+                        "/" + gridWidth + "x" + gridHeight;
+
+                    Debug.Log(
+                        "Difficulty Candidates mix | " + gridWidth + "x" + gridHeight +
+                        " | count=" + numberOfLevels
+                    );
+                    GenerateLevels(assignDifficultyFromPreset: false);
+                }
+            }
+        }
+        finally
+        {
+            RestoreManualSnapshot(snapshot);
+            EditorUtility.ClearProgressBar();
+        }
+
+        EditorUtility.DisplayDialog(
+            "Difficulty Candidates",
+            "Finished difficulty-candidate generation for bucket " +
+            difficultyCandidateBucket + ".\n" +
+            "Output under:\n" + GeneratedRoot + "/DifficultyCandidates/",
+            "OK"
+        );
+    }
+
+    private static int[] DistributeCountAcross(int total, int buckets)
+    {
+        int[] result = new int[Mathf.Max(0, buckets)];
+        if (buckets <= 0 || total <= 0)
+        {
+            return result;
+        }
+
+        int baseCount = total / buckets;
+        int remainder = total % buckets;
+        for (int i = 0; i < buckets; i++)
+        {
+            result[i] = baseCount + (i < remainder ? 1 : 0);
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// Oversampled V1 candidate batch. Writes to GeneratedLevels only.
+    /// Uses planning-bucket presets for quality filters; does NOT assign final difficulty.
+    /// </summary>
+    private void GenerateV1ReleaseCandidates()
+    {
+        cancelGeneration = false;
+        int multiplier = Mathf.Max(1, v1CandidateMultiplier);
+        List<V1ReleaseContentPlan.GenerationJob> jobs =
+            V1ReleaseContentPlan.BuildGenerationJobs(multiplier);
+
+        if (jobs.Count == 0)
+        {
+            Debug.LogWarning("V1 Release Candidates: no generation jobs.");
+            return;
+        }
+
+        int estimated = V1ReleaseContentPlan.TargetTotal * multiplier;
+        bool proceed = EditorUtility.DisplayDialog(
+            "Generate V1 Release Candidates",
+            "Target Final Levels: " + V1ReleaseContentPlan.TargetTotal + "\n" +
+            "Candidate Multiplier: " + multiplier + "x\n" +
+            "Estimated Generated Candidates: " + estimated +
+            "  (" + V1ReleaseContentPlan.TargetTotal + " × " + multiplier + ")\n\n" +
+            "Jobs: " + jobs.Count + "\n" +
+            "Output: " + GeneratedRoot + "/V1_Release_Candidates/...\n\n" +
+            "Does NOT modify MainLevelDatabase.\n" +
+            "Manual settings will be restored after the batch.\n" +
+            "Continue?",
+            "Generate",
+            "Cancel"
+        );
+        if (!proceed)
+        {
+            return;
+        }
+
+        ManualGeneratorSnapshot snapshot = CaptureManualSnapshot();
+        int jobsDone = 0;
+        int jobsCancelled = 0;
+
+        try
+        {
+            for (int i = 0; i < jobs.Count; i++)
+            {
+                if (cancelGeneration)
+                {
+                    jobsCancelled = jobs.Count - i;
+                    break;
+                }
+
+                V1ReleaseContentPlan.GenerationJob job = jobs[i];
+                gridWidth = job.width;
+                gridHeight = job.height;
+                numberOfLevels = Mathf.Max(1, job.candidateCount);
+                randomSeed = snapshot.randomSeed + i * 9973;
+
+                ApplyPlanningBucketPreset(job.planningBucket);
+                batchName = "V1_" + job.width + "x" + job.height + "_" + job.planningBucket;
+                outputFolder =
+                    GeneratedRoot + "/V1_Release_Candidates/" +
+                    job.width + "x" + job.height + "/" + job.planningBucket;
+
+                Debug.Log(
+                    "V1 job " + (i + 1) + "/" + jobs.Count +
+                    " | " + job.width + "x" + job.height +
+                    " | planningBucket=" + job.planningBucket +
+                    " | candidates=" + numberOfLevels +
+                    " | group=" + job.groupLabel
+                );
+
+                GenerateLevels(assignDifficultyFromPreset: false);
+                jobsDone++;
+            }
+        }
+        finally
+        {
+            RestoreManualSnapshot(snapshot);
+            EditorUtility.ClearProgressBar();
+        }
+
+        Debug.Log(
+            "V1 Release Candidates finished | jobsDone=" + jobsDone +
+            " | cancelledRemaining=" + jobsCancelled
+        );
+        EditorUtility.DisplayDialog(
+            "V1 Release Candidates",
+            "Finished " + jobsDone + " / " + jobs.Count + " jobs.\n" +
+            "Manual settings restored.\n" +
+            "Review assets under:\n" + GeneratedRoot + "/V1_Release_Candidates/",
+            "OK"
+        );
+    }
+
+    /// <summary>
+    /// Smoke-test rectangular boards: place + solve one candidate per non-square V1 size.
+    /// </summary>
+    private void TestRectangularGeneration()
+    {
+        Vector2Int[] sizes =
+        {
+            new Vector2Int(5, 6),
+            new Vector2Int(6, 5),
+            new Vector2Int(6, 7),
+            new Vector2Int(7, 6),
+            new Vector2Int(7, 8),
+            new Vector2Int(8, 7)
+        };
+
+        StringBuilder sb = new StringBuilder();
+        sb.AppendLine("=== Rectangular Generation Smoke Test ===");
+
+        ManualGeneratorSnapshot snapshot = CaptureManualSnapshot();
+
+        try
+        {
+            for (int i = 0; i < sizes.Length; i++)
+            {
+                Vector2Int size = sizes[i];
+                gridWidth = size.x;
+                gridHeight = size.y;
+                numberOfLevels = 1;
+                ApplyPlanningBucketPreset(LevelDifficulty.Medium);
+                batchName = "RectTest_" + size.x + "x" + size.y;
+                outputFolder = GeneratedRoot + "/_RectSmokeTest";
+
+                GenerateLevels(assignDifficultyFromPreset: false);
+
+                sb.AppendLine(
+                    size.x + "x" + size.y +
+                    " | allowed=" + V1ReleaseContentPlan.IsAllowedDimension(size.x, size.y) +
+                    " | see Console Accepted logs / " + outputFolder
+                );
+            }
+        }
+        finally
+        {
+            RestoreManualSnapshot(snapshot);
+        }
+
+        sb.AppendLine();
+        sb.AppendLine("Square-assumption audit:");
+        sb.AppendLine("- Generator: independent gridWidth/gridHeight (OK).");
+        sb.AppendLine("- RushOutSolver: width×height occupancy (OK).");
+        sb.AppendLine("- LevelData/LevelManager: ResolvedGridWidth/Height (OK).");
+        sb.AppendLine("- Length4 defaults use Max(w,h) (safe for rectangles).");
+        sb.AppendLine("- AreaScale uses w*h vs 6x6 baseline (OK).");
+
+        Debug.Log(sb.ToString());
+        EditorUtility.DisplayDialog("Rectangular Smoke Test", sb.ToString(), "OK");
+    }
+
+    private void GenerateLevels(bool assignDifficultyFromPreset)
     {
         cancelGeneration = false;
 
@@ -1098,7 +1664,9 @@ public class LevelGeneratorWindow : EditorWindow
         EnsureFolderExists(outputFolder);
 
         string safeBatchName = SanitizeBatchName(batchName);
-        LevelDifficulty tier = GetLevelDifficultyTier();
+        LevelDifficulty tier = assignDifficultyFromPreset
+            ? GetLevelDifficultyTier()
+            : LevelDifficulty.Easy;
         System.Random rng = new System.Random(randomSeed);
 
         HashSet<string> existingLevelKeys = LevelCanonicalKey.CollectExistingLevelKeys(

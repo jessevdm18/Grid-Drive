@@ -430,6 +430,9 @@ public class ParkingGridVisual : MonoBehaviour
         {
             if (spawnedObjects[i] != null)
             {
+                // Deactivate BEFORE Destroy: Destroy is end-of-frame deferred.
+                // CameraFitter must not still see old 8x8 tiles when fitting 5x5 same frame.
+                spawnedObjects[i].SetActive(false);
                 Destroy(spawnedObjects[i]);
             }
         }
@@ -451,7 +454,10 @@ public class ParkingGridVisual : MonoBehaviour
 
         for (int i = parent.childCount - 1; i >= 0; i--)
         {
-            Destroy(parent.GetChild(i).gameObject);
+            GameObject child = parent.GetChild(i).gameObject;
+            // Immediate deactivate so Renderer.bounds are excluded this frame.
+            child.SetActive(false);
+            Destroy(child);
         }
     }
 

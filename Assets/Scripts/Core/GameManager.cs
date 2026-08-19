@@ -311,60 +311,70 @@ public class GameManager : MonoBehaviour
         // net-opgeslagen 3★ als "legacy claimed" markeren zonder payout.
         if (saveManager != null && levelManager != null)
         {
-            int completedIndex = levelManager.CurrentLevelIndex;
-            int previousBestStars = saveManager.GetStarsForLevel(completedIndex);
-            bool claimedBefore = saveManager.HasClaimedThreeStarCoinReward(completedIndex);
-            bool eligible = LastEarnedStars == 3 && !claimedBefore;
-
-            if (eligible)
+            // Editor V1 candidate playtest: geen DB-index → geen progression/economy writes.
+            if (levelManager.IsV1CandidatePlaytest)
             {
-                LastEarnedCoins = LevelCompleteCoinReward;
-                saveManager.MarkThreeStarCoinRewardClaimed(completedIndex);
-                LastThreeStarCoinRewardGranted = true;
-                coinsFeatureTutorialTriggerPending = true;
-
-                if (coinManager != null)
-                {
-                    coinManager.AddCoins(LastEarnedCoins);
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
-                    Debug.Log(
-                        "[CoinsFT]\n" +
-                        "Stage=CoinsAdded\n" +
-                        "Session=" + FeatureTutorialController.CoinsFtSessionId + "\n" +
-                        "Amount=" + LastEarnedCoins + "\n" +
-                        "BalanceAfter=" + coinManager.GetCoins()
-                    );
-#endif
-                }
+                Debug.Log(
+                    "CompleteLevel: V1 candidate playtest — skipping stars/coins/unlock writes."
+                );
             }
+            else
+            {
+                int completedIndex = levelManager.CurrentLevelIndex;
+                int previousBestStars = saveManager.GetStarsForLevel(completedIndex);
+                bool claimedBefore = saveManager.HasClaimedThreeStarCoinReward(completedIndex);
+                bool eligible = LastEarnedStars == 3 && !claimedBefore;
+
+                if (eligible)
+                {
+                    LastEarnedCoins = LevelCompleteCoinReward;
+                    saveManager.MarkThreeStarCoinRewardClaimed(completedIndex);
+                    LastThreeStarCoinRewardGranted = true;
+                    coinsFeatureTutorialTriggerPending = true;
+
+                    if (coinManager != null)
+                    {
+                        coinManager.AddCoins(LastEarnedCoins);
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                        Debug.Log(
+                            "[CoinsFT]\n" +
+                            "Stage=CoinsAdded\n" +
+                            "Session=" + FeatureTutorialController.CoinsFtSessionId + "\n" +
+                            "Amount=" + LastEarnedCoins + "\n" +
+                            "BalanceAfter=" + coinManager.GetCoins()
+                        );
+#endif
+                    }
+                }
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-            Debug.Log(
-                "[CoinsFT]\n" +
-                "Stage=CompleteLevel\n" +
-                "Session=" + FeatureTutorialController.CoinsFtSessionId + "\n" +
-                "LevelIndex=" + completedIndex + "\n" +
-                "ResultStars=" + LastEarnedStars + "\n" +
-                "PreviousBest=" + previousBestStars + "\n" +
-                "ClaimedBefore=" + claimedBefore + "\n" +
-                "RewardGranted=" + LastThreeStarCoinRewardGranted + "\n" +
-                "LastEarnedCoins=" + LastEarnedCoins + "\n" +
-                "LastThreeStarCoinRewardGranted=" + LastThreeStarCoinRewardGranted
-            );
+                Debug.Log(
+                    "[CoinsFT]\n" +
+                    "Stage=CompleteLevel\n" +
+                    "Session=" + FeatureTutorialController.CoinsFtSessionId + "\n" +
+                    "LevelIndex=" + completedIndex + "\n" +
+                    "ResultStars=" + LastEarnedStars + "\n" +
+                    "PreviousBest=" + previousBestStars + "\n" +
+                    "ClaimedBefore=" + claimedBefore + "\n" +
+                    "RewardGranted=" + LastThreeStarCoinRewardGranted + "\n" +
+                    "LastEarnedCoins=" + LastEarnedCoins + "\n" +
+                    "LastThreeStarCoinRewardGranted=" + LastThreeStarCoinRewardGranted
+                );
 #endif
 
-            saveManager.SaveStarsForLevel(completedIndex, LastEarnedStars);
+                saveManager.SaveStarsForLevel(completedIndex, LastEarnedStars);
 
-            int nextUnlock = completedIndex + 1;
-            int maxIndex = Mathf.Max(0, levelManager.LevelCount - 1);
-            nextUnlock = Mathf.Clamp(nextUnlock, 0, maxIndex);
+                int nextUnlock = completedIndex + 1;
+                int maxIndex = Mathf.Max(0, levelManager.LevelCount - 1);
+                nextUnlock = Mathf.Clamp(nextUnlock, 0, maxIndex);
 
-            Debug.Log(
-                "Completed level " + completedIndex +
-                " -> unlocking level " + nextUnlock
-            );
+                Debug.Log(
+                    "Completed level " + completedIndex +
+                    " -> unlocking level " + nextUnlock
+                );
 
-            saveManager.SaveUnlockedLevel(nextUnlock);
+                saveManager.SaveUnlockedLevel(nextUnlock);
+            }
         }
 
 #if UNITY_ANDROID || UNITY_IOS

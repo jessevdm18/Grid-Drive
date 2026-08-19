@@ -1,0 +1,82 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e98a2ca1400bdfc4896e8c352e3628b7, type: 3}
+  m_Name: Level_113
+  m_EditorClassIdentifier: Assembly-CSharp::LevelData
+  levelNumber: 113
+  difficulty: 0
+  objectiveType: 0
+  timeLimitSeconds: 0
+  moveLimit: 0
+  fragileCargoMoveLimit: 0
+  limitedVehicleMoveLimit: 0
+  specialTargetSprite: {fileID: 0}
+  gridWidth: 5
+  gridHeight: 6
+  exitRow: 5
+  vehicles:
+  - vehicleName: Target
+    orientation: 0
+    lengthInCells: 2
+    gridPosition: {x: 1, y: 5}
+    canExitRight: 1
+    isProtectedVehicle: 0
+    isFragileCargo: 0
+    isLimitedVehicle: 0
+    vehicleSprite: {fileID: 0}
+  - vehicleName: A
+    orientation: 1
+    lengthInCells: 2
+    gridPosition: {x: 4, y: 4}
+    canExitRight: 0
+    isProtectedVehicle: 0
+    isFragileCargo: 0
+    isLimitedVehicle: 0
+    vehicleSprite: {fileID: 0}
+  - vehicleName: B
+    orientation: 0
+    lengthInCells: 3
+    gridPosition: {x: 1, y: 2}
+    canExitRight: 0
+    isProtectedVehicle: 0
+    isFragileCargo: 0
+    isLimitedVehicle: 0
+    vehicleSprite: {fileID: 0}
+  - vehicleName: C
+    orientation: 1
+    lengthInCells: 2
+    gridPosition: {x: 4, y: 0}
+    canExitRight: 0
+    isProtectedVehicle: 0
+    isFragileCargo: 0
+    isLimitedVehicle: 0
+    vehicleSprite: {fileID: 0}
+  - vehicleName: D
+    orientation: 0
+    lengthInCells: 2
+    gridPosition: {x: 3, y: 3}
+    canExitRight: 0
+    isProtectedVehicle: 0
+    isFragileCargo: 0
+    isLimitedVehicle: 0
+    vehicleSprite: {fileID: 0}
+  minimumMoves: 3
+  statesExplored: 32
+  difficultyScore: 426
+  solutionComplexityScore: 0
+  uniqueVehiclesInSolution: 3
+  axisAlternations: 0
+  vehicleRevisits: 0
+  longestSingleAxisRun: 0
+  linearChainSolutionRatio: 0
+  secondaryBlockersUsed: 0
+  forkDependencies: 0
