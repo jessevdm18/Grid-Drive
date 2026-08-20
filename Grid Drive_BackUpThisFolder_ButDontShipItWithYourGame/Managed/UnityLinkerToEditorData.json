@@ -2053,6 +2053,7 @@
           {
             "name": "CanvasGroup",
             "scenes": [
+              "Assets/Scenes/Gameplay.unity",
               "Assets/Scenes/Splash.unity"
             ],
             "dependencyType": 0,
