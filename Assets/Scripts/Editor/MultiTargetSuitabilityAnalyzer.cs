@@ -33,8 +33,10 @@ public static class MultiTargetSuitabilityAnalyzer
         public int minimumMoves;
         public string primaryTargetName;
         public Vector2Int primaryTargetPos;
+        public int primaryTargetIndex;
         public string bestCandidateName;
         public Vector2Int bestCandidatePos;
+        public int bestCandidateIndex;
         public int blockersAfterFirstRescue;
         public bool immediateExit;
         public int score;
@@ -89,8 +91,10 @@ public static class MultiTargetSuitabilityAnalyzer
             minimumMoves = level != null ? level.minimumMoves : 0,
             primaryTargetName = "-",
             primaryTargetPos = new Vector2Int(-1, -1),
+            primaryTargetIndex = -1,
             bestCandidateName = "-",
             bestCandidatePos = new Vector2Int(-1, -1),
+            bestCandidateIndex = -1,
             blockersAfterFirstRescue = 0,
             immediateExit = false,
             score = 0,
@@ -118,6 +122,7 @@ public static class MultiTargetSuitabilityAnalyzer
         VehicleData primary = level.vehicles[primaryIndex];
         result.primaryTargetName = VehicleLabel(primary, primaryIndex);
         result.primaryTargetPos = primary.gridPosition;
+        result.primaryTargetIndex = primaryIndex;
 
         if (primary.orientation != VehicleController.VehicleOrientation.Horizontal ||
             primary.gridPosition.y != exitRow)
@@ -185,6 +190,8 @@ public static class MultiTargetSuitabilityAnalyzer
 
         result.bestCandidateName = VehicleLabel(candidate, candidateIndex);
         result.bestCandidatePos = candidate.gridPosition;
+        result.bestCandidateIndex = candidateIndex;
+        result.primaryTargetIndex = primaryIndex;
 
         int[,] occupancy = BuildOccupancy(level.vehicles, gw, gh);
         ClearVehicle(occupancy, primary, gw, gh);

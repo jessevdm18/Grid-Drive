@@ -62,13 +62,6 @@ public static class ObjectiveTutorialEditorMenu
         );
     }
 
-    [MenuItem(MenuRoot + "Reset Hint Tutorial", priority = 302)]
-    private static void ResetHint() => ResetFeature(FeatureTutorialType.Hint);
-
-    [MenuItem(MenuRoot + "Reset Watch Ad Tutorial", priority = 303)]
-    private static void ResetWatchAd() =>
-        ResetFeature(FeatureTutorialType.WatchAdForHint);
-
     [MenuItem(MenuRoot + "Reset Skins Tutorial", priority = 304)]
     private static void ResetSkins() => ResetFeature(FeatureTutorialType.Skins);
 

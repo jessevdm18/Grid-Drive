@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: Level_052
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   levelNumber: 52
-  difficulty: 2
-  objectiveType: 0
+  difficulty: 1
+  objectiveType: 2
   timeLimitSeconds: 0
-  moveLimit: 0
+  moveLimit: 16
   fragileCargoMoveLimit: 0
   limitedVehicleMoveLimit: 0
   specialTargetSprite: {fileID: 0}

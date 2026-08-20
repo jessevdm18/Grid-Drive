@@ -332,7 +332,10 @@ public class LevelSelectUI : MonoBehaviour
 
         ClearExistingButtons();
 
-        List<int> indices = levelDatabase.GetLevelIndicesByDifficulty(selectedDifficulty);
+        List<int> indices = LevelDifficultyOrder.GetOrderedLevelIndicesForDifficulty(
+            levelDatabase,
+            selectedDifficulty
+        );
         int visibleCount = indices != null ? indices.Count : 0;
 
         if (emptyStateText != null)
@@ -344,10 +347,10 @@ public class LevelSelectUI : MonoBehaviour
             }
         }
 
-        for (int i = 0; i < visibleCount; i++)
+        for (int visibleIndex = 0; visibleIndex < visibleCount; visibleIndex++)
         {
-            int databaseIndex = indices[i];
-            int displayNumber = i + 1;
+            int databaseIndex = indices[visibleIndex];
+            int displayNumber = visibleIndex + 1;
 
             GameObject buttonObject = Instantiate(levelButtonPrefab, levelGrid);
             LevelButtonUI buttonUI = buttonObject.GetComponent<LevelButtonUI>();
@@ -374,6 +377,7 @@ public class LevelSelectUI : MonoBehaviour
                 : LevelObjectiveType.Classic;
 
             buttonUI.Setup(
+                databaseIndex,
                 displayNumber,
                 isUnlocked,
                 stars,
@@ -392,10 +396,14 @@ public class LevelSelectUI : MonoBehaviour
                 continue;
             }
 
+            // Drop prefab-persistent + prior runtime listeners so only DB-index click remains.
+            button.onClick = new Button.ButtonClickedEvent();
+
             if (isUnlocked)
             {
-                int capturedIndex = databaseIndex;
-                button.onClick.AddListener(() => OnLevelButtonClicked(capturedIndex));
+                // Capture LevelButtonUI (not loop index) — click uses stored DatabaseIndex.
+                LevelButtonUI capturedButton = buttonUI;
+                button.onClick.AddListener(() => OnLevelButtonClicked(capturedButton));
             }
         }
 
@@ -462,11 +470,40 @@ public class LevelSelectUI : MonoBehaviour
         }
     }
 
-    private void OnLevelButtonClicked(int databaseLevelIndex)
+    private void OnLevelButtonClicked(LevelButtonUI buttonUI)
     {
+        if (buttonUI == null)
+        {
+            Debug.LogError("LevelSelectUI: clicked LevelButtonUI is null.");
+            return;
+        }
+
+        int databaseIndex = buttonUI.DatabaseIndex;
+        if (databaseIndex < 0 || levelDatabase == null ||
+            databaseIndex >= levelDatabase.LevelCount)
+        {
+            Debug.LogError(
+                "LevelSelectUI: invalid DatabaseIndex on button: " + databaseIndex
+            );
+            return;
+        }
+
+        LevelData levelData = levelDatabase.GetLevel(databaseIndex);
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        Debug.Log(
+            "[LevelSelectClick]\n" +
+            "Difficulty=" + selectedDifficulty + "\n" +
+            "DisplayNumber=" + buttonUI.DisplayNumber + "\n" +
+            "DatabaseIndex=" + databaseIndex + "\n" +
+            "Asset=" + (levelData != null ? levelData.name : "?") + "\n" +
+            "MinMoves=" + (levelData != null ? levelData.minimumMoves : 0)
+        );
+#endif
+
         if (saveManager != null)
         {
-            saveManager.SaveCurrentLevel(databaseLevelIndex);
+            saveManager.SaveCurrentLevel(databaseIndex);
         }
 
         SceneTransition.LoadScene("Gameplay");

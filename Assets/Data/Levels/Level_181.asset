@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Level_181
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   levelNumber: 181
-  difficulty: 1
-  objectiveType: 0
-  timeLimitSeconds: 0
+  difficulty: 0
+  objectiveType: 1
+  timeLimitSeconds: 39
   moveLimit: 0
   fragileCargoMoveLimit: 0
   limitedVehicleMoveLimit: 0

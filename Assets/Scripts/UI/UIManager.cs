@@ -42,6 +42,17 @@ public class UIManager : MonoBehaviour
     [Header("Win Confetti")]
     [SerializeField] private UIWinConfetti winConfetti;
 
+    [Header("Difficulty Unlock")]
+    [Tooltip("Optional choice panel when Medium/Hard unlocks for the first time.")]
+    [SerializeField] private DifficultyUnlockNotificationUI difficultyUnlockNotification;
+
+    [Header("Win Sequence Gate")]
+    [Tooltip("Optional. Disabled during unlock notice + star/coin reveal.")]
+    [SerializeField] private Button nextLevelButton;
+    [SerializeField] private Button restartButton;
+    [Tooltip("Optional. When assigned, blocksRaycasts follows win-sequence interactable.")]
+    [SerializeField] private CanvasGroup winPanelCanvasGroup;
+
     [Header("Referenties")]
     [SerializeField] private LevelManager levelManager;
     [SerializeField] private GameManager gameManager;
@@ -51,6 +62,9 @@ public class UIManager : MonoBehaviour
 
     // Voorkomt dubbele Next Level-acties (dubbele klik / dubbele ad-callback).
     private bool isHandlingNextLevel;
+
+    // Diagnostic: how many Next clicks this WinPanel session.
+    private int nextClickCountThisWin;
 
     // Lopende win-panel animaties (sterren + coin reward).
     private Coroutine winSequenceCoroutine;
@@ -78,6 +92,9 @@ public class UIManager : MonoBehaviour
 
         // RewardText start verborgen.
         ResetRewardVisual(hide: true);
+
+        // Ensure no stale unlock raycast blocker from a previous Play Mode session.
+        EnsureDifficultyUnlockFullyHidden();
     }
 
     private void Start()
@@ -96,6 +113,16 @@ public class UIManager : MonoBehaviour
         StopWinAnimations();
         PrepareStarsForReveal();
         ResetRewardVisual(hide: true);
+
+        nextClickCountThisWin = 0;
+        isHandlingNextLevel = false;
+
+        // Always clear unlock UI — even when this completion has no unlock —
+        // so a previous Stay/Try never leaves InputBlocker over Next.
+        EnsureDifficultyUnlockFullyHidden();
+
+        // Block Next/Restart until unlock (if any) + stars/coins + FT finish.
+        SetWinPanelButtonsInteractable(false);
 
         if (winPanel != null)
         {
@@ -139,6 +166,10 @@ public class UIManager : MonoBehaviour
         ResetStarScales();
         ResetRewardVisual(hide: true);
 
+        EnsureDifficultyUnlockFullyHidden();
+
+        SetWinPanelButtonsInteractable(true);
+
         if (winPanel != null)
         {
             winPanel.SetActive(false);
@@ -171,13 +202,70 @@ public class UIManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Sterren reveal → daarna coin reward fly (alleen visueel).
+    /// Unlock choice (only if pending) → stars → coins → Coins FT →
+    /// Stay/normal: enable Next / Try: navigate to first ordered unlocked tier.
+    /// Completion/rewards are already persisted before this routine runs.
     /// </summary>
     private IEnumerator WinSequenceRoutine(int earnedStars, int earnedCoins)
     {
+        // Local only — never carried across completions.
+        LevelDifficulty? pendingDifficultyNavigation = null;
+
+        bool unlockPending =
+            gameManager != null &&
+            gameManager.PendingDifficultyUnlockNotice.HasValue;
+
+        LogNextButtonTrace("WinSequenceStart", unlockPending);
+
+        // 1) Difficulty unlock choice ONLY when pending for this completion.
+        if (gameManager != null &&
+            gameManager.TryConsumePendingDifficultyUnlockNotice(out LevelDifficulty unlocked))
+        {
+            DifficultyUnlockChoice choice =
+                DifficultyUnlockChoice.StayCurrentDifficulty;
+
+            if (difficultyUnlockNotification != null)
+            {
+                yield return difficultyUnlockNotification.ShowChoiceAndWait(unlocked);
+                choice = difficultyUnlockNotification.LastChoice;
+            }
+            else
+            {
+                Debug.LogWarning(
+                    "UIManager: difficulty unlock pending but " +
+                    "DifficultyUnlockNotificationUI is not assigned."
+                );
+            }
+
+            // Mark seen only after the player actually chose.
+            DifficultyUnlockNoticePrefs.MarkSeen(unlocked);
+
+            if (choice == DifficultyUnlockChoice.TryUnlockedDifficulty)
+            {
+                pendingDifficultyNavigation = unlocked;
+            }
+
+            // Always clear blocker after choice (Stay or Try) before stars.
+            EnsureDifficultyUnlockFullyHidden();
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            LogDifficultyUnlockChoice(unlocked, choice, pendingDifficultyNavigation);
+#endif
+        }
+        else
+        {
+            // Normal completion: unlock UI must not affect this flow.
+            EnsureDifficultyUnlockFullyHidden();
+        }
+
+        LogNextButtonTrace("BeforeStars", unlockPending: false);
+
+        // 2) Star reveal
         yield return RevealStarsRoutine(earnedStars);
 
-        // Alleen coin-fly + SFX als er daadwerkelijk coins zijn uitgekeerd.
+        LogNextButtonTrace("AfterStars", unlockPending: false);
+
+        // 3) Coin fly (only when coins granted)
         if (earnedCoins > 0)
         {
             if (CanPlayRewardAnimation())
@@ -190,7 +278,8 @@ public class UIManager : MonoBehaviour
             }
         }
 
-        winSequenceCoroutine = null;
+        // 4) Fire Coins FT while Next stays non-interactable (no half-active state).
+        LogNextButtonTrace("BeforeEnableButtons", unlockPending: false);
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         bool granted = gameManager != null && gameManager.LastThreeStarCoinRewardGranted;
@@ -207,10 +296,230 @@ public class UIManager : MonoBehaviour
 #endif
 
         OnWinSequenceFinished?.Invoke();
-
-        // Direct notify (werkt ook als controller-event-subscription mist).
         FeatureTutorialController.NotifyWinSequenceFinished();
+
+        yield return WaitUntilFeatureTutorialsIdle();
+
+        // 5) Clear running flag BEFORE enabling buttons so Next click is never
+        // rejected by WinSequenceRunning while visually interactable.
+        winSequenceCoroutine = null;
+
+        if (pendingDifficultyNavigation.HasValue)
+        {
+            LevelDifficulty target = pendingDifficultyNavigation.Value;
+            pendingDifficultyNavigation = null;
+            if (!TryNavigateToFirstLevelOfDifficulty(target))
+            {
+                SetWinPanelButtonsInteractable(true);
+                LogNextButtonTrace("ButtonsEnabled", unlockPending: false);
+            }
+        }
+        else
+        {
+            SetWinPanelButtonsInteractable(true);
+            LogNextButtonTrace("ButtonsEnabled", unlockPending: false);
+        }
     }
+
+    private void EnsureDifficultyUnlockFullyHidden()
+    {
+        if (difficultyUnlockNotification != null)
+        {
+            difficultyUnlockNotification.EnsureFullyHidden();
+        }
+    }
+
+    private IEnumerator WaitUntilFeatureTutorialsIdle()
+    {
+        // Allow subscribers / NotifyWinSequenceFinished to queue Coins FT.
+        yield return null;
+
+        FeatureTutorialController ft =
+            FindAnyObjectByType<FeatureTutorialController>(
+                FindObjectsInactive.Include);
+        if (ft == null)
+        {
+            yield break;
+        }
+
+        // Coins FT uses a short show delay; wait through queue + delay + Got It.
+        float elapsed = 0f;
+        const float timeoutSeconds = 90f;
+        while (ft.IsBlockingModalPresentation && elapsed < timeoutSeconds)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            yield return null;
+        }
+    }
+
+    /// <summary>
+    /// Save first ordered db index for difficulty and reload Gameplay.
+    /// Returns false on missing levels / unlock / managers (caller continues Stay flow).
+    /// </summary>
+    private bool TryNavigateToFirstLevelOfDifficulty(LevelDifficulty difficulty)
+    {
+        if (levelManager == null)
+        {
+            Debug.LogWarning(
+                "[DifficultyUnlock] Cannot navigate: LevelManager missing."
+            );
+            return false;
+        }
+
+        LevelDatabase database = levelManager.LevelDatabase;
+        if (database == null)
+        {
+            Debug.LogWarning(
+                "[DifficultyUnlock] Cannot navigate: LevelDatabase missing."
+            );
+            return false;
+        }
+
+        SaveManager saveManager = FindAnyObjectByType<SaveManager>();
+        if (saveManager == null)
+        {
+            Debug.LogWarning(
+                "[DifficultyUnlock] Cannot navigate: SaveManager missing."
+            );
+            return false;
+        }
+
+        int dbIndex = LevelDifficultyOrder.GetFirstOrderedLevelIndex(
+            database,
+            difficulty
+        );
+
+        if (dbIndex < 0)
+        {
+            Debug.LogWarning(
+                "[DifficultyUnlock] TRY " + difficulty +
+                " failed: no levels in that tier. Continuing current WinSequence."
+            );
+            return false;
+        }
+
+        if (!saveManager.IsDifficultyUnlocked(
+                difficulty,
+                database,
+                levelManager.DifficultyProgressionConfig))
+        {
+            Debug.LogWarning(
+                "[DifficultyUnlock] TRY " + difficulty +
+                " failed: difficulty not unlocked. Continuing current WinSequence."
+            );
+            return false;
+        }
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        int displayNumber = LevelDifficultyOrder.GetDifficultyDisplayNumber(
+            database,
+            dbIndex
+        );
+        Debug.Log(
+            "[DifficultyUnlock]\n" +
+            "Unlocked=" + difficulty + "\n" +
+            "Choice=Try\n" +
+            "TargetDbIndex=" + dbIndex + "\n" +
+            "TargetDisplayNumber=" + displayNumber + "\n" +
+            "Navigating=Gameplay"
+        );
+#endif
+
+        saveManager.SaveCurrentLevel(dbIndex);
+        SceneTransition.LoadScene("Gameplay");
+        return true;
+    }
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+    private void LogDifficultyUnlockChoice(
+        LevelDifficulty unlocked,
+        DifficultyUnlockChoice choice,
+        LevelDifficulty? pendingNav)
+    {
+        if (choice == DifficultyUnlockChoice.StayCurrentDifficulty)
+        {
+            Debug.Log(
+                "[DifficultyUnlock]\n" +
+                "Unlocked=" + unlocked + "\n" +
+                "Choice=Stay"
+            );
+            return;
+        }
+
+        LevelDatabase database =
+            levelManager != null ? levelManager.LevelDatabase : null;
+        int dbIndex = database != null
+            ? LevelDifficultyOrder.GetFirstOrderedLevelIndex(database, unlocked)
+            : -1;
+        int displayNumber = database != null && dbIndex >= 0
+            ? LevelDifficultyOrder.GetDifficultyDisplayNumber(database, dbIndex)
+            : -1;
+
+        Debug.Log(
+            "[DifficultyUnlock]\n" +
+            "Unlocked=" + unlocked + "\n" +
+            "Choice=Try\n" +
+            "TargetDbIndex=" + dbIndex + "\n" +
+            "TargetDisplayNumber=" + displayNumber + "\n" +
+            "PendingNav=" + (pendingNav.HasValue ? pendingNav.Value.ToString() : "none")
+        );
+    }
+#endif
+
+    /// <summary>
+    /// Single owner for WinPanel Next/Restart interactable state.
+    /// Buttons become interactable only when no unlock/FT blocker should eat clicks.
+    /// </summary>
+    private void SetWinPanelButtonsInteractable(bool enabled)
+    {
+        if (nextLevelButton != null)
+        {
+            nextLevelButton.interactable = enabled;
+        }
+
+        if (restartButton != null)
+        {
+            restartButton.interactable = enabled;
+        }
+
+        if (winPanelCanvasGroup != null)
+        {
+            winPanelCanvasGroup.interactable = enabled;
+            // Keep raycasts on so layout works; buttons themselves are gated.
+            winPanelCanvasGroup.blocksRaycasts = true;
+        }
+    }
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+    private void LogNextButtonTrace(string stage, bool unlockPending)
+    {
+        bool nextInteractable =
+            nextLevelButton != null && nextLevelButton.interactable;
+        bool blockerActive = false;
+        bool blockerBlocks = false;
+
+        if (difficultyUnlockNotification != null)
+        {
+            blockerActive = difficultyUnlockNotification.IsVisualRootActive();
+            blockerBlocks = difficultyUnlockNotification.IsBlockerRaycastActive();
+        }
+
+        Debug.Log(
+            "[NextButtonTrace]\n" +
+            "Stage=" + stage + "\n" +
+            "UnlockPending=" + unlockPending + "\n" +
+            "NextInteractable=" + nextInteractable + "\n" +
+            "BlockerActive=" + blockerActive + "\n" +
+            "BlockerBlocksRaycasts=" + blockerBlocks + "\n" +
+            "IsHandlingNext=" + isHandlingNextLevel + "\n" +
+            "WinSequenceRunning=" + (winSequenceCoroutine != null)
+        );
+    }
+#else
+    private void LogNextButtonTrace(string stage, bool unlockPending)
+    {
+    }
+#endif
 
     private bool CanPlayRewardAnimation()
     {
@@ -541,14 +850,45 @@ public class UIManager : MonoBehaviour
     /// <summary>
     /// Wordt aangeroepen door de "Next Level"-knop.
     /// Toont eventueel een interstitial vóór het volgende level.
+    /// Invariant: if Next is interactable, only isHandlingNextLevel may ignore a click.
     /// </summary>
     public void OnNextLevelButton()
     {
+        nextClickCountThisWin++;
+
+        bool nextInteractable =
+            nextLevelButton == null || nextLevelButton.interactable;
+
+        string blockReason = null;
         if (isHandlingNextLevel)
+        {
+            blockReason = "AlreadyNavigating";
+        }
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        bool blockerBlocks = difficultyUnlockNotification != null &&
+            difficultyUnlockNotification.IsBlockerRaycastActive();
+        Debug.Log(
+            "[NextButtonTrace]\n" +
+            "Stage=NextClicked\n" +
+            "ClickCount=" + nextClickCountThisWin + "\n" +
+            "CanNavigate=" + (blockReason == null) + "\n" +
+            "ReasonIfBlocked=" + (blockReason ?? "None") + "\n" +
+            "NextInteractable=" + nextInteractable + "\n" +
+            "BlockerBlocksRaycasts=" + blockerBlocks + "\n" +
+            "IsHandlingNext=" + isHandlingNextLevel
+        );
+#endif
+
+        if (blockReason != null)
         {
             return;
         }
 
+        // Valid click: arm navigate guard only now (not earlier).
+        isHandlingNextLevel = true;
+
+        EnsureDifficultyUnlockFullyHidden();
         HideWinPanel();
 
         bool wantsInterstitial =
@@ -561,7 +901,6 @@ public class UIManager : MonoBehaviour
 
         if (wantsInterstitial && adReady)
         {
-            isHandlingNextLevel = true;
             gameManager.ResetInterstitialCounter();
 
             adsManager.ShowInterstitialAd(() =>
@@ -577,12 +916,18 @@ public class UIManager : MonoBehaviour
 
     private void LoadNextLevelOnce()
     {
-        if (levelManager != null)
+        try
         {
-            levelManager.LoadNextLevel();
+            if (levelManager != null)
+            {
+                levelManager.LoadNextLevel();
+            }
         }
-
-        isHandlingNextLevel = false;
+        finally
+        {
+            // Scene may unload this object; if navigation stayed in-scene, allow retry.
+            isHandlingNextLevel = false;
+        }
     }
 
     /// <summary>
@@ -590,6 +935,12 @@ public class UIManager : MonoBehaviour
     /// </summary>
     public void OnRestartButton()
     {
+        if (restartButton != null && !restartButton.interactable)
+        {
+            return;
+        }
+
+        EnsureDifficultyUnlockFullyHidden();
         HideWinPanel();
 
         if (levelManager != null)

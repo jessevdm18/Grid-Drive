@@ -112,7 +112,7 @@ public static class V1AutoCurator
         report.AppendLine("Scanned candidates: " + scanned);
         report.AppendLine("Eligible (excl. rejected): " + eligible.Count);
 
-        // Seed ManualKeep into finals first.
+        // Seed ManualKeep into finals first (hard minMoves fit preferred).
         for (int i = 0; i < eligible.Count; i++)
         {
             Candidate c = eligible[i];
@@ -122,6 +122,19 @@ public static class V1AutoCurator
             }
 
             LevelDifficulty d = c.score.suggestedDifficulty;
+            if (!LevelMinMovesDifficulty.FitsDifficulty(c.signature.minimumMoves, d) &&
+                LevelMinMovesDifficulty.TryGetDifficultyForMinimumMoves(
+                    c.signature.minimumMoves,
+                    out LevelDifficulty fromMoves))
+            {
+                d = fromMoves;
+                c.score.suggestedDifficulty = fromMoves;
+                report.AppendLine(
+                    "ManualKeep/Maybe reclass " + c.level.name + " → " + fromMoves +
+                    " (minMoves " + c.signature.minimumMoves + ")"
+                );
+            }
+
             if (selectedFinal[d].Count < TargetFor(d))
             {
                 selectedFinal[d].Add(c);
@@ -279,35 +292,22 @@ public static class V1AutoCurator
                 continue;
             }
 
-            // Prefer matching suggested tier; allow soft neighbors only if shortage.
-            if (c.score.suggestedDifficulty == difficulty)
+            // Prefer matching suggested tier from hard minMoves ranges only.
+            if (c.score.suggestedDifficulty == difficulty &&
+                LevelMinMovesDifficulty.FitsDifficulty(c.signature.minimumMoves, difficulty))
             {
                 pool.Add(c);
             }
         }
 
-        // Soft fill from neighbors if short.
-        if (pool.Count + already.Count < finalTarget + reserveTarget)
+        // No soft neighbor fill — shortage is reported; do not cross tier boundaries.
+        if (pool.Count + already.Count < finalTarget)
         {
-            for (int i = 0; i < eligible.Count; i++)
-            {
-                Candidate c = eligible[i];
-                if (pool.Contains(c) || already.Contains(c))
-                {
-                    continue;
-                }
-
-                if (IsUsedInAny(c, selectedFinal) || IsUsedInAny(c, selectedReserve))
-                {
-                    continue;
-                }
-
-                if (Mathf.Abs((int)c.score.suggestedDifficulty - (int)difficulty) == 1 &&
-                    c.score.baseQuality >= MinAcceptBaseQuality)
-                {
-                    pool.Add(c);
-                }
-            }
+            report.AppendLine(
+                "SHORTAGE pool " + difficulty + ": eligible fit " + pool.Count +
+                " (+seeded " + already.Count + ") / target " + finalTarget +
+                " [" + LevelMinMovesDifficulty.DescribeRange(difficulty) + "]"
+            );
         }
 
         pool.Sort(CompareCandidatesStable);

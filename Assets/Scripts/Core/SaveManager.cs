@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -22,12 +23,15 @@ public class SaveManager : MonoBehaviour
         "RushOut_ThreeStarCoinClaimMigrationV1";
     private const string FirstLaunchCompletedKey = "RushOut_FirstLaunchCompleted";
     private const string CoinsKey = "RushOut_Coins";
+
+    /// <summary>Same key CoinManager uses — exposed for editor fresh-reset validation.</summary>
+    public const string CoinsPrefsKey = "RushOut_Coins";
     /// <summary>Laatst gekozen LevelSelect difficulty-tab (int = LevelDifficulty).</summary>
     private const string LastSelectedDifficultyKey = "RushOut_LastSelectedDifficulty";
 
 #if UNITY_EDITOR
     /// <summary>
-    /// Editor-only: één-shot force first-launch route (Splash → Gameplay index 0).
+    /// Editor-only: één-shot force first-launch route (Splash → first Easy ordered level).
     /// </summary>
     public const string EditorForceFirstLaunchKey = "RushOut_EditorForceFirstLaunch";
 #endif
@@ -68,11 +72,32 @@ public class SaveManager : MonoBehaviour
 
     /// <summary>
     /// Geeft het laatst gespeelde level terug.
-    /// Default = 0 (eerste level).
+    /// Missing key → fresh Easy Level 1 DB index (not hardcoded 0).
     /// </summary>
     public int GetCurrentLevel()
     {
+        if (!PlayerPrefs.HasKey(CurrentLevelKey))
+        {
+            return ResolveFreshStartDatabaseIndex(null);
+        }
+
         return PlayerPrefs.GetInt(CurrentLevelKey, 0);
+    }
+
+    /// <summary>
+    /// True when RushOut_CurrentLevel has been written.
+    /// </summary>
+    public static bool HasCurrentLevelKey()
+    {
+        return PlayerPrefs.HasKey(CurrentLevelKey);
+    }
+
+    /// <summary>
+    /// Raw FirstLaunchCompleted without migration side-effects.
+    /// </summary>
+    public static bool HasFirstLaunchCompletedKeyRaw()
+    {
+        return PlayerPrefs.GetInt(FirstLaunchCompletedKey, 0) == 1;
     }
 
     /// <summary>
@@ -121,7 +146,7 @@ public class SaveManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Splash/startup: true → direct Gameplay Level 1 (index 0), geen MainMenu.
+    /// Splash/startup: true → direct Gameplay Easy Level 1 (ordered), geen MainMenu.
     /// Roept migratie aan voor bestaande spelers zonder FirstLaunchCompleted-key.
     /// </summary>
     public static bool ShouldRouteFirstLaunchToGameplay()
@@ -132,9 +157,7 @@ public class SaveManager : MonoBehaviour
         if (PlayerPrefs.GetInt(EditorForceFirstLaunchKey, 0) == 1)
         {
             PlayerPrefs.DeleteKey(EditorForceFirstLaunchKey);
-            // Zelfde pad als LevelSelect button index 0.
-            PlayerPrefs.SetInt(CurrentLevelKey, 0);
-            PlayerPrefs.Save();
+            PrepareFirstLaunchGameplayLevelStatic(null);
             return true;
         }
 #endif
@@ -151,13 +174,93 @@ public class SaveManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Zet current level op index 0 (LEVEL 1) — zelfde als LevelSelect eerste knop.
+    /// Sets current level to the first Easy level in difficulty-local order
+    /// (same as LevelSelect Easy button 1). Not hardcoded DB index 0.
+    /// Clears Editor V1 playtest override so it cannot hijack fresh start.
     /// </summary>
-    public static void PrepareFirstLaunchGameplayLevelStatic()
+    public static void PrepareFirstLaunchGameplayLevelStatic(LevelDatabase database = null)
     {
-        PlayerPrefs.SetInt(CurrentLevelKey, 0);
+#if UNITY_EDITOR
+        V1PlaytestOverride.Clear();
+#endif
+        int freshIndex = ResolveFreshStartDatabaseIndex(database);
+        PlayerPrefs.SetInt(CurrentLevelKey, freshIndex);
         PlayerPrefs.Save();
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        LevelData asset = database != null ? database.GetLevel(freshIndex) : null;
+#if UNITY_EDITOR
+        if (asset == null)
+        {
+            LevelDatabase resolved = database != null ? database : EditorLoadMainLevelDatabase();
+            asset = resolved != null ? resolved.GetLevel(freshIndex) : null;
+        }
+#endif
+        Debug.Log(
+            "[FreshStartTrace]\n" +
+            "Stage=PrepareFirstLaunch\n" +
+            "FirstEasyDbIndex=" + freshIndex + "\n" +
+            "Asset=" + (asset != null ? asset.name : "?") + "\n" +
+            "DisplayNumber=1\n" +
+            "V1OverrideCleared=true"
+        );
+        Debug.Log(
+            "[FreshStartTrace]\n" +
+            "Stage=SaveCurrentLevel\n" +
+            "DbIndex=" + freshIndex
+        );
+#endif
     }
+
+    /// <summary>
+    /// Authoritative fresh-start DB index = first ordered Easy level.
+    /// Falls back to 0 only if database/Easy list unavailable.
+    /// </summary>
+    public static int ResolveFreshStartDatabaseIndex(LevelDatabase database)
+    {
+        LevelDatabase resolved = database;
+#if UNITY_EDITOR
+        if (resolved == null)
+        {
+            resolved = EditorLoadMainLevelDatabase();
+        }
+#endif
+        if (resolved == null)
+        {
+            Debug.LogWarning(
+                "SaveManager: no LevelDatabase for fresh-start index — fallback DB 0."
+            );
+            return 0;
+        }
+
+        int firstEasy = LevelDifficultyOrder.GetFirstOrderedLevelIndex(
+            resolved,
+            LevelDifficulty.Easy
+        );
+        if (firstEasy < 0)
+        {
+            Debug.LogWarning(
+                "SaveManager: no Easy levels in database — fallback DB 0."
+            );
+            return 0;
+        }
+
+        return firstEasy;
+    }
+
+#if UNITY_EDITOR
+    private static LevelDatabase EditorLoadMainLevelDatabase()
+    {
+        string[] guids = UnityEditor.AssetDatabase.FindAssets("MainLevelDatabase t:LevelDatabase");
+        if (guids == null || guids.Length == 0)
+        {
+            return null;
+        }
+
+        string path = UnityEditor.AssetDatabase.GUIDToAssetPath(guids[0]);
+        return UnityEditor.AssetDatabase.LoadAssetAtPath<LevelDatabase>(path);
+    }
+#endif
 
     /// <summary>
     /// Zet FirstLaunchCompleted=1. Statisch zodat Splash/LevelManager geen race hebben.
@@ -242,6 +345,91 @@ public class SaveManager : MonoBehaviour
     {
         PlayerPrefs.SetInt(EditorForceFirstLaunchKey, 1);
         PlayerPrefs.Save();
+    }
+
+    /// <summary>
+    /// Editor-only: wipe all player progression prefs to simulate a brand-new install.
+    /// Does not touch EditorPrefs, curation, or project assets.
+    /// Coins key is deleted (not written) so first-launch migration stays clean.
+    /// </summary>
+    public static void EditorResetAllPlayerProgressPrefs()
+    {
+        PlayerPrefs.DeleteKey(UnlockedLevelKey);
+        PlayerPrefs.DeleteKey(CurrentLevelKey);
+        PlayerPrefs.DeleteKey(LastSelectedDifficultyKey);
+        PlayerPrefs.DeleteKey(FirstLaunchCompletedKey);
+        PlayerPrefs.DeleteKey(EditorForceFirstLaunchKey);
+        PlayerPrefs.DeleteKey(CoinsKey);
+
+        // Wide scan so orphaned stars/claims without max-index are also cleared.
+        const int scanLimit = 512;
+        int maxStars = Mathf.Max(PlayerPrefs.GetInt(StarsMaxIndexKey, -1), scanLimit - 1);
+        for (int i = 0; i <= maxStars; i++)
+        {
+            PlayerPrefs.DeleteKey(StarsKeyPrefix + i);
+        }
+
+        PlayerPrefs.DeleteKey(StarsMaxIndexKey);
+
+        int maxClaimed = Mathf.Max(
+            PlayerPrefs.GetInt(ThreeStarCoinClaimedMaxIndexKey, -1),
+            scanLimit - 1
+        );
+        for (int i = 0; i <= maxClaimed; i++)
+        {
+            PlayerPrefs.DeleteKey(ThreeStarCoinClaimedPrefix + i);
+        }
+
+        PlayerPrefs.DeleteKey(ThreeStarCoinClaimedMaxIndexKey);
+        PlayerPrefs.DeleteKey(ThreeStarRewardMigrationCompletedKey);
+        PlayerPrefs.DeleteKey(ThreeStarCoinClaimMigrationLegacyKey);
+        PlayerPrefs.Save();
+    }
+
+    /// <summary>Editor validation helpers (defaults match fresh install).</summary>
+    public static int EditorGetCurrentLevelOrDefault()
+    {
+        return PlayerPrefs.GetInt(CurrentLevelKey, 0);
+    }
+
+    public static bool EditorHasFirstLaunchCompletedKey()
+    {
+        return PlayerPrefs.GetInt(FirstLaunchCompletedKey, 0) == 1;
+    }
+
+    public static bool EditorHasCoinsKey()
+    {
+        return PlayerPrefs.HasKey(CoinsKey);
+    }
+
+    public static int EditorCountStarsWithValue()
+    {
+        int count = 0;
+        int maxIndex = PlayerPrefs.GetInt(StarsMaxIndexKey, -1);
+        for (int i = 0; i <= maxIndex; i++)
+        {
+            if (PlayerPrefs.GetInt(StarsKeyPrefix + i, 0) > 0)
+            {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+    public static int EditorCountThreeStarClaims()
+    {
+        int count = 0;
+        int maxIndex = PlayerPrefs.GetInt(ThreeStarCoinClaimedMaxIndexKey, -1);
+        for (int i = 0; i <= maxIndex; i++)
+        {
+            if (PlayerPrefs.GetInt(ThreeStarCoinClaimedPrefix + i, 0) == 1)
+            {
+                count++;
+            }
+        }
+
+        return count;
     }
 #endif
 
@@ -404,8 +592,10 @@ public class SaveManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Speelbaar level: difficulty unlocked + eerste van die tier of vorige same-difficulty completed
+    /// Speelbaar level: difficulty unlocked + eerste in difficulty-local order,
+    /// of vorige item in die same ordered list completed
     /// (of dit level zelf al completed — behoudt toegang na retag / replay).
+    /// Order: minimumMoves → difficultyScore → dbIndex (LevelDifficultyOrder).
     /// </summary>
     public bool IsLevelUnlocked(
         int levelIndex,
@@ -434,20 +624,34 @@ public class SaveManager : MonoBehaviour
             return true;
         }
 
-        // Zoek vorige level met dezelfde difficulty (database-order).
-        for (int i = levelIndex - 1; i >= 0; i--)
-        {
-            LevelData previous = database.GetLevel(i);
-            if (previous == null || previous.difficulty != level.difficulty)
-            {
-                continue;
-            }
+        List<int> ordered = LevelDifficultyOrder.GetOrderedLevelIndicesForDifficulty(
+            database,
+            level.difficulty
+        );
 
-            return IsLevelCompleted(i);
+        int position = -1;
+        for (int i = 0; i < ordered.Count; i++)
+        {
+            if (ordered[i] == levelIndex)
+            {
+                position = i;
+                break;
+            }
         }
 
-        // Geen vorige same-difficulty → eerste van deze tier.
-        return true;
+        if (position < 0)
+        {
+            return false;
+        }
+
+        // Eerste in difficulty-local progression → unlocked als difficulty unlocked.
+        if (position == 0)
+        {
+            return true;
+        }
+
+        // Later level: vorige in dezelfde ordered list moet completed zijn.
+        return IsLevelCompleted(ordered[position - 1]);
     }
 
     /// <summary>

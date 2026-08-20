@@ -87,6 +87,11 @@ public class GameManager : MonoBehaviour
     public bool HasPendingCoinsFeatureTutorialTrigger => coinsFeatureTutorialTriggerPending;
 
     /// <summary>
+    /// Pending one-time Medium/Hard unlock toast after this completion (null if none).
+    /// </summary>
+    public LevelDifficulty? PendingDifficultyUnlockNotice { get; private set; }
+
+    /// <summary>
     /// True als het huidige level bij 3★ nog een coin reward zou geven.
     /// Voor latere WinPanel-copy ("GET 3 STARS TO EARN COINS").
     /// </summary>
@@ -114,6 +119,22 @@ public class GameManager : MonoBehaviour
         }
 
         coinsFeatureTutorialTriggerPending = false;
+        return true;
+    }
+
+    /// <summary>
+    /// Consumeert pending difficulty-unlock toast (één keer).
+    /// </summary>
+    public bool TryConsumePendingDifficultyUnlockNotice(out LevelDifficulty difficulty)
+    {
+        if (!PendingDifficultyUnlockNotice.HasValue)
+        {
+            difficulty = LevelDifficulty.Easy;
+            return false;
+        }
+
+        difficulty = PendingDifficultyUnlockNotice.Value;
+        PendingDifficultyUnlockNotice = null;
         return true;
     }
 
@@ -149,6 +170,18 @@ public class GameManager : MonoBehaviour
         if (undoManager == null)
         {
             undoManager = FindAnyObjectByType<GameplayUndoManager>();
+        }
+    }
+
+    private void Start()
+    {
+        if (saveManager != null && levelManager != null)
+        {
+            DifficultyUnlockNoticePrefs.MigrateExistingUnlocks(
+                saveManager,
+                levelManager.LevelDatabase,
+                levelManager.DifficultyProgressionConfig
+            );
         }
     }
 
@@ -304,6 +337,7 @@ public class GameManager : MonoBehaviour
         LastThreeStarCoinRewardGranted = false;
         LastEarnedCoins = 0;
         coinsFeatureTutorialTriggerPending = false;
+        PendingDifficultyUnlockNotice = null;
 
         FeatureTutorialController.BeginCoinsFtSession();
 
@@ -324,6 +358,21 @@ public class GameManager : MonoBehaviour
                 int previousBestStars = saveManager.GetStarsForLevel(completedIndex);
                 bool claimedBefore = saveManager.HasClaimedThreeStarCoinReward(completedIndex);
                 bool eligible = LastEarnedStars == 3 && !claimedBefore;
+
+                LevelDatabase database = levelManager.LevelDatabase;
+                DifficultyProgressionConfig progressionConfig =
+                    levelManager.DifficultyProgressionConfig;
+
+                bool mediumUnlockedBefore = saveManager.IsDifficultyUnlocked(
+                    LevelDifficulty.Medium,
+                    database,
+                    progressionConfig
+                );
+                bool hardUnlockedBefore = saveManager.IsDifficultyUnlocked(
+                    LevelDifficulty.Hard,
+                    database,
+                    progressionConfig
+                );
 
                 if (eligible)
                 {
@@ -363,6 +412,47 @@ public class GameManager : MonoBehaviour
 #endif
 
                 saveManager.SaveStarsForLevel(completedIndex, LastEarnedStars);
+
+                // Difficulty unlock toast: only on unique first completion + false→true.
+                if (previousBestStars <= 0)
+                {
+                    bool mediumUnlockedAfter = saveManager.IsDifficultyUnlocked(
+                        LevelDifficulty.Medium,
+                        database,
+                        progressionConfig
+                    );
+                    bool hardUnlockedAfter = saveManager.IsDifficultyUnlocked(
+                        LevelDifficulty.Hard,
+                        database,
+                        progressionConfig
+                    );
+
+                    if (!hardUnlockedBefore &&
+                        hardUnlockedAfter &&
+                        !DifficultyUnlockNoticePrefs.HasSeenHard())
+                    {
+                        PendingDifficultyUnlockNotice = LevelDifficulty.Hard;
+                    }
+                    else if (!mediumUnlockedBefore &&
+                             mediumUnlockedAfter &&
+                             !DifficultyUnlockNoticePrefs.HasSeenMedium())
+                    {
+                        PendingDifficultyUnlockNotice = LevelDifficulty.Medium;
+                    }
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                    Debug.Log(
+                        "[DifficultyUnlock]\n" +
+                        "UniqueCompletion=" + (previousBestStars <= 0) + "\n" +
+                        "Medium " + mediumUnlockedBefore + "→" + mediumUnlockedAfter + "\n" +
+                        "Hard " + hardUnlockedBefore + "→" + hardUnlockedAfter + "\n" +
+                        "PendingNotice=" +
+                        (PendingDifficultyUnlockNotice.HasValue
+                            ? PendingDifficultyUnlockNotice.Value.ToString()
+                            : "None")
+                    );
+#endif
+                }
 
                 int nextUnlock = completedIndex + 1;
                 int maxIndex = Mathf.Max(0, levelManager.LevelCount - 1);

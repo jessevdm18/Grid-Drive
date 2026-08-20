@@ -177,7 +177,21 @@ public class V1PlaytestWindow : EditorWindow
                 ? cachedResolved.dbIndex.ToString()
                 : "Not in Main DB")
         );
-        EditorGUILayout.LabelField("Display #: " + level.levelNumber);
+        string displayLabel = level.levelNumber.ToString();
+        if (cachedResolved.dbIndex >= 0)
+        {
+            LevelDatabase mainDb = V1PlaytestSession.LoadMainDatabase();
+            int local = LevelDifficultyOrder.GetDifficultyDisplayNumber(
+                mainDb,
+                cachedResolved.dbIndex
+            );
+            if (local > 0)
+            {
+                displayLabel = local.ToString();
+            }
+        }
+
+        EditorGUILayout.LabelField("Display #: " + displayLabel);
         EditorGUILayout.LabelField(
             "Difficulty: " +
             (entry != null ? entry.assignedDifficulty.ToString() : level.difficulty.ToString())

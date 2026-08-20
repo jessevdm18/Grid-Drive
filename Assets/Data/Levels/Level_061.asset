@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Level_061
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   levelNumber: 61
-  difficulty: 2
+  difficulty: 1
   objectiveType: 0
   timeLimitSeconds: 0
   moveLimit: 0

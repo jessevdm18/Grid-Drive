@@ -150,6 +150,18 @@ public static class V1PlaytestOverride
     }
 
     /// <summary>
+    /// Pending GUID string (empty if none). Editor only.
+    /// </summary>
+    public static string GetPendingGuid()
+    {
+#if UNITY_EDITOR
+        return SessionState.GetString(PendingGuidKey, string.Empty);
+#else
+        return string.Empty;
+#endif
+    }
+
+    /// <summary>
     /// Clear Pending + Active (Stop Playtest / Clear Override menu).
     /// </summary>
     public static void Clear()

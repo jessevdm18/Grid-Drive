@@ -80,26 +80,11 @@ public class LevelDatabase : ScriptableObject
     }
 
     /// <summary>
-    /// Volgende index ná <paramref name="fromIndex"/> met dezelfde difficulty, of -1.
+    /// Volgende index in difficulty-local progression order (minMoves → score → index), of -1.
+    /// Does not use raw database order.
     /// </summary>
     public int FindNextLevelIndexSameDifficulty(int fromIndex)
     {
-        LevelData current = GetLevel(fromIndex);
-        if (current == null || levels == null)
-        {
-            return -1;
-        }
-
-        LevelDifficulty tier = current.difficulty;
-        for (int i = fromIndex + 1; i < levels.Count; i++)
-        {
-            LevelData level = levels[i];
-            if (level != null && level.difficulty == tier)
-            {
-                return i;
-            }
-        }
-
-        return -1;
+        return LevelDifficultyOrder.FindNextOrderedLevelIndexSameDifficulty(this, fromIndex);
     }
 }

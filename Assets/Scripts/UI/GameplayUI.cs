@@ -2,7 +2,7 @@ using UnityEngine;
 using TMPro;
 
 /// <summary>
-/// Toont coins, levelnummer en moves tijdens Gameplay.
+/// Toont coins, levelnummer, difficulty en moves tijdens Gameplay.
 /// Level/Moves: alleen ValueText (cijfers); LabelText blijft "LEVEL" / "MOVES".
 /// </summary>
 public class GameplayUI : MonoBehaviour
@@ -21,6 +21,12 @@ public class GameplayUI : MonoBehaviour
 
     [Tooltip("MovesCard/ValueText — alleen het aantal moves, bijv. \"0\".")]
     [SerializeField] private TextMeshProUGUI movesValueText;
+
+    [Header("Difficulty Label")]
+    [Tooltip("Optional. Shows EASY / MEDIUM / HARD from LevelData.difficulty.")]
+    [SerializeField] private TextMeshProUGUI difficultyText;
+    [Tooltip("Optional root to show/hide the difficulty label.")]
+    [SerializeField] private GameObject difficultyLabelRoot;
 
     private void Start()
     {
@@ -65,18 +71,71 @@ public class GameplayUI : MonoBehaviour
     }
 
     /// <summary>
-    /// Zet alleen LevelCard/ValueText op het levelnummer (index 0 → "1").
+    /// Zet LevelCard/ValueText + difficulty label (LevelData.difficulty).
     /// Raakt LabelText ("LEVEL") niet aan.
     /// </summary>
     public void UpdateLevelText()
     {
-        if (levelValueText == null || levelManager == null)
+        if (levelValueText != null && levelManager != null)
+        {
+            int displayNumber = levelManager.GetDisplayLevelNumber();
+            levelValueText.text = displayNumber.ToString();
+        }
+
+        UpdateDifficultyLabel();
+    }
+
+    /// <summary>
+    /// HUD difficulty from authoritative LevelData.difficulty (incl. V1 playtest).
+    /// </summary>
+    public void UpdateDifficultyLabel()
+    {
+        if (difficultyText == null && difficultyLabelRoot == null)
         {
             return;
         }
 
-        int displayNumber = levelManager.GetDisplayLevelNumber();
-        levelValueText.text = displayNumber.ToString();
+        if (levelManager == null)
+        {
+            SetDifficultyLabelVisible(false);
+            return;
+        }
+
+        LevelData data = levelManager.CurrentLevelData;
+        if (data == null)
+        {
+            SetDifficultyLabelVisible(false);
+            return;
+        }
+
+        if (difficultyText != null)
+        {
+            difficultyText.text = GetDifficultyLabelCopy(data.difficulty);
+        }
+
+        SetDifficultyLabelVisible(true);
+    }
+
+    private static string GetDifficultyLabelCopy(LevelDifficulty difficulty)
+    {
+        switch (difficulty)
+        {
+            case LevelDifficulty.Medium:
+                return "MEDIUM";
+            case LevelDifficulty.Hard:
+                return "HARD";
+            case LevelDifficulty.Easy:
+            default:
+                return "EASY";
+        }
+    }
+
+    private void SetDifficultyLabelVisible(bool visible)
+    {
+        if (difficultyLabelRoot != null)
+        {
+            difficultyLabelRoot.SetActive(visible);
+        }
     }
 
     /// <summary>

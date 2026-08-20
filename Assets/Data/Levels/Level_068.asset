@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: Level_068
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   levelNumber: 68
-  difficulty: 2
-  objectiveType: 0
+  difficulty: 1
+  objectiveType: 6
   timeLimitSeconds: 0
   moveLimit: 0
   fragileCargoMoveLimit: 0
-  limitedVehicleMoveLimit: 0
+  limitedVehicleMoveLimit: 2
   specialTargetSprite: {fileID: 0}
   gridWidth: 7
   gridHeight: 6
@@ -76,7 +76,7 @@ MonoBehaviour:
     canExitRight: 0
     isProtectedVehicle: 0
     isFragileCargo: 0
-    isLimitedVehicle: 0
+    isLimitedVehicle: 1
     vehicleSprite: {fileID: 0}
   - vehicleName: F
     orientation: 0

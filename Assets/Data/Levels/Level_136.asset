@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   levelNumber: 136
   difficulty: 0
-  objectiveType: 0
-  timeLimitSeconds: 0
+  objectiveType: 1
+  timeLimitSeconds: 27
   moveLimit: 0
   fragileCargoMoveLimit: 0
   limitedVehicleMoveLimit: 0

@@ -28,6 +28,9 @@ public class SplashController : MonoBehaviour
     [Tooltip("Returning players. First-launch gaat naar Gameplay (negeert dit veld).")]
     [SerializeField] private string nextSceneName = MainMenuSceneName;
 
+    [Tooltip("MainLevelDatabase — required for first-launch Easy Level 1 DB index.")]
+    [SerializeField] private LevelDatabase levelDatabase;
+
     private bool hasStartedLoad;
 
     private void Awake()
@@ -131,8 +134,8 @@ public class SplashController : MonoBehaviour
 
         if (SaveManager.ShouldRouteFirstLaunchToGameplay())
         {
-            // Zelfde contract als LevelSelect button index 0 = LEVEL 1.
-            SaveManager.PrepareFirstLaunchGameplayLevelStatic();
+            // Same contract as LevelSelect Easy button 1 (ordered Easy[0]).
+            SaveManager.PrepareFirstLaunchGameplayLevelStatic(levelDatabase);
             SceneTransition.LoadScene(GameplaySceneName);
             return;
         }

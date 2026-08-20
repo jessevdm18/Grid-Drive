@@ -13,6 +13,9 @@ public class SkinManager : MonoBehaviour
     private const string OwnedSkinsKey = "GridDrive_OwnedSkins";
     private const string SelectedSkinKey = "GridDrive_SelectedSkin";
 
+    public const string OwnedSkinsPrefsKey = "GridDrive_OwnedSkins";
+    public const string SelectedSkinPrefsKey = "GridDrive_SelectedSkin";
+
     [Header("Data")]
     [SerializeField] private VehicleSkinCatalog catalog;
 
@@ -200,13 +203,9 @@ public class SkinManager : MonoBehaviour
     [ContextMenu("Debug Reset Skins")]
     private void DebugResetSkins()
     {
-        PlayerPrefs.DeleteKey(OwnedSkinsKey);
-        PlayerPrefs.DeleteKey(SelectedSkinKey);
-        PlayerPrefs.Save();
-
+        EditorResetSkinPrefsToFreshDefaults();
         ownedSkinIds.Clear();
         selectedSkinId = ClassicSkinId;
-
         Load();
         EnsureDefaults();
         OnSkinsChanged?.Invoke();
@@ -215,6 +214,17 @@ public class SkinManager : MonoBehaviour
             "SkinManager: Debug Reset Skins — owned/selected keys gewist. " +
             "Classic restored via EnsureDefaults. RushOut_Coins ongewijzigd."
         );
+    }
+
+    /// <summary>
+    /// Clears skin prefs. Next SkinManager.Awake/EnsureDefaults restores Classic + unlockedByDefault.
+    /// Safe without Play Mode.
+    /// </summary>
+    public static void EditorResetSkinPrefsToFreshDefaults()
+    {
+        PlayerPrefs.DeleteKey(OwnedSkinsKey);
+        PlayerPrefs.DeleteKey(SelectedSkinKey);
+        PlayerPrefs.Save();
     }
 
     private void EnsureDefaults()

@@ -9,8 +9,10 @@ public enum FeatureTutorialType
     Coins = 0,
     /// <summary>Deprecated — geen Undo onboarding meer. Key mag blijven voor oude saves.</summary>
     Undo = 1,
+    /// <summary>Deprecated — geen Hint feature tutorial meer. Key mag blijven voor oude saves.</summary>
     Hint = 2,
     Skins = 3,
+    /// <summary>Deprecated — geen WatchAdForHint feature tutorial meer. Key mag blijven voor oude saves.</summary>
     WatchAdForHint = 4
 }
 

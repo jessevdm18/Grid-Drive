@@ -60,49 +60,27 @@ public static class V1LevelQualityScorer
 
     public static LevelDifficulty SuggestDifficulty(LevelFeatureSignature s)
     {
-        int score = s.difficultyScore;
-        int moves = s.minimumMoves;
-        int area = s.GridArea;
-
-        // Soft grid nudge (not dominant): larger boards bias slightly harder.
-        int scoreAdj = score;
-        if (area >= 56)
+        if (LevelMinMovesDifficulty.TryGetDifficultyForMinimumMoves(
+                s.minimumMoves,
+                out LevelDifficulty fromMoves))
         {
-            scoreAdj += 120;
-        }
-        else if (area <= 30)
-        {
-            scoreAdj -= 80;
+            return fromMoves;
         }
 
-        if (scoreAdj <= EasyScoreMax && moves <= EasyMovesMax + 2)
-        {
-            return LevelDifficulty.Easy;
-        }
-
-        if (scoreAdj <= MediumScoreMax && moves <= MediumMovesMax + 3)
-        {
-            return LevelDifficulty.Medium;
-        }
-
-        return LevelDifficulty.Hard;
+        // Invalid / unsolved — do not invent a tier from score/grid.
+        return LevelDifficulty.Medium;
     }
 
     public static float DifficultyFit(LevelFeatureSignature s, LevelDifficulty tier)
     {
-        LevelDifficulty suggested = SuggestDifficulty(s);
-        if (suggested == tier)
+        if (!LevelMinMovesDifficulty.TryGetDifficultyForMinimumMoves(
+                s.minimumMoves,
+                out LevelDifficulty expected))
         {
-            return 1f;
+            return 0f;
         }
 
-        int delta = Mathf.Abs((int)suggested - (int)tier);
-        if (delta == 1)
-        {
-            return 0.55f;
-        }
-
-        return 0.15f;
+        return expected == tier ? 1f : 0f;
     }
 
     private static float SolutionQuality(LevelFeatureSignature s)
@@ -151,8 +129,10 @@ public static class V1LevelQualityScorer
         }
 
         int minMovesForTier = tier == LevelDifficulty.Easy
-            ? 3
-            : tier == LevelDifficulty.Medium ? 6 : 10;
+            ? LevelMinMovesDifficulty.EasyMinMoves
+            : tier == LevelDifficulty.Medium
+                ? LevelMinMovesDifficulty.MediumMinMoves
+                : LevelMinMovesDifficulty.HardMinMoves;
         if (s.minimumMoves > 0 && s.minimumMoves < minMovesForTier)
         {
             penalty += 0.35f;

@@ -4,8 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// Feature tutorials: Coins / Hint / WatchAdForHint / Skins.
-/// Modal (Coins/Skins) vs PointerOnly (Hint/WatchAd) — presentation only.
+/// Feature tutorials: Coins / Skins.
+/// Modal (Coins/Skins Step2) vs PointerOnly (Skins Step1) — presentation only.
 /// </summary>
 public class FeatureTutorialController : MonoBehaviour
 {
@@ -19,8 +19,6 @@ public class FeatureTutorialController : MonoBehaviour
     [SerializeField] private GameManager gameManager;
     [SerializeField] private SaveManager saveManager;
     [SerializeField] private UIManager uiManager;
-    [SerializeField] private HintManager hintManager;
-    [SerializeField] private LevelManager levelManager;
     [SerializeField] private ObjectiveTutorialController objectiveTutorialController;
     [SerializeField] private ShopUIController shopUI;
 
@@ -32,22 +30,17 @@ public class FeatureTutorialController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI costText;
     [SerializeField] private Button gotItButton;
 
-    [Header("Shared pointer (Hint / WatchAd / Skins Step1)")]
+    [Header("Shared pointer (Skins Step1)")]
     [SerializeField] private RectTransform arrow;
 
     [Header("Spotlight targets (bestaande UI)")]
     [SerializeField] private RectTransform coinCounterTarget;
-    [SerializeField] private RectTransform hintButtonTarget;
-    [SerializeField] private RectTransform watchAdButtonTarget;
     [SerializeField] private RectTransform shopButtonTarget;
 
     [Header("Coins copy")]
     [SerializeField] private string coinsTitle = "COINS";
     [SerializeField] private string coinsPrimary = "GET 3 STARS TO EARN COINS";
     [SerializeField] private string coinsSecondary = "USE COINS FOR HINTS AND SKINS";
-
-    [Header("Hint")]
-    [SerializeField, Min(0)] private int hintMinLevelIndex = 1;
 
     [Header("Skins (MainMenu two-step)")]
     [SerializeField] private string skinsTitle = "UNLOCK NEW SKINS";
@@ -79,8 +72,6 @@ public class FeatureTutorialController : MonoBehaviour
     private bool targetClickBound;
 
     private bool pendingCoins;
-    private bool pendingHint;
-    private bool pendingWatchAd;
     private bool pendingSkinsStep1;
     private bool pendingSkinsStep2;
 
@@ -123,6 +114,13 @@ public class FeatureTutorialController : MonoBehaviour
 
     /// <summary>True terwijl modal of pointer actief is (stacking).</summary>
     public bool IsTutorialUiActive => modalActive || pointerActive;
+
+    /// <summary>
+    /// True while a tutorial modal is queued, delayed, or visible.
+    /// Used so Try-difficulty navigation waits for Coins FT after win.
+    /// </summary>
+    public bool IsBlockingModalPresentation =>
+        modalActive || pendingCoins || showCoroutine != null;
 
     private void Awake()
     {
@@ -174,10 +172,8 @@ public class FeatureTutorialController : MonoBehaviour
         UnbindGotItListener();
         UnbindTargetClick();
         ForceHideAllPresentation(releaseGate: true);
-        // Hint/WatchAd pending wissen; Coins komt terug via GameManager trigger.
+        // Coins komt terug via GameManager trigger.
         // Skins Step2 pending behouden niet over disable — visit is klaar.
-        pendingHint = false;
-        pendingWatchAd = false;
         pendingSkinsStep1 = false;
         pendingSkinsStep2 = false;
     }
@@ -354,7 +350,9 @@ public class FeatureTutorialController : MonoBehaviour
 
     public bool TryQueueFeatureTutorial(FeatureTutorialType type)
     {
-        if (type == FeatureTutorialType.Undo)
+        if (type == FeatureTutorialType.Undo ||
+            type == FeatureTutorialType.Hint ||
+            type == FeatureTutorialType.WatchAdForHint)
         {
             return false;
         }
@@ -368,12 +366,6 @@ public class FeatureTutorialController : MonoBehaviour
         {
             case FeatureTutorialType.Coins:
                 pendingCoins = true;
-                return true;
-            case FeatureTutorialType.Hint:
-                pendingHint = true;
-                return true;
-            case FeatureTutorialType.WatchAdForHint:
-                pendingWatchAd = true;
                 return true;
             case FeatureTutorialType.Skins:
                 if (!IsSkinsEligible())
@@ -415,7 +407,7 @@ public class FeatureTutorialController : MonoBehaviour
     {
         ClearSeenPendings();
 
-        // Priority: Coins (modal) → Hint (pointer) → WatchAd (pointer) → Skins (modal)
+        // Priority: Coins (modal) → Skins (Step2 modal / Step1 pointer)
         if (pendingCoins)
         {
             bool canPresent = CanOpen(FeatureTutorialType.Coins);
@@ -444,24 +436,6 @@ public class FeatureTutorialController : MonoBehaviour
                 ignoreShowInFlight: false);
         }
 
-        if (pendingHint &&
-            CanOpen(FeatureTutorialType.Hint) &&
-            IsHintTriggerContextValid())
-        {
-            pendingHint = false;
-            BeginShow(FeatureTutorialType.Hint, FeatureTutorialPresentationMode.PointerOnly);
-            return;
-        }
-
-        if (pendingWatchAd && CanOpen(FeatureTutorialType.WatchAdForHint))
-        {
-            pendingWatchAd = false;
-            BeginShow(
-                FeatureTutorialType.WatchAdForHint,
-                FeatureTutorialPresentationMode.PointerOnly);
-            return;
-        }
-
         // Skins Step 2 (shop modal) vóór Step 1 als beide pending.
         if (pendingSkinsStep2 &&
             IsSkinsEligible() &&
@@ -487,14 +461,6 @@ public class FeatureTutorialController : MonoBehaviour
                 FeatureTutorialType.Skins,
                 FeatureTutorialPresentationMode.PointerOnly);
             return;
-        }
-
-        if (!FeatureTutorialPrefs.HasSeen(FeatureTutorialType.Hint) &&
-            !pendingHint &&
-            IsHintTriggerContextValid() &&
-            IsPresentationClearForPointers())
-        {
-            pendingHint = true;
         }
 
         if (enableSkinsTutorialOnThisScene &&
@@ -703,15 +669,8 @@ public class FeatureTutorialController : MonoBehaviour
 
         pointerLifetimeCoroutine = null;
 
-        // Skins Step1 timeout: GEEN MarkSeen — mag later opnieuw (andere visit).
-        if (type == FeatureTutorialType.Skins)
-        {
-            CompletePointer(markSeen: false);
-        }
-        else
-        {
-            CompletePointer(markSeen: true);
-        }
+        // Skins Step1 (enige pointer): GEEN MarkSeen — mag later opnieuw (andere visit).
+        CompletePointer(markSeen: false);
     }
 
     private void OnTargetButtonClicked()
@@ -729,8 +688,7 @@ public class FeatureTutorialController : MonoBehaviour
             return;
         }
 
-        // Hint / Watch Ad — pointer weg + MarkSeen.
-        CompletePointer(markSeen: true);
+        CompletePointer(markSeen: false);
     }
 
     private void CompletePointer(bool markSeen)
@@ -1122,7 +1080,8 @@ public class FeatureTutorialController : MonoBehaviour
                 return "LevelFailed";
             }
 
-            // Hint/WatchAd: niet tijdens win. Coins/Skins: wel post-win toegestaan.
+            // Coins/Skins: post-win toegestaan. PointerOnly (Skins Step1 via BeginShow)
+            // blokkeert tijdens win/exit — GetMode blijft Modal voor queue types.
             if (GetMode(type) == FeatureTutorialPresentationMode.PointerOnly)
             {
                 if (gameManager.IsLevelCompleted)
@@ -1142,14 +1101,10 @@ public class FeatureTutorialController : MonoBehaviour
 
     private static FeatureTutorialPresentationMode GetMode(FeatureTutorialType type)
     {
-        switch (type)
-        {
-            case FeatureTutorialType.Hint:
-            case FeatureTutorialType.WatchAdForHint:
-                return FeatureTutorialPresentationMode.PointerOnly;
-            default:
-                return FeatureTutorialPresentationMode.Modal;
-        }
+        // Coins + Skins queue as Modal; Skins Step1 pointer set via BeginShow.
+        // Parameter kept for call-site clarity / future PointerOnly queue types.
+        _ = type;
+        return FeatureTutorialPresentationMode.Modal;
     }
 
     private bool IsPresentationClearForModal()
@@ -1174,24 +1129,6 @@ public class FeatureTutorialController : MonoBehaviour
             {
                 return false;
             }
-        }
-
-        return true;
-    }
-
-    private bool IsPresentationClearForPointers()
-    {
-        if (!IsPresentationClearForModal())
-        {
-            return false;
-        }
-
-        if (gameManager != null &&
-            (gameManager.IsLevelCompleted ||
-             gameManager.IsTargetExitInProgress ||
-             gameManager.IsFeatureTutorialPlaying))
-        {
-            return false;
         }
 
         return true;
@@ -1225,36 +1162,6 @@ public class FeatureTutorialController : MonoBehaviour
 
             if (gameManager.IsObjectiveTutorialPlaying ||
                 gameManager.IsSpecialMissionIntroPlaying)
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    private bool IsHintTriggerContextValid()
-    {
-        if (levelManager == null)
-        {
-            levelManager = FindAnyObjectByType<LevelManager>();
-        }
-
-        if (levelManager == null || hintButtonTarget == null)
-        {
-            return false;
-        }
-
-        if (levelManager.CurrentLevelIndex < hintMinLevelIndex)
-        {
-            return false;
-        }
-
-        if (gameManager != null)
-        {
-            if (gameManager.IsLevelCompleted ||
-                gameManager.IsLevelFailed ||
-                gameManager.IsTargetExitInProgress)
             {
                 return false;
             }
@@ -1345,10 +1252,6 @@ public class FeatureTutorialController : MonoBehaviour
         {
             case FeatureTutorialType.Coins:
                 return coinCounterTarget;
-            case FeatureTutorialType.Hint:
-                return hintButtonTarget;
-            case FeatureTutorialType.WatchAdForHint:
-                return watchAdButtonTarget;
             case FeatureTutorialType.Skins:
                 // Step2: alleen buyable card (mag null = geen pulse).
                 if (activeMode == FeatureTutorialPresentationMode.Modal)
@@ -1643,11 +1546,6 @@ public class FeatureTutorialController : MonoBehaviour
         HandleWinSequenceFinished();
     }
 
-    private void OnInsufficientCoinsForHint()
-    {
-        TryQueueFeatureTutorial(FeatureTutorialType.WatchAdForHint);
-    }
-
     private void LogCoinsFtPendingRecheck(
         FeatureTutorialType type,
         bool ignoreShowInFlight)
@@ -1735,12 +1633,6 @@ public class FeatureTutorialController : MonoBehaviour
             case FeatureTutorialType.Coins:
                 pendingCoins = true;
                 break;
-            case FeatureTutorialType.Hint:
-                pendingHint = true;
-                break;
-            case FeatureTutorialType.WatchAdForHint:
-                pendingWatchAd = true;
-                break;
             case FeatureTutorialType.Skins:
                 // Requeue Step2 if shop open, else Step1 (mits visit allow).
                 if (shopUI != null && shopUI.IsShopOpen)
@@ -1763,16 +1655,6 @@ public class FeatureTutorialController : MonoBehaviour
             pendingCoins = false;
         }
 
-        if (FeatureTutorialPrefs.HasSeen(FeatureTutorialType.Hint))
-        {
-            pendingHint = false;
-        }
-
-        if (FeatureTutorialPrefs.HasSeen(FeatureTutorialType.WatchAdForHint))
-        {
-            pendingWatchAd = false;
-        }
-
         if (FeatureTutorialPrefs.HasSeen(FeatureTutorialType.Skins))
         {
             pendingSkinsStep1 = false;
@@ -1783,8 +1665,6 @@ public class FeatureTutorialController : MonoBehaviour
     private void ClearAllPending()
     {
         pendingCoins = false;
-        pendingHint = false;
-        pendingWatchAd = false;
         pendingSkinsStep1 = false;
         pendingSkinsStep2 = false;
     }
@@ -1820,12 +1700,6 @@ public class FeatureTutorialController : MonoBehaviour
             uiManager.OnWinSequenceFinished += OnWinSequenceFinished;
         }
 
-        if (hintManager != null)
-        {
-            hintManager.OnInsufficientCoinsForHint -= OnInsufficientCoinsForHint;
-            hintManager.OnInsufficientCoinsForHint += OnInsufficientCoinsForHint;
-        }
-
         if (shopUI == null && enableSkinsTutorialOnThisScene)
         {
             shopUI = FindAnyObjectByType<ShopUIController>();
@@ -1843,11 +1717,6 @@ public class FeatureTutorialController : MonoBehaviour
         if (uiManager != null)
         {
             uiManager.OnWinSequenceFinished -= OnWinSequenceFinished;
-        }
-
-        if (hintManager != null)
-        {
-            hintManager.OnInsufficientCoinsForHint -= OnInsufficientCoinsForHint;
         }
 
         if (shopUI != null)
@@ -1871,16 +1740,6 @@ public class FeatureTutorialController : MonoBehaviour
         if (uiManager == null)
         {
             uiManager = FindAnyObjectByType<UIManager>();
-        }
-
-        if (hintManager == null)
-        {
-            hintManager = FindAnyObjectByType<HintManager>();
-        }
-
-        if (levelManager == null)
-        {
-            levelManager = FindAnyObjectByType<LevelManager>();
         }
 
         if (objectiveTutorialController == null)

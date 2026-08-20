@@ -63,6 +63,10 @@ public class LevelContentPlannerWindow : EditorWindow
         public LevelData level;
         public LevelDifficulty plannedDifficulty;
         public LevelObjectiveType plannedObjective;
+        public float plannedTimeLimit;
+        public int plannedMoveLimit;
+        public int plannedFragileLimit;
+        public int plannedLimitedLimit;
         public bool selected;
         public V1CurationStatus curationStatus = V1CurationStatus.Unassigned;
         public bool needsReview;
@@ -81,6 +85,39 @@ public class LevelContentPlannerWindow : EditorWindow
         public SpecialMissionSuitabilityAnalyzer.Category limitedCategory;
         public int multiTargetScore;
         public MultiTargetSuitabilityAnalyzer.Category multiTargetCategory;
+
+        public int noTouchVehicleIndex;
+        public string noTouchLabel;
+        public int fragileVehicleIndex;
+        public string fragileLabel;
+        public int recommendedCargoLimit;
+        public int limitedVehicleIndex;
+        public string limitedLabel;
+        public int recommendedLimitedLimit;
+        public int multiPrimaryIndex;
+        public int multiCandidateIndex;
+        public string multiPrimaryLabel;
+        public string multiCandidateLabel;
+
+        public static SuitabilityScores CreateEmpty()
+        {
+            return new SuitabilityScores
+            {
+                hasData = true,
+                noTouchVehicleIndex = -1,
+                noTouchLabel = string.Empty,
+                fragileVehicleIndex = -1,
+                fragileLabel = string.Empty,
+                recommendedCargoLimit = 0,
+                limitedVehicleIndex = -1,
+                limitedLabel = string.Empty,
+                recommendedLimitedLimit = 0,
+                multiPrimaryIndex = -1,
+                multiCandidateIndex = -1,
+                multiPrimaryLabel = string.Empty,
+                multiCandidateLabel = string.Empty
+            };
+        }
     }
 
     private LevelDatabase database;
@@ -98,7 +135,7 @@ public class LevelContentPlannerWindow : EditorWindow
     private readonly List<string> gridSizeLabels = new List<string> { "All" };
     private readonly List<Vector2Int> gridSizeValues = new List<Vector2Int>();
     private string searchText = string.Empty;
-    private SortMode sortMode = SortMode.DbIndex;
+    private SortMode sortMode = SortMode.Difficulty;
     private bool sortAscending = true;
     private CurationViewFilter curationViewFilter = CurationViewFilter.MainDatabase;
     private V1CurationState curationState;
@@ -191,6 +228,12 @@ public class LevelContentPlannerWindow : EditorWindow
     private void DrawHeader()
     {
         EditorGUILayout.LabelField("Level Content Planner", EditorStyles.boldLabel);
+        EditorGUILayout.HelpBox(
+            "PRE-RELEASE DATABASE TOOL\n" +
+            "Do not reorder/remove database entries after public release while save identity " +
+            "is index-based.",
+            MessageType.Warning
+        );
         EditorGUILayout.HelpBox(
             "Planner does not reorder MainLevelDatabase. Existing save identities remain stable.\n" +
             "Planned Difficulty / Objective are window-state until APPLY.\n" +
@@ -359,6 +402,21 @@ public class LevelContentPlannerWindow : EditorWindow
         GUI.enabled = true;
 
         EditorGUILayout.EndHorizontal();
+
+        EditorGUILayout.BeginHorizontal();
+        if (GUILayout.Button(
+                "AUTO CLASSIFY DIFFICULTY BY MIN MOVES",
+                GUILayout.Height(24f),
+                GUILayout.Width(300f)))
+        {
+            AutoClassifyDifficultyByMinMoves();
+        }
+
+        EditorGUILayout.LabelField(
+            "Planned difficulty only — " + LevelMinMovesDifficulty.RangesSummary,
+            EditorStyles.miniLabel
+        );
+        EditorGUILayout.EndHorizontal();
     }
 
     private void DrawFiltersAndSort()
@@ -467,6 +525,23 @@ public class LevelContentPlannerWindow : EditorWindow
 
         GUI.enabled = true;
         EditorGUILayout.EndHorizontal();
+
+        if (curationViewFilter == CurationViewFilter.MainDatabase && database != null)
+        {
+            EditorGUILayout.Space(4f);
+            GUI.enabled = selectedCount > 0;
+            GUI.backgroundColor = new Color(0.95f, 0.55f, 0.5f);
+            if (GUILayout.Button(
+                    "REMOVE SELECTED FROM MAIN DATABASE",
+                    GUILayout.Height(26f),
+                    GUILayout.Width(300f)))
+            {
+                RemoveSelectedFromMainDatabase();
+            }
+
+            GUI.backgroundColor = Color.white;
+            GUI.enabled = true;
+        }
 
         EditorGUILayout.EndVertical();
     }
@@ -577,7 +652,7 @@ public class LevelContentPlannerWindow : EditorWindow
 
         GUI.Label(new Rect(x, padY, 44f, h), row.dbIndex.ToString());
         x += 44f;
-        GUI.Label(new Rect(x, padY, 44f, h), level.levelNumber.ToString());
+        GUI.Label(new Rect(x, padY, 44f, h), BuildDisplayNumberLabel(row));
         x += 44f;
         GUI.Label(new Rect(x, padY, 150f, h), level.name);
         x += 150f;
@@ -615,6 +690,7 @@ public class LevelContentPlannerWindow : EditorWindow
         if (EditorGUI.EndChangeCheck())
         {
             row.plannedObjective = newObj;
+            InitializePlannedLimitsForObjective(row);
         }
 
         x += 120f;
@@ -649,7 +725,7 @@ public class LevelContentPlannerWindow : EditorWindow
             GUI.color = new Color(1f, 0.55f, 0.2f);
         }
 
-        GUI.Label(new Rect(x, padY, 220f, h), warning);
+        GUI.Label(new Rect(x, padY, 220f, h), new GUIContent(warning, warning));
         GUI.color = prev;
         x += 220f;
 
@@ -668,6 +744,7 @@ public class LevelContentPlannerWindow : EditorWindow
         int kind)
     {
         string text = "-";
+        string tooltip = "Not analyzed.";
         Color color = Color.gray;
 
         if (scores.hasData)
@@ -680,21 +757,36 @@ public class LevelContentPlannerWindow : EditorWindow
                     score = scores.noTouchScore;
                     cat = ShortCategory(scores.noTouchCategory);
                     color = CategoryColor(scores.noTouchCategory);
+                    tooltip = "Protected candidate: " +
+                        DescribeRecommendation(scores.noTouchLabel, scores.noTouchVehicleIndex);
                     break;
                 case 1:
                     score = scores.fragileScore;
                     cat = ShortCategory(scores.fragileCategory);
                     color = CategoryColor(scores.fragileCategory);
+                    tooltip = "Cargo candidate: " +
+                        DescribeRecommendation(scores.fragileLabel, scores.fragileVehicleIndex) +
+                        " | recommended limit " + scores.recommendedCargoLimit;
                     break;
                 case 2:
                     score = scores.limitedScore;
                     cat = ShortCategory(scores.limitedCategory);
                     color = CategoryColor(scores.limitedCategory);
+                    tooltip = "Limited candidate: " +
+                        DescribeRecommendation(scores.limitedLabel, scores.limitedVehicleIndex) +
+                        " | recommended limit " + scores.recommendedLimitedLimit;
                     break;
                 default:
                     score = scores.multiTargetScore;
                     cat = ShortCategory(scores.multiTargetCategory);
                     color = CategoryColor(scores.multiTargetCategory);
+                    tooltip = "Targets: " +
+                        DescribeRecommendation(scores.multiPrimaryLabel, scores.multiPrimaryIndex) +
+                        " + " +
+                        DescribeRecommendation(
+                            scores.multiCandidateLabel,
+                            scores.multiCandidateIndex
+                        );
                     break;
             }
 
@@ -703,7 +795,7 @@ public class LevelContentPlannerWindow : EditorWindow
 
         Color prev = GUI.color;
         GUI.color = color;
-        GUI.Label(new Rect(x, y, 72f, h), text);
+        GUI.Label(new Rect(x, y, 72f, h), new GUIContent(text, tooltip));
         GUI.color = prev;
         x += 72f;
     }
@@ -757,11 +849,29 @@ public class LevelContentPlannerWindow : EditorWindow
             }
         }
 
+        EditorGUILayout.LabelField("MIN MOVES RANGES", EditorStyles.boldLabel);
+        EditorGUILayout.LabelField(LevelMinMovesDifficulty.RangesSummary, EditorStyles.miniLabel);
+        EditorGUILayout.Space(6f);
+
+        EditorGUILayout.LabelField("DATABASE", EditorStyles.boldLabel);
+        EditorGUILayout.LabelField(
+            "Total levels: " + (database != null ? database.LevelCount : rows.Count),
+            EditorStyles.miniLabel
+        );
+        EditorGUILayout.LabelField("Rows in view source: " + rows.Count, EditorStyles.miniLabel);
+        EditorGUILayout.Space(6f);
+
         EditorGUILayout.LabelField("DIFFICULTY", EditorStyles.boldLabel);
         EditorGUILayout.LabelField("Easy: " + easy);
         EditorGUILayout.LabelField("Medium: " + medium);
         EditorGUILayout.LabelField("Hard: " + hard);
+
+        DrawTargetShortageLabel("Easy", easy, V1ReleaseContentPlan.TargetEasy);
+        DrawTargetShortageLabel("Medium", medium, V1ReleaseContentPlan.TargetMedium);
+        DrawTargetShortageLabel("Hard", hard, V1ReleaseContentPlan.TargetHard);
         EditorGUILayout.Space(6f);
+
+        DrawSelectedRowSetupPanel();
 
         EditorGUILayout.LabelField("OBJECTIVES", EditorStyles.boldLabel);
         EditorGUILayout.LabelField("Classic: " + objectives[0]);
@@ -812,6 +922,206 @@ public class LevelContentPlannerWindow : EditorWindow
 
         EditorGUILayout.EndScrollView();
         EditorGUILayout.EndVertical();
+    }
+
+    private static void DrawTargetShortageLabel(string label, int planned, int target)
+    {
+        if (planned >= target)
+        {
+            return;
+        }
+
+        EditorGUILayout.LabelField(
+            "  " + label + " shortage: " + (target - planned) + " (target " + target + ")",
+            EditorStyles.miniLabel
+        );
+    }
+
+    /// <summary>
+    /// Auto setup preview + editable planned limits for the first selected row.
+    /// </summary>
+    private void DrawSelectedRowSetupPanel()
+    {
+        RowState row = GetSelectedRowForPanel();
+        if (row == null || row.level == null)
+        {
+            return;
+        }
+
+        EditorGUILayout.LabelField("AUTO SETUP PREVIEW", EditorStyles.boldLabel);
+        EditorGUILayout.LabelField(
+            "DB#" + row.dbIndex + " " + row.level.name,
+            EditorStyles.miniLabel
+        );
+        EditorGUILayout.HelpBox(BuildAutoSetupPreview(row), MessageType.None);
+
+        switch (row.plannedObjective)
+        {
+            case LevelObjectiveType.TimedAmbulance:
+                row.plannedTimeLimit = EditorGUILayout.FloatField(
+                    "Time Limit",
+                    row.plannedTimeLimit
+                );
+                break;
+
+            case LevelObjectiveType.MoveLimit:
+                row.plannedMoveLimit = EditorGUILayout.IntField(
+                    "Move Limit",
+                    row.plannedMoveLimit
+                );
+                break;
+
+            case LevelObjectiveType.FragileCargo:
+                row.plannedFragileLimit = EditorGUILayout.IntField(
+                    "Fragile Limit",
+                    row.plannedFragileLimit
+                );
+                break;
+
+            case LevelObjectiveType.LimitedVehicle:
+                row.plannedLimitedLimit = EditorGUILayout.IntField(
+                    "Limited Limit",
+                    row.plannedLimitedLimit
+                );
+                break;
+        }
+
+        EditorGUILayout.Space(8f);
+    }
+
+    /// <summary>
+    /// First selected row in view order, or null.
+    /// </summary>
+    private RowState GetSelectedRowForPanel()
+    {
+        for (int i = 0; i < rows.Count; i++)
+        {
+            if (rows[i].selected && rows[i].level != null)
+            {
+                return rows[i];
+            }
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// Human-readable description of what APPLY will configure for this row.
+    /// </summary>
+    private string BuildAutoSetupPreview(RowState row)
+    {
+        if (row == null || row.level == null)
+        {
+            return "(no level)";
+        }
+
+        SuitabilityScores scores;
+        bool hasScores = suitabilityByDbIndex.TryGetValue(row.dbIndex, out scores) &&
+            scores.hasData;
+
+        switch (row.plannedObjective)
+        {
+            case LevelObjectiveType.NoTouchChallenge:
+                if (!hasScores || scores.noTouchVehicleIndex < 0)
+                {
+                    return "NoTouch: Protected = ANALYZE REQUIRED";
+                }
+
+                return "NoTouch: Protected = " +
+                    DescribeRecommendation(scores.noTouchLabel, scores.noTouchVehicleIndex);
+
+            case LevelObjectiveType.FragileCargo:
+                if (!hasScores || scores.fragileVehicleIndex < 0)
+                {
+                    return "Fragile: Cargo = ANALYZE REQUIRED";
+                }
+
+                return "Fragile: Cargo = " +
+                    DescribeRecommendation(scores.fragileLabel, scores.fragileVehicleIndex) +
+                    "\nLimit = " + ResolveFragileLimit(row, scores);
+
+            case LevelObjectiveType.LimitedVehicle:
+                if (!hasScores || scores.limitedVehicleIndex < 0)
+                {
+                    return "Limited: Limited = ANALYZE REQUIRED";
+                }
+
+                return "Limited: Limited = " +
+                    DescribeRecommendation(scores.limitedLabel, scores.limitedVehicleIndex) +
+                    "\nLimit = " + ResolveLimitedLimit(row, scores);
+
+            case LevelObjectiveType.MultiTargetRescue:
+                if (!hasScores ||
+                    scores.multiPrimaryIndex < 0 ||
+                    scores.multiCandidateIndex < 0)
+                {
+                    return "MultiTarget: Targets = ANALYZE REQUIRED";
+                }
+
+                return "MultiTarget: Targets = " +
+                    DescribeRecommendation(scores.multiPrimaryLabel, scores.multiPrimaryIndex) +
+                    " + " +
+                    DescribeRecommendation(
+                        scores.multiCandidateLabel,
+                        scores.multiCandidateIndex
+                    );
+
+            case LevelObjectiveType.TimedAmbulance:
+                return "Timed: time limit = " +
+                    row.plannedTimeLimit.ToString("0.#") + " sec" +
+                    (row.plannedTimeLimit <= 0f ? " (invalid)" : string.Empty);
+
+            case LevelObjectiveType.MoveLimit:
+                return "MoveLimit: move limit = " + row.plannedMoveLimit +
+                    (row.plannedMoveLimit <= 0 ? " (invalid)" : string.Empty);
+
+            default:
+                return "Classic: clear special vehicle flags and special limits.";
+        }
+    }
+
+    private static string DescribeRecommendation(string label, int vehicleIndex)
+    {
+        if (vehicleIndex < 0)
+        {
+            return "ANALYZE REQUIRED";
+        }
+
+        string name = string.IsNullOrEmpty(label) ? "vehicle" : label;
+        return name + " [" + vehicleIndex + "]";
+    }
+
+    private static int ResolveFragileLimit(RowState row, SuitabilityScores scores)
+    {
+        if (row.plannedFragileLimit > 0)
+        {
+            return row.plannedFragileLimit;
+        }
+
+        return scores.recommendedCargoLimit;
+    }
+
+    private static int ResolveLimitedLimit(RowState row, SuitabilityScores scores)
+    {
+        if (row.plannedLimitedLimit > 0)
+        {
+            return row.plannedLimitedLimit;
+        }
+
+        return scores.recommendedLimitedLimit;
+    }
+
+    private string BuildDisplayNumberLabel(RowState row)
+    {
+        if (database == null ||
+            row.dbIndex < 0 ||
+            curationViewFilter != CurationViewFilter.MainDatabase)
+        {
+            return "-";
+        }
+
+        int display = LevelDifficultyOrder.GetDifficultyDisplayNumber(database, row.dbIndex);
+        return display > 0 ? display.ToString() : "-";
     }
 
     private void DrawGridDistributionReport()
@@ -1076,6 +1386,10 @@ public class LevelContentPlannerWindow : EditorWindow
                 level = level,
                 plannedDifficulty = level.difficulty,
                 plannedObjective = level.objectiveType,
+                plannedTimeLimit = level.timeLimitSeconds,
+                plannedMoveLimit = level.moveLimit,
+                plannedFragileLimit = level.fragileCargoMoveLimit,
+                plannedLimitedLimit = level.limitedVehicleMoveLimit,
                 selected = false
             });
         }
@@ -1153,6 +1467,10 @@ public class LevelContentPlannerWindow : EditorWindow
                 level = entry.level,
                 plannedDifficulty = entry.assignedDifficulty,
                 plannedObjective = entry.level.objectiveType,
+                plannedTimeLimit = entry.level.timeLimitSeconds,
+                plannedMoveLimit = entry.level.moveLimit,
+                plannedFragileLimit = entry.level.fragileCargoMoveLimit,
+                plannedLimitedLimit = entry.level.limitedVehicleMoveLimit,
                 selected = false,
                 curationStatus = entry.status,
                 needsReview = entry.needsReview,
@@ -1333,6 +1651,11 @@ public class LevelContentPlannerWindow : EditorWindow
                 break;
             case SortMode.Difficulty:
                 cmp = a.plannedDifficulty.CompareTo(b.plannedDifficulty);
+                if (cmp == 0)
+                {
+                    cmp = LevelDifficultyOrder.CompareLevels(la, lb, a.dbIndex, b.dbIndex);
+                }
+
                 break;
             case SortMode.Objective:
                 cmp = a.plannedObjective.CompareTo(b.plannedObjective);
@@ -1384,7 +1707,7 @@ public class LevelContentPlannerWindow : EditorWindow
             SuitabilityScores scores;
             if (!suitabilityByDbIndex.TryGetValue(dbIndex, out scores))
             {
-                scores = new SuitabilityScores { hasData = true };
+                scores = SuitabilityScores.CreateEmpty();
             }
 
             scores.hasData = true;
@@ -1393,14 +1716,22 @@ public class LevelContentPlannerWindow : EditorWindow
                 case SpecialMissionSuitabilityAnalyzer.MissionKind.NoTouch:
                     scores.noTouchScore = r.score;
                     scores.noTouchCategory = r.category;
+                    scores.noTouchVehicleIndex = r.vehicleIndex;
+                    scores.noTouchLabel = r.vehicleName;
                     break;
                 case SpecialMissionSuitabilityAnalyzer.MissionKind.FragileCargo:
                     scores.fragileScore = r.score;
                     scores.fragileCategory = r.category;
+                    scores.fragileVehicleIndex = r.vehicleIndex;
+                    scores.fragileLabel = r.vehicleName;
+                    scores.recommendedCargoLimit = r.recommendedCargoLimit;
                     break;
                 case SpecialMissionSuitabilityAnalyzer.MissionKind.LimitedVehicle:
                     scores.limitedScore = r.score;
                     scores.limitedCategory = r.category;
+                    scores.limitedVehicleIndex = r.vehicleIndex;
+                    scores.limitedLabel = r.vehicleName;
+                    scores.recommendedLimitedLimit = r.recommendedLimitedLimit;
                     break;
             }
 
@@ -1418,12 +1749,16 @@ public class LevelContentPlannerWindow : EditorWindow
             SuitabilityScores scores;
             if (!suitabilityByDbIndex.TryGetValue(dbIndex, out scores))
             {
-                scores = new SuitabilityScores { hasData = true };
+                scores = SuitabilityScores.CreateEmpty();
             }
 
             scores.hasData = true;
             scores.multiTargetScore = r.score;
             scores.multiTargetCategory = r.category;
+            scores.multiPrimaryIndex = r.primaryTargetIndex;
+            scores.multiCandidateIndex = r.bestCandidateIndex;
+            scores.multiPrimaryLabel = r.primaryTargetName;
+            scores.multiCandidateLabel = r.bestCandidateName;
             suitabilityByDbIndex[dbIndex] = scores;
         }
 
@@ -1565,7 +1900,224 @@ public class LevelContentPlannerWindow : EditorWindow
             if (rows[i].selected)
             {
                 rows[i].plannedObjective = objective;
+                InitializePlannedLimitsForObjective(rows[i]);
             }
+        }
+    }
+
+    /// <summary>
+    /// Planned-difficulty only, from minimumMoves ranges. No asset writes.
+    /// </summary>
+    private void AutoClassifyDifficultyByMinMoves()
+    {
+        int easy = 0;
+        int medium = 0;
+        int hard = 0;
+        int invalid = 0;
+
+        for (int i = 0; i < rows.Count; i++)
+        {
+            RowState row = rows[i];
+            if (row.level == null)
+            {
+                continue;
+            }
+
+            LevelDifficulty classified;
+            if (!LevelMinMovesDifficulty.TryGetDifficultyForMinimumMoves(
+                    row.level.minimumMoves,
+                    out classified))
+            {
+                invalid++;
+                continue;
+            }
+
+            row.plannedDifficulty = classified;
+            switch (classified)
+            {
+                case LevelDifficulty.Easy:
+                    easy++;
+                    break;
+                case LevelDifficulty.Medium:
+                    medium++;
+                    break;
+                default:
+                    hard++;
+                    break;
+            }
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.AppendLine("Planned difficulty set from minimumMoves.");
+        sb.AppendLine(LevelMinMovesDifficulty.RangesSummary);
+        sb.AppendLine();
+        sb.AppendLine("Easy: " + easy);
+        sb.AppendLine("Medium: " + medium);
+        sb.AppendLine("Hard: " + hard);
+        sb.AppendLine("Invalid (minimumMoves <= 0, skipped): " + invalid);
+        sb.AppendLine();
+        sb.AppendLine("Planned state only — no asset writes until APPLY.");
+
+        EditorUtility.DisplayDialog(
+            "Auto Classify Difficulty By Min Moves",
+            sb.ToString(),
+            "OK"
+        );
+        Repaint();
+    }
+
+    /// <summary>
+    /// Removes selected level references from MainLevelDatabase. Assets are not deleted.
+    /// </summary>
+    private void RemoveSelectedFromMainDatabase()
+    {
+        if (database == null || database.levels == null)
+        {
+            EditorUtility.DisplayDialog(
+                "Remove From Main Database",
+                "MainLevelDatabase not loaded.",
+                "OK"
+            );
+            return;
+        }
+
+        List<LevelData> toRemove = new List<LevelData>();
+        for (int i = 0; i < rows.Count; i++)
+        {
+            RowState row = rows[i];
+            if (row.selected && row.level != null && !toRemove.Contains(row.level))
+            {
+                toRemove.Add(row.level);
+            }
+        }
+
+        if (toRemove.Count == 0)
+        {
+            EditorUtility.DisplayDialog(
+                "Remove From Main Database",
+                "No levels selected.",
+                "OK"
+            );
+            return;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.AppendLine("Remove " + toRemove.Count + " selected level(s) from MainLevelDatabase?");
+        sb.AppendLine();
+        sb.AppendLine("Removing levels changes database-index identities for entries after them.");
+        sb.AppendLine("This is PRE-RELEASE ONLY and may invalidate local test progression.");
+        sb.AppendLine();
+        sb.AppendLine("Level assets are NOT deleted — only database references.");
+
+        bool confirm = EditorUtility.DisplayDialog(
+            "Remove Selected From Main Database",
+            sb.ToString(),
+            "Remove",
+            "Cancel"
+        );
+        if (!confirm)
+        {
+            return;
+        }
+
+        Undo.RecordObject(database, "Remove Levels From Main Database");
+
+        int removed = 0;
+        for (int i = database.levels.Count - 1; i >= 0; i--)
+        {
+            LevelData level = database.levels[i];
+            if (level == null || !toRemove.Contains(level))
+            {
+                continue;
+            }
+
+            database.levels.RemoveAt(i);
+            removed++;
+        }
+
+        EditorUtility.SetDirty(database);
+        AssetDatabase.SaveAssets();
+        ReloadFromDatabase();
+
+        Debug.LogWarning(
+            "Level Content Planner: removed " + removed +
+            " level reference(s) from MainLevelDatabase. Database-index identities shifted."
+        );
+        Repaint();
+    }
+
+    /// <summary>
+    /// Seeds planned limits from analyzer / progression recommendations. No asset writes.
+    /// </summary>
+    private void InitializePlannedLimitsForObjective(RowState row)
+    {
+        if (row == null || row.level == null)
+        {
+            return;
+        }
+
+        SuitabilityScores scores;
+        bool hasScores = suitabilityByDbIndex.TryGetValue(row.dbIndex, out scores) &&
+            scores.hasData;
+
+        switch (row.plannedObjective)
+        {
+            case LevelObjectiveType.TimedAmbulance:
+                if (row.plannedTimeLimit <= 0f)
+                {
+                    SpecialMissionProgressionUtility.Settings timedSettings =
+                        SpecialMissionProgressionUtility.Settings.LoadFromEditorPrefs();
+                    int ambulanceIndex = Mathf.Max(
+                        0,
+                        SpecialMissionProgressionUtility.GetAmbulanceProgressIndex(
+                            row.level.levelNumber
+                        )
+                    );
+                    row.plannedTimeLimit =
+                        SpecialMissionProgressionUtility.ComputeAmbulanceTimeLimit(
+                            row.level.minimumMoves,
+                            ambulanceIndex,
+                            timedSettings
+                        );
+                }
+
+                break;
+
+            case LevelObjectiveType.MoveLimit:
+                if (row.plannedMoveLimit <= 0)
+                {
+                    SpecialMissionProgressionUtility.Settings moveSettings =
+                        SpecialMissionProgressionUtility.Settings.LoadFromEditorPrefs();
+                    int moveIndex = Mathf.Max(
+                        0,
+                        SpecialMissionProgressionUtility.GetMoveLimitProgressIndex(
+                            row.level.levelNumber
+                        )
+                    );
+                    row.plannedMoveLimit = SpecialMissionProgressionUtility.ComputeMoveLimit(
+                        row.level.minimumMoves,
+                        moveIndex,
+                        moveSettings
+                    );
+                }
+
+                break;
+
+            case LevelObjectiveType.FragileCargo:
+                if (row.plannedFragileLimit <= 0 && hasScores && scores.recommendedCargoLimit > 0)
+                {
+                    row.plannedFragileLimit = scores.recommendedCargoLimit;
+                }
+
+                break;
+
+            case LevelObjectiveType.LimitedVehicle:
+                if (row.plannedLimitedLimit <= 0 && hasScores && scores.recommendedLimitedLimit > 0)
+                {
+                    row.plannedLimitedLimit = scores.recommendedLimitedLimit;
+                }
+
+                break;
         }
     }
 
@@ -1581,6 +2133,10 @@ public class LevelContentPlannerWindow : EditorWindow
 
             row.plannedDifficulty = row.level.difficulty;
             row.plannedObjective = row.level.objectiveType;
+            row.plannedTimeLimit = row.level.timeLimitSeconds;
+            row.plannedMoveLimit = row.level.moveLimit;
+            row.plannedFragileLimit = row.level.fragileCargoMoveLimit;
+            row.plannedLimitedLimit = row.level.limitedVehicleMoveLimit;
         }
 
         Repaint();
@@ -1616,6 +2172,9 @@ public class LevelContentPlannerWindow : EditorWindow
         }
 
         int applied = 0;
+        int specialConfigured = 0;
+        int specialSkipped = 0;
+
         for (int i = 0; i < dirty.Count; i++)
         {
             RowState row = dirty[i];
@@ -1626,15 +2185,223 @@ public class LevelContentPlannerWindow : EditorWindow
             }
 
             Undo.RecordObject(level, "Apply Level Content Plan");
+
+            LevelObjectiveType oldObjective = level.objectiveType;
             level.difficulty = row.plannedDifficulty;
             level.objectiveType = row.plannedObjective;
+
+            bool objectiveChanged = oldObjective != row.plannedObjective;
+            if (objectiveChanged || AreSpecialLimitsDirty(row))
+            {
+                if (ApplySpecialConfiguration(row, level))
+                {
+                    specialConfigured++;
+                }
+                else
+                {
+                    specialSkipped++;
+                }
+            }
+
             EditorUtility.SetDirty(level);
+            SyncPlannedLimitsFromLevel(row);
             applied++;
         }
 
         AssetDatabase.SaveAssets();
-        Debug.Log("Level Content Planner: applied assignments to " + applied + " levels.");
+        Debug.Log(
+            "Level Content Planner: applied assignments to " + applied + " levels" +
+            " | special auto-config " + specialConfigured +
+            " | special skipped " + specialSkipped + "."
+        );
         Repaint();
+    }
+
+    /// <summary>
+    /// Applies objective-specific vehicle flags / limits. False when a recommendation was
+    /// missing and no vehicle flags were invented.
+    /// </summary>
+    private bool ApplySpecialConfiguration(RowState row, LevelData level)
+    {
+        SuitabilityScores scores;
+        bool hasScores = suitabilityByDbIndex.TryGetValue(row.dbIndex, out scores) &&
+            scores.hasData;
+        string error;
+
+        switch (row.plannedObjective)
+        {
+            case LevelObjectiveType.Classic:
+                LevelSpecialConfigEditor.ApplyClassicCleanup(level);
+                return true;
+
+            case LevelObjectiveType.TimedAmbulance:
+                LevelSpecialConfigEditor.ApplyTimedAmbulance(level, row.plannedTimeLimit);
+                if (row.plannedTimeLimit > 0f)
+                {
+                    return true;
+                }
+
+                Debug.LogWarning(
+                    "Level Content Planner: DB#" + row.dbIndex + " " + level.name +
+                    " Timed objective applied without a positive time limit."
+                );
+                return false;
+
+            case LevelObjectiveType.MoveLimit:
+                LevelSpecialConfigEditor.ApplyMoveLimit(level, row.plannedMoveLimit);
+                if (row.plannedMoveLimit > 0)
+                {
+                    return true;
+                }
+
+                Debug.LogWarning(
+                    "Level Content Planner: DB#" + row.dbIndex + " " + level.name +
+                    " MoveLimit objective applied without a positive move limit."
+                );
+                return false;
+
+            case LevelObjectiveType.NoTouchChallenge:
+                if (!hasScores || scores.noTouchVehicleIndex < 0)
+                {
+                    Debug.LogWarning(
+                        "Level Content Planner: DB#" + row.dbIndex + " " + level.name +
+                        " NoTouch needs Analyze Suitability — objective set, " +
+                        "vehicle flags untouched."
+                    );
+                    return false;
+                }
+
+                if (!LevelSpecialConfigEditor.TryApplyNoTouch(
+                        level,
+                        scores.noTouchVehicleIndex,
+                        out error))
+                {
+                    Debug.LogWarning(
+                        "Level Content Planner: DB#" + row.dbIndex + " " + level.name +
+                        " NoTouch auto-config failed (" + error + ")."
+                    );
+                    return false;
+                }
+
+                return true;
+
+            case LevelObjectiveType.FragileCargo:
+                if (!hasScores || scores.fragileVehicleIndex < 0)
+                {
+                    Debug.LogWarning(
+                        "Level Content Planner: DB#" + row.dbIndex + " " + level.name +
+                        " FragileCargo needs Analyze Suitability — objective set, " +
+                        "vehicle flags untouched."
+                    );
+                    return false;
+                }
+
+                int fragileLimit = ResolveFragileLimit(row, scores);
+                if (!LevelSpecialConfigEditor.TryApplyFragileCargo(
+                        level,
+                        scores.fragileVehicleIndex,
+                        fragileLimit,
+                        out error))
+                {
+                    Debug.LogWarning(
+                        "Level Content Planner: DB#" + row.dbIndex + " " + level.name +
+                        " FragileCargo auto-config failed (" + error + ")."
+                    );
+                    return false;
+                }
+
+                row.plannedFragileLimit = fragileLimit;
+                return true;
+
+            case LevelObjectiveType.LimitedVehicle:
+                if (!hasScores || scores.limitedVehicleIndex < 0)
+                {
+                    Debug.LogWarning(
+                        "Level Content Planner: DB#" + row.dbIndex + " " + level.name +
+                        " LimitedVehicle needs Analyze Suitability — objective set, " +
+                        "vehicle flags untouched."
+                    );
+                    return false;
+                }
+
+                int limitedLimit = ResolveLimitedLimit(row, scores);
+                if (!LevelSpecialConfigEditor.TryApplyLimitedVehicle(
+                        level,
+                        scores.limitedVehicleIndex,
+                        limitedLimit,
+                        out error))
+                {
+                    Debug.LogWarning(
+                        "Level Content Planner: DB#" + row.dbIndex + " " + level.name +
+                        " LimitedVehicle auto-config failed (" + error + ")."
+                    );
+                    return false;
+                }
+
+                row.plannedLimitedLimit = limitedLimit;
+                return true;
+
+            case LevelObjectiveType.MultiTargetRescue:
+                if (!hasScores ||
+                    scores.multiPrimaryIndex < 0 ||
+                    scores.multiCandidateIndex < 0)
+                {
+                    Debug.LogWarning(
+                        "Level Content Planner: DB#" + row.dbIndex + " " + level.name +
+                        " MultiTarget needs Analyze Suitability — objective set, " +
+                        "targets untouched."
+                    );
+                    return false;
+                }
+
+                if (!LevelSpecialConfigEditor.TryApplyMultiTarget(
+                        level,
+                        scores.multiPrimaryIndex,
+                        scores.multiCandidateIndex,
+                        out error))
+                {
+                    Debug.LogWarning(
+                        "Level Content Planner: DB#" + row.dbIndex + " " + level.name +
+                        " MultiTarget auto-config failed (" + error + ")."
+                    );
+                    return false;
+                }
+
+                return true;
+
+            default:
+                return false;
+        }
+    }
+
+    /// <summary>
+    /// Special config helpers clear limits they do not own; mirror the asset back into
+    /// planned state so applied rows stop reporting as dirty.
+    /// </summary>
+    private static void SyncPlannedLimitsFromLevel(RowState row)
+    {
+        if (row == null || row.level == null)
+        {
+            return;
+        }
+
+        row.plannedTimeLimit = row.level.timeLimitSeconds;
+        row.plannedMoveLimit = row.level.moveLimit;
+        row.plannedFragileLimit = row.level.fragileCargoMoveLimit;
+        row.plannedLimitedLimit = row.level.limitedVehicleMoveLimit;
+    }
+
+    private static bool AreSpecialLimitsDirty(RowState row)
+    {
+        if (row == null || row.level == null)
+        {
+            return false;
+        }
+
+        return !Mathf.Approximately(row.plannedTimeLimit, row.level.timeLimitSeconds)
+            || row.plannedMoveLimit != row.level.moveLimit
+            || row.plannedFragileLimit != row.level.fragileCargoMoveLimit
+            || row.plannedLimitedLimit != row.level.limitedVehicleMoveLimit;
     }
 
     private string BuildApplyConfirmationSummary(List<RowState> dirty)
@@ -1646,6 +2413,9 @@ public class LevelContentPlannerWindow : EditorWindow
 
         Dictionary<string, int> diffChanges = new Dictionary<string, int>();
         Dictionary<string, int> objChanges = new Dictionary<string, int>();
+        int autoConfigReady = 0;
+        int autoConfigBlocked = 0;
+        int limitOnlyChanges = 0;
 
         for (int i = 0; i < dirty.Count; i++)
         {
@@ -1653,6 +2423,23 @@ public class LevelContentPlannerWindow : EditorWindow
             if (row.level == null)
             {
                 continue;
+            }
+
+            if (RequiresVehicleAutoConfiguration(row.plannedObjective))
+            {
+                if (HasVehicleRecommendation(row))
+                {
+                    autoConfigReady++;
+                }
+                else
+                {
+                    autoConfigBlocked++;
+                }
+            }
+            else if (row.plannedObjective == row.level.objectiveType &&
+                     AreSpecialLimitsDirty(row))
+            {
+                limitOnlyChanges++;
             }
 
             if (row.plannedDifficulty != row.level.difficulty)
@@ -1699,8 +2486,51 @@ public class LevelContentPlannerWindow : EditorWindow
         }
 
         sb.AppendLine();
+        sb.AppendLine("Special vehicle auto-config:");
+        sb.AppendLine("  Ready (from suitability cache): " + autoConfigReady);
+        sb.AppendLine("  Blocked (ANALYZE REQUIRED, objective only): " + autoConfigBlocked);
+        sb.AppendLine("  Limit-only updates: " + limitOnlyChanges);
+
+        sb.AppendLine();
         sb.AppendLine("Database order and levelNumber will NOT change.");
         return sb.ToString();
+    }
+
+    private static bool RequiresVehicleAutoConfiguration(LevelObjectiveType objective)
+    {
+        return objective == LevelObjectiveType.NoTouchChallenge
+            || objective == LevelObjectiveType.FragileCargo
+            || objective == LevelObjectiveType.LimitedVehicle
+            || objective == LevelObjectiveType.MultiTargetRescue;
+    }
+
+    /// <summary>
+    /// True when the suitability cache holds a usable vehicle recommendation for
+    /// the planned objective.
+    /// </summary>
+    private bool HasVehicleRecommendation(RowState row)
+    {
+        SuitabilityScores scores;
+        if (row == null ||
+            !suitabilityByDbIndex.TryGetValue(row.dbIndex, out scores) ||
+            !scores.hasData)
+        {
+            return false;
+        }
+
+        switch (row.plannedObjective)
+        {
+            case LevelObjectiveType.NoTouchChallenge:
+                return scores.noTouchVehicleIndex >= 0;
+            case LevelObjectiveType.FragileCargo:
+                return scores.fragileVehicleIndex >= 0;
+            case LevelObjectiveType.LimitedVehicle:
+                return scores.limitedVehicleIndex >= 0;
+            case LevelObjectiveType.MultiTargetRescue:
+                return scores.multiPrimaryIndex >= 0 && scores.multiCandidateIndex >= 0;
+            default:
+                return false;
+        }
     }
 
     // -------------------------------------------------------------------------
@@ -1762,10 +2592,104 @@ public class LevelContentPlannerWindow : EditorWindow
             return string.Empty;
         }
 
+        List<string> parts = new List<string>();
+
+        string mismatch = LevelMinMovesDifficulty.GetMismatchWarning(
+            row.plannedDifficulty,
+            level.minimumMoves
+        );
+        if (!string.IsNullOrEmpty(mismatch))
+        {
+            parts.Add(mismatch);
+        }
+
+        if (RequiresVehicleAutoConfiguration(row.plannedObjective))
+        {
+            SuitabilityScores scores;
+            bool hasScores = suitabilityByDbIndex.TryGetValue(row.dbIndex, out scores) &&
+                scores.hasData;
+            if (!hasScores)
+            {
+                parts.Add("ANALYZE REQUIRED");
+            }
+            else if (IsLowSuitability(row, scores))
+            {
+                parts.Add("LOW SUITABILITY");
+            }
+        }
+
+        string config = BuildObjectiveConfigWarning(row, level);
+        if (!string.IsNullOrEmpty(config))
+        {
+            // Apply rewrites the flags for dirty rows, so a stale-config warning is noise.
+            parts.Add(
+                IsRowDirty(row) && WillApplyConfigureObjective(row)
+                    ? "will auto-configure on Apply"
+                    : config
+            );
+        }
+
+        return string.Join(" | ", parts.ToArray());
+    }
+
+    /// <summary>
+    /// True when the planned objective has no usable recommendation or a Poor score.
+    /// Apply is still allowed.
+    /// </summary>
+    private bool IsLowSuitability(RowState row, SuitabilityScores scores)
+    {
+        if (!HasVehicleRecommendation(row))
+        {
+            return true;
+        }
+
+        switch (row.plannedObjective)
+        {
+            case LevelObjectiveType.NoTouchChallenge:
+                return scores.noTouchCategory != SpecialMissionSuitabilityAnalyzer.Category.Good &&
+                    scores.noTouchCategory != SpecialMissionSuitabilityAnalyzer.Category.Maybe;
+            case LevelObjectiveType.FragileCargo:
+                return scores.fragileCategory != SpecialMissionSuitabilityAnalyzer.Category.Good &&
+                    scores.fragileCategory != SpecialMissionSuitabilityAnalyzer.Category.Maybe;
+            case LevelObjectiveType.LimitedVehicle:
+                return scores.limitedCategory != SpecialMissionSuitabilityAnalyzer.Category.Good &&
+                    scores.limitedCategory != SpecialMissionSuitabilityAnalyzer.Category.Maybe;
+            case LevelObjectiveType.MultiTargetRescue:
+                return scores.multiTargetCategory != MultiTargetSuitabilityAnalyzer.Category.Good &&
+                    scores.multiTargetCategory != MultiTargetSuitabilityAnalyzer.Category.Maybe;
+            default:
+                return false;
+        }
+    }
+
+    /// <summary>
+    /// True when APPLY has everything it needs to configure the planned objective,
+    /// so current LevelData flags are about to be rewritten.
+    /// </summary>
+    private bool WillApplyConfigureObjective(RowState row)
+    {
+        switch (row.plannedObjective)
+        {
+            case LevelObjectiveType.Classic:
+                return true;
+            case LevelObjectiveType.TimedAmbulance:
+                return row.plannedTimeLimit > 0f;
+            case LevelObjectiveType.MoveLimit:
+                return row.plannedMoveLimit > 0;
+            default:
+                return HasVehicleRecommendation(row);
+        }
+    }
+
+    /// <summary>
+    /// Incomplete-configuration warning based on planned limits + current LevelData flags.
+    /// </summary>
+    private static string BuildObjectiveConfigWarning(RowState row, LevelData level)
+    {
         switch (row.plannedObjective)
         {
             case LevelObjectiveType.TimedAmbulance:
-                if (level.timeLimitSeconds <= 0f)
+                if (row.plannedTimeLimit <= 0f)
                 {
                     return "Timed: timeLimitSeconds <= 0";
                 }
@@ -1778,7 +2702,7 @@ public class LevelContentPlannerWindow : EditorWindow
                 break;
 
             case LevelObjectiveType.MoveLimit:
-                if (level.moveLimit <= 0)
+                if (row.plannedMoveLimit <= 0)
                 {
                     return "MoveLimit: moveLimit <= 0";
                 }
@@ -1820,7 +2744,7 @@ public class LevelContentPlannerWindow : EditorWindow
                     return "Fragile: no isFragileCargo";
                 }
 
-                if (level.fragileCargoMoveLimit <= 0)
+                if (row.plannedFragileLimit <= 0)
                 {
                     return "Fragile: fragileCargoMoveLimit <= 0";
                 }
@@ -1834,7 +2758,7 @@ public class LevelContentPlannerWindow : EditorWindow
                     return "Limited: no isLimitedVehicle";
                 }
 
-                if (level.limitedVehicleMoveLimit <= 0)
+                if (row.plannedLimitedLimit <= 0)
                 {
                     return "Limited: limitedVehicleMoveLimit <= 0";
                 }
@@ -1897,7 +2821,8 @@ public class LevelContentPlannerWindow : EditorWindow
         }
 
         return row.plannedDifficulty != row.level.difficulty
-            || row.plannedObjective != row.level.objectiveType;
+            || row.plannedObjective != row.level.objectiveType
+            || AreSpecialLimitsDirty(row);
     }
 
     private int CountDirtyRows()

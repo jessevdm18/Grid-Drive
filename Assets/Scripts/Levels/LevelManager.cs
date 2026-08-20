@@ -68,6 +68,26 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     public int CurrentLevelIndex => currentLevelIndex;
 
+    /// <summary>Alias: authoritative save identity index.</summary>
+    public int CurrentDatabaseIndex => currentLevelIndex;
+
+    /// <summary>
+    /// Difficulty of the active LevelData, or Easy if none.
+    /// </summary>
+    public LevelDifficulty CurrentDifficulty
+    {
+        get
+        {
+            LevelData data = CurrentLevelData;
+            return data != null ? data.difficulty : LevelDifficulty.Easy;
+        }
+    }
+
+    /// <summary>
+    /// Difficulty-local display number (1..N within tier). Matches LevelSelect.
+    /// </summary>
+    public int CurrentDifficultyDisplayNumber => GetDisplayLevelNumber();
+
     /// <summary>
     /// Editor-only: true wanneer Gameplay via V1 direct-candidate override is geladen.
     /// </summary>
@@ -82,6 +102,13 @@ public class LevelManager : MonoBehaviour
     /// Aantal levels in de database.
     /// </summary>
     public int LevelCount => levelDatabase != null ? levelDatabase.LevelCount : 0;
+
+    /// <summary>Authoritative LevelDatabase reference (unlock / progression).</summary>
+    public LevelDatabase LevelDatabase => levelDatabase;
+
+    /// <summary>Optional progression thresholds; null = built-in defaults.</summary>
+    public DifficultyProgressionConfig DifficultyProgressionConfig =>
+        difficultyProgressionConfig;
 
     /// <summary>
     /// LevelData van het actieve level, of null.
@@ -105,8 +132,8 @@ public class LevelManager : MonoBehaviour
     }
 
     /// <summary>
-    /// UI display number. Candidate playtest: LevelData.levelNumber (fallback 0).
-    /// Normal: index + 1.
+    /// UI display number matching LevelSelect local numbering within difficulty.
+    /// Candidate playtest: LevelData.levelNumber fallback.
     /// </summary>
     public int GetDisplayLevelNumber()
     {
@@ -115,29 +142,88 @@ public class LevelManager : MonoBehaviour
             return editorPlaytestLevel.levelNumber;
         }
 
-        return currentLevelIndex + 1;
+        if (levelDatabase == null || currentLevelIndex < 0)
+        {
+            return 0;
+        }
+
+        return LevelDifficultyOrder.GetDifficultyDisplayNumber(levelDatabase, currentLevelIndex);
     }
 
     private void Start()
     {
+        int serializedSnapshot = currentLevelIndex;
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        Debug.Log(
+            "[FreshStartTrace]\n" +
+            "Stage=LevelManagerStart\n" +
+            "SavedDbIndex=" +
+            (saveManager != null
+                ? saveManager.GetCurrentLevel().ToString()
+                : "no-SaveManager") + "\n" +
+            "HasCurrentLevelKey=" + SaveManager.HasCurrentLevelKey() + "\n" +
+            "SerializedCurrentLevelIndex=" + serializedSnapshot + "\n" +
+            "PendingPlaytestOverride=" + V1PlaytestOverride.HasPending +
+            " (" + V1PlaytestOverride.GetPendingGuid() + ")\n" +
+            "ActivePlaytestOverride=" + V1PlaytestOverride.HasActive +
+            " (" + V1PlaytestOverride.GetActiveGuid() + ")\n" +
+            "FirstLaunchCompletedKey=" + SaveManager.HasFirstLaunchCompletedKeyRaw()
+        );
+#endif
+
 #if UNITY_EDITOR
-        if (V1PlaytestOverride.TryConsumePendingLevel(out LevelData overrideLevel))
+        // Fresh / first-launch must never be hijacked by a leftover V1 playtest Pending GUID.
+        if (!SaveManager.HasFirstLaunchCompletedKeyRaw())
+        {
+            if (V1PlaytestOverride.HasPending || V1PlaytestOverride.HasActive)
+            {
+                Debug.LogWarning(
+                    "[FreshStartTrace] Clearing V1 playtest override during first-launch."
+                );
+                V1PlaytestOverride.Clear();
+            }
+        }
+        else if (V1PlaytestOverride.TryConsumePendingLevel(out LevelData overrideLevel))
         {
             editorPlaytestLevel = overrideLevel;
             currentLevelIndex = -1;
             LoadLevelData(overrideLevel);
             MarkFirstLaunchDone();
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            Debug.Log(
+                "[FreshStartTrace]\n" +
+                "Stage=FinalLevelResolved\n" +
+                "Source=V1Override\n" +
+                "DbIndex=-1\n" +
+                "Asset=" + overrideLevel.name + "\n" +
+                "Difficulty=" + overrideLevel.difficulty + "\n" +
+                "DisplayNumber=" + overrideLevel.levelNumber
+            );
+#endif
             return;
         }
 #endif
 
-        // Laad voortgang uit save (default = 0).
+        // Authoritative: SaveManager only. Serialized Inspector index is never used as source.
         if (saveManager != null)
         {
             currentLevelIndex = saveManager.GetCurrentLevel();
         }
+        else if (levelDatabase != null)
+        {
+            currentLevelIndex = SaveManager.ResolveFreshStartDatabaseIndex(levelDatabase);
+            Debug.LogWarning(
+                "LevelManager: no SaveManager — using ResolveFreshStartDatabaseIndex."
+            );
+        }
+        else
+        {
+            currentLevelIndex = 0;
+            Debug.LogError("LevelManager: no SaveManager and no LevelDatabase.");
+        }
 
-        // Zorg dat de index altijd binnen de database valt.
         if (levelDatabase != null && levelDatabase.LevelCount > 0)
         {
             currentLevelIndex = Mathf.Clamp(
@@ -153,6 +239,20 @@ public class LevelManager : MonoBehaviour
 
         LoadCurrentLevel();
         MarkFirstLaunchDone();
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        LevelData loaded = CurrentLevelData;
+        Debug.Log(
+            "[FreshStartTrace]\n" +
+            "Stage=FinalLevelResolved\n" +
+            "Source=SaveManager\n" +
+            "DbIndex=" + currentLevelIndex + "\n" +
+            "Asset=" + (loaded != null ? loaded.name : "?") + "\n" +
+            "Difficulty=" + (loaded != null ? loaded.difficulty.ToString() : "?") + "\n" +
+            "DisplayNumber=" + GetDisplayLevelNumber() + "\n" +
+            "SerializedWasIgnored=" + serializedSnapshot
+        );
+#endif
     }
 
     private void MarkFirstLaunchDone()
@@ -179,7 +279,7 @@ public class LevelManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Laadt het volgende level binnen dezelfde difficulty.
+    /// Laadt het volgende level binnen dezelfde difficulty (difficulty-local order).
     /// Geen auto-switch naar Medium/Hard. Geen volgend same-difficulty → LevelSelect.
     /// </summary>
     public void LoadNextLevel()
@@ -199,30 +299,63 @@ public class LevelManager : MonoBehaviour
             return;
         }
 
-        int nextIndex = levelDatabase.FindNextLevelIndexSameDifficulty(currentLevelIndex);
+        int currentDb = currentLevelIndex;
+        LevelDifficulty difficulty = CurrentDifficulty;
+        int currentLocal = LevelDifficultyOrder.GetDifficultyDisplayNumber(
+            levelDatabase,
+            currentDb
+        );
+        List<int> ordered = LevelDifficultyOrder.GetOrderedLevelIndicesForDifficulty(
+            levelDatabase,
+            difficulty
+        );
+
+        int nextIndex = LevelDifficultyOrder.FindNextOrderedLevelIndexSameDifficulty(
+            levelDatabase,
+            currentDb
+        );
+        int nextLocal = nextIndex >= 0
+            ? LevelDifficultyOrder.GetDifficultyDisplayNumber(levelDatabase, nextIndex)
+            : 0;
+        bool currentCompleted = saveManager != null && saveManager.IsLevelCompleted(currentDb);
+        bool nextUnlocked = nextIndex >= 0 &&
+            saveManager != null &&
+            saveManager.IsLevelUnlocked(
+                nextIndex,
+                levelDatabase,
+                difficultyProgressionConfig
+            );
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        Debug.Log(
+            "[NextDifficultyLevel]\n" +
+            "CurrentDb=" + currentDb + "\n" +
+            "Difficulty=" + difficulty + "\n" +
+            "CurrentLocal=" + currentLocal + "\n" +
+            "OrderedCount=" + ordered.Count + "\n" +
+            "NextDb=" + nextIndex + "\n" +
+            "NextLocal=" + nextLocal + "\n" +
+            "CurrentCompleted=" + currentCompleted + "\n" +
+            "NextUnlocked=" + nextUnlocked
+        );
+#endif
+
         if (nextIndex < 0)
         {
             Debug.Log(
-                "LevelManager: geen volgend level binnen difficulty " +
-                (CurrentLevelData != null
-                    ? CurrentLevelData.difficulty.ToString()
-                    : "?") +
+                "LevelManager: geen volgend level binnen difficulty " + difficulty +
                 " — terug naar LevelSelect."
             );
             SceneTransition.LoadScene("LevelSelect");
             return;
         }
 
-        // Alleen laden als difficulty unlocked + sequential unlock binnen tier.
-        if (saveManager != null &&
-            !saveManager.IsLevelUnlocked(
-                nextIndex,
-                levelDatabase,
-                difficultyProgressionConfig))
+        // Alleen laden als difficulty unlocked + sequential unlock binnen ordered tier.
+        if (saveManager != null && !nextUnlocked)
         {
             Debug.Log(
                 "LevelManager: next same-difficulty index " + nextIndex +
-                " is locked — terug naar LevelSelect."
+                " (local " + nextLocal + ") is locked — terug naar LevelSelect."
             );
             SceneTransition.LoadScene("LevelSelect");
             return;
@@ -406,6 +539,18 @@ public class LevelManager : MonoBehaviour
 
         // Na spawn: Classic = no-op, TimedAmbulance = wacht op fade → start timer.
         levelObjectiveController?.BeginForLevel(levelData);
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        Debug.Log(
+            "[LevelLoad]\n" +
+            "DatabaseIndex=" + currentLevelIndex + "\n" +
+            "Difficulty=" + levelData.difficulty + "\n" +
+            "DisplayNumber=" + GetDisplayLevelNumber() + "\n" +
+            "Asset=" + levelData.name + "\n" +
+            "MinMoves=" + levelData.minimumMoves + "\n" +
+            "V1Override=" + (editorPlaytestLevel != null)
+        );
+#endif
     }
 
     /// <summary>

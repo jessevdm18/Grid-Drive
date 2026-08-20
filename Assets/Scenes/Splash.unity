@@ -376,6 +376,7 @@ MonoBehaviour:
   startScale: 0.9
   endScale: 1
   nextSceneName: MainMenu
+  levelDatabase: {fileID: 11400000, guid: 0d072e92c04ea424495d428e7d766e30, type: 2}
 --- !u!1 &300001
 GameObject:
   m_ObjectHideFlags: 0

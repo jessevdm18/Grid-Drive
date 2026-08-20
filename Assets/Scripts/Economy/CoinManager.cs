@@ -8,7 +8,9 @@ using UnityEngine;
 public class CoinManager : MonoBehaviour
 {
     private const string CoinsKey = "RushOut_Coins";
-    private const int StartingCoins = 200;
+
+    /// <summary>Fresh-install default (also PlayerPrefs miss default).</summary>
+    public const int StartingCoins = 200;
 
     // Wordt aangeroepen wanneer het aantal coins verandert.
     // UI kan zich hierop abonneren: coinManager.OnCoinsChanged += UpdateText;

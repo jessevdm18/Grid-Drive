@@ -6,6 +6,7 @@ using TMPro;
 /// UI-state voor één LevelButton-prefab (Background, nummer, sterren, lock).
 /// Unlock-bepaling blijft in LevelSelectUI / SaveManager.
 /// Special-mission badge = presentation only (LevelData.objectiveType).
+/// databaseIndex = save/load identity; displayNumber = player-visible local number.
 /// </summary>
 public class LevelButtonUI : MonoBehaviour
 {
@@ -37,15 +38,22 @@ public class LevelButtonUI : MonoBehaviour
     [Tooltip("Uit = SpecialMissionLabel-tekst die jij handmatig zette blijft staan.")]
     [SerializeField] private bool applySpecialMissionLabel = false;
 
+    /// <summary>Authoritative MainLevelDatabase index for this button.</summary>
+    public int DatabaseIndex { get; private set; } = -1;
+
+    /// <summary>1-based local number within the selected difficulty.</summary>
+    public int DisplayNumber { get; private set; }
+
     /// <summary>
     /// Button op deze prefab (voor OnClick in LevelSelectUI).
     /// </summary>
     public Button Button => button;
 
     /// <summary>
-    /// Zet nummer, unlocked/locked visuals, sterren en special-mission badge.
+    /// Zet database identity + display number, unlocked/locked visuals, sterren en special badge.
     /// </summary>
     public void Setup(
+        int databaseIndex,
         int displayNumber,
         bool isUnlocked,
         int earnedStars,
@@ -53,6 +61,9 @@ public class LevelButtonUI : MonoBehaviour
         Sprite emptyStarSprite,
         LevelObjectiveType objectiveType = LevelObjectiveType.Classic)
     {
+        DatabaseIndex = databaseIndex;
+        DisplayNumber = displayNumber;
+
         SetLevelNumber(displayNumber);
         ApplyLockState(isUnlocked);
         ApplyStars(isUnlocked ? earnedStars : 0, filledStarSprite, emptyStarSprite);
@@ -60,10 +71,11 @@ public class LevelButtonUI : MonoBehaviour
     }
 
     /// <summary>
-    /// Zet het zichtbare levelnummer (1-based).
+    /// Zet het zichtbare levelnummer (1-based local). Never writes database index to UI.
     /// </summary>
     public void SetLevelNumber(int displayNumber)
     {
+        DisplayNumber = displayNumber;
         if (levelNumberText != null)
         {
             levelNumberText.text = displayNumber.ToString();

@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Level_083
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   levelNumber: 83
-  difficulty: 2
-  objectiveType: 0
+  difficulty: 1
+  objectiveType: 3
   timeLimitSeconds: 0
   moveLimit: 0
   fragileCargoMoveLimit: 0
@@ -163,7 +163,7 @@ MonoBehaviour:
     orientation: 0
     lengthInCells: 2
     gridPosition: {x: 0, y: 6}
-    canExitRight: 0
+    canExitRight: 1
     isProtectedVehicle: 0
     isFragileCargo: 0
     isLimitedVehicle: 0
