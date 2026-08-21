@@ -16,7 +16,7 @@ MonoBehaviour:
   difficulty: 1
   objectiveType: 2
   timeLimitSeconds: 0
-  moveLimit: 16
+  moveLimit: 14
   fragileCargoMoveLimit: 0
   limitedVehicleMoveLimit: 0
   specialTargetSprite: {fileID: 0}

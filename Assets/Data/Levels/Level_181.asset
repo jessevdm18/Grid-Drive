@@ -15,7 +15,7 @@ MonoBehaviour:
   levelNumber: 181
   difficulty: 0
   objectiveType: 1
-  timeLimitSeconds: 39
+  timeLimitSeconds: 31
   moveLimit: 0
   fragileCargoMoveLimit: 0
   limitedVehicleMoveLimit: 0

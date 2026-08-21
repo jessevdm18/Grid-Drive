@@ -113,16 +113,17 @@ public class AudioManager : MonoBehaviour
 
     /// <summary>
     /// Zet muziek aan/uit en bewaart de keuze.
-    /// Stuurt door naar MusicManager indien aanwezig.
+    /// Stuurt door naar MusicManager (maakt er één aan indien nodig).
     /// </summary>
     public void ToggleMusic()
     {
         bool nextEnabled = !MusicEnabled;
 
-        if (MusicManager.Instance != null)
+        MusicManager manager = MusicManager.EnsureInstance();
+        if (manager != null)
         {
-            MusicManager.Instance.SetMusicEnabled(nextEnabled);
-            MusicEnabled = MusicManager.Instance.MusicEnabled;
+            manager.SetMusicEnabled(nextEnabled);
+            MusicEnabled = manager.MusicEnabled;
             return;
         }
 

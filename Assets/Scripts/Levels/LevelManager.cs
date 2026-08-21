@@ -207,6 +207,9 @@ public class LevelManager : MonoBehaviour
 #endif
 
         // Authoritative: SaveManager only. Serialized Inspector index is never used as source.
+        // Safety net if Splash was skipped (Editor Play from Gameplay).
+        LevelDatabaseContentVersion.ApplyIfNeeded();
+
         if (saveManager != null)
         {
             currentLevelIndex = saveManager.GetCurrentLevel();
@@ -226,11 +229,43 @@ public class LevelManager : MonoBehaviour
 
         if (levelDatabase != null && levelDatabase.LevelCount > 0)
         {
-            currentLevelIndex = Mathf.Clamp(
-                currentLevelIndex,
-                0,
-                levelDatabase.LevelCount - 1
-            );
+            if (currentLevelIndex < 0 || currentLevelIndex >= levelDatabase.LevelCount)
+            {
+                Debug.LogWarning(
+                    "[LevelLoadTrace] CurrentLevel out of bounds (" +
+                    currentLevelIndex + ") — falling back to first Easy."
+                );
+                currentLevelIndex = SaveManager.ResolveFreshStartDatabaseIndex(levelDatabase);
+                if (saveManager != null)
+                {
+                    saveManager.SaveCurrentLevel(currentLevelIndex);
+                }
+            }
+            else
+            {
+                currentLevelIndex = Mathf.Clamp(
+                    currentLevelIndex,
+                    0,
+                    levelDatabase.LevelCount - 1
+                );
+            }
+
+            // Stale save / mismatch: difficulty+order gate — never play a locked tier level.
+            if (saveManager != null &&
+                editorPlaytestLevel == null &&
+                !saveManager.IsLevelUnlocked(
+                    currentLevelIndex,
+                    levelDatabase,
+                    difficultyProgressionConfig))
+            {
+                int safeIndex = SaveManager.ResolveFreshStartDatabaseIndex(levelDatabase);
+                Debug.LogWarning(
+                    "[LevelLoadTrace] CurrentLevel dbIndex=" + currentLevelIndex +
+                    " is locked — falling back to first Easy dbIndex=" + safeIndex
+                );
+                currentLevelIndex = safeIndex;
+                saveManager.SaveCurrentLevel(currentLevelIndex);
+            }
         }
         else
         {
@@ -542,14 +577,27 @@ public class LevelManager : MonoBehaviour
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         Debug.Log(
-            "[LevelLoad]\n" +
-            "DatabaseIndex=" + currentLevelIndex + "\n" +
+            "[LevelLoadTrace]\n" +
+            "DbIndex=" + currentLevelIndex + "\n" +
+            "Asset=" + levelData.name + "\n" +
             "Difficulty=" + levelData.difficulty + "\n" +
             "DisplayNumber=" + GetDisplayLevelNumber() + "\n" +
-            "Asset=" + levelData.name + "\n" +
+            "Objective=" + levelData.objectiveType + "\n" +
             "MinMoves=" + levelData.minimumMoves + "\n" +
+            "ContentVersion=" + LevelDatabaseContentVersion.Current + "\n" +
+            "SavedContentVersion=" + LevelDatabaseContentVersion.GetSavedVersion() + "\n" +
             "V1Override=" + (editorPlaytestLevel != null)
         );
+
+        string objectiveMissing = ObjectiveConfigValidation.ValidateSpecialObjective(levelData);
+        if (!string.IsNullOrEmpty(objectiveMissing))
+        {
+            ObjectiveConfigValidation.LogValidation(
+                levelData,
+                objectiveMissing,
+                currentLevelIndex
+            );
+        }
 #endif
     }
 

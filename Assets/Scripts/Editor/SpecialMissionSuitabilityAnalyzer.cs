@@ -405,7 +405,8 @@ public static class SpecialMissionSuitabilityAnalyzer
         result.targetMovesInSolution = targetMoves;
         result.vehicleMovesInSolution = targetMoves;
 
-        int recommended = RecommendCargoLimit(targetMoves);
+        LevelDifficulty difficulty = level != null ? level.difficulty : LevelDifficulty.Easy;
+        int recommended = RecommendCargoLimit(targetMoves, difficulty);
         result.recommendedCargoLimit = recommended;
 
         int score = 25;
@@ -488,24 +489,16 @@ public static class SpecialMissionSuitabilityAnalyzer
         return result;
     }
 
-    private static int RecommendCargoLimit(int targetMoves)
+    private static int RecommendCargoLimit(int targetMoves, LevelDifficulty difficulty)
     {
-        if (targetMoves <= 1)
-        {
-            return 0;
-        }
-
-        if (targetMoves == 2)
-        {
-            return 3;
-        }
-
-        if (targetMoves == 3)
-        {
-            return 4;
-        }
-
-        return Mathf.Clamp(targetMoves + 1, 4, 12);
+        SpecialObjectiveDifficultyConfig.Settings settings =
+            SpecialObjectiveDifficultyConfig.Settings.Load();
+        return SpecialObjectiveDifficultyRecommender.RecommendFragile(
+            targetMoves,
+            null,
+            difficulty,
+            settings
+        ).recommended;
     }
 
     private static int CountNonTargetMoves(RushOutSolver.SolverResult solve, int targetIndex)
@@ -590,7 +583,10 @@ public static class SpecialMissionSuitabilityAnalyzer
         int last = stats[vehicleIndex].lastIndex;
         int spread = (first >= 0 && last >= first) ? (last - first) : 0;
 
-        int recommended = RecommendLimitedLimit(moves);
+        int recommended = RecommendLimitedLimit(
+            moves,
+            level != null ? level.difficulty : LevelDifficulty.Easy
+        );
         result.recommendedLimitedLimit = recommended;
 
         int score = 20;
@@ -678,19 +674,18 @@ public static class SpecialMissionSuitabilityAnalyzer
         return result;
     }
 
-    private static int RecommendLimitedLimit(int movesInSolution)
+    private static int RecommendLimitedLimit(
+        int movesInSolution,
+        LevelDifficulty difficulty)
     {
-        if (movesInSolution <= 0)
-        {
-            return 0;
-        }
-
-        if (movesInSolution >= 4)
-        {
-            return 3;
-        }
-
-        return movesInSolution;
+        SpecialObjectiveDifficultyConfig.Settings settings =
+            SpecialObjectiveDifficultyConfig.Settings.Load();
+        return SpecialObjectiveDifficultyRecommender.RecommendLimited(
+            movesInSolution,
+            null,
+            difficulty,
+            settings
+        ).recommended;
     }
 
     // -------------------------------------------------------------------------

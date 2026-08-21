@@ -18,7 +18,7 @@ MonoBehaviour:
   timeLimitSeconds: 0
   moveLimit: 0
   fragileCargoMoveLimit: 0
-  limitedVehicleMoveLimit: 2
+  limitedVehicleMoveLimit: 4
   specialTargetSprite: {fileID: 0}
   gridWidth: 7
   gridHeight: 6

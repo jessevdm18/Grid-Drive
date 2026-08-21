@@ -91,9 +91,11 @@ public class LevelContentPlannerWindow : EditorWindow
         public int fragileVehicleIndex;
         public string fragileLabel;
         public int recommendedCargoLimit;
+        public int fragileRequiredMoves;
         public int limitedVehicleIndex;
         public string limitedLabel;
         public int recommendedLimitedLimit;
+        public int limitedRequiredMoves;
         public int multiPrimaryIndex;
         public int multiCandidateIndex;
         public string multiPrimaryLabel;
@@ -109,9 +111,11 @@ public class LevelContentPlannerWindow : EditorWindow
                 fragileVehicleIndex = -1,
                 fragileLabel = string.Empty,
                 recommendedCargoLimit = 0,
+                fragileRequiredMoves = 0,
                 limitedVehicleIndex = -1,
                 limitedLabel = string.Empty,
                 recommendedLimitedLimit = 0,
+                limitedRequiredMoves = 0,
                 multiPrimaryIndex = -1,
                 multiCandidateIndex = -1,
                 multiPrimaryLabel = string.Empty,
@@ -383,6 +387,20 @@ public class LevelContentPlannerWindow : EditorWindow
         }
 
         GUI.enabled = true;
+        if (GUILayout.Button("AUTO TUNE SPECIAL PARAMETERS", GUILayout.Height(26f), GUILayout.Width(230f)))
+        {
+            AutoTuneSpecialParameters();
+        }
+
+        if (GUILayout.Button("Special Progression Report", GUILayout.Height(26f), GUILayout.Width(190f)))
+        {
+            LogSpecialProgressionReport();
+        }
+
+        if (GUILayout.Button("Reset Special Difficulty Defaults", GUILayout.Height(26f), GUILayout.Width(220f)))
+        {
+            SpecialObjectiveDifficultyConfig.MenuResetDefaults();
+        }
 
         GUILayout.FlexibleSpace();
 
@@ -873,6 +891,9 @@ public class LevelContentPlannerWindow : EditorWindow
 
         DrawSelectedRowSetupPanel();
 
+        EditorGUILayout.Space(6f);
+        DrawSpecialDifficultyPanel();
+
         EditorGUILayout.LabelField("OBJECTIVES", EditorStyles.boldLabel);
         EditorGUILayout.LabelField("Classic: " + objectives[0]);
         EditorGUILayout.LabelField("Timed: " + objectives[1]);
@@ -987,6 +1008,238 @@ public class LevelContentPlannerWindow : EditorWindow
         }
 
         EditorGUILayout.Space(8f);
+    }
+
+    /// <summary>
+    /// SPECIAL DIFFICULTY: current vs recommended + strictness for selected special.
+    /// </summary>
+    private void DrawSpecialDifficultyPanel()
+    {
+        EditorGUILayout.LabelField("SPECIAL DIFFICULTY", EditorStyles.boldLabel);
+        EditorGUILayout.LabelField(
+            "Recommendations use LevelDifficulty + minimumMoves (Editor only).",
+            EditorStyles.miniLabel
+        );
+
+        RowState row = GetSelectedRowForPanel();
+        if (row == null || row.level == null)
+        {
+            EditorGUILayout.LabelField("Select a row to inspect.", EditorStyles.miniLabel);
+            EditorGUILayout.Space(6f);
+            return;
+        }
+
+        if (row.plannedObjective == LevelObjectiveType.Classic)
+        {
+            EditorGUILayout.LabelField("Classic — no special parameter.", EditorStyles.miniLabel);
+            EditorGUILayout.Space(6f);
+            return;
+        }
+
+        SpecialObjectiveDifficultyConfig.Settings settings =
+            SpecialObjectiveDifficultyConfig.Settings.Load();
+        float progress = SpecialObjectiveDifficultyRecommender.GetLocalProgress01(
+            database,
+            row.dbIndex,
+            row.plannedDifficulty
+        );
+        string local = BuildDisplayNumberLabel(row);
+
+        EditorGUILayout.LabelField(
+            row.plannedDifficulty + " #" + local +
+            "  MinMoves: " + row.level.minimumMoves +
+            "  LocalProgress: " + progress.ToString("0%") ,
+            EditorStyles.miniLabel
+        );
+
+        SuitabilityScores scores;
+        bool hasScores = suitabilityByDbIndex.TryGetValue(row.dbIndex, out scores) &&
+            scores.hasData;
+
+        switch (row.plannedObjective)
+        {
+            case LevelObjectiveType.TimedAmbulance:
+            {
+                var rec = SpecialObjectiveDifficultyRecommender.RecommendTimed(
+                    row.level,
+                    row.plannedDifficulty,
+                    progress,
+                    settings
+                );
+                float current = row.plannedTimeLimit > 0f
+                    ? row.plannedTimeLimit
+                    : row.level.timeLimitSeconds;
+                var strict = SpecialObjectiveDifficultyRecommender.EvaluateStrictness(
+                    current,
+                    rec.recommendedSeconds
+                );
+                EditorGUILayout.LabelField(
+                    "Current Time: " + current.ToString("0.#") + "s",
+                    EditorStyles.miniLabel
+                );
+                EditorGUILayout.LabelField(
+                    "Recommended: " + rec.recommendedSeconds.ToString("0.#") + "s" +
+                    "  (" + rec.secondsPerMoveUsed.ToString("0.00") + "s/move + " +
+                    rec.bufferUsed.ToString("0.#") + ")",
+                    EditorStyles.miniLabel
+                );
+                EditorGUILayout.LabelField(
+                    "→ " + SpecialObjectiveDifficultyRecommender.StrictnessLabel(strict),
+                    EditorStyles.boldLabel
+                );
+                break;
+            }
+
+            case LevelObjectiveType.MoveLimit:
+            {
+                var rec = SpecialObjectiveDifficultyRecommender.RecommendMoveLimit(
+                    row.level,
+                    row.plannedDifficulty,
+                    progress,
+                    settings
+                );
+                int current = row.plannedMoveLimit > 0
+                    ? row.plannedMoveLimit
+                    : row.level.moveLimit;
+                var strict = SpecialObjectiveDifficultyRecommender.EvaluateStrictnessInt(
+                    current,
+                    rec.recommended,
+                    higherIsEasier: true
+                );
+                EditorGUILayout.LabelField("Current Limit: " + current, EditorStyles.miniLabel);
+                EditorGUILayout.LabelField(
+                    "Recommended: " + rec.recommended +
+                    "  (minMoves+" + (rec.recommended - row.level.minimumMoves) + ")",
+                    EditorStyles.miniLabel
+                );
+                EditorGUILayout.LabelField(
+                    "→ " + SpecialObjectiveDifficultyRecommender.StrictnessLabel(strict),
+                    EditorStyles.boldLabel
+                );
+                break;
+            }
+
+            case LevelObjectiveType.FragileCargo:
+            {
+                int required = hasScores ? scores.fragileRequiredMoves : 0;
+                if (required <= 0)
+                {
+                    EditorGUILayout.LabelField(
+                        "Run Analyze Suitability for required cargo moves.",
+                        EditorStyles.miniLabel
+                    );
+                    break;
+                }
+
+                var rec = SpecialObjectiveDifficultyRecommender.RecommendFragile(
+                    required,
+                    row.level,
+                    row.plannedDifficulty,
+                    settings
+                );
+                int current = row.plannedFragileLimit > 0
+                    ? row.plannedFragileLimit
+                    : row.level.fragileCargoMoveLimit;
+                var strict = SpecialObjectiveDifficultyRecommender.EvaluateStrictnessInt(
+                    current,
+                    rec.recommended,
+                    higherIsEasier: true
+                );
+                EditorGUILayout.LabelField(
+                    "Required cargo moves: " + required,
+                    EditorStyles.miniLabel
+                );
+                EditorGUILayout.LabelField("Current Limit: " + current, EditorStyles.miniLabel);
+                EditorGUILayout.LabelField(
+                    "Recommended: " + rec.recommended,
+                    EditorStyles.miniLabel
+                );
+                EditorGUILayout.LabelField(
+                    "→ " + SpecialObjectiveDifficultyRecommender.StrictnessLabel(strict),
+                    EditorStyles.boldLabel
+                );
+                break;
+            }
+
+            case LevelObjectiveType.LimitedVehicle:
+            {
+                int required = hasScores ? scores.limitedRequiredMoves : 0;
+                if (required <= 0)
+                {
+                    EditorGUILayout.LabelField(
+                        "Run Analyze Suitability for required limited moves.",
+                        EditorStyles.miniLabel
+                    );
+                    break;
+                }
+
+                var rec = SpecialObjectiveDifficultyRecommender.RecommendLimited(
+                    required,
+                    row.level,
+                    row.plannedDifficulty,
+                    settings
+                );
+                int current = row.plannedLimitedLimit > 0
+                    ? row.plannedLimitedLimit
+                    : row.level.limitedVehicleMoveLimit;
+                var strict = SpecialObjectiveDifficultyRecommender.EvaluateStrictnessInt(
+                    current,
+                    rec.recommended,
+                    higherIsEasier: true
+                );
+                EditorGUILayout.LabelField(
+                    "Required limited moves: " + required,
+                    EditorStyles.miniLabel
+                );
+                EditorGUILayout.LabelField("Current Limit: " + current, EditorStyles.miniLabel);
+                EditorGUILayout.LabelField(
+                    "Recommended: " + rec.recommended,
+                    EditorStyles.miniLabel
+                );
+                EditorGUILayout.LabelField(
+                    "→ " + SpecialObjectiveDifficultyRecommender.StrictnessLabel(strict),
+                    EditorStyles.boldLabel
+                );
+                break;
+            }
+
+            case LevelObjectiveType.NoTouchChallenge:
+                EditorGUILayout.LabelField(
+                    "No numeric limit. Harder tiers: protected vehicle with " +
+                    "stronger temptation but solvable without moving it.",
+                    EditorStyles.wordWrappedMiniLabel
+                );
+                if (hasScores && scores.noTouchVehicleIndex >= 0)
+                {
+                    EditorGUILayout.LabelField(
+                        "Analyzer pick: " + scores.noTouchLabel +
+                        " (score " + scores.noTouchScore + ")",
+                        EditorStyles.miniLabel
+                    );
+                }
+
+                break;
+
+            case LevelObjectiveType.MultiTargetRescue:
+                EditorGUILayout.LabelField(
+                    "No numeric limit. Progression via minMoves / blockers / " +
+                    "target involvement (analyzer).",
+                    EditorStyles.wordWrappedMiniLabel
+                );
+                if (hasScores)
+                {
+                    EditorGUILayout.LabelField(
+                        "Pair: " + scores.multiPrimaryLabel + " + " +
+                        scores.multiCandidateLabel +
+                        " (score " + scores.multiTargetScore + ")",
+                        EditorStyles.miniLabel
+                    );
+                }
+
+                break;
+        }
+
+        EditorGUILayout.Space(6f);
     }
 
     /// <summary>
@@ -1724,6 +1977,7 @@ public class LevelContentPlannerWindow : EditorWindow
                     scores.fragileCategory = r.category;
                     scores.fragileVehicleIndex = r.vehicleIndex;
                     scores.fragileLabel = r.vehicleName;
+                    scores.fragileRequiredMoves = r.targetMovesInSolution;
                     scores.recommendedCargoLimit = r.recommendedCargoLimit;
                     break;
                 case SpecialMissionSuitabilityAnalyzer.MissionKind.LimitedVehicle:
@@ -1731,6 +1985,7 @@ public class LevelContentPlannerWindow : EditorWindow
                     scores.limitedCategory = r.category;
                     scores.limitedVehicleIndex = r.vehicleIndex;
                     scores.limitedLabel = r.vehicleName;
+                    scores.limitedRequiredMoves = r.vehicleMovesInSolution;
                     scores.recommendedLimitedLimit = r.recommendedLimitedLimit;
                     break;
             }
@@ -1847,6 +2102,7 @@ public class LevelContentPlannerWindow : EditorWindow
         for (int i = 0; i < candidates.Count && applied < maxSuggestions; i++)
         {
             candidates[i].row.plannedObjective = objective;
+            InitializePlannedLimitsForObjective(candidates[i].row);
             applied++;
         }
     }
@@ -2047,7 +2303,8 @@ public class LevelContentPlannerWindow : EditorWindow
     }
 
     /// <summary>
-    /// Seeds planned limits from analyzer / progression recommendations. No asset writes.
+    /// Seeds planned limits from difficulty-aware recommendations. No asset writes.
+    /// Only fills empty/invalid planned fields.
     /// </summary>
     private void InitializePlannedLimitsForObjective(RowState row)
     {
@@ -2055,6 +2312,14 @@ public class LevelContentPlannerWindow : EditorWindow
         {
             return;
         }
+
+        SpecialObjectiveDifficultyConfig.Settings settings =
+            SpecialObjectiveDifficultyConfig.Settings.Load();
+        float progress = SpecialObjectiveDifficultyRecommender.GetLocalProgress01(
+            database,
+            row.dbIndex,
+            row.plannedDifficulty
+        );
 
         SuitabilityScores scores;
         bool hasScores = suitabilityByDbIndex.TryGetValue(row.dbIndex, out scores) &&
@@ -2065,20 +2330,13 @@ public class LevelContentPlannerWindow : EditorWindow
             case LevelObjectiveType.TimedAmbulance:
                 if (row.plannedTimeLimit <= 0f)
                 {
-                    SpecialMissionProgressionUtility.Settings timedSettings =
-                        SpecialMissionProgressionUtility.Settings.LoadFromEditorPrefs();
-                    int ambulanceIndex = Mathf.Max(
-                        0,
-                        SpecialMissionProgressionUtility.GetAmbulanceProgressIndex(
-                            row.level.levelNumber
-                        )
-                    );
                     row.plannedTimeLimit =
-                        SpecialMissionProgressionUtility.ComputeAmbulanceTimeLimit(
-                            row.level.minimumMoves,
-                            ambulanceIndex,
-                            timedSettings
-                        );
+                        SpecialObjectiveDifficultyRecommender.RecommendTimed(
+                            row.level,
+                            row.plannedDifficulty,
+                            progress,
+                            settings
+                        ).recommendedSeconds;
                 }
 
                 break;
@@ -2086,39 +2344,317 @@ public class LevelContentPlannerWindow : EditorWindow
             case LevelObjectiveType.MoveLimit:
                 if (row.plannedMoveLimit <= 0)
                 {
-                    SpecialMissionProgressionUtility.Settings moveSettings =
-                        SpecialMissionProgressionUtility.Settings.LoadFromEditorPrefs();
-                    int moveIndex = Mathf.Max(
-                        0,
-                        SpecialMissionProgressionUtility.GetMoveLimitProgressIndex(
-                            row.level.levelNumber
-                        )
-                    );
-                    row.plannedMoveLimit = SpecialMissionProgressionUtility.ComputeMoveLimit(
-                        row.level.minimumMoves,
-                        moveIndex,
-                        moveSettings
-                    );
+                    row.plannedMoveLimit =
+                        SpecialObjectiveDifficultyRecommender.RecommendMoveLimit(
+                            row.level,
+                            row.plannedDifficulty,
+                            progress,
+                            settings
+                        ).recommended;
                 }
 
                 break;
 
             case LevelObjectiveType.FragileCargo:
-                if (row.plannedFragileLimit <= 0 && hasScores && scores.recommendedCargoLimit > 0)
+                if (row.plannedFragileLimit <= 0)
                 {
-                    row.plannedFragileLimit = scores.recommendedCargoLimit;
+                    int required = hasScores ? scores.fragileRequiredMoves : 0;
+                    if (required <= 0 && hasScores && scores.recommendedCargoLimit > 0)
+                    {
+                        required = Mathf.Max(1, scores.recommendedCargoLimit - 1);
+                    }
+
+                    if (required > 0)
+                    {
+                        row.plannedFragileLimit =
+                            SpecialObjectiveDifficultyRecommender.RecommendFragile(
+                                required,
+                                row.level,
+                                row.plannedDifficulty,
+                                settings
+                            ).recommended;
+                    }
+                    else if (hasScores && scores.recommendedCargoLimit > 0)
+                    {
+                        row.plannedFragileLimit = scores.recommendedCargoLimit;
+                    }
                 }
 
                 break;
 
             case LevelObjectiveType.LimitedVehicle:
-                if (row.plannedLimitedLimit <= 0 && hasScores && scores.recommendedLimitedLimit > 0)
+                if (row.plannedLimitedLimit <= 0)
                 {
-                    row.plannedLimitedLimit = scores.recommendedLimitedLimit;
+                    int required = hasScores ? scores.limitedRequiredMoves : 0;
+                    if (required <= 0 && hasScores && scores.recommendedLimitedLimit > 0)
+                    {
+                        required = scores.recommendedLimitedLimit;
+                    }
+
+                    if (required > 0)
+                    {
+                        row.plannedLimitedLimit =
+                            SpecialObjectiveDifficultyRecommender.RecommendLimited(
+                                required,
+                                row.level,
+                                row.plannedDifficulty,
+                                settings
+                            ).recommended;
+                    }
+                    else if (hasScores && scores.recommendedLimitedLimit > 0)
+                    {
+                        row.plannedLimitedLimit = scores.recommendedLimitedLimit;
+                    }
                 }
 
                 break;
         }
+    }
+
+    /// <summary>
+    /// Force-overwrite planned numeric special parameters with recommendations.
+    /// Planned only — APPLY required to write assets.
+    /// </summary>
+    private void AutoTuneSpecialParameters()
+    {
+        SpecialObjectiveDifficultyConfig.Settings settings =
+            SpecialObjectiveDifficultyConfig.Settings.Load();
+        settings.Save();
+
+        int tuned = 0;
+        StringBuilder preview = new StringBuilder();
+        preview.AppendLine("AUTO TUNE SPECIAL PARAMETERS (planned only)");
+        preview.AppendLine();
+
+        for (int i = 0; i < rows.Count; i++)
+        {
+            RowState row = rows[i];
+            if (row.level == null)
+            {
+                continue;
+            }
+
+            if (row.plannedObjective == LevelObjectiveType.Classic)
+            {
+                continue;
+            }
+
+            float progress = SpecialObjectiveDifficultyRecommender.GetLocalProgress01(
+                database,
+                row.dbIndex,
+                row.plannedDifficulty
+            );
+            SuitabilityScores scores;
+            bool hasScores = suitabilityByDbIndex.TryGetValue(row.dbIndex, out scores) &&
+                scores.hasData;
+
+            string local = BuildDisplayNumberLabel(row);
+            string header =
+                row.plannedDifficulty + " #" + local +
+                " [" + ShortObjective(row.plannedObjective) + "] " +
+                row.level.name;
+
+            switch (row.plannedObjective)
+            {
+                case LevelObjectiveType.TimedAmbulance:
+                {
+                    float before = row.plannedTimeLimit > 0f
+                        ? row.plannedTimeLimit
+                        : row.level.timeLimitSeconds;
+                    float after = SpecialObjectiveDifficultyRecommender.RecommendTimed(
+                        row.level,
+                        row.plannedDifficulty,
+                        progress,
+                        settings
+                    ).recommendedSeconds;
+                    row.plannedTimeLimit = after;
+                    preview.AppendLine(
+                        header + "\n  Timed: " + before.ToString("0.#") +
+                        "s → " + after.ToString("0.#") + "s"
+                    );
+                    tuned++;
+                    break;
+                }
+
+                case LevelObjectiveType.MoveLimit:
+                {
+                    int before = row.plannedMoveLimit > 0
+                        ? row.plannedMoveLimit
+                        : row.level.moveLimit;
+                    int after = SpecialObjectiveDifficultyRecommender.RecommendMoveLimit(
+                        row.level,
+                        row.plannedDifficulty,
+                        progress,
+                        settings
+                    ).recommended;
+                    row.plannedMoveLimit = after;
+                    preview.AppendLine(
+                        header + "\n  MoveLimit: " + before + " → " + after
+                    );
+                    tuned++;
+                    break;
+                }
+
+                case LevelObjectiveType.FragileCargo:
+                {
+                    int required = hasScores ? scores.fragileRequiredMoves : 0;
+                    if (required <= 0)
+                    {
+                        preview.AppendLine(
+                            header + "\n  Fragile: skipped (Analyze Suitability first)"
+                        );
+                        break;
+                    }
+
+                    int before = row.plannedFragileLimit > 0
+                        ? row.plannedFragileLimit
+                        : row.level.fragileCargoMoveLimit;
+                    int after = SpecialObjectiveDifficultyRecommender.RecommendFragile(
+                        required,
+                        row.level,
+                        row.plannedDifficulty,
+                        settings
+                    ).recommended;
+                    row.plannedFragileLimit = after;
+                    preview.AppendLine(
+                        header + "\n  Fragile: " + before + " → " + after +
+                        " (required=" + required + ")"
+                    );
+                    tuned++;
+                    break;
+                }
+
+                case LevelObjectiveType.LimitedVehicle:
+                {
+                    int required = hasScores ? scores.limitedRequiredMoves : 0;
+                    if (required <= 0)
+                    {
+                        preview.AppendLine(
+                            header + "\n  Limited: skipped (Analyze Suitability first)"
+                        );
+                        break;
+                    }
+
+                    int before = row.plannedLimitedLimit > 0
+                        ? row.plannedLimitedLimit
+                        : row.level.limitedVehicleMoveLimit;
+                    int after = SpecialObjectiveDifficultyRecommender.RecommendLimited(
+                        required,
+                        row.level,
+                        row.plannedDifficulty,
+                        settings
+                    ).recommended;
+                    row.plannedLimitedLimit = after;
+                    preview.AppendLine(
+                        header + "\n  Limited: " + before + " → " + after +
+                        " (required=" + required + ")"
+                    );
+                    tuned++;
+                    break;
+                }
+
+                case LevelObjectiveType.NoTouchChallenge:
+                    if (hasScores && scores.noTouchVehicleIndex >= 0)
+                    {
+                        preview.AppendLine(
+                            header + "\n  NoTouch: keep analyzer pick → " +
+                            scores.noTouchLabel + " (no numeric tune)"
+                        );
+                    }
+                    else
+                    {
+                        preview.AppendLine(
+                            header + "\n  NoTouch: Analyze Suitability for vehicle pick"
+                        );
+                    }
+
+                    break;
+
+                case LevelObjectiveType.MultiTargetRescue:
+                    if (hasScores &&
+                        scores.multiPrimaryIndex >= 0 &&
+                        scores.multiCandidateIndex >= 0)
+                    {
+                        preview.AppendLine(
+                            header + "\n  MultiTarget: " +
+                            scores.multiPrimaryLabel + " + " +
+                            scores.multiCandidateLabel + " (no numeric tune)"
+                        );
+                    }
+                    else
+                    {
+                        preview.AppendLine(
+                            header + "\n  MultiTarget: Analyze Suitability for pair"
+                        );
+                    }
+
+                    break;
+            }
+        }
+
+        preview.AppendLine();
+        preview.AppendLine("Tuned numeric rows: " + tuned);
+        preview.AppendLine("APPLY PLANNED ASSIGNMENTS to write LevelData.");
+        Debug.Log(preview.ToString());
+        EditorUtility.DisplayDialog(
+            "AUTO TUNE SPECIAL PARAMETERS",
+            "Updated planned values for " + tuned + " specials.\n\n" +
+            "See Console for before → after preview.\n" +
+            "Nothing written until APPLY.",
+            "OK"
+        );
+        Repaint();
+    }
+
+    private void LogSpecialProgressionReport()
+    {
+        List<LevelData> levels = new List<LevelData>();
+        Dictionary<LevelData, int> indexByLevel = new Dictionary<LevelData, int>();
+        for (int i = 0; i < rows.Count; i++)
+        {
+            if (rows[i].level == null)
+            {
+                continue;
+            }
+
+            levels.Add(rows[i].level);
+            if (!indexByLevel.ContainsKey(rows[i].level))
+            {
+                indexByLevel.Add(rows[i].level, rows[i].dbIndex);
+            }
+        }
+
+        string report = SpecialObjectiveDifficultyRecommender.BuildProgressionReport(
+            database,
+            levels,
+            level =>
+            {
+                int idx;
+                return indexByLevel.TryGetValue(level, out idx) ? idx : -1;
+            },
+            dbIndex =>
+            {
+                SuitabilityScores scores;
+                if (suitabilityByDbIndex.TryGetValue(dbIndex, out scores) && scores.hasData)
+                {
+                    return scores.fragileRequiredMoves;
+                }
+
+                return 0;
+            },
+            dbIndex =>
+            {
+                SuitabilityScores scores;
+                if (suitabilityByDbIndex.TryGetValue(dbIndex, out scores) && scores.hasData)
+                {
+                    return scores.limitedRequiredMoves;
+                }
+
+                return 0;
+            }
+        );
+
+        Debug.Log(report);
     }
 
     private void RevertPlannedChanges()
@@ -2490,6 +3026,65 @@ public class LevelContentPlannerWindow : EditorWindow
         sb.AppendLine("  Ready (from suitability cache): " + autoConfigReady);
         sb.AppendLine("  Blocked (ANALYZE REQUIRED, objective only): " + autoConfigBlocked);
         sb.AppendLine("  Limit-only updates: " + limitOnlyChanges);
+
+        sb.AppendLine();
+        sb.AppendLine("Special parameter changes:");
+        int paramLines = 0;
+        for (int i = 0; i < dirty.Count; i++)
+        {
+            RowState row = dirty[i];
+            if (row.level == null || !AreSpecialLimitsDirty(row))
+            {
+                continue;
+            }
+
+            string name = row.level.name;
+            if (!Mathf.Approximately(row.plannedTimeLimit, row.level.timeLimitSeconds) &&
+                row.plannedObjective == LevelObjectiveType.TimedAmbulance)
+            {
+                sb.AppendLine(
+                    "  Timed " + name + ": " +
+                    row.level.timeLimitSeconds.ToString("0.#") + "s → " +
+                    row.plannedTimeLimit.ToString("0.#") + "s"
+                );
+                paramLines++;
+            }
+
+            if (row.plannedMoveLimit != row.level.moveLimit &&
+                row.plannedObjective == LevelObjectiveType.MoveLimit)
+            {
+                sb.AppendLine(
+                    "  MoveLimit " + name + ": " +
+                    row.level.moveLimit + " → " + row.plannedMoveLimit
+                );
+                paramLines++;
+            }
+
+            if (row.plannedFragileLimit != row.level.fragileCargoMoveLimit &&
+                row.plannedObjective == LevelObjectiveType.FragileCargo)
+            {
+                sb.AppendLine(
+                    "  Fragile " + name + ": " +
+                    row.level.fragileCargoMoveLimit + " → " + row.plannedFragileLimit
+                );
+                paramLines++;
+            }
+
+            if (row.plannedLimitedLimit != row.level.limitedVehicleMoveLimit &&
+                row.plannedObjective == LevelObjectiveType.LimitedVehicle)
+            {
+                sb.AppendLine(
+                    "  Limited " + name + ": " +
+                    row.level.limitedVehicleMoveLimit + " → " + row.plannedLimitedLimit
+                );
+                paramLines++;
+            }
+        }
+
+        if (paramLines == 0)
+        {
+            sb.AppendLine("  (none)");
+        }
 
         sb.AppendLine();
         sb.AppendLine("Database order and levelNumber will NOT change.");

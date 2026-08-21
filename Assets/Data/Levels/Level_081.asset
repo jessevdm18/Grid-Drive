@@ -17,7 +17,7 @@ MonoBehaviour:
   objectiveType: 5
   timeLimitSeconds: 0
   moveLimit: 0
-  fragileCargoMoveLimit: 4
+  fragileCargoMoveLimit: 3
   limitedVehicleMoveLimit: 0
   specialTargetSprite: {fileID: 0}
   gridWidth: 6

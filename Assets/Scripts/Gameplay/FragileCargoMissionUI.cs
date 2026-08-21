@@ -365,10 +365,19 @@ public class FragileCargoMissionUI : MonoBehaviour
 
         SetFragileCargoHudVisible(true);
 
-        if (applyMissionLabel && missionLabel != null)
+        if (missionLabel != null)
         {
             missionLabel.text = fragileCargoMissionLabel;
         }
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        else
+        {
+            Debug.LogWarning(
+                "[FragileCargoMissionUI] missionLabel TMP ref missing — " +
+                "title cannot display for Fragile Cargo."
+            );
+        }
+#endif
 
         if (movesText != null)
         {

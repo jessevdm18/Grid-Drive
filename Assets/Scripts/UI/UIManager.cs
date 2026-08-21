@@ -644,7 +644,7 @@ public class UIManager : MonoBehaviour
 
     private IEnumerator RewardFlyRoutine(int earnedCoins)
     {
-        // Toon "+50" (of echte LastEarnedCoins).
+        // Toon "+N" via LastEarnedCoins (difficulty-based 3★ reward).
         rewardText.gameObject.SetActive(true);
         rewardText.text = "+" + earnedCoins;
         SetRewardAlpha(1f);

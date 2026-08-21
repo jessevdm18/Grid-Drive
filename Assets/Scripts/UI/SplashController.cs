@@ -132,6 +132,9 @@ public class SplashController : MonoBehaviour
 
         hasStartedLoad = true;
 
+        // Index-based saves + DB reorder: wipe stale progression before routing.
+        LevelDatabaseContentVersion.ApplyIfNeeded();
+
         if (SaveManager.ShouldRouteFirstLaunchToGameplay())
         {
             // Same contract as LevelSelect Easy button 1 (ordered Easy[0]).

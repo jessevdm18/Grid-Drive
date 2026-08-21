@@ -9,6 +9,16 @@ public class MainMenuUI : MonoBehaviour
     [SerializeField] private MainMenuSettingsUI settingsUI;
     [SerializeField] private ShopUIController shopUI;
 
+    private void Start()
+    {
+        // Safety if Splash was skipped (Editor Play from MainMenu).
+        LevelDatabaseContentVersion.ApplyIfNeeded();
+
+        // Authoritative menu music — works whether MusicManager came from this
+        // scene or was bootstrapped earlier (e.g. fresh Splash→Gameplay→Menu).
+        MusicManager.PlayMenuMusic();
+    }
+
     /// <summary>
     /// Start het spel → Gameplay-scene.
     /// </summary>

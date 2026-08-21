@@ -50,6 +50,7 @@ public static class FreshPlayerResetEditorMenu
         FeatureTutorialPrefs.ResetAll();
         DifficultyUnlockNoticePrefs.ResetAll();
         SkinManager.EditorResetSkinPrefsToFreshDefaults();
+        PlayerPrefs.DeleteKey(LevelDatabaseContentVersion.PrefsKey);
 
         // Critical: leftover Pending GUID would override SaveManager in LevelManager.Start.
         V1PlaytestOverride.Clear();

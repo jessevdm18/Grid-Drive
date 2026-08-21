@@ -198,6 +198,14 @@ public class LevelObjectiveController : MonoBehaviour
 
         if (levelData.objectiveType == LevelObjectiveType.TimedAmbulance)
         {
+            string missing = ObjectiveConfigValidation.ValidateSpecialObjective(levelData);
+            if (!string.IsNullOrEmpty(missing))
+            {
+                ObjectiveConfigValidation.LogValidation(levelData, missing);
+                BeginClassicFallback();
+                return;
+            }
+
             BeginSpecialIntroGate();
             MaybeBeginObjectiveTutorialGate(LevelObjectiveType.TimedAmbulance);
             isTimedLevel = true;
@@ -220,16 +228,15 @@ public class LevelObjectiveController : MonoBehaviour
             OnCargoMovesRemainingChanged?.Invoke(0, 0);
             OnLimitedVehicleMovesRemainingChanged?.Invoke(0, 0);
 
-            int configuredLimit = Mathf.Max(0, levelData.moveLimit);
-            if (configuredLimit <= 0)
+            string missing = ObjectiveConfigValidation.ValidateSpecialObjective(levelData);
+            if (!string.IsNullOrEmpty(missing))
             {
-                Debug.LogWarning(
-                    "LevelObjectiveController: MoveLimit objective zonder moveLimit > 0."
-                );
-                OnMovesRemainingChanged?.Invoke(0);
+                ObjectiveConfigValidation.LogValidation(levelData, missing);
+                BeginClassicFallback();
                 return;
             }
 
+            int configuredLimit = Mathf.Max(0, levelData.moveLimit);
             isMoveLimitLevel = true;
             moveLimit = configuredLimit;
             movesUsed = 0;
@@ -248,23 +255,17 @@ public class LevelObjectiveController : MonoBehaviour
             OnCargoMovesRemainingChanged?.Invoke(0, 0);
             OnLimitedVehicleMovesRemainingChanged?.Invoke(0, 0);
 
-            ValidateMultiTargetRescueLayout(levelData);
-
-            int targetCount = CountTargetsInLevelData(levelData);
-            if (targetCount < 2)
+            string missing = ObjectiveConfigValidation.ValidateSpecialObjective(levelData);
+            if (!string.IsNullOrEmpty(missing))
             {
-                Debug.LogWarning(
-                    "[MultiTargetRescue] Verwacht ≥ 2 vehicles met canExitRight " +
-                    "(nu: " + targetCount + ")."
-                );
-            }
-
-            if (targetCount <= 0)
-            {
-                OnTargetsRemainingChanged?.Invoke(0, 0);
+                ObjectiveConfigValidation.LogValidation(levelData, missing);
+                BeginClassicFallback();
                 return;
             }
 
+            ValidateMultiTargetRescueLayout(levelData);
+
+            int targetCount = CountTargetsInLevelData(levelData);
             isMultiTargetRescueLevel = true;
             targetsTotal = targetCount;
             targetsRescued = 0;
@@ -284,8 +285,26 @@ public class LevelObjectiveController : MonoBehaviour
             OnCargoMovesRemainingChanged?.Invoke(0, 0);
             OnLimitedVehicleMovesRemainingChanged?.Invoke(0, 0);
 
+            string missing = ObjectiveConfigValidation.ValidateSpecialObjective(levelData);
+            if (!string.IsNullOrEmpty(missing))
+            {
+                ObjectiveConfigValidation.LogValidation(levelData, missing);
+                BeginClassicFallback();
+                return;
+            }
+
             ValidateNoTouchChallengeLayout(levelData);
             BindProtectedVehicleFromActiveVehicles();
+
+            if (protectedVehicle == null)
+            {
+                ObjectiveConfigValidation.LogValidation(
+                    levelData,
+                    "runtime protected vehicle missing after spawn"
+                );
+                BeginClassicFallback();
+                return;
+            }
 
             isNoTouchChallengeLevel = true;
             noTouchViolated = false;
@@ -302,21 +321,28 @@ public class LevelObjectiveController : MonoBehaviour
             OnTargetsRemainingChanged?.Invoke(0, 0);
             OnLimitedVehicleMovesRemainingChanged?.Invoke(0, 0);
 
-            ValidateFragileCargoLayout(levelData);
-
-            int configuredLimit = Mathf.Max(0, levelData.fragileCargoMoveLimit);
-            if (configuredLimit <= 0)
+            string missing = ObjectiveConfigValidation.ValidateSpecialObjective(levelData);
+            if (!string.IsNullOrEmpty(missing))
             {
-                Debug.LogWarning(
-                    "[FragileCargo] Level " + levelData.levelNumber +
-                    " heeft geen fragileCargoMoveLimit > 0."
-                );
-                OnCargoMovesRemainingChanged?.Invoke(0, 0);
+                ObjectiveConfigValidation.LogValidation(levelData, missing);
+                BeginClassicFallback();
                 return;
             }
 
+            ValidateFragileCargoLayout(levelData);
             BindFragileCargoVehicleFromActiveVehicles();
 
+            if (fragileCargoVehicle == null)
+            {
+                ObjectiveConfigValidation.LogValidation(
+                    levelData,
+                    "runtime cargo vehicle missing after spawn"
+                );
+                BeginClassicFallback();
+                return;
+            }
+
+            int configuredLimit = Mathf.Max(0, levelData.fragileCargoMoveLimit);
             isFragileCargoLevel = true;
             cargoMoveLimit = configuredLimit;
             cargoMovesUsed = 0;
@@ -336,38 +362,34 @@ public class LevelObjectiveController : MonoBehaviour
             OnTargetsRemainingChanged?.Invoke(0, 0);
             OnCargoMovesRemainingChanged?.Invoke(0, 0);
 
-            ValidateLimitedVehicleLayout(levelData);
-
-            int configuredLimit = Mathf.Max(0, levelData.limitedVehicleMoveLimit);
-            if (configuredLimit <= 0)
+            string missing = ObjectiveConfigValidation.ValidateSpecialObjective(levelData);
+            if (!string.IsNullOrEmpty(missing))
             {
-                Debug.LogWarning(
-                    "[LimitedVehicle] Level " + levelData.levelNumber +
-                    " heeft geen limitedVehicleMoveLimit > 0."
-                );
-                OnLimitedVehicleMovesRemainingChanged?.Invoke(0, 0);
+                ObjectiveConfigValidation.LogValidation(levelData, missing);
+                BeginClassicFallback();
                 return;
             }
 
+            ValidateLimitedVehicleLayout(levelData);
             BindLimitedVehicleFromActiveVehicles();
 
+            if (limitedVehicle == null)
+            {
+                ObjectiveConfigValidation.LogValidation(
+                    levelData,
+                    "runtime limited vehicle missing after spawn"
+                );
+                BeginClassicFallback();
+                return;
+            }
+
+            int configuredLimit = Mathf.Max(0, levelData.limitedVehicleMoveLimit);
             isLimitedVehicleLevel = true;
             limitedVehicleMoveLimit = configuredLimit;
             limitedVehicleMovesUsed = 0;
             limitedVehicleMovesRemaining = limitedVehicleMoveLimit;
             limitedVehicleLocked = false;
-
-            if (limitedVehicle != null)
-            {
-                limitedVehicle.SetLimitedVehicleLocked(false);
-            }
-            else
-            {
-                Debug.LogWarning(
-                    "[LimitedVehicle] Level " + levelData.levelNumber +
-                    " heeft geen gebonden LimitedVehicle na spawn."
-                );
-            }
+            limitedVehicle.SetLimitedVehicleLocked(false);
 
             BeginSpecialIntroGate();
             MaybeBeginObjectiveTutorialGate(LevelObjectiveType.LimitedVehicle);
@@ -379,6 +401,29 @@ public class LevelObjectiveController : MonoBehaviour
             return;
         }
 
+        OnTimerChanged?.Invoke(0f);
+        OnMovesRemainingChanged?.Invoke(0);
+        OnTargetsRemainingChanged?.Invoke(0, 0);
+        OnCargoMovesRemainingChanged?.Invoke(0, 0);
+        OnLimitedVehicleMovesRemainingChanged?.Invoke(0, 0);
+    }
+
+    /// <summary>
+    /// Invalid special config: play as Classic (no special HUD/gates/fails).
+    /// </summary>
+    private void BeginClassicFallback()
+    {
+        ClearMoveLimitState();
+        ClearMultiTargetState();
+        ClearNoTouchState();
+        ClearFragileCargoState();
+        ClearLimitedVehicleState();
+        ClearSpecialIntroGate();
+        // Do not auto-start Classic tutorial from a broken special — avoid spam.
+        isTimedLevel = false;
+        timeLimit = 0f;
+        remainingTime = 0f;
+        state = RuntimeState.Inactive;
         OnTimerChanged?.Invoke(0f);
         OnMovesRemainingChanged?.Invoke(0);
         OnTargetsRemainingChanged?.Invoke(0, 0);

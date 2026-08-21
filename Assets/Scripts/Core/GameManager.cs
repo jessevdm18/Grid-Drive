@@ -57,11 +57,6 @@ public class GameManager : MonoBehaviour
     private bool featureTutorialBlocked;
 
     /// <summary>
-    /// Coin-beloning bij level completion (één bron van waarheid voor UI + uitbetaling).
-    /// </summary>
-    public const int LevelCompleteCoinReward = 50;
-
-    /// <summary>
     /// Sterren verdiend bij de laatste succesvolle CompleteLevel (1–3).
     /// </summary>
     public int LastEarnedStars { get; private set; }
@@ -175,6 +170,10 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        // Authoritative gameplay music — covers Splash→Gameplay fresh launch
+        // (MainMenu MusicManager never loaded) and Menu→Gameplay.
+        MusicManager.PlayGameplayMusic();
+
         if (saveManager != null && levelManager != null)
         {
             DifficultyUnlockNoticePrefs.MigrateExistingUnlocks(
@@ -376,7 +375,15 @@ public class GameManager : MonoBehaviour
 
                 if (eligible)
                 {
-                    LastEarnedCoins = LevelCompleteCoinReward;
+                    LevelDifficulty rewardDifficulty =
+                        levelManager.CurrentDifficulty;
+                    LevelData completedData = levelManager.CurrentLevelData;
+                    if (completedData != null)
+                    {
+                        rewardDifficulty = completedData.difficulty;
+                    }
+
+                    LastEarnedCoins = ThreeStarCoinReward.GetReward(rewardDifficulty);
                     saveManager.MarkThreeStarCoinRewardClaimed(completedIndex);
                     LastThreeStarCoinRewardGranted = true;
                     coinsFeatureTutorialTriggerPending = true;
@@ -397,11 +404,29 @@ public class GameManager : MonoBehaviour
                 }
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
+                LevelDifficulty logDifficulty = levelManager.CurrentDifficulty;
+                LevelData logData = levelManager.CurrentLevelData;
+                if (logData != null)
+                {
+                    logDifficulty = logData.difficulty;
+                }
+
+                Debug.Log(
+                    "[ThreeStarReward]\n" +
+                    "LevelIndex=" + completedIndex + "\n" +
+                    "Difficulty=" + logDifficulty + "\n" +
+                    "Stars=" + LastEarnedStars + "\n" +
+                    "ClaimedBefore=" + claimedBefore + "\n" +
+                    "Eligible=" + eligible + "\n" +
+                    "Reward=" + (eligible ? LastEarnedCoins : 0)
+                );
+
                 Debug.Log(
                     "[CoinsFT]\n" +
                     "Stage=CompleteLevel\n" +
                     "Session=" + FeatureTutorialController.CoinsFtSessionId + "\n" +
                     "LevelIndex=" + completedIndex + "\n" +
+                    "Difficulty=" + logDifficulty + "\n" +
                     "ResultStars=" + LastEarnedStars + "\n" +
                     "PreviousBest=" + previousBestStars + "\n" +
                     "ClaimedBefore=" + claimedBefore + "\n" +

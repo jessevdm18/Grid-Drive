@@ -354,12 +354,41 @@ public class SaveManager : MonoBehaviour
     /// </summary>
     public static void EditorResetAllPlayerProgressPrefs()
     {
+        ResetLevelProgressKeys(includeCoins: true, includeFirstLaunch: true);
+        PlayerPrefs.DeleteKey(LevelDatabaseContentVersion.PrefsKey);
+        PlayerPrefs.Save();
+    }
+
+    /// <summary>
+    /// Runtime/pre-release: wipe index-based level progression after a
+    /// MainLevelDatabase content-version mismatch.
+    /// Keeps audio, coins balance, skins, feature-tutorial seen flags.
+    /// Clears first-launch so Splash routes to Easy Level 1 again.
+    /// </summary>
+    public static void ResetLevelProgressForContentVersionMismatch()
+    {
+        ResetLevelProgressKeys(includeCoins: false, includeFirstLaunch: true);
+        PlayerPrefs.Save();
+    }
+
+    private static void ResetLevelProgressKeys(bool includeCoins, bool includeFirstLaunch)
+    {
         PlayerPrefs.DeleteKey(UnlockedLevelKey);
         PlayerPrefs.DeleteKey(CurrentLevelKey);
         PlayerPrefs.DeleteKey(LastSelectedDifficultyKey);
-        PlayerPrefs.DeleteKey(FirstLaunchCompletedKey);
-        PlayerPrefs.DeleteKey(EditorForceFirstLaunchKey);
-        PlayerPrefs.DeleteKey(CoinsKey);
+
+        if (includeFirstLaunch)
+        {
+            PlayerPrefs.DeleteKey(FirstLaunchCompletedKey);
+#if UNITY_EDITOR
+            PlayerPrefs.DeleteKey(EditorForceFirstLaunchKey);
+#endif
+        }
+
+        if (includeCoins)
+        {
+            PlayerPrefs.DeleteKey(CoinsKey);
+        }
 
         // Wide scan so orphaned stars/claims without max-index are also cleared.
         const int scanLimit = 512;
@@ -383,7 +412,6 @@ public class SaveManager : MonoBehaviour
         PlayerPrefs.DeleteKey(ThreeStarCoinClaimedMaxIndexKey);
         PlayerPrefs.DeleteKey(ThreeStarRewardMigrationCompletedKey);
         PlayerPrefs.DeleteKey(ThreeStarCoinClaimMigrationLegacyKey);
-        PlayerPrefs.Save();
     }
 
     /// <summary>Editor validation helpers (defaults match fresh install).</summary>

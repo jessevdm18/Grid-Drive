@@ -15,7 +15,7 @@ MonoBehaviour:
   levelNumber: 85
   difficulty: 2
   objectiveType: 1
-  timeLimitSeconds: 66
+  timeLimitSeconds: 54
   moveLimit: 0
   fragileCargoMoveLimit: 0
   limitedVehicleMoveLimit: 0

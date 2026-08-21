@@ -15,7 +15,7 @@ MonoBehaviour:
   levelNumber: 136
   difficulty: 0
   objectiveType: 1
-  timeLimitSeconds: 27
+  timeLimitSeconds: 19
   moveLimit: 0
   fragileCargoMoveLimit: 0
   limitedVehicleMoveLimit: 0
