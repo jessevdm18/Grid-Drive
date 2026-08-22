@@ -1,10 +1,14 @@
 using System;
+using System.Collections.Generic;
 using GoogleMobileAds.Api;
 using UnityEngine;
 
 /// <summary>
-/// Beheert Rewarded en Interstitial Ads via Google Mobile Ads.
-/// Gebruik tijdens development de officiële test ad unit IDs.
+/// Manages Rewarded and Interstitial Ads via Google Mobile Ads.
+/// Uses official test ad unit IDs during development.
+/// Initializes only after PrivacyConsentManager resolves and CanRequestAds is true.
+/// Google Mobile Ads callbacks are marshalled onto the Unity main thread before
+/// touching PlayerPrefs / scene / gameplay code (prevents GetInt off-thread crashes).
 /// </summary>
 public class AdsManager : MonoBehaviour
 {
@@ -26,30 +30,129 @@ public class AdsManager : MonoBehaviour
     private RewardedAd rewardedAd;
     private InterstitialAd interstitialAd;
 
-    // Callback na sluiten/falen van interstitial — maximaal één keer.
+    // Callback after interstitial close/fail — at most once.
     private Action interstitialClosedCallback;
     private bool interstitialCallbackInvoked;
 
+    private bool adsInitialized;
+    private bool subscribedToConsent;
+
+    private readonly Queue<Action> mainThreadQueue = new Queue<Action>(8);
+    private readonly object mainThreadQueueLock = new object();
+    private int mainThreadId = -1;
+
+    private void Awake()
+    {
+        mainThreadId = System.Threading.Thread.CurrentThread.ManagedThreadId;
+    }
+
+    private void OnEnable()
+    {
+        SubscribeToConsent();
+    }
+
+    private void Update()
+    {
+        PumpMainThreadQueue();
+    }
+
     private void Start()
     {
-        // Initialiseer Google Mobile Ads één keer.
+        // Do NOT MobileAds.Initialize here — wait for PrivacyConsentManager.
+        PrivacyConsentManager.EnsureInstance();
+        SubscribeToConsent();
+
+        if (PrivacyConsentManager.IsResolved)
+        {
+            TryInitializeAdsFromConsent("StartAlreadyResolved");
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (subscribedToConsent)
+        {
+            PrivacyConsentManager.OnConsentResolved -= OnConsentResolved;
+            subscribedToConsent = false;
+        }
+    }
+
+    private void SubscribeToConsent()
+    {
+        if (subscribedToConsent)
+        {
+            return;
+        }
+
+        PrivacyConsentManager.OnConsentResolved += OnConsentResolved;
+        subscribedToConsent = true;
+    }
+
+    private void OnConsentResolved()
+    {
+        TryInitializeAdsFromConsent("ConsentResolved");
+    }
+
+    /// <summary>
+    /// Initializes Mobile Ads once when consent allows ad requests.
+    /// </summary>
+    public void InitializeAds()
+    {
+        TryInitializeAdsFromConsent("InitializeAdsExplicit");
+    }
+
+    private void TryInitializeAdsFromConsent(string reason)
+    {
+        if (adsInitialized)
+        {
+            return;
+        }
+
+        if (!PrivacyConsentManager.IsResolved)
+        {
+            LogAds("InitDeferred Reason=ConsentNotResolved Source=" + reason);
+            return;
+        }
+
+        if (!PrivacyConsentManager.CanRequestAds)
+        {
+            LogAds("InitSkipped Reason=CanRequestAdsFalse Source=" + reason);
+            return;
+        }
+
+        adsInitialized = true;
+        LogAds("Initialized=True Source=" + reason);
+
+        // Plugin helper + our queue as hard fallback. Default is false; without
+        // marshalling, interstitial close can call PlayerPrefs.GetInt off-thread.
+#pragma warning disable 0618
+        MobileAds.RaiseAdEventsOnUnityMainThread = true;
+#pragma warning restore 0618
+
         MobileAds.Initialize(initStatus =>
         {
-            Debug.Log("Mobile Ads initialized");
-            LoadRewardedAd();
-            LoadInterstitialAd();
+            RunOnMainThread(() =>
+            {
+                Debug.Log("Mobile Ads initialized");
+                LoadRewardedAd();
+                LoadInterstitialAd();
+            });
         });
     }
 
     // --- Rewarded Ads ---
 
     /// <summary>
-    /// Laadt een nieuwe rewarded ad.
-    /// Vernietigt eerst een eventuele oude ad.
+    /// Loads a new rewarded ad. Destroys any previous ad first.
+    /// No-op when ads are not allowed yet.
     /// </summary>
     public void LoadRewardedAd()
     {
-        // Oude ad opruimen voordat we een nieuwe laden.
+        if (!adsInitialized || !PrivacyConsentManager.CanRequestAds)
+        {
+            return;
+        }
+
         if (rewardedAd != null)
         {
             rewardedAd.Destroy();
@@ -60,39 +163,44 @@ public class AdsManager : MonoBehaviour
 
         RewardedAd.Load(adUnitId, request, (RewardedAd ad, LoadAdError error) =>
         {
-            if (error != null)
+            RunOnMainThread(() =>
             {
-                Debug.Log("Rewarded ad failed to load");
-                Debug.Log(error.ToString());
-                return;
-            }
+                if (error != null)
+                {
+                    Debug.Log("Rewarded ad failed to load");
+                    Debug.Log(error.ToString());
+                    return;
+                }
 
-            if (ad == null)
-            {
-                Debug.Log("Rewarded ad failed to load");
-                return;
-            }
+                if (ad == null)
+                {
+                    Debug.Log("Rewarded ad failed to load");
+                    return;
+                }
 
-            rewardedAd = ad;
-            RegisterFullScreenCallbacks(rewardedAd);
+                rewardedAd = ad;
+                RegisterFullScreenCallbacks(rewardedAd);
 
-            Debug.Log("Rewarded ad loaded");
+                Debug.Log("Rewarded ad loaded");
+            });
         });
     }
 
     /// <summary>
-    /// True als er een rewarded ad klaarstaat om te tonen.
+    /// True when a rewarded ad is ready to show.
     /// </summary>
     public bool IsRewardedAdReady()
     {
-        return rewardedAd != null && rewardedAd.CanShowAd();
+        return adsInitialized &&
+               PrivacyConsentManager.CanRequestAds &&
+               rewardedAd != null &&
+               rewardedAd.CanShowAd();
     }
 
     /// <summary>
-    /// Toont de rewarded ad. onRewardEarned wordt alleen aangeroepen
-    /// wanneer de gebruiker de reward daadwerkelijk heeft verdiend.
+    /// Shows the rewarded ad. onRewardEarned is only called when the reward is earned.
     /// </summary>
-    public void ShowRewardedAd(Action onRewardEarned)
+    public void ShowRewardedAd(Action onRewardEarned, string placement = "unknown")
     {
         if (!IsRewardedAdReady())
         {
@@ -100,51 +208,75 @@ public class AdsManager : MonoBehaviour
             return;
         }
 
+        GameAnalytics.LogRewardedAdStarted(placement);
+
+        bool rewardCallbackInvoked = false;
         rewardedAd.Show(reward =>
         {
-            Debug.Log("Reward earned");
-            onRewardEarned?.Invoke();
+            RunOnMainThread(() =>
+            {
+                if (rewardCallbackInvoked)
+                {
+                    return;
+                }
+
+                rewardCallbackInvoked = true;
+                Debug.Log("Reward earned");
+                GameAnalytics.LogRewardedAdCompleted(placement);
+                onRewardEarned?.Invoke();
+            });
         });
     }
 
     /// <summary>
-    /// Na sluiten of fout: oude rewarded ad vernietigen en opnieuw laden.
+    /// After close or error: destroy old rewarded ad and reload.
     /// </summary>
     private void RegisterFullScreenCallbacks(RewardedAd ad)
     {
         ad.OnAdFullScreenContentClosed += () =>
         {
-            if (rewardedAd != null)
+            RunOnMainThread(() =>
             {
-                rewardedAd.Destroy();
-                rewardedAd = null;
-            }
+                if (rewardedAd != null)
+                {
+                    rewardedAd.Destroy();
+                    rewardedAd = null;
+                }
 
-            LoadRewardedAd();
+                LoadRewardedAd();
+            });
         };
 
         ad.OnAdFullScreenContentFailed += error =>
         {
-            Debug.Log("Rewarded ad failed to show: " + error);
-
-            if (rewardedAd != null)
+            RunOnMainThread(() =>
             {
-                rewardedAd.Destroy();
-                rewardedAd = null;
-            }
+                Debug.Log("Rewarded ad failed to show: " + error);
 
-            LoadRewardedAd();
+                if (rewardedAd != null)
+                {
+                    rewardedAd.Destroy();
+                    rewardedAd = null;
+                }
+
+                LoadRewardedAd();
+            });
         };
     }
 
     // --- Interstitial Ads ---
 
     /// <summary>
-    /// Laadt een nieuwe interstitial ad.
-    /// Vernietigt eerst een eventuele oude ad.
+    /// Loads a new interstitial ad. Destroys any previous ad first.
+    /// No-op when ads are not allowed yet.
     /// </summary>
     public void LoadInterstitialAd()
     {
+        if (!adsInitialized || !PrivacyConsentManager.CanRequestAds)
+        {
+            return;
+        }
+
         if (interstitialAd != null)
         {
             interstitialAd.Destroy();
@@ -155,42 +287,49 @@ public class AdsManager : MonoBehaviour
 
         InterstitialAd.Load(interstitialAdUnitId, request, (InterstitialAd ad, LoadAdError error) =>
         {
-            if (error != null)
+            RunOnMainThread(() =>
             {
-                Debug.Log("Interstitial failed to load: " + error);
-                return;
-            }
+                if (error != null)
+                {
+                    Debug.Log("Interstitial failed to load: " + error);
+                    return;
+                }
 
-            if (ad == null)
-            {
-                Debug.Log("Interstitial failed to load");
-                return;
-            }
+                if (ad == null)
+                {
+                    Debug.Log("Interstitial failed to load");
+                    return;
+                }
 
-            interstitialAd = ad;
-            RegisterInterstitialCallbacks(interstitialAd);
+                interstitialAd = ad;
+                RegisterInterstitialCallbacks(interstitialAd);
 
-            Debug.Log("Interstitial loaded");
+                Debug.Log("Interstitial loaded");
+            });
         });
     }
 
     /// <summary>
-    /// True als er een interstitial klaarstaat om te tonen.
+    /// True when an interstitial is ready to show.
     /// </summary>
     public bool IsInterstitialReady()
     {
-        return interstitialAd != null && interstitialAd.CanShowAd();
+        return adsInitialized &&
+               PrivacyConsentManager.CanRequestAds &&
+               interstitialAd != null &&
+               interstitialAd.CanShowAd();
     }
 
     /// <summary>
-    /// Toont de interstitial ad als die beschikbaar is.
-    /// onAdClosed wordt één keer aangeroepen na sluiten of bij failure.
+    /// Shows the interstitial when available.
+    /// onAdClosed is invoked once after close or failure (always on main thread).
     /// </summary>
     public void ShowInterstitialAd(Action onAdClosed = null)
     {
         if (!IsInterstitialReady())
         {
             Debug.Log("Interstitial not ready");
+            RunOnMainThread(() => onAdClosed?.Invoke());
             return;
         }
 
@@ -202,7 +341,7 @@ public class AdsManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Voert de closed-callback precies één keer uit.
+    /// Invokes the closed callback exactly once (caller must already be on main thread).
     /// </summary>
     private void InvokeInterstitialClosedOnce()
     {
@@ -219,34 +358,106 @@ public class AdsManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Na sluiten of fout: oude interstitial vernietigen, callback, opnieuw laden.
+    /// After close or error: destroy interstitial, callback, reload.
     /// </summary>
     private void RegisterInterstitialCallbacks(InterstitialAd ad)
     {
         ad.OnAdFullScreenContentClosed += () =>
         {
-            if (interstitialAd != null)
+            RunOnMainThread(() =>
             {
-                interstitialAd.Destroy();
-                interstitialAd = null;
-            }
+                if (interstitialAd != null)
+                {
+                    interstitialAd.Destroy();
+                    interstitialAd = null;
+                }
 
-            InvokeInterstitialClosedOnce();
-            LoadInterstitialAd();
+                InvokeInterstitialClosedOnce();
+                LoadInterstitialAd();
+            });
         };
 
         ad.OnAdFullScreenContentFailed += error =>
         {
-            Debug.Log("Interstitial failed to show: " + error);
-
-            if (interstitialAd != null)
+            RunOnMainThread(() =>
             {
-                interstitialAd.Destroy();
-                interstitialAd = null;
+                Debug.Log("Interstitial failed to show: " + error);
+
+                if (interstitialAd != null)
+                {
+                    interstitialAd.Destroy();
+                    interstitialAd = null;
+                }
+
+                InvokeInterstitialClosedOnce();
+                LoadInterstitialAd();
+            });
+        };
+    }
+
+    /// <summary>
+    /// Runs on the Unity main thread. Invokes immediately when already on main;
+    /// otherwise queues for the next AdsManager.Update.
+    /// Safe to call from Google Mobile Ads native/JNI callback threads.
+    /// </summary>
+    private void RunOnMainThread(Action action)
+    {
+        if (action == null)
+        {
+            return;
+        }
+
+        if (mainThreadId >= 0 &&
+            System.Threading.Thread.CurrentThread.ManagedThreadId == mainThreadId)
+        {
+            try
+            {
+                action.Invoke();
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError("[Ads] MainThread callback exception — " + ex.Message);
             }
 
-            InvokeInterstitialClosedOnce();
-            LoadInterstitialAd();
-        };
+            return;
+        }
+
+        lock (mainThreadQueueLock)
+        {
+            mainThreadQueue.Enqueue(action);
+        }
+    }
+
+    private void PumpMainThreadQueue()
+    {
+        while (true)
+        {
+            Action action = null;
+            lock (mainThreadQueueLock)
+            {
+                if (mainThreadQueue.Count == 0)
+                {
+                    break;
+                }
+
+                action = mainThreadQueue.Dequeue();
+            }
+
+            try
+            {
+                action?.Invoke();
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError("[Ads] MainThread callback exception — " + ex.Message);
+            }
+        }
+    }
+
+    private static void LogAds(string message)
+    {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        Debug.Log("[Privacy] Ads " + message);
+#endif
     }
 }

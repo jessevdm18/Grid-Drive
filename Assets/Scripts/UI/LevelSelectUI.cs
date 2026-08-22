@@ -184,6 +184,8 @@ public class LevelSelectUI : MonoBehaviour
             saveManager.SaveLastSelectedDifficulty(difficulty);
         }
 
+        GameAnalytics.LogDifficultySelected(difficulty.ToString());
+
         RefreshAll();
     }
 

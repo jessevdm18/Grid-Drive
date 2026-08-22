@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "410107420523",
+    "project_id": "grid-drive",
+    "storage_bucket": "grid-drive.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:410107420523:android:fe1315164756043860f62e",
+        "android_client_info": {
+          "package_name": "com.raddergames.griddrive"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA-F3rgyMzVD-8E139iTsor7mR5-bYTsX8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

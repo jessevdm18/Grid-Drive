@@ -64,6 +64,29 @@ public static class LevelDifficultyOrder
     }
 
     /// <summary>
+    /// Database index for 1-based local display number within difficulty, or -1.
+    /// </summary>
+    public static int GetDatabaseIndexForDifficultyDisplayNumber(
+        LevelDatabase database,
+        LevelDifficulty difficulty,
+        int displayNumber)
+    {
+        if (database == null || displayNumber <= 0)
+        {
+            return -1;
+        }
+
+        List<int> ordered = GetOrderedLevelIndicesForDifficulty(database, difficulty);
+        int index = displayNumber - 1;
+        if (index < 0 || index >= ordered.Count)
+        {
+            return -1;
+        }
+
+        return ordered[index];
+    }
+
+    /// <summary>
     /// Next database index in ordered same-difficulty list after <paramref name="fromIndex"/>, or -1.
     /// </summary>
     public static int FindNextOrderedLevelIndexSameDifficulty(
@@ -109,8 +132,8 @@ public static class LevelDifficultyOrder
 
     public static int CompareLevels(LevelData a, LevelData b, int indexA, int indexB)
     {
-        int movesA = a != null ? a.minimumMoves : 0;
-        int movesB = b != null ? b.minimumMoves : 0;
+        int movesA = LevelMinMoves.SortKey(a != null ? a.minimumMoves : 0);
+        int movesB = LevelMinMoves.SortKey(b != null ? b.minimumMoves : 0);
         int movesCmp = movesA.CompareTo(movesB);
         if (movesCmp != 0)
         {

@@ -541,14 +541,19 @@ public class UIManager : MonoBehaviour
 
         if (parValueText != null)
         {
-            int par = 0;
             LevelData levelData = levelManager != null ? levelManager.CurrentLevelData : null;
-            if (levelData != null)
-            {
-                par = levelData.minimumMoves;
-            }
+            int dbIndex = levelManager != null ? levelManager.CurrentLevelIndex : -1;
+            LevelMinMoves.LogInvalidIfNeeded(levelData, dbIndex, "WinPanel/PAR");
 
-            parValueText.text = par.ToString();
+            if (LevelMinMoves.TryGetPar(levelData, out int par))
+            {
+                parValueText.text = par.ToString();
+            }
+            else
+            {
+                // Never show -1 / 0 as PAR.
+                parValueText.text = "—";
+            }
         }
     }
 
@@ -891,6 +896,10 @@ public class UIManager : MonoBehaviour
         EnsureDifficultyUnlockFullyHidden();
         HideWinPanel();
 
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        Debug.Log("[LevelTransition] ResumeRequested");
+#endif
+
         bool wantsInterstitial =
             gameManager != null &&
             gameManager.ShouldShowInterstitial();
@@ -918,10 +927,16 @@ public class UIManager : MonoBehaviour
     {
         try
         {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            Debug.Log("[LevelTransition] SceneLoadStarted Path=InSceneNextLevel");
+#endif
             if (levelManager != null)
             {
                 levelManager.LoadNextLevel();
             }
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            Debug.Log("[LevelTransition] Complete");
+#endif
         }
         finally
         {

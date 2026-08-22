@@ -70,7 +70,8 @@
             "scenes": [
               "Assets/Scenes/Gameplay.unity",
               "Assets/Scenes/LevelSelect.unity",
-              "Assets/Scenes/MainMenu.unity"
+              "Assets/Scenes/MainMenu.unity",
+              "Assets/Scenes/Splash.unity"
             ],
             "dependencyType": 0,
             "icon": null
@@ -103,7 +104,8 @@
             "scenes": [
               "Assets/Scenes/Gameplay.unity",
               "Assets/Scenes/LevelSelect.unity",
-              "Assets/Scenes/MainMenu.unity"
+              "Assets/Scenes/MainMenu.unity",
+              "Assets/Scenes/Splash.unity"
             ],
             "dependencyType": 0,
             "icon": null

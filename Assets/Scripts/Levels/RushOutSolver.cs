@@ -6,9 +6,10 @@ using UnityEngine;
 /// <summary>
 /// Runtime-safe Rush Hour BFS-solver voor Grid Drive.
 /// Werkt uitsluitend op data (geen Editor, geen GameObjects).
-/// Move-definitie: één voertuig naar een andere geldige gridpositie = 1 move;
-/// target exit = finale move.
-/// Gridgrootte is variabel (per level), geen vaste 6x6.
+/// Move-definitie = PLAYER MOVE (zelfde als GameManager.RegisterMove):
+/// één voertuig naar een andere geldige gridpositie = 1 move (multi-cell drag = 1);
+/// target die dockt wint zonder extra synthetische exit-move (gameplay assist/exit merge).
+/// Multi-target auto-exit vanaf dock = 0 player moves.
 /// </summary>
 public static class RushOutSolver
 {
@@ -17,6 +18,9 @@ public static class RushOutSolver
 
     public const string SearchLimitExplored = "explored limit";
     public const string SearchLimitDiscovered = "discovered limit";
+
+    private const int MaxTrackedVehicles = 32;
+    private const int CounterStates = 256;
 
     // -------------------------------------------------------------------------
     // Datastructuren
@@ -36,44 +40,104 @@ public static class RushOutSolver
     /// <summary>
     /// Actuele gridposities per voertuig-index (immutable / hashable).
     /// Equality is structureel — hash collisions worden altijd met Equals gecorrigeerd.
+    /// Constraint fields: exitedMask bits, fragile/limited move counters.
     /// </summary>
     public sealed class BoardState : IEquatable<BoardState>
     {
         public readonly Vector2Int[] positions;
+        public readonly int exitedMask;
+        public readonly byte fragileUsed;
+        public readonly byte limitedUsed;
         private readonly int cachedHash;
 
         public BoardState(Vector2Int[] positions)
+            : this(positions, 0, 0, 0)
         {
-            this.positions = new Vector2Int[positions.Length];
-            Array.Copy(positions, this.positions, positions.Length);
-            cachedHash = ComputeHash(this.positions);
         }
 
         public BoardState(IList<Vector2Int> positions)
-            : this(ToArray(positions))
+            : this(ToArray(positions), 0, 0, 0)
         {
+        }
+
+        public BoardState(
+            Vector2Int[] positions,
+            int exitedMask,
+            byte fragileUsed,
+            byte limitedUsed)
+        {
+            this.positions = new Vector2Int[positions.Length];
+            Array.Copy(positions, this.positions, positions.Length);
+            this.exitedMask = exitedMask;
+            this.fragileUsed = fragileUsed;
+            this.limitedUsed = limitedUsed;
+            cachedHash = ComputeHash(this.positions, exitedMask, fragileUsed, limitedUsed);
         }
 
         /// <summary>
         /// Neemt ownership van de array (geen extra copy). Alleen voor interne move-generatie.
         /// </summary>
-        private BoardState(Vector2Int[] ownedPositions, bool _)
+        private BoardState(
+            Vector2Int[] ownedPositions,
+            int exitedMask,
+            byte fragileUsed,
+            byte limitedUsed,
+            bool _)
         {
             positions = ownedPositions;
-            cachedHash = ComputeHash(positions);
+            this.exitedMask = exitedMask;
+            this.fragileUsed = fragileUsed;
+            this.limitedUsed = limitedUsed;
+            cachedHash = ComputeHash(positions, exitedMask, fragileUsed, limitedUsed);
         }
 
-        public BoardState WithMovedVehicle(int index, Vector2Int newPos)
+        public bool IsExited(int index)
+        {
+            return index >= 0 && index < 32 && (exitedMask & (1 << index)) != 0;
+        }
+
+        public BoardState WithMovedVehicle(
+            int index,
+            Vector2Int newPos,
+            int fragileIndex,
+            int limitedIndex)
         {
             Vector2Int[] copy = new Vector2Int[positions.Length];
             Array.Copy(positions, copy, positions.Length);
             copy[index] = newPos;
-            return new BoardState(copy, true);
+            byte nextFragile = fragileUsed;
+            byte nextLimited = limitedUsed;
+            if (index == fragileIndex && fragileIndex >= 0)
+            {
+                nextFragile = (byte)Mathf.Min(255, fragileUsed + 1);
+            }
+
+            if (index == limitedIndex && limitedIndex >= 0)
+            {
+                nextLimited = (byte)Mathf.Min(255, limitedUsed + 1);
+            }
+
+            return new BoardState(copy, exitedMask, nextFragile, nextLimited, true);
+        }
+
+        public BoardState WithVehicleExited(int index)
+        {
+            Vector2Int[] copy = new Vector2Int[positions.Length];
+            Array.Copy(positions, copy, positions.Length);
+            int mask = exitedMask | (1 << index);
+            return new BoardState(copy, mask, fragileUsed, limitedUsed, true);
         }
 
         public bool Equals(BoardState other)
         {
             if (other == null || other.positions.Length != positions.Length)
+            {
+                return false;
+            }
+
+            if (exitedMask != other.exitedMask ||
+                fragileUsed != other.fragileUsed ||
+                limitedUsed != other.limitedUsed)
             {
                 return false;
             }
@@ -110,11 +174,18 @@ public static class RushOutSolver
             return arr;
         }
 
-        private static int ComputeHash(Vector2Int[] positions)
+        private static int ComputeHash(
+            Vector2Int[] positions,
+            int exitedMask,
+            byte fragileUsed,
+            byte limitedUsed)
         {
             unchecked
             {
                 int hash = 17;
+                hash = hash * 31 + exitedMask;
+                hash = hash * 31 + fragileUsed;
+                hash = hash * 31 + limitedUsed;
                 for (int i = 0; i < positions.Length; i++)
                 {
                     hash = hash * 31 + positions[i].x;
@@ -170,6 +241,36 @@ public static class RushOutSolver
         public double totalMoveGenerationMs;
         public double totalVisitedMs;
         public double totalStateCopyMs;
+
+        /// <summary>Fragile cargo moves used along the found solution (0 if N/A).</summary>
+        public int fragileMovesUsed;
+
+        /// <summary>Limited vehicle moves used along the found solution (0 if N/A).</summary>
+        public int limitedMovesUsed;
+    }
+
+    /// <summary>
+    /// Optional production constraints. Null / default = Classic BFS (single target).
+    /// Exit requires docking at the right edge (matches gameplay CanPerformExitRight).
+    /// </summary>
+    public sealed class SolveConstraints
+    {
+        public int protectedVehicleIndex = -1;
+        public int fragileVehicleIndex = -1;
+        public int fragileMoveLimit = -1;
+        public int limitedVehicleIndex = -1;
+        public int limitedMoveLimit = -1;
+        public int maxSolutionMoves = -1;
+        public bool multiTarget;
+        public int[] targetIndices;
+
+        /// <summary>When true (default), target must sit at gridWidth-length to exit.</summary>
+        public bool requireDockedExit = true;
+
+        public static SolveConstraints Classic()
+        {
+            return new SolveConstraints();
+        }
     }
 
     // -------------------------------------------------------------------------
@@ -188,6 +289,28 @@ public static class RushOutSolver
         int gridHeight,
         int maxStates = DefaultMaxStates,
         int maxDiscoveredStates = -1)
+    {
+        return Solve(
+            vehicles,
+            startState,
+            exitRow,
+            gridWidth,
+            gridHeight,
+            maxStates,
+            maxDiscoveredStates,
+            null
+        );
+    }
+
+    public static SolverResult Solve(
+        List<VehicleDefinition> vehicles,
+        BoardState startState,
+        int exitRow,
+        int gridWidth,
+        int gridHeight,
+        int maxStates,
+        int maxDiscoveredStates,
+        SolveConstraints constraints)
     {
         SolverResult result = new SolverResult();
 
@@ -210,8 +333,9 @@ public static class RushOutSolver
             ? maxDiscoveredStates
             : exploredCap;
 
-        int targetIndex = FindTargetIndex(vehicles);
-        if (targetIndex < 0)
+        SolveConstraints c = constraints ?? SolveConstraints.Classic();
+        int[] targets = ResolveTargetIndices(vehicles, c);
+        if (targets == null || targets.Length == 0)
         {
             result.solvable = false;
             return result;
@@ -220,13 +344,14 @@ public static class RushOutSolver
         return RunBfs(
             vehicles,
             exitRow,
-            targetIndex,
+            targets,
             startState,
             width,
             height,
             result,
             exploredCap,
-            Mathf.Max(1, discoveredCap)
+            Mathf.Max(1, discoveredCap),
+            c
         );
     }
 
@@ -237,6 +362,15 @@ public static class RushOutSolver
         LevelData levelData,
         int maxStates = DefaultMaxStates,
         int maxDiscoveredStates = -1)
+    {
+        return SolveLevelData(levelData, maxStates, maxDiscoveredStates, null);
+    }
+
+    public static SolverResult SolveLevelData(
+        LevelData levelData,
+        int maxStates,
+        int maxDiscoveredStates,
+        SolveConstraints constraints)
     {
         if (levelData == null || levelData.vehicles == null)
         {
@@ -251,7 +385,8 @@ public static class RushOutSolver
             levelData.ResolvedGridWidth,
             levelData.ResolvedGridHeight,
             maxStates,
-            maxDiscoveredStates
+            maxDiscoveredStates,
+            constraints
         );
     }
 
@@ -279,6 +414,66 @@ public static class RushOutSolver
         startState = new BoardState(positions);
     }
 
+    /// <summary>
+    /// Bepaalt welke voertuigen het bord moeten verlaten.
+    /// Expliciete targetIndices &gt; multiTarget (alle canExitRight) &gt; eerste canExitRight.
+    /// </summary>
+    public static int[] ResolveTargetIndices(
+        List<VehicleDefinition> vehicles,
+        SolveConstraints constraints)
+    {
+        if (vehicles == null || vehicles.Count == 0)
+        {
+            return new int[0];
+        }
+
+        SolveConstraints c = constraints ?? SolveConstraints.Classic();
+
+        if (c.targetIndices != null && c.targetIndices.Length > 0)
+        {
+            List<int> explicitTargets = new List<int>(c.targetIndices.Length);
+            for (int i = 0; i < c.targetIndices.Length; i++)
+            {
+                int index = c.targetIndices[i];
+                if (index < 0 || index >= vehicles.Count || index >= MaxTrackedVehicles)
+                {
+                    continue;
+                }
+
+                if (!explicitTargets.Contains(index))
+                {
+                    explicitTargets.Add(index);
+                }
+            }
+
+            if (explicitTargets.Count > 0)
+            {
+                return explicitTargets.ToArray();
+            }
+        }
+
+        if (c.multiTarget)
+        {
+            List<int> all = new List<int>();
+            int limit = Mathf.Min(vehicles.Count, MaxTrackedVehicles);
+            for (int i = 0; i < limit; i++)
+            {
+                if (vehicles[i] != null && vehicles[i].canExitRight)
+                {
+                    all.Add(i);
+                }
+            }
+
+            if (all.Count > 0)
+            {
+                return all.ToArray();
+            }
+        }
+
+        int first = FindTargetIndex(vehicles);
+        return first >= 0 ? new[] { first } : new int[0];
+    }
+
     // -------------------------------------------------------------------------
     // BFS
     // -------------------------------------------------------------------------
@@ -286,14 +481,17 @@ public static class RushOutSolver
     private static SolverResult RunBfs(
         List<VehicleDefinition> vehicles,
         int exitRow,
-        int targetIndex,
+        int[] targetIndices,
         BoardState start,
         int gridWidth,
         int gridHeight,
         SolverResult result,
         int maxStates,
-        int maxDiscoveredStates)
+        int maxDiscoveredStates,
+        SolveConstraints constraints)
     {
+        SolveConstraints c = constraints ?? SolveConstraints.Classic();
+
         int vehicleCount = vehicles.Count;
         int cellCount = gridWidth * gridHeight;
 
@@ -308,34 +506,53 @@ public static class RushOutSolver
             names[i] = v.name;
         }
 
-        ulong[] zobrist = CreateZobristTable(vehicleCount, cellCount);
-        ulong startHash = ComputeZobristHash(zobrist, start.positions, gridWidth, cellCount);
+        bool multiMode = targetIndices.Length > 1;
+        int targetMask = 0;
+        for (int i = 0; i < targetIndices.Length; i++)
+        {
+            int ti = targetIndices[i];
+            if (ti >= 0 && ti < MaxTrackedVehicles)
+            {
+                targetMask |= 1 << ti;
+            }
+        }
 
-        int[] occupancy = new int[cellCount];
+        BfsContext ctx = new BfsContext
+        {
+            isHorizontal = isHorizontal,
+            lengths = lengths,
+            names = names,
+            vehicleCount = vehicleCount,
+            gridWidth = gridWidth,
+            gridHeight = gridHeight,
+            cellCount = cellCount,
+            occupancy = new int[cellCount],
+            zobrist = new ZobristTables(vehicleCount, cellCount),
+            queue = new Queue<QueueItem>(),
+            discoveredSingle = new Dictionary<ulong, BoardState>(),
+            discoveredMulti = new Dictionary<ulong, List<BoardState>>(),
+            cameFrom = new Dictionary<BoardState, ParentLink>(),
+            result = result,
+            constraints = c,
+            maxDiscoveredStates = maxDiscoveredStates,
+            // Een niet-uitgereden single target kost altijd nog minimaal de exit-move.
+            minRemainingMoves = multiMode ? 0 : 1
+        };
 
-        Queue<QueueItem> queue = new Queue<QueueItem>();
-        // Zobrist-buckets: snelle pre-check; structurele match bij hash-hit (collision-safe).
-        Dictionary<ulong, BoardState> discoveredSingle =
-            new Dictionary<ulong, BoardState>();
-        Dictionary<ulong, List<BoardState>> discoveredMulti =
-            new Dictionary<ulong, List<BoardState>>();
-        Dictionary<BoardState, ParentLink> cameFrom = new Dictionary<BoardState, ParentLink>();
-
-        queue.Enqueue(new QueueItem(start, startHash));
-        AddDiscovered(discoveredSingle, discoveredMulti, startHash, start);
-        cameFrom[start] = ParentLink.Root;
-        int discoveredCount = 1;
+        ulong startHash = ComputeZobristHash(ctx.zobrist, start, gridWidth);
+        ctx.queue.Enqueue(new QueueItem(start, startHash, 0));
+        AddDiscovered(ctx.discoveredSingle, ctx.discoveredMulti, startHash, start);
+        ctx.cameFrom[start] = ParentLink.Root;
+        ctx.discoveredCount = 1;
         result.discoveredStates = 1;
         result.queuePeakSize = 1;
 
         int explored = 0;
         long occTicks = 0;
         long moveTicks = 0;
-        long visitedTicks = 0;
-        long copyTicks = 0;
         long tickFreq = Stopwatch.Frequency;
 
-        while (queue.Count > 0)
+        while (ctx.queue.Count > 0)
         {
             if (explored >= maxStates)
             {
@@ -344,28 +561,50 @@ public static class RushOutSolver
                 FinishProfiling(
                     result,
                     explored,
-                    discoveredCount,
+                    ctx.discoveredCount,
                     occTicks,
                     moveTicks,
-                    visitedTicks,
-                    copyTicks,
+                    ctx.visitedTicks,
+                    ctx.copyTicks,
                     tickFreq
                 );
                 result.solvable = false;
                 return result;
             }
 
-            QueueItem currentItem = queue.Dequeue();
+            QueueItem currentItem = ctx.queue.Dequeue();
             BoardState current = currentItem.state;
             ulong currentHash = currentItem.hash;
+            int depth = currentItem.depth;
             explored++;
+
+            if (multiMode && targetMask != 0 && (current.exitedMask & targetMask) == targetMask)
+            {
+                FinishProfiling(
+                    result,
+                    explored,
+                    ctx.discoveredCount,
+                    occTicks,
+                    moveTicks,
+                    ctx.visitedTicks,
+                    ctx.copyTicks,
+                    tickFreq
+                );
+                return FinishSolution(
+                    result,
+                    ReconstructPathFromLinks(ctx.cameFrom, current, names),
+                    current,
+                    c
+                );
+            }
 
             long t0 = Stopwatch.GetTimestamp();
             BuildOccupancyFlat(
-                occupancy,
+                ctx.occupancy,
                 isHorizontal,
                 lengths,
                 current.positions,
+                current.exitedMask,
                 vehicleCount,
                 gridWidth,
                 gridHeight
@@ -373,62 +612,92 @@ public static class RushOutSolver
             result.occupancyBuildCount++;
             occTicks += Stopwatch.GetTimestamp() - t0;
 
-            if (CanTargetExit(current, targetIndex, lengths[targetIndex], exitRow, gridWidth, occupancy))
+            bool hitDiscoveredLimit = false;
+
+            if (!multiMode)
             {
-                result.solvable = true;
-                FinishProfiling(
-                    result,
-                    explored,
-                    discoveredCount,
-                    occTicks,
-                    moveTicks,
-                    visitedTicks,
-                    copyTicks,
-                    tickFreq
-                );
-                result.solution = ReconstructPath(
-                    cameFrom,
-                    current,
-                    names,
-                    targetIndex,
-                    current.positions[targetIndex]
-                );
-                result.minimumMoves = result.solution.Count;
-                return result;
+                int ti = targetIndices[0];
+                if (CanTargetExit(
+                        current,
+                        ti,
+                        lengths[ti],
+                        isHorizontal[ti],
+                        exitRow,
+                        gridWidth,
+                        ctx.occupancy,
+                        c.requireDockedExit))
+                {
+                    FinishProfiling(
+                        result,
+                        explored,
+                        ctx.discoveredCount,
+                        occTicks,
+                        moveTicks,
+                        ctx.visitedTicks,
+                        ctx.copyTicks,
+                        tickFreq
+                    );
+                    // Player-move semantics: arriving at dock (or already docked) matches
+                    // gameplay assist/exit gesture. Do NOT add a second synthetic exit move.
+                    return FinishSolution(
+                        result,
+                        BuildSingleTargetWinningPath(
+                            ctx.cameFrom,
+                            current,
+                            names,
+                            ti
+                        ),
+                        current,
+                        c
+                    );
+                }
+            }
+            else
+            {
+                for (int t = 0; t < targetIndices.Length; t++)
+                {
+                    int ti = targetIndices[t];
+                    if (current.IsExited(ti))
+                    {
+                        continue;
+                    }
+
+                    if (!CanTargetExit(
+                            current,
+                            ti,
+                            lengths[ti],
+                            isHorizontal[ti],
+                            exitRow,
+                            gridWidth,
+                            ctx.occupancy,
+                            c.requireDockedExit))
+                    {
+                        continue;
+                    }
+
+                    if (!TryEnqueueExitChild(ctx, current, currentHash, depth, ti))
+                    {
+                        hitDiscoveredLimit = true;
+                        break;
+                    }
+                }
             }
 
-            long visBefore = visitedTicks;
-            long copyBefore = copyTicks;
-            t0 = Stopwatch.GetTimestamp();
-            bool hitDiscoveredLimit = !ExpandMoves(
-                current,
-                currentHash,
-                isHorizontal,
-                lengths,
-                vehicleCount,
-                gridWidth,
-                gridHeight,
-                cellCount,
-                occupancy,
-                zobrist,
-                queue,
-                discoveredSingle,
-                discoveredMulti,
-                cameFrom,
-                result,
-                ref discoveredCount,
-                maxDiscoveredStates,
-                ref visitedTicks,
-                ref copyTicks
-            );
-            long expandElapsed = Stopwatch.GetTimestamp() - t0;
-            moveTicks += expandElapsed
-                - (visitedTicks - visBefore)
-                - (copyTicks - copyBefore);
-
-            if (queue.Count > result.queuePeakSize)
+            if (!hitDiscoveredLimit)
             {
-                result.queuePeakSize = queue.Count;
+                long visBefore = ctx.visitedTicks;
+                long copyBefore = ctx.copyTicks;
+                t0 = Stopwatch.GetTimestamp();
+                hitDiscoveredLimit = !ExpandMoves(ctx, current, currentHash, depth);
+                long expandElapsed = Stopwatch.GetTimestamp() - t0;
+                moveTicks += expandElapsed
+                    - (ctx.visitedTicks - visBefore)
+                    - (ctx.copyTicks - copyBefore);
+            }
+
+            if (ctx.queue.Count > result.queuePeakSize)
+            {
+                result.queuePeakSize = ctx.queue.Count;
             }
 
             if (hitDiscoveredLimit)
@@ -438,11 +707,11 @@ public static class RushOutSolver
                 FinishProfiling(
                     result,
                     explored,
-                    discoveredCount,
+                    ctx.discoveredCount,
                     occTicks,
                     moveTicks,
-                    visitedTicks,
-                    copyTicks,
+                    ctx.visitedTicks,
+                    ctx.copyTicks,
                     tickFreq
                 );
                 result.solvable = false;
@@ -454,14 +723,100 @@ public static class RushOutSolver
         FinishProfiling(
             result,
             explored,
-            discoveredCount,
+            ctx.discoveredCount,
             occTicks,
             moveTicks,
-            visitedTicks,
-            copyTicks,
+            ctx.visitedTicks,
+            ctx.copyTicks,
             tickFreq
         );
         return result;
+    }
+
+    /// <summary>
+    /// BFS levert de kortste PLAYER-MOVE oplossing (zelfde metric als HUD RegisterMove).
+    /// Automatic/synthetic exit markers tellen niet mee; zie CountPlayerMoves.
+    /// </summary>
+    private static SolverResult FinishSolution(
+        SolverResult result,
+        List<SolverMove> solution,
+        BoardState endState,
+        SolveConstraints constraints)
+    {
+        int playerMoves = CountPlayerMoves(solution, constraints != null && constraints.multiTarget);
+        if (constraints.maxSolutionMoves >= 0 && playerMoves > constraints.maxSolutionMoves)
+        {
+            result.solvable = false;
+            result.solution = new List<SolverMove>();
+            result.minimumMoves = 0;
+            return result;
+        }
+
+        result.solvable = true;
+        result.solution = solution ?? new List<SolverMove>();
+        result.minimumMoves = playerMoves;
+        result.fragileMovesUsed = endState.fragileUsed;
+        result.limitedMovesUsed = endState.limitedUsed;
+        return result;
+    }
+
+    /// <summary>
+    /// Counts gameplay-equivalent player moves.
+    /// Multi-target from==to exitsBoard links are zero-cost auto-exit (HUD +0).
+    /// Single-target from==to exit is the explicit exit gesture when already docked (HUD +1).
+    /// Board slides (including the slide that docks/wins) always count as 1.
+    /// </summary>
+    public static int CountPlayerMoves(List<SolverMove> solution, bool multiTarget)
+    {
+        if (solution == null || solution.Count == 0)
+        {
+            return 0;
+        }
+
+        int count = 0;
+        for (int i = 0; i < solution.Count; i++)
+        {
+            SolverMove move = solution[i];
+            if (move == null)
+            {
+                continue;
+            }
+
+            if (move.exitsBoard && move.fromPosition == move.toPosition)
+            {
+                if (multiTarget)
+                {
+                    // Zero-cost: target already docked; auto-exit does not RegisterMove again.
+                    continue;
+                }
+
+                // Single-target explicit exit-from-dock (puzzle starts docked, or only exit left).
+                count++;
+                continue;
+            }
+
+            count++;
+        }
+
+        return count;
+    }
+
+    /// <summary>
+    /// True when this solution entry should be shown/executed as a player hint action.
+    /// </summary>
+    public static bool IsPlayerHintMove(SolverMove move, bool multiTarget)
+    {
+        if (move == null)
+        {
+            return false;
+        }
+
+        if (move.exitsBoard && move.fromPosition == move.toPosition && multiTarget)
+        {
+            return false;
+        }
+
+        return true;
     }
 
     private static void FinishProfiling(
@@ -487,34 +842,28 @@ public static class RushOutSolver
     /// Returns false als discovered-limit is geraakt (solve moet stoppen).
     /// </summary>
     private static bool ExpandMoves(
+        BfsContext ctx,
         BoardState state,
         ulong stateHash,
-        bool[] isHorizontal,
-        int[] lengths,
-        int vehicleCount,
-        int gridWidth,
-        int gridHeight,
-        int cellCount,
-        int[] occupancy,
-        ulong[] zobrist,
-        Queue<QueueItem> queue,
-        Dictionary<ulong, BoardState> discoveredSingle,
-        Dictionary<ulong, List<BoardState>> discoveredMulti,
-        Dictionary<BoardState, ParentLink> cameFrom,
-        SolverResult result,
-        ref int discoveredCount,
-        int maxDiscoveredStates,
-        ref long visitedTicks,
-        ref long copyTicks)
+        int depth)
     {
         Vector2Int[] positions = state.positions;
+        int[] occupancy = ctx.occupancy;
+        int gridWidth = ctx.gridWidth;
+        int gridHeight = ctx.gridHeight;
+        int protectedIndex = ctx.constraints.protectedVehicleIndex;
 
-        for (int i = 0; i < vehicleCount; i++)
+        for (int i = 0; i < ctx.vehicleCount; i++)
         {
-            Vector2Int from = positions[i];
-            int length = lengths[i];
+            if (i == protectedIndex || state.IsExited(i))
+            {
+                continue;
+            }
 
-            if (isHorizontal[i])
+            Vector2Int from = positions[i];
+            int length = ctx.lengths[i];
+
+            if (ctx.isHorizontal[i])
             {
                 for (int steps = 1; ; steps++)
                 {
@@ -524,30 +873,20 @@ public static class RushOutSolver
                         break;
                     }
 
-                    int checkIdx = from.y * gridWidth + (from.x - steps);
+                    int checkIdx = from.y * gridWidth + newX;
                     if (occupancy[checkIdx] >= 0)
                     {
                         break;
                     }
 
                     if (!TryEnqueueChild(
+                            ctx,
                             state,
                             stateHash,
+                            depth,
                             i,
                             from,
-                            new Vector2Int(newX, from.y),
-                            gridWidth,
-                            cellCount,
-                            zobrist,
-                            queue,
-                            discoveredSingle,
-                            discoveredMulti,
-                            cameFrom,
-                            result,
-                            ref discoveredCount,
-                            maxDiscoveredStates,
-                            ref visitedTicks,
-                            ref copyTicks))
+                            new Vector2Int(newX, from.y)))
                     {
                         return false;
                     }
@@ -569,23 +908,13 @@ public static class RushOutSolver
                     }
 
                     if (!TryEnqueueChild(
+                            ctx,
                             state,
                             stateHash,
+                            depth,
                             i,
                             from,
-                            new Vector2Int(newX, from.y),
-                            gridWidth,
-                            cellCount,
-                            zobrist,
-                            queue,
-                            discoveredSingle,
-                            discoveredMulti,
-                            cameFrom,
-                            result,
-                            ref discoveredCount,
-                            maxDiscoveredStates,
-                            ref visitedTicks,
-                            ref copyTicks))
+                            new Vector2Int(newX, from.y)))
                     {
                         return false;
                     }
@@ -608,23 +937,13 @@ public static class RushOutSolver
                     }
 
                     if (!TryEnqueueChild(
+                            ctx,
                             state,
                             stateHash,
+                            depth,
                             i,
                             from,
-                            new Vector2Int(from.x, newY),
-                            gridWidth,
-                            cellCount,
-                            zobrist,
-                            queue,
-                            discoveredSingle,
-                            discoveredMulti,
-                            cameFrom,
-                            result,
-                            ref discoveredCount,
-                            maxDiscoveredStates,
-                            ref visitedTicks,
-                            ref copyTicks))
+                            new Vector2Int(from.x, newY)))
                     {
                         return false;
                     }
@@ -646,23 +965,13 @@ public static class RushOutSolver
                     }
 
                     if (!TryEnqueueChild(
+                            ctx,
                             state,
                             stateHash,
+                            depth,
                             i,
                             from,
-                            new Vector2Int(from.x, newY),
-                            gridWidth,
-                            cellCount,
-                            zobrist,
-                            queue,
-                            discoveredSingle,
-                            discoveredMulti,
-                            cameFrom,
-                            result,
-                            ref discoveredCount,
-                            maxDiscoveredStates,
-                            ref visitedTicks,
-                            ref copyTicks))
+                            new Vector2Int(from.x, newY)))
                     {
                         return false;
                     }
@@ -674,87 +983,159 @@ public static class RushOutSolver
     }
 
     /// <summary>
-    /// Returns false bij discovered-limit. Duplicate → true (doorgaan).
+    /// Returns false bij discovered-limit. Duplicate / constraint-reject → true (doorgaan).
     /// Discover-markering gebeurt hier bij enqueue, niet bij dequeue.
     /// </summary>
     private static bool TryEnqueueChild(
+        BfsContext ctx,
         BoardState state,
         ulong stateHash,
+        int depth,
         int vehicleIndex,
         Vector2Int from,
-        Vector2Int to,
-        int gridWidth,
-        int cellCount,
-        ulong[] zobrist,
-        Queue<QueueItem> queue,
-        Dictionary<ulong, BoardState> discoveredSingle,
-        Dictionary<ulong, List<BoardState>> discoveredMulti,
-        Dictionary<BoardState, ParentLink> cameFrom,
-        SolverResult result,
-        ref int discoveredCount,
-        int maxDiscoveredStates,
-        ref long visitedTicks,
-        ref long copyTicks)
+        Vector2Int to)
     {
+        SolveConstraints c = ctx.constraints;
+        SolverResult result = ctx.result;
         result.generatedMoves++;
+
+        if (!ctx.WithinMoveBudget(depth + 1))
+        {
+            return true;
+        }
+
+        if (vehicleIndex == c.fragileVehicleIndex &&
+            c.fragileVehicleIndex >= 0 &&
+            c.fragileMoveLimit >= 0 &&
+            state.fragileUsed + 1 > c.fragileMoveLimit)
+        {
+            return true;
+        }
+
+        if (vehicleIndex == c.limitedVehicleIndex &&
+            c.limitedVehicleIndex >= 0 &&
+            c.limitedMoveLimit >= 0 &&
+            state.limitedUsed + 1 > c.limitedMoveLimit)
+        {
+            return true;
+        }
+
+        long tCopy = Stopwatch.GetTimestamp();
+        BoardState next = state.WithMovedVehicle(
+            vehicleIndex,
+            to,
+            c.fragileVehicleIndex,
+            c.limitedVehicleIndex
+        );
+        ctx.copyTicks += Stopwatch.GetTimestamp() - tCopy;
+        result.childStatesCreated++;
 
         ulong childHash = HashAfterMove(
             stateHash,
-            zobrist,
+            ctx.zobrist,
             vehicleIndex,
             from,
             to,
-            gridWidth,
-            cellCount
+            ctx.gridWidth,
+            state,
+            next
         );
 
         long tVis = Stopwatch.GetTimestamp();
-        if (IsDiscoveredMatch(
-                discoveredSingle,
-                discoveredMulti,
-                childHash,
-                state,
-                vehicleIndex,
-                to))
+        bool discovered = IsDiscovered(
+            ctx.discoveredSingle,
+            ctx.discoveredMulti,
+            childHash,
+            next
+        );
+        ctx.visitedTicks += Stopwatch.GetTimestamp() - tVis;
+
+        if (discovered)
         {
-            visitedTicks += Stopwatch.GetTimestamp() - tVis;
             result.visitedPrecheckRejects++;
             return true;
         }
 
-        visitedTicks += Stopwatch.GetTimestamp() - tVis;
-
-        if (discoveredCount >= maxDiscoveredStates)
+        if (ctx.discoveredCount >= ctx.maxDiscoveredStates)
         {
             return false;
         }
 
-        long tCopy = Stopwatch.GetTimestamp();
-        BoardState next = state.WithMovedVehicle(vehicleIndex, to);
-        copyTicks += Stopwatch.GetTimestamp() - tCopy;
-        result.childStatesCreated++;
-
-        AddDiscovered(discoveredSingle, discoveredMulti, childHash, next);
-        discoveredCount++;
-        cameFrom[next] = new ParentLink(state, vehicleIndex, from, to);
-        queue.Enqueue(new QueueItem(next, childHash));
+        AddDiscovered(ctx.discoveredSingle, ctx.discoveredMulti, childHash, next);
+        ctx.discoveredCount++;
+        ctx.cameFrom[next] = new ParentLink(state, vehicleIndex, from, to, false);
+        ctx.queue.Enqueue(new QueueItem(next, childHash, depth + 1));
         result.childStatesEnqueued++;
         return true;
     }
 
-    private static bool IsDiscoveredMatch(
+    /// <summary>
+    /// Multi-target: docked target auto-exits at ZERO player-move cost (matches HUD).
+    /// Same BFS depth; path records exitsBoard from==to for reconstruction only.
+    /// </summary>
+    private static bool TryEnqueueExitChild(
+        BfsContext ctx,
+        BoardState state,
+        ulong stateHash,
+        int depth,
+        int targetIndex)
+    {
+        SolverResult result = ctx.result;
+        result.generatedMoves++;
+
+        // Zero-cost: do not consume move budget / depth.
+        if (!ctx.WithinMoveBudget(depth))
+        {
+            return true;
+        }
+
+        long tCopy = Stopwatch.GetTimestamp();
+        BoardState next = state.WithVehicleExited(targetIndex);
+        ctx.copyTicks += Stopwatch.GetTimestamp() - tCopy;
+        result.childStatesCreated++;
+
+        ulong childHash = stateHash ^ ctx.zobrist.exited[targetIndex];
+
+        long tVis = Stopwatch.GetTimestamp();
+        bool discovered = IsDiscovered(
+            ctx.discoveredSingle,
+            ctx.discoveredMulti,
+            childHash,
+            next
+        );
+        ctx.visitedTicks += Stopwatch.GetTimestamp() - tVis;
+
+        if (discovered)
+        {
+            result.visitedPrecheckRejects++;
+            return true;
+        }
+
+        if (ctx.discoveredCount >= ctx.maxDiscoveredStates)
+        {
+            return false;
+        }
+
+        Vector2Int pos = state.positions[targetIndex];
+        AddDiscovered(ctx.discoveredSingle, ctx.discoveredMulti, childHash, next);
+        ctx.discoveredCount++;
+        ctx.cameFrom[next] = new ParentLink(state, targetIndex, pos, pos, true);
+        ctx.queue.Enqueue(new QueueItem(next, childHash, depth));
+        result.childStatesEnqueued++;
+        return true;
+    }
+
+    private static bool IsDiscovered(
         Dictionary<ulong, BoardState> single,
         Dictionary<ulong, List<BoardState>> multi,
         ulong hash,
-        BoardState parent,
-        int vehicleIndex,
-        Vector2Int to)
+        BoardState candidate)
     {
         if (multi.TryGetValue(hash, out List<BoardState> list))
         {
             for (int i = 0; i < list.Count; i++)
             {
-                if (MatchesMovedState(list[i], parent, vehicleIndex, to))
+                if (candidate.Equals(list[i]))
                 {
                     return true;
                 }
@@ -765,38 +1146,10 @@ public static class RushOutSolver
 
         if (single.TryGetValue(hash, out BoardState existing))
         {
-            return MatchesMovedState(existing, parent, vehicleIndex, to);
+            return candidate.Equals(existing);
         }
 
         return false;
-    }
-
-    /// <summary>
-    /// Structurele check zonder child-array: existing == parent met vehicle op 'to'.
-    /// </summary>
-    private static bool MatchesMovedState(
-        BoardState existing,
-        BoardState parent,
-        int vehicleIndex,
-        Vector2Int to)
-    {
-        Vector2Int[] a = existing.positions;
-        Vector2Int[] b = parent.positions;
-        if (a.Length != b.Length)
-        {
-            return false;
-        }
-
-        for (int i = 0; i < a.Length; i++)
-        {
-            Vector2Int expected = i == vehicleIndex ? to : b[i];
-            if (a[i] != expected)
-            {
-                return false;
-            }
-        }
-
-        return true;
     }
 
     private static void AddDiscovered(
@@ -825,17 +1178,48 @@ public static class RushOutSolver
     // Zobrist hashing (incremental, collision-safe via structurele match)
     // -------------------------------------------------------------------------
 
-    private static ulong[] CreateZobristTable(int vehicleCount, int cellCount)
+    /// <summary>
+    /// Aparte tabellen voor posities, exit-vlaggen en de constraint-tellers, zodat
+    /// twee states met dezelfde posities maar andere constraint-historie niet botsen.
+    /// </summary>
+    private sealed class ZobristTables
     {
-        // Deterministische PRNG — zelfde seed → zelfde hashes tussen runs.
-        ulong seed = 0xC0FFEE5EEDUL;
-        ulong[] table = new ulong[vehicleCount * cellCount];
-        for (int i = 0; i < table.Length; i++)
-        {
-            table[i] = SplitMix64(ref seed);
-        }
+        public readonly ulong[] cells;
+        public readonly ulong[] exited;
+        public readonly ulong[] fragile;
+        public readonly ulong[] limited;
+        public readonly int cellCount;
 
-        return table;
+        public ZobristTables(int vehicleCount, int cellCount)
+        {
+            this.cellCount = cellCount;
+
+            // Deterministische PRNG — zelfde seed → zelfde hashes tussen runs.
+            ulong seed = 0xC0FFEE5EEDUL;
+            cells = new ulong[Mathf.Max(1, vehicleCount * cellCount)];
+            for (int i = 0; i < cells.Length; i++)
+            {
+                cells[i] = SplitMix64(ref seed);
+            }
+
+            exited = new ulong[Mathf.Max(1, vehicleCount)];
+            for (int i = 0; i < exited.Length; i++)
+            {
+                exited[i] = SplitMix64(ref seed);
+            }
+
+            fragile = new ulong[CounterStates];
+            limited = new ulong[CounterStates];
+            for (int i = 0; i < CounterStates; i++)
+            {
+                fragile[i] = SplitMix64(ref seed);
+            }
+
+            for (int i = 0; i < CounterStates; i++)
+            {
+                limited[i] = SplitMix64(ref seed);
+            }
+        }
     }
 
     private static ulong SplitMix64(ref ulong state)
@@ -851,44 +1235,112 @@ public static class RushOutSolver
     }
 
     private static ulong ComputeZobristHash(
-        ulong[] zobrist,
-        Vector2Int[] positions,
-        int gridWidth,
-        int cellCount)
+        ZobristTables zobrist,
+        BoardState state,
+        int gridWidth)
     {
         ulong hash = 0;
+        Vector2Int[] positions = state.positions;
+        int cellCount = zobrist.cellCount;
+
         for (int i = 0; i < positions.Length; i++)
         {
             int cell = positions[i].y * gridWidth + positions[i].x;
-            hash ^= zobrist[i * cellCount + cell];
+            if (cell >= 0 && cell < cellCount)
+            {
+                hash ^= zobrist.cells[i * cellCount + cell];
+            }
+
+            if (state.IsExited(i) && i < zobrist.exited.Length)
+            {
+                hash ^= zobrist.exited[i];
+            }
         }
 
+        hash ^= zobrist.fragile[state.fragileUsed];
+        hash ^= zobrist.limited[state.limitedUsed];
         return hash;
     }
 
     private static ulong HashAfterMove(
         ulong parentHash,
-        ulong[] zobrist,
+        ZobristTables zobrist,
         int vehicleIndex,
         Vector2Int from,
         Vector2Int to,
         int gridWidth,
-        int cellCount)
+        BoardState parent,
+        BoardState child)
     {
+        int cellCount = zobrist.cellCount;
         int baseIndex = vehicleIndex * cellCount;
         int oldCell = from.y * gridWidth + from.x;
         int newCell = to.y * gridWidth + to.x;
-        return parentHash
-            ^ zobrist[baseIndex + oldCell]
-            ^ zobrist[baseIndex + newCell];
+
+        ulong hash = parentHash
+            ^ zobrist.cells[baseIndex + oldCell]
+            ^ zobrist.cells[baseIndex + newCell];
+
+        if (child.fragileUsed != parent.fragileUsed)
+        {
+            hash ^= zobrist.fragile[parent.fragileUsed] ^ zobrist.fragile[child.fragileUsed];
+        }
+
+        if (child.limitedUsed != parent.limitedUsed)
+        {
+            hash ^= zobrist.limited[parent.limitedUsed] ^ zobrist.limited[child.limitedUsed];
+        }
+
+        return hash;
     }
 
+    /// <summary>
+    /// Single-target winning path in PLAYER MOVES.
+    /// Board path to docked target — no synthetic extra exit.
+    /// If already docked at start (empty path), one explicit exit gesture.
+    /// </summary>
+    private static List<SolverMove> BuildSingleTargetWinningPath(
+        Dictionary<BoardState, ParentLink> cameFrom,
+        BoardState endState,
+        string[] names,
+        int targetIndex)
+    {
+        List<SolverMove> path = ReconstructPathFromLinks(cameFrom, endState, names);
+        if (path.Count == 0)
+        {
+            Vector2Int pos = endState.positions[targetIndex];
+            path.Add(new SolverMove(
+                targetIndex,
+                names[targetIndex],
+                pos,
+                pos,
+                exitsBoard: true
+            ));
+        }
+
+        return path;
+    }
+
+    /// <summary>
+    /// Legacy helper — prefer BuildSingleTargetWinningPath for player-move semantics.
+    /// </summary>
     private static List<SolverMove> ReconstructPath(
         Dictionary<BoardState, ParentLink> cameFrom,
         BoardState endState,
         string[] names,
         int targetIndex,
         Vector2Int targetPos)
+    {
+        return BuildSingleTargetWinningPath(cameFrom, endState, names, targetIndex);
+    }
+
+    /// <summary>
+    /// Loopt de ParentLink-keten terug; exit-links worden als exitsBoard-move uitgegeven.
+    /// </summary>
+    private static List<SolverMove> ReconstructPathFromLinks(
+        Dictionary<BoardState, ParentLink> cameFrom,
+        BoardState endState,
+        string[] names)
     {
         List<SolverMove> path = new List<SolverMove>();
         BoardState cursor = endState;
@@ -900,19 +1352,12 @@ public static class RushOutSolver
                 names[link.vehicleIndex],
                 link.from,
                 link.to,
-                exitsBoard: false
+                link.exitsBoard
             ));
             cursor = link.parent;
         }
 
         path.Reverse();
-        path.Add(new SolverMove(
-            targetIndex,
-            names[targetIndex],
-            targetPos,
-            targetPos,
-            exitsBoard: true
-        ));
         return path;
     }
 
@@ -925,6 +1370,7 @@ public static class RushOutSolver
         bool[] isHorizontal,
         int[] lengths,
         Vector2Int[] positions,
+        int exitedMask,
         int vehicleCount,
         int gridWidth,
         int gridHeight)
@@ -936,6 +1382,11 @@ public static class RushOutSolver
 
         for (int i = 0; i < vehicleCount; i++)
         {
+            if (i < MaxTrackedVehicles && (exitedMask & (1 << i)) != 0)
+            {
+                continue;
+            }
+
             Vector2Int pos = positions[i];
             int length = lengths[i];
 
@@ -965,18 +1416,39 @@ public static class RushOutSolver
         }
     }
 
+    /// <summary>
+    /// requireDocked = gameplay-regel (VehicleController.CanPerformExitRight): horizontaal,
+    /// op exitRow en volledig tegen de rechterrand. Anders de oude "vrij pad naar rechts"-regel.
+    /// </summary>
     private static bool CanTargetExit(
         BoardState state,
         int targetIndex,
         int targetLength,
+        bool targetIsHorizontal,
         int exitRow,
         int gridWidth,
-        int[] occupancy)
+        int[] occupancy,
+        bool requireDocked)
     {
+        if (state.IsExited(targetIndex))
+        {
+            return false;
+        }
+
         Vector2Int pos = state.positions[targetIndex];
         if (pos.y != exitRow)
         {
             return false;
+        }
+
+        if (requireDocked)
+        {
+            if (!targetIsHorizontal)
+            {
+                return false;
+            }
+
+            return pos.x == gridWidth - targetLength;
         }
 
         int rightMost = pos.x + targetLength - 1;
@@ -1014,7 +1486,7 @@ public static class RushOutSolver
     {
         for (int i = 0; i < vehicles.Count; i++)
         {
-            if (vehicles[i].canExitRight)
+            if (vehicles[i] != null && vehicles[i].canExitRight)
             {
                 return i;
             }
@@ -1027,15 +1499,49 @@ public static class RushOutSolver
     // Interne BFS-helpers
     // -------------------------------------------------------------------------
 
+    private sealed class BfsContext
+    {
+        public bool[] isHorizontal;
+        public int[] lengths;
+        public string[] names;
+        public int vehicleCount;
+        public int gridWidth;
+        public int gridHeight;
+        public int cellCount;
+        public int[] occupancy;
+        public ZobristTables zobrist;
+        public Queue<QueueItem> queue;
+        public Dictionary<ulong, BoardState> discoveredSingle;
+        public Dictionary<ulong, List<BoardState>> discoveredMulti;
+        public Dictionary<BoardState, ParentLink> cameFrom;
+        public SolverResult result;
+        public SolveConstraints constraints;
+        public int discoveredCount;
+        public int maxDiscoveredStates;
+        public long visitedTicks;
+        public long copyTicks;
+
+        /// <summary>Extra moves die na een state minimaal nog nodig zijn (single target: de exit).</summary>
+        public int minRemainingMoves;
+
+        public bool WithinMoveBudget(int childDepth)
+        {
+            int max = constraints.maxSolutionMoves;
+            return max < 0 || childDepth + minRemainingMoves <= max;
+        }
+    }
+
     private readonly struct QueueItem
     {
         public readonly BoardState state;
         public readonly ulong hash;
+        public readonly int depth;
 
-        public QueueItem(BoardState state, ulong hash)
+        public QueueItem(BoardState state, ulong hash, int depth)
         {
             this.state = state;
             this.hash = hash;
+            this.depth = depth;
         }
     }
 
@@ -1045,15 +1551,23 @@ public static class RushOutSolver
         public readonly int vehicleIndex;
         public readonly Vector2Int from;
         public readonly Vector2Int to;
+        public readonly bool exitsBoard;
 
-        public static readonly ParentLink Root = new ParentLink(null, -1, default, default);
+        public static readonly ParentLink Root =
+            new ParentLink(null, -1, default, default, false);
 
-        public ParentLink(BoardState parent, int vehicleIndex, Vector2Int from, Vector2Int to)
+        public ParentLink(
+            BoardState parent,
+            int vehicleIndex,
+            Vector2Int from,
+            Vector2Int to,
+            bool exitsBoard)
         {
             this.parent = parent;
             this.vehicleIndex = vehicleIndex;
             this.from = from;
             this.to = to;
+            this.exitsBoard = exitsBoard;
         }
     }
 }

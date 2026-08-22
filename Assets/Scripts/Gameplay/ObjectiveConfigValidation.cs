@@ -128,6 +128,13 @@ public static class ObjectiveConfigValidation
             "Missing=" + missing + "\n" +
             "Fallback=Classic"
         );
+
+        FirebaseManager.ReportNonFatal(
+            "InvalidObjectiveConfig asset=" + asset +
+            " objective=" + objective +
+            " missing=" + missing +
+            " dbIndex=" + databaseIndex
+        );
     }
 
     private static int CountExitTargets(LevelData levelData)

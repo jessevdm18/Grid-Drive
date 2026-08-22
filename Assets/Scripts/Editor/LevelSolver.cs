@@ -553,6 +553,8 @@ public static class LevelSolver
 
     /// <summary>
     /// Schrijft solver-resultaat terug naar LevelData en markeert dirty.
+    /// Never writes minimumMoves=-1 over a previously valid value on timeout/unsolvable
+    /// (avoids corrupting PAR / Easy#1 ordering). Only successful solves update minMoves.
     /// </summary>
     public static void ApplyMetadata(LevelData levelData, SolverResult result)
     {
@@ -562,15 +564,23 @@ public static class LevelSolver
         }
 
         int vehicleCount = levelData.vehicles != null ? levelData.vehicles.Count : 0;
+        int previousMinMoves = levelData.minimumMoves;
 
         if (result.invalid)
         {
-            levelData.minimumMoves = -1;
+            // Layout/config invalid — do not invent a par; keep previous if valid.
+            if (!LevelMinMoves.IsValid(previousMinMoves))
+            {
+                levelData.minimumMoves = -1;
+            }
+
             levelData.statesExplored = 0;
             levelData.difficultyScore = -1;
             result.difficultyScore = -1;
         }
-        else if (result.solvable && !result.searchLimitReached)
+        else if (result.solvable &&
+                 !result.searchLimitReached &&
+                 LevelMinMoves.IsValid(result.minimumMoves))
         {
             levelData.minimumMoves = result.minimumMoves;
             levelData.statesExplored = result.statesExplored;
@@ -583,11 +593,22 @@ public static class LevelSolver
         }
         else
         {
-            // Onoplosbaar of search limit.
-            levelData.minimumMoves = -1;
+            // Unsolvable or search limit / zero-length solution: preserve existing PAR.
             levelData.statesExplored = result.statesExplored;
-            levelData.difficultyScore = -1;
-            result.difficultyScore = -1;
+            if (!LevelMinMoves.IsValid(previousMinMoves))
+            {
+                levelData.minimumMoves = -1;
+                levelData.difficultyScore = -1;
+            }
+
+            result.difficultyScore = levelData.difficultyScore;
+            Debug.LogWarning(
+                "LevelSolver.ApplyMetadata: did not overwrite minimumMoves for " +
+                levelData.name + " (solvable=" + result.solvable +
+                ", searchLimit=" + result.searchLimitReached +
+                ", resultMoves=" + result.minimumMoves +
+                ", kept=" + levelData.minimumMoves + ")."
+            );
         }
 
         EditorUtility.SetDirty(levelData);
@@ -851,10 +872,17 @@ public static class LevelSolver
             }
         }
 
-        if (targetCount != 1)
+        if (targetCount < 1)
         {
-            return "precies één voertuig moet canExitRight=true hebben (nu: " +
+            return "minstens één voertuig moet canExitRight=true hebben (nu: " +
                    targetCount + ").";
+        }
+
+        if (levelData.objectiveType != LevelObjectiveType.MultiTargetRescue &&
+            targetCount != 1)
+        {
+            return "Classic/special (niet MultiTarget): precies één canExitRight " +
+                   "(nu: " + targetCount + ").";
         }
 
         return null;

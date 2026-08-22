@@ -142,8 +142,8 @@ MonoBehaviour:
     isLimitedVehicle: 0
     vehicleSprite: {fileID: 0}
   minimumMoves: 12
-  statesExplored: 25346
-  difficultyScore: 1550
+  statesExplored: 72785
+  difficultyScore: 1573
   solutionComplexityScore: 0
   uniqueVehiclesInSolution: 9
   axisAlternations: 0

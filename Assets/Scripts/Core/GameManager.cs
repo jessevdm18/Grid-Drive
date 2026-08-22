@@ -193,6 +193,11 @@ public class GameManager : MonoBehaviour
         currentMoves++;
         Debug.Log("Move registered. Total moves: " + currentMoves);
 
+        if (hintManager != null)
+        {
+            hintManager.NotifyPlayerMove();
+        }
+
         if (gameplayUI != null)
         {
             gameplayUI.UpdateMovesText(currentMoves);
@@ -333,6 +338,8 @@ public class GameManager : MonoBehaviour
             ". Stars = " + LastEarnedStars
         );
 
+        ReportLevelCompleteTelemetry(parMoves);
+
         LastThreeStarCoinRewardGranted = false;
         LastEarnedCoins = 0;
         coinsFeatureTutorialTriggerPending = false;
@@ -391,6 +398,7 @@ public class GameManager : MonoBehaviour
                     if (coinManager != null)
                     {
                         coinManager.AddCoins(LastEarnedCoins);
+                        GameAnalytics.LogCoinReward(LastEarnedCoins, "three_star");
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
                         Debug.Log(
                             "[CoinsFT]\n" +
@@ -452,17 +460,21 @@ public class GameManager : MonoBehaviour
                         progressionConfig
                     );
 
-                    if (!hardUnlockedBefore &&
-                        hardUnlockedAfter &&
-                        !DifficultyUnlockNoticePrefs.HasSeenHard())
+                    if (!hardUnlockedBefore && hardUnlockedAfter)
                     {
-                        PendingDifficultyUnlockNotice = LevelDifficulty.Hard;
+                        GameAnalytics.LogDifficultyUnlocked(LevelDifficulty.Hard.ToString());
+                        if (!DifficultyUnlockNoticePrefs.HasSeenHard())
+                        {
+                            PendingDifficultyUnlockNotice = LevelDifficulty.Hard;
+                        }
                     }
-                    else if (!mediumUnlockedBefore &&
-                             mediumUnlockedAfter &&
-                             !DifficultyUnlockNoticePrefs.HasSeenMedium())
+                    else if (!mediumUnlockedBefore && mediumUnlockedAfter)
                     {
-                        PendingDifficultyUnlockNotice = LevelDifficulty.Medium;
+                        GameAnalytics.LogDifficultyUnlocked(LevelDifficulty.Medium.ToString());
+                        if (!DifficultyUnlockNoticePrefs.HasSeenMedium())
+                        {
+                            PendingDifficultyUnlockNotice = LevelDifficulty.Medium;
+                        }
                     }
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
@@ -511,7 +523,7 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// Special mission failed: geen win, unlock, stars of reward.
     /// </summary>
-    public void FailLevel()
+    public void FailLevel(string failReason = "mission_failed")
     {
         if (levelCompleted || levelFailed || targetExitInProgress)
         {
@@ -527,7 +539,67 @@ public class GameManager : MonoBehaviour
 
         ClearUndoHistory();
 
+        ReportLevelFailTelemetry(failReason);
+
         Debug.Log("LEVEL FAILED (special mission).");
+    }
+
+    private void ReportLevelCompleteTelemetry(int parMoves)
+    {
+        if (levelManager == null)
+        {
+            return;
+        }
+
+        LevelData data = levelManager.CurrentLevelData;
+        string difficulty = data != null
+            ? data.difficulty.ToString()
+            : levelManager.CurrentDifficulty.ToString();
+        string objective = data != null
+            ? data.objectiveType.ToString()
+            : "unknown";
+        string asset = data != null ? data.name : null;
+
+        GameAnalytics.LogLevelComplete(
+            levelManager.GetDisplayLevelNumber(),
+            difficulty,
+            objective,
+            currentMoves,
+            parMoves,
+            LastEarnedStars,
+            asset
+        );
+    }
+
+    private void ReportLevelFailTelemetry(string failReason)
+    {
+        if (levelManager == null)
+        {
+            return;
+        }
+
+        LevelData data = levelManager.CurrentLevelData;
+        string difficulty = data != null
+            ? data.difficulty.ToString()
+            : levelManager.CurrentDifficulty.ToString();
+        string objective = data != null
+            ? data.objectiveType.ToString()
+            : "unknown";
+        int display = levelManager.GetDisplayLevelNumber();
+
+        GameAnalytics.LogLevelFail(
+            display,
+            difficulty,
+            objective,
+            failReason,
+            currentMoves
+        );
+        GameAnalytics.LogObjectiveFailed(
+            display,
+            difficulty,
+            objective,
+            failReason
+        );
     }
 
     private void ClearUndoHistory()
@@ -542,28 +614,14 @@ public class GameManager : MonoBehaviour
 
     /// <summary>
     /// 3★ ≤ par, 2★ ≤ par+2, anders 1★.
+    /// Uses LevelMinMoves — never treats stored -1 as PAR.
     /// </summary>
     private int CalculateStars(out int parMoves)
     {
-        parMoves = 0;
-
         LevelData levelData = levelManager != null ? levelManager.CurrentLevelData : null;
-        if (levelData != null)
-        {
-            parMoves = levelData.minimumMoves;
-        }
-
-        if (currentMoves <= parMoves)
-        {
-            return 3;
-        }
-
-        if (currentMoves <= parMoves + 2)
-        {
-            return 2;
-        }
-
-        return 1;
+        int dbIndex = levelManager != null ? levelManager.CurrentLevelIndex : -1;
+        LevelMinMoves.LogInvalidIfNeeded(levelData, dbIndex, "CompleteLevel/CalculateStars");
+        return LevelMinMoves.CalculateStars(currentMoves, levelData, out parMoves);
     }
 
     /// <summary>

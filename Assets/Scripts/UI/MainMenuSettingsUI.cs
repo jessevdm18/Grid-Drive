@@ -2,8 +2,8 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// Klein settingspanel op het MainMenu voor Music/Sound toggles.
-/// Gebruikt de bestaande AudioManager + PlayerPrefs (geen tweede manager).
+/// Klein settingspanel op het MainMenu voor Music/Sound + Analytics toggles.
+/// Gebruikt de bestaande AudioManager + PrivacyConsentManager (geen tweede manager).
 /// </summary>
 public class MainMenuSettingsUI : MonoBehaviour
 {
@@ -20,6 +20,10 @@ public class MainMenuSettingsUI : MonoBehaviour
     [SerializeField] private Sprite soundOnSprite;
     [SerializeField] private Sprite soundOffSprite;
 
+    [Header("Analytics (optional Inspector wire)")]
+    [Tooltip("Label in UI: SHARE ANONYMOUS USAGE DATA")]
+    [SerializeField] private Toggle analyticsToggle;
+
     private void Awake()
     {
         if (audioManager == null)
@@ -32,10 +36,23 @@ public class MainMenuSettingsUI : MonoBehaviour
         {
             settingsPanel.SetActive(false);
         }
+
+        if (analyticsToggle != null)
+        {
+            analyticsToggle.onValueChanged.AddListener(OnAnalyticsToggleChanged);
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (analyticsToggle != null)
+        {
+            analyticsToggle.onValueChanged.RemoveListener(OnAnalyticsToggleChanged);
+        }
     }
 
     /// <summary>
-    /// SettingsButton OnClick: opent het panel met actuele audio-state.
+    /// SettingsButton OnClick: opent het panel met actuele audio/analytics-state.
     /// </summary>
     public void OpenSettings()
     {
@@ -53,6 +70,7 @@ public class MainMenuSettingsUI : MonoBehaviour
         settingsPanel.SetActive(true);
         audioManager?.PlayPanelOpen();
         UpdateIcons();
+        SyncAnalyticsToggleFromPreference();
     }
 
     /// <summary>
@@ -73,6 +91,16 @@ public class MainMenuSettingsUI : MonoBehaviour
 
         settingsPanel.SetActive(false);
         audioManager?.PlayPanelClose();
+    }
+
+    /// <summary>
+    /// Optional Privacy options button OnClick.
+    /// Wire in the Inspector when needed — no scene YAML edits from code.
+    /// Safe no-op when UMP does not require privacy options.
+    /// </summary>
+    public void OnPrivacyOptionsButton()
+    {
+        PrivacyConsentManager.ShowPrivacyOptions();
     }
 
     /// <summary>
@@ -103,6 +131,22 @@ public class MainMenuSettingsUI : MonoBehaviour
 
         audioManager.ToggleSfx();
         UpdateIcons();
+    }
+
+    private void SyncAnalyticsToggleFromPreference()
+    {
+        if (analyticsToggle == null)
+        {
+            return;
+        }
+
+        analyticsToggle.SetIsOnWithoutNotify(PrivacyConsentManager.AnalyticsEnabled);
+    }
+
+    private void OnAnalyticsToggleChanged(bool enabled)
+    {
+        // Direct preference change — does NOT reopen AnalyticsConsentPopup.
+        PrivacyConsentManager.SetAnalyticsEnabled(enabled);
     }
 
     private void UpdateIcons()

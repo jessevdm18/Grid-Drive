@@ -882,7 +882,7 @@ public class LevelObjectiveController : MonoBehaviour
 
         if (gameManager != null)
         {
-            gameManager.FailLevel();
+            gameManager.FailLevel("timed_out");
         }
 
         OnTimedMissionFailed?.Invoke();
@@ -899,7 +899,7 @@ public class LevelObjectiveController : MonoBehaviour
 
         if (gameManager != null)
         {
-            gameManager.FailLevel();
+            gameManager.FailLevel("move_limit");
         }
 
         OnMoveLimitMissionFailed?.Invoke();
@@ -917,7 +917,7 @@ public class LevelObjectiveController : MonoBehaviour
 
         if (gameManager != null)
         {
-            gameManager.FailLevel();
+            gameManager.FailLevel("no_touch");
         }
 
         OnNoTouchMissionFailed?.Invoke();
@@ -934,7 +934,7 @@ public class LevelObjectiveController : MonoBehaviour
 
         if (gameManager != null)
         {
-            gameManager.FailLevel();
+            gameManager.FailLevel("fragile_cargo");
         }
 
         OnFragileCargoMissionFailed?.Invoke();

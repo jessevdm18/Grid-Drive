@@ -11,8 +11,8 @@ using UnityEngine;
 public class LevelContentPlannerWindow : EditorWindow
 {
     private const string DatabaseFilter = "MainLevelDatabase t:LevelDatabase";
-    private const float MinWidth = 1000f;
-    private const float MinHeight = 650f;
+    private const float MinWidth = 520f;
+    private const float MinHeight = 400f;
 
     private enum DifficultyFilter
     {
@@ -55,6 +55,17 @@ public class LevelContentPlannerWindow : EditorWindow
         ManualKeep = 6,
         Maybe = 7,
         Unreviewed = 8
+    }
+
+    private enum PlayabilityFilter
+    {
+        All = 0,
+        Valid = 1,
+        Invalid = 2,
+        Timeout = 3,
+        Unsolvable = 4,
+        ObjectiveInvalid = 5,
+        ConfigInvalid = 6
     }
 
     private sealed class RowState
@@ -129,9 +140,15 @@ public class LevelContentPlannerWindow : EditorWindow
     private readonly List<RowState> rows = new List<RowState>();
     private readonly Dictionary<int, SuitabilityScores> suitabilityByDbIndex =
         new Dictionary<int, SuitabilityScores>();
+    private readonly Dictionary<int, ProductionLevelPlayability.Report> playabilityByDbIndex =
+        new Dictionary<int, ProductionLevelPlayability.Report>();
+    private readonly Dictionary<int, ProductionLevelPlayability.DeepTimeoutResult> deepTimeoutByDbIndex =
+        new Dictionary<int, ProductionLevelPlayability.DeepTimeoutResult>();
+    private readonly Dictionary<int, bool> hintPathPassByDbIndex = new Dictionary<int, bool>();
+    private PlayabilityFilter playabilityFilter = PlayabilityFilter.All;
 
-    private Vector2 tableScroll;
-    private Vector2 summaryScroll;
+    private Vector2 mainScrollPosition;
+    private Vector2 tableHorizontalScroll;
 
     private DifficultyFilter difficultyFilter = DifficultyFilter.All;
     private ObjectiveFilter objectiveFilter = ObjectiveFilter.All;
@@ -209,6 +226,10 @@ public class LevelContentPlannerWindow : EditorWindow
             return;
         }
 
+        // One vertical root scroll for the full planner (toolbar + levels + side panel + footer).
+        // Levels table uses a height-locked scroll so nested vertical scrolls do not fight.
+        mainScrollPosition = EditorGUILayout.BeginScrollView(mainScrollPosition);
+
         DrawHeader();
         EditorGUILayout.Space(4f);
         DrawCurationToolbar();
@@ -227,6 +248,8 @@ public class LevelContentPlannerWindow : EditorWindow
 
         EditorGUILayout.Space(4f);
         DrawFooter();
+
+        EditorGUILayout.EndScrollView();
     }
 
     private void DrawHeader()
@@ -302,14 +325,6 @@ public class LevelContentPlannerWindow : EditorWindow
             EditorUtility.DisplayDialog("Replace Rejected", TrimDialog(report), "OK");
         }
 
-        if (GUILayout.Button("Apply Final Set → DB", GUILayout.Height(28f)))
-        {
-            string report = V1AutoCurator.ApplyFinalToMainLevelDatabase();
-            curationViewFilter = CurationViewFilter.MainDatabase;
-            ReloadFromDatabase();
-            EditorUtility.DisplayDialog("Apply Final Set", TrimDialog(report), "OK");
-        }
-
         EditorGUILayout.EndHorizontal();
 
         EditorGUILayout.BeginHorizontal();
@@ -337,6 +352,19 @@ public class LevelContentPlannerWindow : EditorWindow
         }
 
         EditorGUILayout.EndHorizontal();
+
+        EditorGUILayout.Space(4f);
+        EditorGUILayout.LabelField("DANGEROUS — DATABASE WRITE", EditorStyles.boldLabel);
+        GUI.backgroundColor = new Color(0.95f, 0.7f, 0.45f);
+        if (GUILayout.Button("APPLY FINAL SET → DB", GUILayout.Height(28f)))
+        {
+            string report = V1AutoCurator.ApplyFinalToMainLevelDatabase();
+            curationViewFilter = CurationViewFilter.MainDatabase;
+            ReloadFromDatabase();
+            EditorUtility.DisplayDialog("Apply Final Set", TrimDialog(report), "OK");
+        }
+
+        GUI.backgroundColor = Color.white;
         EditorGUILayout.EndVertical();
     }
 
@@ -352,9 +380,14 @@ public class LevelContentPlannerWindow : EditorWindow
 
     private void DrawToolbar()
     {
-        EditorGUILayout.BeginHorizontal();
+        // CHANGES / APPLY first — always visible above filters, never clipped off the right.
+        DrawChangesApplySection();
+        EditorGUILayout.Space(4f);
 
-        if (GUILayout.Button("Reload Database", GUILayout.Height(26f), GUILayout.Width(140f)))
+        EditorGUILayout.BeginVertical("box");
+        EditorGUILayout.LabelField("DATABASE / ANALYSIS", EditorStyles.boldLabel);
+        EditorGUILayout.BeginHorizontal();
+        if (GUILayout.Button("Reload Database", GUILayout.Height(24f)))
         {
             if (CountDirtyRows() > 0)
             {
@@ -364,77 +397,143 @@ public class LevelContentPlannerWindow : EditorWindow
                     "Reload",
                     "Cancel"
                 );
-                if (!ok)
+                if (ok)
                 {
-                    EditorGUILayout.EndHorizontal();
-                    return;
+                    curationViewFilter = CurationViewFilter.MainDatabase;
+                    ReloadFromDatabase();
                 }
             }
-
-            curationViewFilter = CurationViewFilter.MainDatabase;
-            ReloadFromDatabase();
+            else
+            {
+                curationViewFilter = CurationViewFilter.MainDatabase;
+                ReloadFromDatabase();
+            }
         }
 
-        if (GUILayout.Button("Analyze Suitability", GUILayout.Height(26f), GUILayout.Width(160f)))
+        if (GUILayout.Button("Analyze Suitability", GUILayout.Height(24f)))
         {
             RunSuitabilityAnalyze();
         }
 
+        if (GUILayout.Button("Validate All Playable Levels", GUILayout.Height(24f)))
+        {
+            RunPlayabilityValidation();
+        }
+
+        EditorGUILayout.EndHorizontal();
+
+        EditorGUILayout.BeginHorizontal();
+        if (GUILayout.Button("Deep Validate Timeouts", GUILayout.Height(24f)))
+        {
+            RunDeepValidateTimeouts();
+        }
+
+        if (GUILayout.Button("Verify Hint Paths", GUILayout.Height(24f)))
+        {
+            RunHintPathVerification();
+        }
+
+        EditorGUILayout.EndHorizontal();
+        EditorGUILayout.EndVertical();
+        EditorGUILayout.Space(2f);
+
+        EditorGUILayout.BeginVertical("box");
+        EditorGUILayout.LabelField("LEVEL DATA", EditorStyles.boldLabel);
+        EditorGUILayout.BeginHorizontal();
+        if (GUILayout.Button("Recalculate Min Moves", GUILayout.Height(24f)))
+        {
+            ProductionLevelPlayability.MenuRecalculateMinMoves();
+        }
+
+        if (GUILayout.Button("Auto Classify Difficulty", GUILayout.Height(24f)))
+        {
+            AutoClassifyDifficultyByMinMoves();
+        }
+
+        EditorGUILayout.EndHorizontal();
+        EditorGUILayout.LabelField(
+            "Planned difficulty only — " + LevelMinMovesDifficulty.RangesSummary,
+            EditorStyles.miniLabel
+        );
+        EditorGUILayout.EndVertical();
+        EditorGUILayout.Space(2f);
+
+        EditorGUILayout.BeginVertical("box");
+        EditorGUILayout.LabelField("SPECIALS", EditorStyles.boldLabel);
+        EditorGUILayout.BeginHorizontal();
         GUI.enabled = suitabilityByDbIndex.Count > 0;
-        if (GUILayout.Button("Auto Suggest Specials", GUILayout.Height(26f), GUILayout.Width(170f)))
+        if (GUILayout.Button("Auto Suggest Specials", GUILayout.Height(24f)))
         {
             AutoSuggestSpecials();
         }
 
         GUI.enabled = true;
-        if (GUILayout.Button("AUTO TUNE SPECIAL PARAMETERS", GUILayout.Height(26f), GUILayout.Width(230f)))
+        if (GUILayout.Button("Auto Tune Special Parameters", GUILayout.Height(24f)))
         {
             AutoTuneSpecialParameters();
         }
 
-        if (GUILayout.Button("Special Progression Report", GUILayout.Height(26f), GUILayout.Width(190f)))
+        EditorGUILayout.EndHorizontal();
+
+        EditorGUILayout.BeginHorizontal();
+        if (GUILayout.Button("Special Progression Report", GUILayout.Height(24f)))
         {
             LogSpecialProgressionReport();
         }
 
-        if (GUILayout.Button("Reset Special Difficulty Defaults", GUILayout.Height(26f), GUILayout.Width(220f)))
+        if (GUILayout.Button("Reset Special Difficulty Defaults", GUILayout.Height(24f)))
         {
             SpecialObjectiveDifficultyConfig.MenuResetDefaults();
         }
 
-        GUILayout.FlexibleSpace();
+        EditorGUILayout.EndHorizontal();
+        EditorGUILayout.EndVertical();
+    }
 
-        if (GUILayout.Button("Revert Planned", GUILayout.Height(26f), GUILayout.Width(130f)))
+    private void DrawChangesApplySection()
+    {
+        int dirty = CountDirtyRows();
+
+        EditorGUILayout.BeginVertical("box");
+        EditorGUILayout.LabelField("CHANGES", EditorStyles.boldLabel);
+        EditorGUILayout.LabelField(
+            dirty + " planned change(s)",
+            dirty > 0 ? EditorStyles.boldLabel : EditorStyles.miniLabel
+        );
+
+        EditorGUILayout.BeginHorizontal();
+        if (GUILayout.Button("Revert Planned", GUILayout.Height(28f)))
         {
             RevertPlannedChanges();
         }
 
-        GUI.enabled = CountDirtyRows() > 0;
+        GUI.enabled = dirty > 0;
         GUI.backgroundColor = new Color(0.55f, 0.9f, 0.55f);
-        if (GUILayout.Button("APPLY PLANNED ASSIGNMENTS", GUILayout.Height(26f), GUILayout.Width(220f)))
+        if (GUILayout.Button("APPLY PLANNED ASSIGNMENTS", GUILayout.Height(28f)))
         {
             TryApplyPlannedAssignments();
         }
 
         GUI.backgroundColor = Color.white;
         GUI.enabled = true;
-
         EditorGUILayout.EndHorizontal();
 
-        EditorGUILayout.BeginHorizontal();
-        if (GUILayout.Button(
-                "AUTO CLASSIFY DIFFICULTY BY MIN MOVES",
-                GUILayout.Height(24f),
-                GUILayout.Width(300f)))
+        if (dirty == 0)
         {
-            AutoClassifyDifficultyByMinMoves();
+            EditorGUILayout.LabelField(
+                "Apply disabled — no planned changes.",
+                EditorStyles.miniLabel
+            );
+        }
+        else
+        {
+            EditorGUILayout.HelpBox(
+                "Apply writes Difficulty / Objective / special limits to LevelData assets.",
+                MessageType.Warning
+            );
         }
 
-        EditorGUILayout.LabelField(
-            "Planned difficulty only — " + LevelMinMovesDifficulty.RangesSummary,
-            EditorStyles.miniLabel
-        );
-        EditorGUILayout.EndHorizontal();
+        EditorGUILayout.EndVertical();
     }
 
     private void DrawFiltersAndSort()
@@ -471,6 +570,18 @@ public class LevelContentPlannerWindow : EditorWindow
             GUILayout.Width(320f)
         );
         EditorGUILayout.EndHorizontal();
+
+        playabilityFilter = (PlayabilityFilter)EditorGUILayout.EnumPopup(
+            "Playability",
+            playabilityFilter
+        );
+        if (playabilityByDbIndex.Count == 0 && playabilityFilter != PlayabilityFilter.All)
+        {
+            EditorGUILayout.HelpBox(
+                "Run VALIDATE ALL PLAYABLE LEVELS to populate playability statuses.",
+                MessageType.Info
+            );
+        }
 
         EditorGUILayout.BeginHorizontal();
         if (gridSizeLabels.Count > 0)
@@ -546,19 +657,19 @@ public class LevelContentPlannerWindow : EditorWindow
 
         if (curationViewFilter == CurationViewFilter.MainDatabase && database != null)
         {
-            EditorGUILayout.Space(4f);
+            EditorGUILayout.Space(6f);
+            EditorGUILayout.BeginVertical("box");
+            EditorGUILayout.LabelField("DANGEROUS — DATABASE REMOVE", EditorStyles.boldLabel);
             GUI.enabled = selectedCount > 0;
             GUI.backgroundColor = new Color(0.95f, 0.55f, 0.5f);
-            if (GUILayout.Button(
-                    "REMOVE SELECTED FROM MAIN DATABASE",
-                    GUILayout.Height(26f),
-                    GUILayout.Width(300f)))
+            if (GUILayout.Button("REMOVE SELECTED FROM MAIN DATABASE", GUILayout.Height(28f)))
             {
                 RemoveSelectedFromMainDatabase();
             }
 
             GUI.backgroundColor = Color.white;
             GUI.enabled = true;
+            EditorGUILayout.EndVertical();
         }
 
         EditorGUILayout.EndVertical();
@@ -574,13 +685,16 @@ public class LevelContentPlannerWindow : EditorWindow
         float headerHeight = 24f;
         float contentWidth = 1680f;
         float contentHeight = headerHeight + visible.Count * rowHeight + 8f;
+        // Horizontal scrollbar lane so full row height stays visible inside root vertical scroll.
+        float scrollViewHeight = contentHeight + GUI.skin.horizontalScrollbar.fixedHeight + 4f;
 
-        tableScroll = EditorGUILayout.BeginScrollView(
-            tableScroll,
-            true,
-            true,
-            GUILayout.ExpandHeight(true)
+        // Height-locked scroll: full row block stays visible; root scroll handles vertical.
+        // Horizontal scrollbar appears when columns exceed window width.
+        Vector2 tableScroll = EditorGUILayout.BeginScrollView(
+            new Vector2(tableHorizontalScroll.x, 0f),
+            GUILayout.Height(scrollViewHeight)
         );
+        tableHorizontalScroll = new Vector2(tableScroll.x, 0f);
 
         Rect contentRect = GUILayoutUtility.GetRect(
             contentWidth,
@@ -820,10 +934,9 @@ public class LevelContentPlannerWindow : EditorWindow
 
     private void DrawSidePanel()
     {
+        // Natural height — follows root vertical scroll (no nested ExpandHeight scroll).
         EditorGUILayout.BeginVertical("box", GUILayout.Width(280f));
         EditorGUILayout.LabelField("Planned Balance", EditorStyles.boldLabel);
-
-        summaryScroll = EditorGUILayout.BeginScrollView(summaryScroll, GUILayout.ExpandHeight(true));
 
         int easy = 0;
         int medium = 0;
@@ -941,7 +1054,6 @@ public class LevelContentPlannerWindow : EditorWindow
             }
         }
 
-        EditorGUILayout.EndScrollView();
         EditorGUILayout.EndVertical();
     }
 
@@ -1872,6 +1984,60 @@ public class LevelContentPlannerWindow : EditorWindow
             }
         }
 
+        if (playabilityFilter != PlayabilityFilter.All)
+        {
+            if (!playabilityByDbIndex.TryGetValue(row.dbIndex, out ProductionLevelPlayability.Report report))
+            {
+                return false;
+            }
+
+            switch (playabilityFilter)
+            {
+                case PlayabilityFilter.Valid:
+                    if (report.status != ProductionLevelPlayability.Status.Valid)
+                    {
+                        return false;
+                    }
+
+                    break;
+                case PlayabilityFilter.Invalid:
+                    if (report.status == ProductionLevelPlayability.Status.Valid)
+                    {
+                        return false;
+                    }
+
+                    break;
+                case PlayabilityFilter.Timeout:
+                    if (report.status != ProductionLevelPlayability.Status.SolverTimeout)
+                    {
+                        return false;
+                    }
+
+                    break;
+                case PlayabilityFilter.Unsolvable:
+                    if (report.status != ProductionLevelPlayability.Status.Unsolvable)
+                    {
+                        return false;
+                    }
+
+                    break;
+                case PlayabilityFilter.ObjectiveInvalid:
+                    if (report.status != ProductionLevelPlayability.Status.ObjectiveInvalid)
+                    {
+                        return false;
+                    }
+
+                    break;
+                case PlayabilityFilter.ConfigInvalid:
+                    if (report.status != ProductionLevelPlayability.Status.ConfigInvalid)
+                    {
+                        return false;
+                    }
+
+                    break;
+            }
+        }
+
         return true;
     }
 
@@ -2022,6 +2188,209 @@ public class LevelContentPlannerWindow : EditorWindow
             suitabilityByDbIndex.Count + " levels."
         );
         Repaint();
+    }
+
+    private void RunPlayabilityValidation()
+    {
+        playabilityByDbIndex.Clear();
+        deepTimeoutByDbIndex.Clear();
+        hintPathPassByDbIndex.Clear();
+        StringBuilder sb = new StringBuilder();
+        sb.AppendLine("=== VALIDATE ALL PLAYABLE LEVELS ===");
+        sb.AppendLine(
+            "Normal budget states=" + ProductionLevelPlayability.DefaultMaxStates +
+            " — TIMEOUT ≠ VALID/UNSOLVABLE."
+        );
+        int[] counts = new int[6];
+
+        for (int i = 0; i < rows.Count; i++)
+        {
+            RowState row = rows[i];
+            if (row.level == null)
+            {
+                continue;
+            }
+
+            ProductionLevelPlayability.Report report =
+                ProductionLevelPlayability.Validate(row.level, row.dbIndex);
+            playabilityByDbIndex[row.dbIndex] = report;
+            counts[(int)report.status]++;
+            if (report.status != ProductionLevelPlayability.Status.Valid)
+            {
+                sb.AppendLine(ProductionLevelPlayability.FormatReportLine(report));
+            }
+        }
+
+        sb.AppendLine();
+        sb.AppendLine(
+            "Valid=" + counts[(int)ProductionLevelPlayability.Status.Valid] +
+            " Unsolvable=" + counts[(int)ProductionLevelPlayability.Status.Unsolvable] +
+            " ObjectiveInvalid=" +
+            counts[(int)ProductionLevelPlayability.Status.ObjectiveInvalid] +
+            " Timeout=" + counts[(int)ProductionLevelPlayability.Status.SolverTimeout] +
+            " ConfigInvalid=" +
+            counts[(int)ProductionLevelPlayability.Status.ConfigInvalid]
+        );
+        sb.AppendLine(
+            "Use DEEP VALIDATE TIMEOUT LEVELS for the " +
+            counts[(int)ProductionLevelPlayability.Status.SolverTimeout] +
+            " timeout(s). No LevelData auto-modified."
+        );
+        Debug.Log(sb.ToString());
+        Repaint();
+    }
+
+    private void RunDeepValidateTimeouts()
+    {
+        if (database == null)
+        {
+            EditorUtility.DisplayDialog(
+                "Deep Validate Timeout Levels",
+                "No MainLevelDatabase loaded.",
+                "OK"
+            );
+            return;
+        }
+
+        List<ProductionLevelPlayability.Report> priors =
+            new List<ProductionLevelPlayability.Report>();
+        foreach (KeyValuePair<int, ProductionLevelPlayability.Report> pair in
+                 playabilityByDbIndex)
+        {
+            if (pair.Value.status == ProductionLevelPlayability.Status.SolverTimeout ||
+                pair.Value.status == ProductionLevelPlayability.Status.Unknown)
+            {
+                priors.Add(pair.Value);
+            }
+        }
+
+        if (priors.Count == 0)
+        {
+            bool scan = EditorUtility.DisplayDialog(
+                "Deep Validate Timeout Levels",
+                "No TIMEOUT results cached.\n\n" +
+                "Run a normal scan first to find timeouts, then deep-validate only those?",
+                "Scan + Deep Validate",
+                "Cancel"
+            );
+            if (!scan)
+            {
+                return;
+            }
+
+            RunPlayabilityValidation();
+            foreach (KeyValuePair<int, ProductionLevelPlayability.Report> pair in
+                     playabilityByDbIndex)
+            {
+                if (pair.Value.status == ProductionLevelPlayability.Status.SolverTimeout ||
+                    pair.Value.status == ProductionLevelPlayability.Status.Unknown)
+                {
+                    priors.Add(pair.Value);
+                }
+            }
+
+            if (priors.Count == 0)
+            {
+                EditorUtility.DisplayDialog(
+                    "Deep Validate Timeout Levels",
+                    "No TIMEOUT levels under normal budget.",
+                    "OK"
+                );
+                return;
+            }
+        }
+
+        bool proceed = EditorUtility.DisplayDialog(
+            "Deep Validate Timeout Levels",
+            "Deep-validate " + priors.Count + " TIMEOUT level(s)\n" +
+            "with " + ProductionLevelPlayability.DeepMaxStates + " states " +
+            "(normal " + ProductionLevelPlayability.DefaultMaxStates + " × " +
+            ProductionLevelPlayability.DeepMaxStatesMultiplier + ").\n\n" +
+            "No LevelData writes. Continue?",
+            "Deep Validate",
+            "Cancel"
+        );
+        if (!proceed)
+        {
+            return;
+        }
+
+        deepTimeoutByDbIndex.Clear();
+        List<ProductionLevelPlayability.DeepTimeoutResult> results =
+            ProductionLevelPlayability.DeepValidateTimeoutLevels(
+                database,
+                priors,
+                ProductionLevelPlayability.DeepMaxStates
+            );
+
+        for (int i = 0; i < results.Count; i++)
+        {
+            ProductionLevelPlayability.DeepTimeoutResult entry = results[i];
+            int dbIndex = entry.deepReport.dbIndex;
+            deepTimeoutByDbIndex[dbIndex] = entry;
+            playabilityByDbIndex[dbIndex] = entry.deepReport;
+            if (entry.deepReport.status == ProductionLevelPlayability.Status.Valid)
+            {
+                hintPathPassByDbIndex[dbIndex] = entry.hintPathPass;
+            }
+
+            if (entry.releaseBlocker)
+            {
+                for (int r = 0; r < rows.Count; r++)
+                {
+                    if (rows[r].dbIndex != dbIndex)
+                    {
+                        continue;
+                    }
+
+                    rows[r].needsReview = true;
+                    rows[r].reviewReason = entry.recommendedAction;
+                    break;
+                }
+            }
+        }
+
+        string summary = ProductionLevelPlayability.BuildDeepValidationSummary(results);
+        Debug.Log(summary);
+        EditorUtility.DisplayDialog(
+            "Deep Validate Timeout Levels",
+            "Finished " + results.Count +
+            " deep check(s).\nSee Console for Release Safe / Blockers.",
+            "OK"
+        );
+        Repaint();
+    }
+
+    private void RunHintPathVerification()
+    {
+        StringBuilder sb = new StringBuilder();
+        sb.AppendLine("=== VERIFY HINT PATHS ===");
+        int pass = 0;
+        int fail = 0;
+        for (int i = 0; i < rows.Count; i++)
+        {
+            RowState row = rows[i];
+            if (row.level == null)
+            {
+                continue;
+            }
+
+            bool ok = ProductionLevelPlayability.VerifyHintPath(row.level, out string detail);
+            if (ok)
+            {
+                pass++;
+            }
+            else
+            {
+                fail++;
+                sb.AppendLine(
+                    "FAIL DB#" + row.dbIndex + " " + row.level.name + " | " + detail
+                );
+            }
+        }
+
+        sb.AppendLine("Pass=" + pass + " Fail=" + fail);
+        Debug.Log(sb.ToString());
     }
 
     private void AutoSuggestSpecials()

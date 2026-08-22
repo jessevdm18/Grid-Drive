@@ -359,11 +359,59 @@ public class SaveManager : MonoBehaviour
         PlayerPrefs.Save();
     }
 
+    /// <summary>Editor validation helpers (defaults match fresh install).</summary>
+    public static int EditorGetCurrentLevelOrDefault()
+    {
+        return PlayerPrefs.GetInt(CurrentLevelKey, 0);
+    }
+
+    public static bool EditorHasFirstLaunchCompletedKey()
+    {
+        return PlayerPrefs.GetInt(FirstLaunchCompletedKey, 0) == 1;
+    }
+
+    public static bool EditorHasCoinsKey()
+    {
+        return PlayerPrefs.HasKey(CoinsKey);
+    }
+
+    public static int EditorCountStarsWithValue()
+    {
+        int count = 0;
+        int maxIndex = PlayerPrefs.GetInt(StarsMaxIndexKey, -1);
+        for (int i = 0; i <= maxIndex; i++)
+        {
+            if (PlayerPrefs.GetInt(StarsKeyPrefix + i, 0) > 0)
+            {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+    public static int EditorCountThreeStarClaims()
+    {
+        int count = 0;
+        int maxIndex = PlayerPrefs.GetInt(ThreeStarCoinClaimedMaxIndexKey, -1);
+        for (int i = 0; i <= maxIndex; i++)
+        {
+            if (PlayerPrefs.GetInt(ThreeStarCoinClaimedPrefix + i, 0) == 1)
+            {
+                count++;
+            }
+        }
+
+        return count;
+    }
+#endif
+
     /// <summary>
     /// Runtime/pre-release: wipe index-based level progression after a
     /// MainLevelDatabase content-version mismatch.
     /// Keeps audio, coins balance, skins, feature-tutorial seen flags.
     /// Clears first-launch so Splash routes to Easy Level 1 again.
+    /// Player-build safe (not Editor-only).
     /// </summary>
     public static void ResetLevelProgressForContentVersionMismatch()
     {
@@ -413,53 +461,6 @@ public class SaveManager : MonoBehaviour
         PlayerPrefs.DeleteKey(ThreeStarRewardMigrationCompletedKey);
         PlayerPrefs.DeleteKey(ThreeStarCoinClaimMigrationLegacyKey);
     }
-
-    /// <summary>Editor validation helpers (defaults match fresh install).</summary>
-    public static int EditorGetCurrentLevelOrDefault()
-    {
-        return PlayerPrefs.GetInt(CurrentLevelKey, 0);
-    }
-
-    public static bool EditorHasFirstLaunchCompletedKey()
-    {
-        return PlayerPrefs.GetInt(FirstLaunchCompletedKey, 0) == 1;
-    }
-
-    public static bool EditorHasCoinsKey()
-    {
-        return PlayerPrefs.HasKey(CoinsKey);
-    }
-
-    public static int EditorCountStarsWithValue()
-    {
-        int count = 0;
-        int maxIndex = PlayerPrefs.GetInt(StarsMaxIndexKey, -1);
-        for (int i = 0; i <= maxIndex; i++)
-        {
-            if (PlayerPrefs.GetInt(StarsKeyPrefix + i, 0) > 0)
-            {
-                count++;
-            }
-        }
-
-        return count;
-    }
-
-    public static int EditorCountThreeStarClaims()
-    {
-        int count = 0;
-        int maxIndex = PlayerPrefs.GetInt(ThreeStarCoinClaimedMaxIndexKey, -1);
-        for (int i = 0; i <= maxIndex; i++)
-        {
-            if (PlayerPrefs.GetInt(ThreeStarCoinClaimedPrefix + i, 0) == 1)
-            {
-                count++;
-            }
-        }
-
-        return count;
-    }
-#endif
 
     /// <summary>
     /// Repareert unlocked progress op basis van bestaande sterren.

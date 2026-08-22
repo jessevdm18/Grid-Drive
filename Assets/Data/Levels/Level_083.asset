@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Level_083
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   levelNumber: 83
-  difficulty: 1
+  difficulty: 2
   objectiveType: 3
   timeLimitSeconds: 0
   moveLimit: 0
@@ -204,9 +204,9 @@ MonoBehaviour:
     isFragileCargo: 0
     isLimitedVehicle: 0
     vehicleSprite: {fileID: 0}
-  minimumMoves: 15
-  statesExplored: 11773
-  difficultyScore: 1904
+  minimumMoves: 16
+  statesExplored: 13470
+  difficultyScore: 2006
   solutionComplexityScore: 0
   uniqueVehiclesInSolution: 12
   axisAlternations: 0

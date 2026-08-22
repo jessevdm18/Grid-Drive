@@ -249,9 +249,9 @@ MonoBehaviour:
     isFragileCargo: 0
     isLimitedVehicle: 0
     vehicleSprite: {fileID: 0}
-  minimumMoves: 19
-  statesExplored: 46378
-  difficultyScore: 2383
+  minimumMoves: 20
+  statesExplored: 48949
+  difficultyScore: 2484
   solutionComplexityScore: 0
   uniqueVehiclesInSolution: 19
   axisAlternations: 0

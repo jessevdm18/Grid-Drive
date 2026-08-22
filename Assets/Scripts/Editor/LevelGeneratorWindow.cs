@@ -305,7 +305,11 @@ public class LevelGeneratorWindow : EditorWindow
         maxVehicles = EditorGUILayout.IntField("Max Vehicles", maxVehicles);
         minMinimumMoves = EditorGUILayout.IntField("Min Minimum Moves", minMinimumMoves);
         maxMinimumMoves = EditorGUILayout.IntField("Max Minimum Moves", maxMinimumMoves);
-        maxAttemptsPerLevel = EditorGUILayout.IntField("Max Attempts Per Level", maxAttemptsPerLevel);
+        maxAttemptsPerLevel = EditorGUILayout.IntField("Attempts Per Level", maxAttemptsPerLevel);
+        EditorGUILayout.LabelField(
+            "Outer candidate attempts per requested level (not placement/solver safety).",
+            EditorStyles.miniLabel
+        );
         randomSeed = EditorGUILayout.IntField("Random Seed", randomSeed);
 
         EditorGUILayout.Space(8f);
@@ -1245,8 +1249,8 @@ public class LevelGeneratorWindow : EditorWindow
 
         maxAttemptsPerLevel = Mathf.Clamp(
             Mathf.RoundToInt(baseAttempts * Mathf.Lerp(1f, areaScale, 0.5f)),
-            baseAttempts,
-            2000
+            1,
+            100000
         );
 
         if (areaScale >= 2.5f)
@@ -1633,7 +1637,7 @@ public class LevelGeneratorWindow : EditorWindow
         maxVehicles = Mathf.Clamp(maxVehicles, minVehicles, vehicleCap);
         minMinimumMoves = Mathf.Max(1, minMinimumMoves);
         maxMinimumMoves = Mathf.Max(minMinimumMoves, maxMinimumMoves);
-        maxAttemptsPerLevel = Mathf.Clamp(maxAttemptsPerLevel, 1, 5000);
+        maxAttemptsPerLevel = Mathf.Clamp(maxAttemptsPerLevel, 1, 100000);
         placementAttemptsPerVehicle = Mathf.Clamp(placementAttemptsPerVehicle, 1, 200);
         maxPlacementIterationsPerCandidate = Mathf.Clamp(maxPlacementIterationsPerCandidate, 1, 5000);
         maxSolverStatesPerCandidate = Mathf.Clamp(maxSolverStatesPerCandidate, 1000, 200000);
@@ -1715,6 +1719,8 @@ public class LevelGeneratorWindow : EditorWindow
         Debug.Log(
             "LevelGenerator START | Random | grid=" + gridWidth + "x" + gridHeight +
             " | levels=" + numberOfLevels +
+            " | attemptsPerLevel=" + maxAttemptsPerLevel +
+            " | timeoutPerLevel=" + maxGenerationSecondsPerLevel.ToString("0.#") + "s" +
             " | vehicles=" + effectiveMinVehicles + "-" + effectiveMaxVehicles +
             " | moves=" + effectiveMinMoves + "-" + effectiveMaxMoves +
             " | existingKeys=" + existingLevelKeysLoaded
@@ -1732,34 +1738,56 @@ public class LevelGeneratorWindow : EditorWindow
                 bool found = false;
                 double levelStartSeconds = batchWatch.Elapsed.TotalSeconds;
                 int levelAttemptStart = totalAttempts;
+                string stopReason = "ATTEMPTS_EXHAUSTED";
+                int attemptsUsedThisLevel = 0;
+
+                // Snapshot rejection counters at level start for per-level delta in FAIL log.
+                int rUnsolv0 = rejectedUnsolvable;
+                int rEasy0 = rejectedTooEasy;
+                int rHard0 = rejectedTooHard;
+                int rQuality0 = rejectedLowSolutionParticipation + rejectedDensity +
+                    rejectedMovableRatio + rejectedOrientationLengthBalance +
+                    rejectedBlockers + rejectedAlmostSolved + rejectedTrivial;
+                int rDup0 = rejectedDuplicates;
+                int rPlace0 = rejectedPlacementFailed;
+                int rSolver0 = rejectedSearchLimit;
 
                 for (int attempt = 0; attempt < maxAttemptsPerLevel; attempt++)
                 {
                     if (cancelGeneration)
                     {
+                        stopReason = "CANCELLED";
                         break;
                     }
 
                     double levelElapsed = batchWatch.Elapsed.TotalSeconds - levelStartSeconds;
                     if (levelElapsed >= maxGenerationSecondsPerLevel)
                     {
+                        stopReason = "TIMEOUT";
                         Debug.LogWarning(
-                            "Generation timeout after " +
-                            levelElapsed.ToString("0.0") +
-                            " seconds (level " + (levelIndex + 1) + "/" + numberOfLevels + ")"
+                            "[LevelGeneration] StopReason=TIMEOUT | Level " +
+                            (levelIndex + 1) + "/" + numberOfLevels +
+                            " | elapsed=" + levelElapsed.ToString("0.0") +
+                            "s | limit=" + maxGenerationSecondsPerLevel.ToString("0.#") +
+                            "s | CandidateAttemptsUsed=" + attemptsUsedThisLevel +
+                            " / " + maxAttemptsPerLevel
                         );
                         break;
                     }
 
+                    attemptsUsedThisLevel = attempt + 1;
                     totalAttempts++;
                     profiledCandidates++;
 
-                    if (totalAttempts % 25 == 0)
+                    if (attemptsUsedThisLevel == 1 ||
+                        attemptsUsedThisLevel % 25 == 0 ||
+                        attemptsUsedThisLevel >= maxAttemptsPerLevel)
                     {
                         bool cancel = EditorUtility.DisplayCancelableProgressBar(
                             "Generating Levels",
                             "Level " + (levelIndex + 1) + "/" + numberOfLevels +
-                            " | attempt " + totalAttempts,
+                            "\nCandidate attempt: " + attemptsUsedThisLevel +
+                            " / " + maxAttemptsPerLevel,
                             Mathf.Clamp01(
                                 (levelIndex + (attempt + 1f) / maxAttemptsPerLevel) /
                                 Mathf.Max(1, numberOfLevels)
@@ -1768,6 +1796,7 @@ public class LevelGeneratorWindow : EditorWindow
                         if (cancel)
                         {
                             cancelGeneration = true;
+                            stopReason = "CANCELLED";
                             break;
                         }
 
@@ -1788,7 +1817,7 @@ public class LevelGeneratorWindow : EditorWindow
                         RecordPlacementFailure(failReason);
                         sumTotalCandidateMs += candidateWatch.Elapsed.TotalMilliseconds;
                         MaybeLogAttemptProgress(
-                            totalAttempts,
+                            attemptsUsedThisLevel,
                             maxAttemptsPerLevel,
                             sumPlacementMs,
                             sumSolverMs,
@@ -1965,6 +1994,39 @@ public class LevelGeneratorWindow : EditorWindow
                         continue;
                     }
 
+                    // Production gate: same docked-exit + objective solver as gameplay hints.
+                    ProductionLevelPlayability.Report playability =
+                        ProductionLevelPlayability.Validate(
+                            tempLevel,
+                            -1,
+                            maxSolverStatesPerCandidate
+                        );
+                    if (playability.status == ProductionLevelPlayability.Status.SolverTimeout)
+                    {
+                        rejectedSearchLimit++;
+                        DestroyImmediate(tempLevel);
+                        sumTotalCandidateMs += candidateWatch.Elapsed.TotalMilliseconds;
+                        continue;
+                    }
+
+                    if (playability.status != ProductionLevelPlayability.Status.Valid ||
+                        playability.solverResult == null ||
+                        playability.solverResult.solution == null ||
+                        playability.solverResult.solution.Count == 0)
+                    {
+                        rejectedUnsolvable++;
+                        DestroyImmediate(tempLevel);
+                        sumTotalCandidateMs += candidateWatch.Elapsed.TotalMilliseconds;
+                        continue;
+                    }
+
+                    // Prefer production minimumMoves when available.
+                    if (playability.minimumMoves > 0)
+                    {
+                        result.minimumMoves = playability.minimumMoves;
+                        result.statesExplored = playability.statesExplored;
+                    }
+
                     // Accept
                     tempLevel.levelNumber = accepted + 1;
                     tempLevel.difficulty = tier;
@@ -1982,12 +2044,17 @@ public class LevelGeneratorWindow : EditorWindow
                     existingLevelKeys.Add(layoutKey);
                     nextFileIndex++;
                     found = true;
+                    stopReason = "ACCEPTED";
 
                     candidateWatch.Stop();
                     sumTotalCandidateMs += candidateWatch.Elapsed.TotalMilliseconds;
 
                     Debug.Log(
-                        "Accepted | tier=" + tier +
+                        "[LevelGeneration] StopReason=ACCEPTED | Level " +
+                        (levelIndex + 1) + "/" + numberOfLevels +
+                        " | CandidateAttemptsUsed=" + attemptsUsedThisLevel +
+                        " / " + maxAttemptsPerLevel +
+                        " | tier=" + tier +
                         " | moves=" + tempLevel.minimumMoves +
                         " | uniqueVehicles=" + uniqueVehiclesMoved +
                         " | occupancy=" + occupancy.ToString("0.00") +
@@ -1999,20 +2066,53 @@ public class LevelGeneratorWindow : EditorWindow
                     break;
                 }
 
+                if (cancelGeneration && stopReason != "CANCELLED")
+                {
+                    stopReason = "CANCELLED";
+                }
+
                 if (cancelGeneration)
                 {
+                    Debug.LogWarning(
+                        "[LevelGeneration] StopReason=CANCELLED | Level " +
+                        (levelIndex + 1) + "/" + numberOfLevels +
+                        " | CandidateAttemptsUsed=" + attemptsUsedThisLevel +
+                        " / " + maxAttemptsPerLevel
+                    );
                     break;
                 }
 
                 if (!found)
                 {
+                    if (stopReason != "TIMEOUT" && stopReason != "CANCELLED")
+                    {
+                        stopReason = "ATTEMPTS_EXHAUSTED";
+                    }
+
                     int levelAttempts = totalAttempts - levelAttemptStart;
                     Debug.LogWarning(
-                        "LevelGenerator: kon level " + (levelIndex + 1) +
-                        "/" + numberOfLevels +
-                        " niet vinden (attempts this level≈" + levelAttempts +
-                        ", maxAttempts=" + maxAttemptsPerLevel +
-                        ", timeout=" + maxGenerationSecondsPerLevel + "s)."
+                        "[LevelGeneration]\n" +
+                        "FAILED\n" +
+                        "StopReason=" + stopReason + "\n" +
+                        "RequestedLevel=" + (levelIndex + 1) + "/" + numberOfLevels + "\n" +
+                        "AttemptsUsed=" + attemptsUsedThisLevel + "\n" +
+                        "AttemptsLimit=" + maxAttemptsPerLevel + "\n" +
+                        "AttemptsCounted=" + levelAttempts + "\n" +
+                        "Grid=" + gridWidth + "x" + gridHeight + "\n" +
+                        "MinMoves=" + effectiveMinMoves + "\n" +
+                        "MaxMoves=" + effectiveMaxMoves + "\n" +
+                        "Unsolvable=" + (rejectedUnsolvable - rUnsolv0) + "\n" +
+                        "MinMovesTooLow=" + (rejectedTooEasy - rEasy0) + "\n" +
+                        "MinMovesTooHigh=" + (rejectedTooHard - rHard0) + "\n" +
+                        "QualityRejected=" + (
+                            rejectedLowSolutionParticipation + rejectedDensity +
+                            rejectedMovableRatio + rejectedOrientationLengthBalance +
+                            rejectedBlockers + rejectedAlmostSolved + rejectedTrivial -
+                            rQuality0
+                        ) + "\n" +
+                        "Duplicate=" + (rejectedDuplicates - rDup0) + "\n" +
+                        "PlacementFailed=" + (rejectedPlacementFailed - rPlace0) + "\n" +
+                        "SolverLimitReached=" + (rejectedSearchLimit - rSolver0)
                     );
                 }
             }
@@ -2224,7 +2324,7 @@ public class LevelGeneratorWindow : EditorWindow
         double avgTotal = profiledCandidates > 0 ? sumTotalCandidateMs / profiledCandidates : 0;
 
         Debug.Log(
-            "Attempt " + attempt + " / " + maxAttempts +
+            "Attempt (candidate this level) " + attempt + " / " + maxAttempts +
             "\nAverage placement ms: " + avgPlacement.ToString("0.00") +
             "\nAverage solver ms: " + avgSolver.ToString("0.00") +
             "\nMaximum solver ms: " + maxSolverMs.ToString("0.00") +

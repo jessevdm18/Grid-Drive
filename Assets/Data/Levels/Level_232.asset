@@ -250,7 +250,7 @@ MonoBehaviour:
     isLimitedVehicle: 0
     vehicleSprite: {fileID: 0}
   minimumMoves: 16
-  statesExplored: 21447
+  statesExplored: 22016
   difficultyScore: 2067
   solutionComplexityScore: 0
   uniqueVehiclesInSolution: 13

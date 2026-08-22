@@ -78,6 +78,30 @@ public class HintManager : MonoBehaviour
     private VehicleController highlightedVehicle;
     private int highlightedVehicleIndex = -1;
 
+    /// <summary>Board hashes seen during this level session (loop detection).</summary>
+    private readonly HashSet<int> hintBoardHashesSeen = new HashSet<int>();
+
+    /// <summary>Board state before the previous successful hint (anti-undo).</summary>
+    private RushOutSolver.BoardState boardStateBeforeLastHint;
+
+    /// <summary>
+    /// Increments only on GameManager.RegisterMove (real player board change).
+    /// Used to distinguish duplicate hint requests from true hint loops.
+    /// </summary>
+    private int playerMoveGeneration;
+
+    private int lastHintBoardHash;
+    private int lastHintMoveGeneration = -1;
+    private bool hasCachedHint;
+    private int cachedHintVehicleIndex = -1;
+    private HintDirection cachedHintDirection;
+
+    /// <summary>Hashes recorded at each non-duplicate hint solve in this level session.</summary>
+    private readonly List<int> hintFollowBoardHashes = new List<int>();
+
+    /// <summary>playerMoveGeneration when each hintFollowBoardHashes entry was recorded.</summary>
+    private readonly List<int> hintFollowMoveGenerations = new List<int>();
+
     private VehicleController activeHintVehicle;
 
     private SpriteRenderer highlightedRenderer;
@@ -90,6 +114,12 @@ public class HintManager : MonoBehaviour
 
     private bool isHintRequestInProgress;
     private bool isSubscribedToHighlightedVehicle;
+
+    /// <summary>Prevents double OnRewardedAdCompleted for one ShowRewardedAd.</summary>
+    private bool rewardedCompletionHandled;
+
+    /// <summary>coins / rewarded_ad — set before ShowHintVisual for analytics.</summary>
+    private string pendingHintAnalyticsSource = "other";
 
     private void Awake()
     {
@@ -112,6 +142,33 @@ public class HintManager : MonoBehaviour
         {
             hintStatusText.gameObject.SetActive(false);
         }
+    }
+
+    /// <summary>
+    /// Call when a level loads / restarts so loop detection resets.
+    /// </summary>
+    public void ResetHintSession()
+    {
+        hintBoardHashesSeen.Clear();
+        hintFollowBoardHashes.Clear();
+        hintFollowMoveGenerations.Clear();
+        boardStateBeforeLastHint = null;
+        playerMoveGeneration = 0;
+        lastHintMoveGeneration = -1;
+        lastHintBoardHash = 0;
+        hasCachedHint = false;
+        cachedHintVehicleIndex = -1;
+        rewardedCompletionHandled = false;
+        ClearCurrentHint("LevelReset");
+    }
+
+    /// <summary>
+    /// Call from GameManager.RegisterMove when a real player move changes the board.
+    /// </summary>
+    public void NotifyPlayerMove()
+    {
+        playerMoveGeneration++;
+        hasCachedHint = false;
     }
 
     private void OnDisable()
@@ -161,7 +218,7 @@ public class HintManager : MonoBehaviour
 
         try
         {
-            HintComputeResult compute = TryComputeHint();
+            HintComputeResult compute = TryComputeHint("PaidHint");
 
             if (compute.result != HintResult.Success)
             {
@@ -176,32 +233,37 @@ public class HintManager : MonoBehaviour
                 return;
             }
 
-            if (!coinManager.SpendCoins(hintCost))
+            // Duplicate request: re-show cached hint — never charge again.
+            if (!compute.reusedCache)
             {
-                Debug.LogWarning(
-                    "HintManager: SpendCoins faalde onverwacht na CanAfford — geen hint getoond."
-                );
-                LogHintRequest(
-                    HintResult.SpendFailed,
-                    compute.solverResult,
-                    coinsBefore,
-                    coinsSpent: false,
-                    paidHint: true
-                );
-                return;
-            }
+                if (!coinManager.SpendCoins(hintCost))
+                {
+                    Debug.LogWarning(
+                        "HintManager: SpendCoins faalde onverwacht na CanAfford — geen hint getoond."
+                    );
+                    LogHintRequest(
+                        HintResult.SpendFailed,
+                        compute.solverResult,
+                        coinsBefore,
+                        coinsSpent: false,
+                        paidHint: true
+                    );
+                    return;
+                }
 
-            // Alleen na echte afschrijving (niet bij shop — die gebruikt PlayUpgrade).
-            audioManager?.PlayCoinSpend();
+                // Alleen na echte afschrijving (niet bij shop — die gebruikt PlayUpgrade).
+                audioManager?.PlayCoinSpend();
+            }
 
             LogHintRequest(
                 HintResult.Success,
                 compute.solverResult,
                 coinsBefore,
-                coinsSpent: true,
+                coinsSpent: !compute.reusedCache,
                 paidHint: true
             );
 
+            pendingHintAnalyticsSource = "coins";
             ShowHintVisual(compute.vehicle, compute.direction, compute.vehicleIndex);
         }
         finally
@@ -233,7 +295,7 @@ public class HintManager : MonoBehaviour
         try
         {
             int coinsBefore = coinManager != null ? coinManager.GetCoins() : -1;
-            HintComputeResult probe = TryComputeHint();
+            HintComputeResult probe = TryComputeHint("RewardedAdProbe");
             LogHintRequest(probe.result, probe.solverResult, coinsBefore, false, false);
 
             if (probe.result != HintResult.Success)
@@ -251,8 +313,9 @@ public class HintManager : MonoBehaviour
                 return;
             }
 
-            // Ad starten; na reward opnieuw solven (board kan veranderd zijn).
-            adsManager.ShowRewardedAd(OnRewardedAdCompleted);
+            // Ad starten; na reward opnieuw TryComputeHint (cache hit if board unchanged).
+            rewardedCompletionHandled = false;
+            adsManager.ShowRewardedAd(OnRewardedAdCompleted, "hint");
         }
         finally
         {
@@ -263,6 +326,15 @@ public class HintManager : MonoBehaviour
 
     private void OnRewardedAdCompleted()
     {
+        // One completed ad → one hint presentation (ignore duplicate SDK callbacks).
+        if (rewardedCompletionHandled)
+        {
+            Debug.Log("HintManager: ignoring duplicate rewarded-ad completion callback.");
+            return;
+        }
+
+        rewardedCompletionHandled = true;
+
         if (isHintRequestInProgress)
         {
             return;
@@ -273,7 +345,7 @@ public class HintManager : MonoBehaviour
         try
         {
             int coinsBefore = coinManager != null ? coinManager.GetCoins() : -1;
-            HintComputeResult compute = TryComputeHint();
+            HintComputeResult compute = TryComputeHint("RewardedAd");
             LogHintRequest(compute.result, compute.solverResult, coinsBefore, false, false);
 
             if (compute.result != HintResult.Success)
@@ -286,6 +358,7 @@ public class HintManager : MonoBehaviour
                 return;
             }
 
+            pendingHintAnalyticsSource = "rewarded_ad";
             ShowHintVisual(compute.vehicle, compute.direction, compute.vehicleIndex);
         }
         finally
@@ -338,12 +411,13 @@ public class HintManager : MonoBehaviour
         public int vehicleIndex;
         public HintDirection direction;
         public RushOutSolver.SolverResult solverResult;
+        public bool reusedCache;
     }
 
     /// <summary>
-    /// Snapshot + solve. Geen coins, geen visual (behalve clear van oude hint).
+    /// Snapshot + solve (or reuse cache). Geen coins, geen visual (behalve clear van oude hint).
     /// </summary>
-    private HintComputeResult TryComputeHint()
+    private HintComputeResult TryComputeHint(string source)
     {
         HintComputeResult outcome = new HintComputeResult
         {
@@ -351,7 +425,8 @@ public class HintManager : MonoBehaviour
             vehicle = null,
             vehicleIndex = -1,
             direction = HintDirection.Right,
-            solverResult = null
+            solverResult = null,
+            reusedCache = false
         };
 
         ClearCurrentHint("NewHintRequested");
@@ -369,6 +444,56 @@ public class HintManager : MonoBehaviour
             return outcome;
         }
 
+        int boardHash = boardState.GetHashCode();
+        string levelName = levelData != null ? levelData.name : "?";
+
+        // Same board + no player move since last hint → duplicate request, not a loop.
+        if (hasCachedHint &&
+            boardHash == lastHintBoardHash &&
+            playerMoveGeneration == lastHintMoveGeneration)
+        {
+            Debug.Log(
+                "[HintDuplicateRequest]\n" +
+                "Level=" + levelName + "\n" +
+                "BoardHash=" + boardHash + "\n" +
+                "MoveGeneration=" + playerMoveGeneration + "\n" +
+                "Source=" + source
+            );
+
+            if (TryResolveCachedHint(controllers, out VehicleController cachedVehicle))
+            {
+                outcome.result = HintResult.Success;
+                outcome.vehicle = cachedVehicle;
+                outcome.vehicleIndex = cachedHintVehicleIndex;
+                outcome.direction = cachedHintDirection;
+                outcome.reusedCache = true;
+                return outcome;
+            }
+
+            // Cache vehicle gone — fall through to fresh solve.
+            hasCachedHint = false;
+        }
+
+        // True loop: board returned to an earlier hint-follow state AFTER at least one move.
+        int previousStep = IndexOfHintFollowHash(boardHash);
+        if (previousStep >= 0 &&
+            playerMoveGeneration > hintFollowMoveGenerations[previousStep])
+        {
+            int movesSince = playerMoveGeneration - hintFollowMoveGenerations[previousStep];
+            Debug.LogWarning(
+                "[HintLoopDetected]\n" +
+                "Level=" + levelName + "\n" +
+                "BoardHash=" + boardHash + "\n" +
+                "PreviousOccurrenceStep=" + previousStep + "\n" +
+                "CurrentStep=" + hintFollowBoardHashes.Count + "\n" +
+                "MovesSincePrevious=" + movesSince + "\n" +
+                "Source=" + source
+            );
+        }
+
+        RushOutSolver.SolveConstraints constraints =
+            ObjectiveSolveConstraints.ForRuntimeHint(levelData, controllers);
+
         int maxStates = Mathf.Max(1, hintSolverMaxStates);
         RushOutSolver.SolverResult result = RushOutSolver.Solve(
             definitions,
@@ -376,8 +501,48 @@ public class HintManager : MonoBehaviour
             exitRow,
             gridWidth,
             gridHeight,
-            maxStates
+            maxStates,
+            -1,
+            constraints
         );
+
+        // Prefer a solution-preserving move that does not undo the previous board state.
+        if (result.solvable &&
+            result.solution != null &&
+            result.solution.Count > 0 &&
+            boardStateBeforeLastHint != null)
+        {
+            RushOutSolver.SolverMove first = result.solution[0];
+            if (!first.exitsBoard)
+            {
+                RushOutSolver.BoardState after = boardState.WithMovedVehicle(
+                    first.vehicleIndex,
+                    first.toPosition,
+                    constraints.fragileVehicleIndex,
+                    constraints.limitedVehicleIndex
+                );
+                if (after.Equals(boardStateBeforeLastHint))
+                {
+                    RushOutSolver.SolverResult alternate = TrySolveAvoidingReversal(
+                        definitions,
+                        boardState,
+                        exitRow,
+                        gridWidth,
+                        gridHeight,
+                        maxStates,
+                        constraints,
+                        first
+                    );
+                    if (alternate != null &&
+                        alternate.solvable &&
+                        alternate.solution != null &&
+                        alternate.solution.Count > 0)
+                    {
+                        result = alternate;
+                    }
+                }
+            }
+        }
 
         outcome.solverResult = result;
         LogHintDiagnostics(
@@ -388,7 +553,9 @@ public class HintManager : MonoBehaviour
             gridWidth,
             gridHeight,
             result,
-            maxStates
+            maxStates,
+            boardHash,
+            constraints
         );
 
         if (result.searchLimitReached)
@@ -409,7 +576,24 @@ public class HintManager : MonoBehaviour
             return outcome;
         }
 
-        RushOutSolver.SolverMove firstMove = result.solution[0];
+        RushOutSolver.SolverMove firstMove = null;
+        bool multi = constraints != null && constraints.multiTarget;
+        for (int i = 0; i < result.solution.Count; i++)
+        {
+            RushOutSolver.SolverMove candidate = result.solution[i];
+            if (RushOutSolver.IsPlayerHintMove(candidate, multi))
+            {
+                firstMove = candidate;
+                break;
+            }
+        }
+
+        if (firstMove == null)
+        {
+            outcome.result = HintResult.NoMoveFound;
+            return outcome;
+        }
+
         if (firstMove.vehicleIndex < 0 || firstMove.vehicleIndex >= controllers.Count)
         {
             outcome.result = HintResult.NoMoveFound;
@@ -423,11 +607,120 @@ public class HintManager : MonoBehaviour
             return outcome;
         }
 
+        boardStateBeforeLastHint = boardState;
+        StoreHintCache(
+            boardHash,
+            firstMove.vehicleIndex,
+            GetHintDirection(firstMove)
+        );
+        RecordHintFollowState(boardHash);
+
+        // Legacy set kept for diagnostics; loop detection uses hint-follow + move generation.
+        hintBoardHashesSeen.Add(boardHash);
+
         outcome.result = HintResult.Success;
         outcome.vehicle = vehicle;
         outcome.vehicleIndex = firstMove.vehicleIndex;
         outcome.direction = GetHintDirection(firstMove);
         return outcome;
+    }
+
+    private void StoreHintCache(int boardHash, int vehicleIndex, HintDirection direction)
+    {
+        lastHintBoardHash = boardHash;
+        lastHintMoveGeneration = playerMoveGeneration;
+        hasCachedHint = true;
+        cachedHintVehicleIndex = vehicleIndex;
+        cachedHintDirection = direction;
+    }
+
+    private void RecordHintFollowState(int boardHash)
+    {
+        if (IndexOfHintFollowHash(boardHash) >= 0)
+        {
+            return;
+        }
+
+        hintFollowBoardHashes.Add(boardHash);
+        hintFollowMoveGenerations.Add(playerMoveGeneration);
+    }
+
+    private int IndexOfHintFollowHash(int boardHash)
+    {
+        for (int i = 0; i < hintFollowBoardHashes.Count; i++)
+        {
+            if (hintFollowBoardHashes[i] == boardHash)
+            {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    private bool TryResolveCachedHint(
+        List<VehicleController> controllers,
+        out VehicleController vehicle)
+    {
+        vehicle = null;
+        if (cachedHintVehicleIndex < 0 ||
+            cachedHintVehicleIndex >= controllers.Count)
+        {
+            return false;
+        }
+
+        vehicle = controllers[cachedHintVehicleIndex];
+        return vehicle != null && vehicle.gameObject.activeInHierarchy;
+    }
+
+    /// <summary>
+    /// If the optimal first move undoes the previous board, search for another
+    /// solution-preserving first move by freezing that vehicle for one solve.
+    /// </summary>
+    private static RushOutSolver.SolverResult TrySolveAvoidingReversal(
+        List<RushOutSolver.VehicleDefinition> definitions,
+        RushOutSolver.BoardState boardState,
+        int exitRow,
+        int gridWidth,
+        int gridHeight,
+        int maxStates,
+        RushOutSolver.SolveConstraints constraints,
+        RushOutSolver.SolverMove forbiddenFirst)
+    {
+        RushOutSolver.SolveConstraints avoid = RushOutSolver.SolveConstraints.Classic();
+        avoid.requireDockedExit = constraints.requireDockedExit;
+        avoid.multiTarget = constraints.multiTarget;
+        avoid.fragileVehicleIndex = constraints.fragileVehicleIndex;
+        avoid.fragileMoveLimit = constraints.fragileMoveLimit;
+        avoid.limitedVehicleIndex = constraints.limitedVehicleIndex;
+        avoid.limitedMoveLimit = constraints.limitedMoveLimit;
+        avoid.maxSolutionMoves = constraints.maxSolutionMoves;
+        avoid.targetIndices = constraints.targetIndices;
+        avoid.protectedVehicleIndex = forbiddenFirst.vehicleIndex;
+        if (constraints.protectedVehicleIndex >= 0 &&
+            constraints.protectedVehicleIndex != forbiddenFirst.vehicleIndex)
+        {
+            // Cannot freeze two different vehicles with one field — keep NoTouch protect.
+            avoid.protectedVehicleIndex = constraints.protectedVehicleIndex;
+            return null;
+        }
+
+        RushOutSolver.SolverResult alt = RushOutSolver.Solve(
+            definitions,
+            boardState,
+            exitRow,
+            gridWidth,
+            gridHeight,
+            maxStates,
+            -1,
+            avoid
+        );
+        if (alt.solvable && alt.solution != null && alt.solution.Count > 0)
+        {
+            return alt;
+        }
+
+        return null;
     }
 
     private void HandleHintFailure(HintResult result, bool paidHint)
@@ -437,6 +730,8 @@ public class HintManager : MonoBehaviour
             (paidHint ? " — no coins spent" : " — no coins spent (rewarded)")
         );
 
+        ReportSeriousHintFailureIfNeeded(result);
+
         if (result == HintResult.NotEnoughCoins)
         {
             ShowHintStatus(notEnoughCoinsMessage);
@@ -444,6 +739,56 @@ public class HintManager : MonoBehaviour
         }
 
         ShowHintStatus(hintUnavailableMessage);
+    }
+
+    private void ReportSeriousHintFailureIfNeeded(HintResult result)
+    {
+        if (result == HintResult.NotEnoughCoins || result == HintResult.SpendFailed)
+        {
+            return;
+        }
+
+        if (result != HintResult.Unsolvable &&
+            result != HintResult.SearchLimitReached &&
+            result != HintResult.InvalidRuntimeState &&
+            result != HintResult.NoMoveFound)
+        {
+            return;
+        }
+
+        LevelData level = levelManager != null ? levelManager.CurrentLevelData : null;
+        if (!LevelMinMoves.IsValid(level))
+        {
+            // Invalid metadata already reported separately; skip hint noise.
+            return;
+        }
+
+        string asset = level != null ? level.name : "?";
+        FirebaseManager.ReportNonFatal(
+            "HintSolverFailure result=" + result +
+            " asset=" + asset +
+            " display=" +
+            (levelManager != null ? levelManager.GetDisplayLevelNumber().ToString() : "?")
+        );
+    }
+
+    private void LogHintUsedTelemetry()
+    {
+        if (levelManager == null)
+        {
+            return;
+        }
+
+        LevelData data = levelManager.CurrentLevelData;
+        string difficulty = data != null
+            ? data.difficulty.ToString()
+            : levelManager.CurrentDifficulty.ToString();
+
+        GameAnalytics.LogHintUsed(
+            levelManager.GetDisplayLevelNumber(),
+            difficulty,
+            pendingHintAnalyticsSource
+        );
     }
 
     private void ShowHintVisual(
@@ -461,6 +806,7 @@ public class HintManager : MonoBehaviour
 
         // Succesvolle hint-presentatie (paid of rewarded).
         audioManager?.PlayHint();
+        LogHintUsedTelemetry();
 
         highlightedVehicle = vehicle;
         highlightedVehicleIndex = vehicleIndex;
@@ -719,16 +1065,49 @@ public class HintManager : MonoBehaviour
         int gridWidth,
         int gridHeight,
         RushOutSolver.SolverResult result,
-        int maxStates)
+        int maxStates,
+        int boardHash,
+        RushOutSolver.SolveConstraints constraints)
     {
         StringBuilder log = new StringBuilder(2048);
         int moveCount = gameManager != null ? gameManager.CurrentMoves : -1;
+        string assetName = levelData != null ? levelData.name : "?";
+        string guid = string.Empty;
+#if UNITY_EDITOR
+        if (levelData != null)
+        {
+            string path = UnityEditor.AssetDatabase.GetAssetPath(levelData);
+            guid = UnityEditor.AssetDatabase.AssetPathToGUID(path);
+        }
+#endif
 
         log.AppendLine("=== HINT SOLVER ===");
+        log.AppendLine("level asset=" + assetName + " guid=" + guid);
+        if (levelData != null)
+        {
+            log.AppendLine(
+                "difficulty=" + levelData.difficulty +
+                " objective=" + levelData.objectiveType
+            );
+        }
+
+        log.AppendLine("board-state hash=" + boardHash);
         log.AppendLine("Current move count: " + moveCount);
         log.AppendLine("Grid: " + gridWidth + "x" + gridHeight);
         log.AppendLine("Runtime vehicles: " + controllers.Count);
         log.AppendLine("hintSolverMaxStates: " + maxStates);
+        if (constraints != null)
+        {
+            log.AppendLine(
+                "constraints: protected=" + constraints.protectedVehicleIndex +
+                " fragile=" + constraints.fragileVehicleIndex +
+                "/" + constraints.fragileMoveLimit +
+                " limited=" + constraints.limitedVehicleIndex +
+                "/" + constraints.limitedMoveLimit +
+                " maxMoves=" + constraints.maxSolutionMoves +
+                " multi=" + constraints.multiTarget
+            );
+        }
 
         for (int i = 0; i < controllers.Count; i++)
         {
@@ -751,6 +1130,11 @@ public class HintManager : MonoBehaviour
         {
             log.AppendLine("searchLimitReason = " + result.searchLimitReason);
         }
+
+        log.AppendLine("statesExplored = " + result.statesExplored);
+        log.AppendLine("solutionLength = " +
+            (result.solution != null ? result.solution.Count : 0));
+        log.AppendLine("minimumMoves from state = " + result.minimumMoves);
 
         log.AppendLine("statesExplored = " + result.statesExplored);
         log.AppendLine("discoveredStates = " + result.discoveredStates);

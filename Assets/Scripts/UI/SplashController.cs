@@ -3,13 +3,14 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// Branded splash: fade/scale in → hold → SceneTransition.
+/// Branded splash: fade/scale in → hold → UMP resolve → Analytics consent → SceneTransition.
 /// First-launch: Gameplay Level 1. Returning: MainMenu.
 /// </summary>
 public class SplashController : MonoBehaviour
 {
     private const string MainMenuSceneName = "MainMenu";
     private const string GameplaySceneName = "Gameplay";
+    private const float PrivacyResolveTimeoutSeconds = 20f;
 
     [Header("References")]
     [SerializeField] private CanvasGroup canvasGroup;
@@ -94,12 +95,47 @@ public class SplashController : MonoBehaviour
             logoTransform.localScale = Vector3.one * endScale;
         }
 
-        // Hold
+        // Hold (UMP may finish in parallel during fade/hold).
         yield return new WaitForSecondsRealtime(Mathf.Max(0f, holdDuration));
+
+        // Startup order: UMP resolve/fail-soft → Analytics consent (if Unknown) → route.
+        yield return WaitForPrivacyConsentResolved();
+        yield return WaitForAnalyticsConsentGate();
 
         // First-launch: Splash → Gameplay (geen MainMenu-flash).
         // Returning: Splash → MainMenu.
         LoadNextSceneOnce();
+    }
+
+    private IEnumerator WaitForPrivacyConsentResolved()
+    {
+        PrivacyConsentManager.EnsureInstance();
+
+        float elapsed = 0f;
+        while (!PrivacyConsentManager.IsResolved &&
+               elapsed < PrivacyResolveTimeoutSeconds)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            yield return null;
+        }
+
+        if (!PrivacyConsentManager.IsResolved)
+        {
+            Debug.LogWarning(
+                "[Privacy] UMP resolve wait timed out — continuing Splash routing."
+            );
+        }
+    }
+
+    private IEnumerator WaitForAnalyticsConsentGate()
+    {
+        bool done = false;
+        AnalyticsConsentPopup.RunGate(() => done = true);
+
+        while (!done)
+        {
+            yield return null;
+        }
     }
 
     private IEnumerator Animate(float duration, System.Action<float> onProgress)

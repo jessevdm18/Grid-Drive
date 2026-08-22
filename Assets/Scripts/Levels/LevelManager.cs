@@ -363,6 +363,13 @@ public class LevelManager : MonoBehaviour
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         Debug.Log(
+            "[LevelTransition] NextIndexResolved=" + nextIndex +
+            " CurrentDb=" + currentDb +
+            " Difficulty=" + difficulty +
+            " NextLocal=" + nextLocal +
+            " NextUnlocked=" + nextUnlocked
+        );
+        Debug.Log(
             "[NextDifficultyLevel]\n" +
             "CurrentDb=" + currentDb + "\n" +
             "Difficulty=" + difficulty + "\n" +
@@ -381,6 +388,9 @@ public class LevelManager : MonoBehaviour
                 "LevelManager: geen volgend level binnen difficulty " + difficulty +
                 " — terug naar LevelSelect."
             );
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            Debug.Log("[LevelTransition] SceneLoadStarted Path=LevelSelect Reason=NoNextInTier");
+#endif
             SceneTransition.LoadScene("LevelSelect");
             return;
         }
@@ -392,6 +402,9 @@ public class LevelManager : MonoBehaviour
                 "LevelManager: next same-difficulty index " + nextIndex +
                 " (local " + nextLocal + ") is locked — terug naar LevelSelect."
             );
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            Debug.Log("[LevelTransition] SceneLoadStarted Path=LevelSelect Reason=NextLocked");
+#endif
             SceneTransition.LoadScene("LevelSelect");
             return;
         }
@@ -407,7 +420,21 @@ public class LevelManager : MonoBehaviour
             saveManager.SaveUnlockedLevel(currentLevelIndex);
         }
 
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        LevelData nextData =
+            levelDatabase != null ? levelDatabase.GetLevel(currentLevelIndex) : null;
+        Debug.Log(
+            "[LevelTransition] LevelDataLoaded=" +
+            (nextData != null ? nextData.name : "null") +
+            " DbIndex=" + currentLevelIndex
+        );
+#endif
+
         LoadLevel();
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        Debug.Log("[LevelTransition] Complete");
+#endif
     }
 
     /// <summary>
@@ -415,6 +442,8 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     public void RestartLevel()
     {
+        LogLevelRestartTelemetry();
+
         if (editorPlaytestLevel != null)
         {
             Debug.Log("Restarting V1 playtest level: " + editorPlaytestLevel.name);
@@ -429,6 +458,16 @@ public class LevelManager : MonoBehaviour
 
         currentLevelIndex = indexToReload;
         LoadCurrentLevel();
+    }
+
+    private void LogLevelRestartTelemetry()
+    {
+        LevelData data = CurrentLevelData;
+        string difficulty = data != null
+            ? data.difficulty.ToString()
+            : CurrentDifficulty.ToString();
+        int movesUsed = gameManager != null ? gameManager.CurrentMoves : 0;
+        GameAnalytics.LogLevelRestart(GetDisplayLevelNumber(), difficulty, movesUsed);
     }
 
     /// <summary>
@@ -446,12 +485,18 @@ public class LevelManager : MonoBehaviour
         if (levelDatabase == null || levelDatabase.LevelCount == 0)
         {
             Debug.LogError("LevelManager: geen levels in LevelDatabase.");
+            FirebaseManager.ReportNonFatal(
+                "LevelManager: empty LevelDatabase (impossible current level lookup)"
+            );
             return;
         }
 
         if (currentLevelIndex < 0 || currentLevelIndex >= levelDatabase.LevelCount)
         {
             Debug.LogError("LevelManager: currentLevelIndex buiten bereik: " + currentLevelIndex);
+            FirebaseManager.ReportNonFatal(
+                "LevelManager: currentLevelIndex out of range: " + currentLevelIndex
+            );
             return;
         }
 
@@ -459,6 +504,9 @@ public class LevelManager : MonoBehaviour
         if (levelData == null)
         {
             Debug.LogError("LevelManager: level op index " + currentLevelIndex + " is leeg.");
+            FirebaseManager.ReportNonFatal(
+                "LevelManager: null LevelData at index " + currentLevelIndex
+            );
             return;
         }
 
@@ -494,6 +542,12 @@ public class LevelManager : MonoBehaviour
         if (gameManager != null)
         {
             gameManager.ResetMoves();
+        }
+
+        HintManager hintManager = FindAnyObjectByType<HintManager>();
+        if (hintManager != null)
+        {
+            hintManager.ResetHintSession();
         }
 
         // Eerst oude gespawnde voertuigen + occupancy opruimen.
@@ -575,6 +629,8 @@ public class LevelManager : MonoBehaviour
         // Na spawn: Classic = no-op, TimedAmbulance = wacht op fade → start timer.
         levelObjectiveController?.BeginForLevel(levelData);
 
+        ReportLevelLoadTelemetry(levelData);
+
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         Debug.Log(
             "[LevelLoadTrace]\n" +
@@ -588,6 +644,48 @@ public class LevelManager : MonoBehaviour
             "SavedContentVersion=" + LevelDatabaseContentVersion.GetSavedVersion() + "\n" +
             "V1Override=" + (editorPlaytestLevel != null)
         );
+#endif
+    }
+
+    private void ReportLevelLoadTelemetry(LevelData levelData)
+    {
+        if (levelData == null)
+        {
+            return;
+        }
+
+        int displayNumber = GetDisplayLevelNumber();
+        string difficulty = levelData.difficulty.ToString();
+        string objective = levelData.objectiveType.ToString();
+        int width = levelData.ResolvedGridWidth;
+        int height = levelData.ResolvedGridHeight;
+        string grid = width + "x" + height;
+
+        FirebaseManager.SetLevelCrashContext(
+            displayNumber,
+            levelData.name,
+            difficulty,
+            objective,
+            grid,
+            levelData.minimumMoves
+        );
+
+        GameAnalytics.LogLevelStart(
+            displayNumber,
+            difficulty,
+            objective,
+            levelData.minimumMoves,
+            width,
+            height,
+            levelData.name
+        );
+
+        // Serious production content issues → Crashlytics non-fatal (via shared validators).
+        LevelMinMoves.LogInvalidIfNeeded(
+            levelData,
+            currentLevelIndex,
+            "LevelManager.LoadLevelData"
+        );
 
         string objectiveMissing = ObjectiveConfigValidation.ValidateSpecialObjective(levelData);
         if (!string.IsNullOrEmpty(objectiveMissing))
@@ -598,7 +696,6 @@ public class LevelManager : MonoBehaviour
                 currentLevelIndex
             );
         }
-#endif
     }
 
     /// <summary>

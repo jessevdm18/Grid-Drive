@@ -9,6 +9,14 @@ public class MainMenuUI : MonoBehaviour
     [SerializeField] private MainMenuSettingsUI settingsUI;
     [SerializeField] private ShopUIController shopUI;
 
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+    private const int CrashlyticsTestTapCount = 7;
+    private const float CrashlyticsTestTapWindowSeconds = 3f;
+
+    private int settingsTapCount;
+    private float settingsTapWindowStartUnscaled;
+#endif
+
     private void Start()
     {
         // Safety if Splash was skipped (Editor Play from MainMenu).
@@ -37,9 +45,14 @@ public class MainMenuUI : MonoBehaviour
 
     /// <summary>
     /// SettingsButton: opent het MainMenu settingspanel.
+    /// Development builds: 7 taps within 3s also sends a Crashlytics non-fatal test.
     /// </summary>
     public void OnSettingsButton()
     {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        RegisterSettingsTapForCrashlyticsTest();
+#endif
+
         if (settingsUI == null)
         {
             settingsUI = FindAnyObjectByType<MainMenuSettingsUI>();
@@ -54,6 +67,29 @@ public class MainMenuUI : MonoBehaviour
             Debug.LogWarning("MainMenuUI: MainMenuSettingsUI is not assigned.");
         }
     }
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+    private void RegisterSettingsTapForCrashlyticsTest()
+    {
+        float now = Time.unscaledTime;
+        if (settingsTapCount == 0 ||
+            now - settingsTapWindowStartUnscaled > CrashlyticsTestTapWindowSeconds)
+        {
+            settingsTapCount = 0;
+            settingsTapWindowStartUnscaled = now;
+        }
+
+        settingsTapCount++;
+        if (settingsTapCount < CrashlyticsTestTapCount)
+        {
+            return;
+        }
+
+        settingsTapCount = 0;
+        settingsTapWindowStartUnscaled = 0f;
+        CrashlyticsDeviceTest.SendTestNonFatal();
+    }
+#endif
 
     /// <summary>
     /// ShopButton: opent het ShopPanel (geen scene load).
