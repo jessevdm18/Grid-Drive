@@ -5,27 +5,30 @@ using UnityEngine;
 
 /// <summary>
 /// Manages Rewarded and Interstitial Ads via Google Mobile Ads.
-/// Uses official test ad unit IDs during development.
+/// Editor / DEVELOPMENT_BUILD → Google official test ad units.
+/// Android Release → Grid Drive production ad units.
+/// iOS production ad units are not wired yet (keeps Google test IDs).
 /// Initializes only after PrivacyConsentManager resolves and CanRequestAds is true.
 /// Google Mobile Ads callbacks are marshalled onto the Unity main thread before
 /// touching PlayerPrefs / scene / gameplay code (prevents GetInt off-thread crashes).
 /// </summary>
 public class AdsManager : MonoBehaviour
 {
-#if UNITY_ANDROID
-    private const string adUnitId =
+    // Official Google test ad units (safe for Editor + Development builds).
+    private const string GoogleTestRewardedAndroid =
         "ca-app-pub-3940256099942544/5224354917";
-    private const string interstitialAdUnitId =
+    private const string GoogleTestInterstitialAndroid =
         "ca-app-pub-3940256099942544/1033173712";
-#elif UNITY_IOS
-    private const string adUnitId =
+    private const string GoogleTestRewardedIos =
         "ca-app-pub-3940256099942544/1712485313";
-    private const string interstitialAdUnitId =
+    private const string GoogleTestInterstitialIos =
         "ca-app-pub-3940256099942544/4411468910";
-#else
-    private const string adUnitId = "unused";
-    private const string interstitialAdUnitId = "unused";
-#endif
+
+    // Grid Drive v1 Android production ad units (Release builds only).
+    private const string ProductionRewardedAndroid =
+        "ca-app-pub-865724589551337/4707151288";
+    private const string ProductionInterstitialAndroid =
+        "ca-app-pub-865724589551337/6318731373";
 
     private RewardedAd rewardedAd;
     private InterstitialAd interstitialAd;
@@ -44,6 +47,68 @@ public class AdsManager : MonoBehaviour
     private void Awake()
     {
         mainThreadId = System.Threading.Thread.CurrentThread.ManagedThreadId;
+        LogAdsConfigOnce();
+    }
+
+    /// <summary>
+    /// Central rewarded ad unit selection.
+    /// Editor / Development → Google test. Android Release → production.
+    /// </summary>
+    public static string GetRewardedAdUnitId()
+    {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+#if UNITY_IOS
+        return GoogleTestRewardedIos;
+#else
+        return GoogleTestRewardedAndroid;
+#endif
+#elif UNITY_ANDROID
+        return ProductionRewardedAndroid;
+#elif UNITY_IOS
+        // iOS production IDs not configured yet — keep Google test / no live fill.
+        return GoogleTestRewardedIos;
+#else
+        return "unused";
+#endif
+    }
+
+    /// <summary>
+    /// Central interstitial ad unit selection.
+    /// Editor / Development → Google test. Android Release → production.
+    /// </summary>
+    public static string GetInterstitialAdUnitId()
+    {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+#if UNITY_IOS
+        return GoogleTestInterstitialIos;
+#else
+        return GoogleTestInterstitialAndroid;
+#endif
+#elif UNITY_ANDROID
+        return ProductionInterstitialAndroid;
+#elif UNITY_IOS
+        // iOS production IDs not configured yet — keep Google test / no live fill.
+        return GoogleTestInterstitialIos;
+#else
+        return "unused";
+#endif
+    }
+
+    private static bool adsConfigLogged;
+
+    private static void LogAdsConfigOnce()
+    {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        if (adsConfigLogged)
+        {
+            return;
+        }
+
+        adsConfigLogged = true;
+        Debug.Log("[AdsConfig] Environment=TEST");
+        Debug.Log("[AdsConfig] Interstitial=test");
+        Debug.Log("[AdsConfig] Rewarded=test");
+#endif
     }
 
     private void OnEnable()
@@ -161,7 +226,7 @@ public class AdsManager : MonoBehaviour
 
         AdRequest request = new AdRequest();
 
-        RewardedAd.Load(adUnitId, request, (RewardedAd ad, LoadAdError error) =>
+        RewardedAd.Load(GetRewardedAdUnitId(), request, (RewardedAd ad, LoadAdError error) =>
         {
             RunOnMainThread(() =>
             {
@@ -285,7 +350,7 @@ public class AdsManager : MonoBehaviour
 
         AdRequest request = new AdRequest();
 
-        InterstitialAd.Load(interstitialAdUnitId, request, (InterstitialAd ad, LoadAdError error) =>
+        InterstitialAd.Load(GetInterstitialAdUnitId(), request, (InterstitialAd ad, LoadAdError error) =>
         {
             RunOnMainThread(() =>
             {
