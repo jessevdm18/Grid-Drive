@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 /// <summary>
@@ -6,6 +7,7 @@ using UnityEngine;
 /// Zet dit op een full-stretch UI-object onder de Canvas.
 /// </summary>
 [RequireComponent(typeof(RectTransform))]
+[DefaultExecutionOrder(-100)]
 public class SafeArea : MonoBehaviour
 {
     private RectTransform rectTransform;
@@ -15,9 +17,26 @@ public class SafeArea : MonoBehaviour
     private int lastScreenWidth;
     private int lastScreenHeight;
 
+    /// <summary>Last applied Screen.safeArea in pixels (zero before first apply).</summary>
+    public Rect LastAppliedSafeAreaPixels { get; private set; }
+
+    /// <summary>Fired after anchors are written (Awake/Start/Update/ForceApply).</summary>
+    public static event Action<SafeArea> OnApplied;
+
     private void Awake()
     {
         rectTransform = GetComponent<RectTransform>();
+        // Apply before GameplayLayoutController (-50) Start/Awake consumers need final bounds.
+        ApplySafeArea();
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        GameplayLayoutController layout =
+            GetComponent<GameplayLayoutController>() ??
+            FindAnyObjectByType<GameplayLayoutController>();
+        if (layout != null)
+        {
+            layout.LogUILayoutAudit("SafeArea.Awake");
+        }
+#endif
     }
 
     private void Start()
@@ -31,6 +50,14 @@ public class SafeArea : MonoBehaviour
         {
             ApplySafeArea();
         }
+    }
+
+    /// <summary>
+    /// Ensures safe-area anchors are current (layout systems may call before Start).
+    /// </summary>
+    public void ForceApply()
+    {
+        ApplySafeArea();
     }
 
     /// <summary>
@@ -48,6 +75,11 @@ public class SafeArea : MonoBehaviour
     /// </summary>
     private void ApplySafeArea()
     {
+        if (rectTransform == null)
+        {
+            rectTransform = GetComponent<RectTransform>();
+        }
+
         if (rectTransform == null)
         {
             return;
@@ -92,5 +124,8 @@ public class SafeArea : MonoBehaviour
         lastSafeArea = safeArea;
         lastScreenWidth = Screen.width;
         lastScreenHeight = Screen.height;
+        LastAppliedSafeAreaPixels = safeArea;
+
+        OnApplied?.Invoke(this);
     }
 }

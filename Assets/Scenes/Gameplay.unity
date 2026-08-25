@@ -15469,6 +15469,8 @@ MonoBehaviour:
   undoButton: {fileID: 2118730885}
   hintButton: {fileID: 792576013}
   rewardedHintButton: {fileID: 514650054}
+  hintStatusText: {fileID: 910020002}
+  hintStatusGap: 28
   pausePanel: {fileID: 492011014}
   winPanel: {fileID: 2047863326}
   objectiveHudRoots:

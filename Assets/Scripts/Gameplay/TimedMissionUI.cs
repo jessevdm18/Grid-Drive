@@ -497,6 +497,14 @@ public class TimedMissionUI : MonoBehaviour
         if (timedHudRoot != null)
         {
             timedHudRoot.SetActive(visible);
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            if (visible)
+            {
+                GameplayLayoutController layout =
+                    FindAnyObjectByType<GameplayLayoutController>();
+                layout?.LogTimedLayoutDiagnostics("TimedMissionUI.Activated");
+            }
+#endif
             return;
         }
 

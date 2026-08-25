@@ -215,6 +215,12 @@ public class SpecialMissionIntroController : MonoBehaviour
             "homeScale=" + homeState.LocalScale + "\n" +
             "homeAnchors=" + homeState.AnchorMin + "→" + homeState.AnchorMax
         );
+        GameplayLayoutController introLayout =
+            FindAnyObjectByType<GameplayLayoutController>();
+        if (introLayout != null)
+        {
+            introLayout.LogUILayoutAudit("MissionIntro.start");
+        }
 #endif
 
         Vector3 homeScale = homeState.LocalScale;
@@ -500,7 +506,8 @@ public class SpecialMissionIntroController : MonoBehaviour
             return;
         }
 
-        // TallPhone / uncaptured Wide: authored CacheHomeState already correct.
+        // Uncaptured Wide: authored CacheHomeState already correct.
+        // Tall home comes from GameplayLayoutController.TryGetMissionLabelHomeState.
     }
 
     /// <summary>
@@ -548,6 +555,11 @@ public class SpecialMissionIntroController : MonoBehaviour
         introRaisedRoot = null;
         introOriginalRootSibling = -1;
         IsIntroPlaying = false;
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        GameplayLayoutController layout = FindAnyObjectByType<GameplayLayoutController>();
+        layout?.LogUILayoutAudit("MissionIntro.end");
+#endif
     }
 
     /// <summary>

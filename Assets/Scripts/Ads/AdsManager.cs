@@ -26,9 +26,9 @@ public class AdsManager : MonoBehaviour
 
     // Grid Drive v1 Android production ad units (Release builds only).
     private const string ProductionRewardedAndroid =
-        "ca-app-pub-865724589551337/4707151288";
+        "ca-app-pub-8657245895551337/4707151288";
     private const string ProductionInterstitialAndroid =
-        "ca-app-pub-865724589551337/6318731373";
+        "ca-app-pub-8657245895551337/6318731373";
 
     private RewardedAd rewardedAd;
     private InterstitialAd interstitialAd;

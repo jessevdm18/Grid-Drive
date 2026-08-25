@@ -88,6 +88,14 @@ public class GameplayLayoutController : MonoBehaviour
     [SerializeField, Range(0.05f, 0.12f)] private float compactRewardedHintFrac = 0.075f;
     [SerializeField, Range(0.05f, 0.12f)] private float compactPauseTopFrac = 0.07f;
 
+    [Header("Tall Phone Portrait — objective block (SafeArea-relative)")]
+    [SerializeField, Range(0.004f, 0.03f)] private float tallTopHudGapFrac = 0.012f;
+    [SerializeField, Range(0.004f, 0.025f)] private float tallInternalGapFrac = 0.01f;
+    [SerializeField, Range(0.008f, 0.04f)] private float tallBoardClearGapFrac = 0.018f;
+    [Tooltip("Max SA-height fraction for the objective band when TopHUD already fills the camera reserve.")]
+    [SerializeField, Range(0.08f, 0.22f)] private float tallMaxObjectiveBandFrac = 0.14f;
+    [SerializeField, Range(1.0f, 2.2f)] private float tallObjectiveRootScale = 1.65f;
+
     [Header("Tablet Column")]
     [SerializeField, Range(0.22f, 0.36f)] private float leftHudWidthFraction = 0.30f;
     [SerializeField] private float tabletPanelPadding = 16f;
@@ -111,6 +119,9 @@ public class GameplayLayoutController : MonoBehaviour
     [SerializeField] private RectTransform undoButton;
     [SerializeField] private RectTransform hintButton;
     [SerializeField] private RectTransform rewardedHintButton;
+    [Tooltip("Insufficient-coins / hint status message. Layout-owned above HintButton.")]
+    [SerializeField] private RectTransform hintStatusText;
+    [SerializeField, Range(8f, 64f)] private float hintStatusGap = 28f;
 
     [Header("Modal Panels (Pause / Win)")]
     [SerializeField] private RectTransform pausePanel;
@@ -146,11 +157,20 @@ public class GameplayLayoutController : MonoBehaviour
     private int lastWidth = -1;
     private int lastHeight = -1;
     private int lastCompactObjectiveActiveMask = int.MinValue;
+    private Rect lastSafeAreaCanvasRect;
+    private bool hasLastSafeAreaCanvasRect;
+    private bool safeAreaReapplyPending;
+    private SafeArea safeAreaComponent;
 
     // Compact Mission Label final/home — written only by StackCompact / CompactObjectiveChildren.
     private RectTransform resolvedCompactMissionLabel;
     private RectTransformState resolvedCompactMissionLabelHome;
     private bool hasResolvedCompactMissionLabelHome;
+
+    // Tall Mission Label final/home — written only by ApplyTallObjectiveBlockLayout.
+    private RectTransform resolvedTallMissionLabel;
+    private RectTransformState resolvedTallMissionLabelHome;
+    private bool hasResolvedTallMissionLabelHome;
 
     public bool IsWideLayoutActive =>
         appliedKind == GameplayLayoutKind.WideTabletLandscape;
@@ -171,6 +191,7 @@ public class GameplayLayoutController : MonoBehaviour
     private void Awake()
     {
         ResolveRefs();
+        EnsureSafeAreaApplied();
         DiscardTallCapturedProfile();
         EnsureImmutablePhoneBaseline();
         CachePhoneLayout();
@@ -201,12 +222,15 @@ public class GameplayLayoutController : MonoBehaviour
             " rewarded=" + (rewardedHintButton != null) +
             " objectives=" + (objectiveHudRoots != null ? objectiveHudRoots.Length : 0)
         );
+        LogUILayoutAudit("Awake");
 #endif
     }
 
 #if UNITY_EDITOR
     private void OnEnable()
     {
+        SafeArea.OnApplied += OnSafeAreaApplied;
+
         if (Application.isPlaying || IsAuthoringPreviewActive)
         {
             return;
@@ -216,6 +240,33 @@ public class GameplayLayoutController : MonoBehaviour
         UnityEditor.EditorApplication.delayCall += EditorAutoRepairPhoneHierarchy;
     }
 
+    private void OnDisable()
+    {
+        SafeArea.OnApplied -= OnSafeAreaApplied;
+    }
+#else
+    private void OnEnable()
+    {
+        SafeArea.OnApplied += OnSafeAreaApplied;
+    }
+
+    private void OnDisable()
+    {
+        SafeArea.OnApplied -= OnSafeAreaApplied;
+    }
+#endif
+
+    private void OnSafeAreaApplied(SafeArea applied)
+    {
+        if (applied == null || safeArea == null || applied.transform != safeArea)
+        {
+            return;
+        }
+
+        safeAreaReapplyPending = true;
+    }
+
+#if UNITY_EDITOR
     private void EditorAutoRepairPhoneHierarchy()
     {
         if (this == null || Application.isPlaying || IsAuthoringPreviewActive)
@@ -264,14 +315,23 @@ public class GameplayLayoutController : MonoBehaviour
 
     private void Start()
     {
+        EnsureSafeAreaApplied();
         ApplyLayout(force: true);
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        LogUILayoutAudit("Start");
+        StartCoroutine(LogUILayoutAuditAfterFrames());
+#endif
     }
 
     private void LateUpdate()
     {
-        // Catch Game View resolution changes and late HUD activation.
-        if (Screen.width != lastWidth || Screen.height != lastHeight)
+        // Catch Game View resolution changes, SafeArea inset changes, and late HUD activation.
+        if (Screen.width != lastWidth ||
+            Screen.height != lastHeight ||
+            safeAreaReapplyPending ||
+            HasSafeAreaCanvasRectChanged())
         {
+            safeAreaReapplyPending = false;
             ApplyLayout(force: true);
             return;
         }
@@ -310,6 +370,7 @@ public class GameplayLayoutController : MonoBehaviour
                 ApplyCapturedProfile(
                     GameplayLayoutKind.CompactPhonePortrait,
                     compactPhoneProfile);
+                ApplyHintStatusLayout();
                 return;
             }
 
@@ -317,6 +378,22 @@ public class GameplayLayoutController : MonoBehaviour
             float topPad = safeH * compactTopHudPaddingFrac;
             float topHudH = safeH * compactTopHudHeightFrac;
             StackCompactObjectiveBlock(topPad + topHudH + safeH * compactObjectiveGapFrac, safeH);
+            ApplyHintStatusLayout();
+        }
+        else if (appliedKind == GameplayLayoutKind.TallPhonePortrait)
+        {
+            // Mission roots often activate after first layout. Re-apply Tall ownership
+            // even during intro (roots only — Mission Label animation is separate).
+            int mask = BuildActiveObjectiveMask();
+            if (mask != lastCompactObjectiveActiveMask)
+            {
+                lastCompactObjectiveActiveMask = mask;
+                ApplyTallObjectiveBlockLayout();
+                ApplyHintStatusLayout();
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                LogUILayoutAudit("TallObjectiveActivated");
+#endif
+            }
         }
     }
 
@@ -337,6 +414,7 @@ public class GameplayLayoutController : MonoBehaviour
 
             if (sa != null)
             {
+                safeAreaComponent = sa;
                 safeArea = sa.transform as RectTransform;
             }
         }
@@ -369,6 +447,11 @@ public class GameplayLayoutController : MonoBehaviour
         if (rewardedHintButton == null)
         {
             rewardedHintButton = FindChildRect(safeArea, "RewardedHintButton");
+        }
+
+        if (hintStatusText == null)
+        {
+            hintStatusText = FindChildRect(safeArea, "HintStatusText");
         }
 
         if (pausePanel == null)
@@ -1009,13 +1092,16 @@ public class GameplayLayoutController : MonoBehaviour
 
     private void ApplyLayout(bool force)
     {
+        EnsureSafeAreaApplied();
+
         GameplayLayoutKind wantKind =
             GameplayLayoutMode.Resolve(tallPhoneMaxAspect, wideAspectThreshold);
 
         if (!force &&
             wantKind == appliedKind &&
             Screen.width == lastWidth &&
-            Screen.height == lastHeight)
+            Screen.height == lastHeight &&
+            !HasSafeAreaCanvasRectChanged())
         {
             return;
         }
@@ -1023,11 +1109,19 @@ public class GameplayLayoutController : MonoBehaviour
         lastWidth = Screen.width;
         lastHeight = Screen.height;
         appliedKind = wantKind;
+        CaptureSafeAreaCanvasRect();
+        safeAreaReapplyPending = false;
 
         if (wantKind != GameplayLayoutKind.CompactPhonePortrait)
         {
             hasResolvedCompactMissionLabelHome = false;
             resolvedCompactMissionLabel = null;
+        }
+
+        if (wantKind != GameplayLayoutKind.TallPhonePortrait)
+        {
+            hasResolvedTallMissionLabelHome = false;
+            resolvedTallMissionLabel = null;
         }
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
@@ -1059,7 +1153,8 @@ public class GameplayLayoutController : MonoBehaviour
                     ApplyCompactPhoneLayout();
                     break;
                 default:
-                    // TallPhonePortrait: baseline already restored.
+                    // TallPhonePortrait: baseline restored, then deterministic objective block.
+                    ApplyTallObjectiveBlockLayout();
                     break;
             }
         }
@@ -1067,8 +1162,13 @@ public class GameplayLayoutController : MonoBehaviour
         // Final ownership sync — survives EnsureTabletScaffold / cleanup side effects.
         SyncTabletHudPanelActiveToKind(wantKind, "ApplyLayout.end");
         ApplyModalPanelsForKind(wantKind);
+        ApplyHintStatusLayout();
 
         NotifyCameraFitter(wantKind, profile);
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        LogUILayoutAudit("ApplyLayout." + wantKind);
+#endif
     }
 
     private void NotifyCameraFitter(GameplayLayoutKind kind, GameplayLayoutProfile profile)
@@ -2233,8 +2333,8 @@ public class GameplayLayoutController : MonoBehaviour
     }
 
     /// <summary>
-    /// Permanent Mission Label home for Compact or Wide when a capture exists.
-    /// Tall: returns false — intro uses authored live state.
+    /// Permanent Mission Label home for Compact / Wide when a capture exists.
+    /// Tall: live post-layout child state (after GameplayLayoutController settle).
     /// </summary>
     public bool TryGetMissionLabelHomeState(
         RectTransform label,
@@ -2252,6 +2352,31 @@ public class GameplayLayoutController : MonoBehaviour
             HasUsableWideCapture() &&
             wideTabletProfile.TryGet(key, out state))
         {
+            return true;
+        }
+
+        if (appliedKind == GameplayLayoutKind.TallPhonePortrait)
+        {
+            if (hasResolvedTallMissionLabelHome &&
+                resolvedTallMissionLabel == label)
+            {
+                state = resolvedTallMissionLabelHome;
+                return true;
+            }
+
+            // Ensure layout-owned home exists (e.g. intro before LateUpdate mask apply).
+            ApplyTallObjectiveBlockLayout();
+            if (hasResolvedTallMissionLabelHome &&
+                resolvedTallMissionLabel == label)
+            {
+                state = resolvedTallMissionLabelHome;
+                return true;
+            }
+
+            state = RectTransformState.From(
+                key,
+                label.parent != null ? label.parent.name : string.Empty,
+                label);
             return true;
         }
 
@@ -3605,6 +3730,771 @@ public class GameplayLayoutController : MonoBehaviour
 
         return label.name;
     }
+
+    private void EnsureSafeAreaApplied()
+    {
+        if (safeAreaComponent == null && safeArea != null)
+        {
+            safeAreaComponent = safeArea.GetComponent<SafeArea>();
+        }
+
+        if (safeAreaComponent == null)
+        {
+            safeAreaComponent = FindAnyObjectByType<SafeArea>();
+        }
+
+        if (safeAreaComponent != null)
+        {
+            safeAreaComponent.ForceApply();
+            if (safeArea == null)
+            {
+                safeArea = safeAreaComponent.transform as RectTransform;
+            }
+        }
+
+        CaptureSafeAreaCanvasRect();
+    }
+
+    private void CaptureSafeAreaCanvasRect()
+    {
+        if (safeArea == null)
+        {
+            hasLastSafeAreaCanvasRect = false;
+            return;
+        }
+
+        lastSafeAreaCanvasRect = safeArea.rect;
+        hasLastSafeAreaCanvasRect = true;
+    }
+
+    private bool HasSafeAreaCanvasRectChanged()
+    {
+        if (safeArea == null || !hasLastSafeAreaCanvasRect)
+        {
+            return false;
+        }
+
+        Rect current = safeArea.rect;
+        return !Mathf.Approximately(current.xMin, lastSafeAreaCanvasRect.xMin) ||
+               !Mathf.Approximately(current.yMin, lastSafeAreaCanvasRect.yMin) ||
+               !Mathf.Approximately(current.width, lastSafeAreaCanvasRect.width) ||
+               !Mathf.Approximately(current.height, lastSafeAreaCanvasRect.height);
+    }
+
+    private static bool IsScreenSafeAreaFullyCovering()
+    {
+        if (Screen.width <= 0 || Screen.height <= 0)
+        {
+            return true;
+        }
+
+        Rect safe = Screen.safeArea;
+        const float tol = 1.5f;
+        return safe.xMin <= tol &&
+               safe.yMin <= tol &&
+               safe.xMax >= Screen.width - tol &&
+               safe.yMax >= Screen.height - tol;
+    }
+
+    /// <summary>
+    /// Layout-owned position for HintStatusText: same parent/anchors as HintButton,
+    /// fixed gap above the button, sibling order after the button so it draws on top.
+    /// HintManager must only set text/visibility.
+    /// </summary>
+    public void EnsureHintStatusLayout()
+    {
+        ApplyHintStatusLayout();
+    }
+
+    private void ApplyHintStatusLayout()
+    {
+        if (hintStatusText == null || hintButton == null)
+        {
+            return;
+        }
+
+        Transform hintParent = hintButton.parent;
+        if (hintParent != null && hintStatusText.parent != hintParent)
+        {
+            hintStatusText.SetParent(hintParent, false);
+        }
+
+        hintStatusText.anchorMin = hintButton.anchorMin;
+        hintStatusText.anchorMax = hintButton.anchorMax;
+        hintStatusText.pivot = new Vector2(0.5f, 0f);
+
+        float btnScaleY = Mathf.Abs(hintButton.localScale.y);
+        float buttonTopY = hintButton.anchoredPosition.y +
+            (1f - hintButton.pivot.y) * hintButton.rect.height * btnScaleY;
+
+        hintStatusText.anchoredPosition = new Vector2(
+            hintButton.anchoredPosition.x,
+            buttonTopY + hintStatusGap);
+
+        if (hintStatusText.parent == hintButton.parent && hintButton.parent != null)
+        {
+            int hintIdx = hintButton.GetSiblingIndex();
+            hintStatusText.SetSiblingIndex(
+                Mathf.Min(hintIdx + 1, hintStatusText.parent.childCount - 1));
+        }
+    }
+
+    /// <summary>
+    /// TallPhone only: keep DifficultyLabel on immutable baseline; place active mission
+    /// Mission Label + secondary BELOW the live Difficulty bottom. Never moves Difficulty.
+    /// Compact / Wide / Hint are untouched.
+    /// </summary>
+    private void ApplyTallObjectiveBlockLayout()
+    {
+        if (appliedKind != GameplayLayoutKind.TallPhonePortrait ||
+            safeArea == null ||
+            objectiveHudRoots == null)
+        {
+            return;
+        }
+
+        float safeH = Mathf.Max(1f, safeArea.rect.height);
+        float boardTop = MeasureBoardTopFromSaTop(safeH);
+        float gapInternal = safeH * tallInternalGapFrac;
+        float gapBoard = safeH * tallBoardClearGapFrac;
+
+        // Difficulty is authored Tall ownership — restore baseline, never recompute from TopHUD.
+        RestoreTallDifficultyLabelBaseline();
+        float difficultyBaselineY = MeasureRectPivotFromSaTop(difficultyLabelRoot, safeH);
+        float difficultyBottom = MeasureRectBottomFromSaTop(difficultyLabelRoot, safeH);
+
+        ParkInactiveTallMissionRoots();
+
+        float missionY = -1f;
+        float secondaryY = -1f;
+        float secondaryBottom = difficultyBottom;
+        RectTransform activeMissionRoot = null;
+
+        activeMissionRoot = FindActiveTallMissionRoot();
+        if (activeMissionRoot == null)
+        {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            LogTallObjectiveLayout(
+                difficultyBaselineY,
+                difficultyBottom,
+                missionY,
+                secondaryY,
+                secondaryBottom,
+                boardTop,
+                boardTop - secondaryBottom,
+                null);
+#endif
+            return;
+        }
+
+        Vector3 rootScale = Vector3.one * tallObjectiveRootScale;
+        if (immutablePhoneBaseline != null &&
+            immutablePhoneBaseline.TryGet(
+                activeMissionRoot.name,
+                out RectTransformState baseline) &&
+            baseline.localScale.y > 0.01f)
+        {
+            float authored = Mathf.Abs(baseline.localScale.y);
+            rootScale = Vector3.one * Mathf.Clamp(
+                authored * 0.62f,
+                1.15f,
+                tallObjectiveRootScale);
+        }
+
+        float localGap = gapInternal / Mathf.Max(0.01f, rootScale.y);
+        // Prefer fitting under board by tightening internal gap before shifting.
+        TallMissionStackMetrics metrics =
+            StackTallMissionChildren(activeMissionRoot, localGap);
+
+        float contentH = Mathf.Max(
+            metrics.ContentHeightLocal * rootScale.y,
+            safeH * 0.06f);
+
+        float cursor = difficultyBottom + gapInternal;
+        float clearLimit = boardTop;
+        if (clearLimit <= difficultyBottom + gapInternal)
+        {
+            clearLimit = difficultyBottom + safeH * tallMaxObjectiveBandFrac;
+        }
+
+        float overflow = (cursor + contentH + gapBoard) - clearLimit;
+        if (overflow > 0.5f)
+        {
+            // 1) Shrink internal gap (mission may approach Difficulty, must not overlap).
+            float minGap = Mathf.Max(4f, safeH * 0.004f);
+            float reducedGap = Mathf.Max(minGap, gapInternal - overflow);
+            float gapSaved = gapInternal - reducedGap;
+            cursor = difficultyBottom + reducedGap;
+            overflow = (cursor + contentH + gapBoard) - clearLimit;
+
+            if (gapSaved > 0.01f)
+            {
+                localGap = reducedGap / Mathf.Max(0.01f, rootScale.y);
+                metrics = StackTallMissionChildren(activeMissionRoot, localGap);
+                contentH = Mathf.Max(
+                    metrics.ContentHeightLocal * rootScale.y,
+                    safeH * 0.06f);
+                overflow = (cursor + contentH + gapBoard) - clearLimit;
+            }
+        }
+
+        PlaceTallAnchoredRoot(
+            activeMissionRoot,
+            cursor,
+            Mathf.Max(contentH / Mathf.Max(0.01f, rootScale.y), 80f),
+            rootScale);
+
+        missionY = cursor + metrics.MissionTopFromRootTopLocal * rootScale.y;
+        if (metrics.HasSecondary)
+        {
+            secondaryY =
+                cursor + metrics.SecondaryTopFromRootTopLocal * rootScale.y;
+            secondaryBottom = cursor + contentH;
+        }
+        else
+        {
+            secondaryBottom = cursor + contentH;
+        }
+
+        // 2) If still overflowing, shift ONLY the mission root upward toward Difficulty.
+        overflow = (secondaryBottom + gapBoard) - clearLimit;
+        if (overflow > 0.5f)
+        {
+            float minFromTop = difficultyBottom + Mathf.Max(4f, safeH * 0.004f);
+            float missionFromTop = -activeMissionRoot.anchoredPosition.y;
+            float maxShift = Mathf.Max(0f, missionFromTop - minFromTop);
+            float shift = Mathf.Min(overflow, maxShift);
+            if (shift > 0.5f)
+            {
+                ShiftTallMissionBlockUp(activeMissionRoot, shift, minFromTop);
+                missionY = Mathf.Max(minFromTop, missionY - shift);
+                if (secondaryY >= 0f)
+                {
+                    secondaryY = Mathf.Max(minFromTop, secondaryY - shift);
+                }
+
+                secondaryBottom = Mathf.Max(minFromTop, secondaryBottom - shift);
+            }
+        }
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        LogTallObjectiveLayout(
+            difficultyBaselineY,
+            difficultyBottom,
+            missionY,
+            secondaryY,
+            secondaryBottom,
+            boardTop,
+            boardTop - secondaryBottom,
+            activeMissionRoot);
+#endif
+    }
+
+    /// <summary>
+    /// Restores DifficultyLabel (+ Label child) from immutable Tall baseline / phone snapshot.
+    /// Tall SafeArea must not rewrite Difficulty Y.
+    /// </summary>
+    private void RestoreTallDifficultyLabelBaseline()
+    {
+        if (difficultyLabelRoot == null)
+        {
+            return;
+        }
+
+        if (immutablePhoneBaseline != null &&
+            immutablePhoneBaseline.TryGet("DifficultyLabel", out RectTransformState state))
+        {
+            if (safeArea != null)
+            {
+                difficultyLabelRoot.SetParent(safeArea, false);
+            }
+
+            state.ApplyTo(difficultyLabelRoot);
+        }
+        else
+        {
+            RestoreFromCache(difficultyLabelRoot);
+        }
+
+        RestoreObjectiveChildrenForRoot(difficultyLabelRoot);
+    }
+    private void ParkInactiveTallMissionRoots()
+    {
+        if (objectiveHudRoots == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < objectiveHudRoots.Length; i++)
+        {
+            RectTransform root = objectiveHudRoots[i];
+            if (root == null || root == difficultyLabelRoot)
+            {
+                continue;
+            }
+
+            if (root.gameObject.activeInHierarchy)
+            {
+                continue;
+            }
+
+            RestoreFromCache(root);
+            RestoreObjectiveChildrenForRoot(root);
+        }
+    }
+
+    private RectTransform FindActiveTallMissionRoot()
+    {
+        if (objectiveHudRoots == null)
+        {
+            return null;
+        }
+
+        for (int i = 0; i < objectiveHudRoots.Length; i++)
+        {
+            RectTransform root = objectiveHudRoots[i];
+            if (root == null || root == difficultyLabelRoot)
+            {
+                continue;
+            }
+
+            if (root.gameObject.activeInHierarchy)
+            {
+                return root;
+            }
+        }
+
+        return null;
+    }
+
+    private void PlaceTallAnchoredRoot(
+        RectTransform root,
+        float fromTop,
+        float height,
+        Vector3 scale)
+    {
+        if (root == null || safeArea == null)
+        {
+            return;
+        }
+
+        root.SetParent(safeArea, false);
+        root.anchorMin = new Vector2(0.5f, 1f);
+        root.anchorMax = new Vector2(0.5f, 1f);
+        root.pivot = new Vector2(0.5f, 1f);
+        root.anchoredPosition = new Vector2(0f, -fromTop);
+        root.sizeDelta = new Vector2(Mathf.Max(root.sizeDelta.x, 520f), height);
+        root.localScale = scale;
+    }
+
+    private struct TallMissionStackMetrics
+    {
+        public float ContentHeightLocal;
+        public float MissionTopFromRootTopLocal;
+        public float SecondaryTopFromRootTopLocal;
+        public bool HasSecondary;
+    }
+
+    private TallMissionStackMetrics StackTallMissionChildren(
+        RectTransform root,
+        float localGap)
+    {
+        TallMissionStackMetrics metrics = default;
+        if (root == null)
+        {
+            return metrics;
+        }
+
+        RectTransform missionLabel = null;
+        List<RectTransform> secondary = new List<RectTransform>(4);
+        for (int i = 0; i < root.childCount; i++)
+        {
+            RectTransform child = root.GetChild(i) as RectTransform;
+            if (child == null || !child.gameObject.activeSelf)
+            {
+                continue;
+            }
+
+            if (IsMissionIntroLabel(child))
+            {
+                missionLabel = child;
+                continue;
+            }
+
+            if (IsTallSecondaryObjectiveChild(child))
+            {
+                secondary.Add(child);
+            }
+        }
+
+        float y = 0f;
+        float contentBottom = 0f;
+
+        if (missionLabel != null)
+        {
+            Vector3 scale = Vector3.one * 0.72f;
+            Vector2 size = missionLabel.sizeDelta;
+            if (objectiveChildPhoneSnapshots.TryGetValue(missionLabel, out RectSnapshot snap))
+            {
+                scale = snap.LocalScale;
+                size = snap.SizeDelta;
+                if (Mathf.Abs(scale.x) < 0.01f)
+                {
+                    scale = Vector3.one * 0.72f;
+                }
+            }
+
+            float lineH = Mathf.Max(28f, Mathf.Abs(size.y) * Mathf.Abs(scale.y));
+            metrics.MissionTopFromRootTopLocal = 0f;
+
+            if (!SpecialMissionIntroController.IsIntroPlaying)
+            {
+                missionLabel.anchorMin = new Vector2(0.5f, 1f);
+                missionLabel.anchorMax = new Vector2(0.5f, 1f);
+                missionLabel.pivot = new Vector2(0.5f, 1f);
+                missionLabel.anchoredPosition = new Vector2(0f, y);
+                missionLabel.localScale = scale;
+                missionLabel.SetAsFirstSibling();
+
+                resolvedTallMissionLabel = missionLabel;
+                resolvedTallMissionLabelHome = RectTransformState.From(
+                    BuildChildKey(missionLabel),
+                    root.name,
+                    missionLabel);
+                hasResolvedTallMissionLabelHome = true;
+            }
+            else if (hasResolvedTallMissionLabelHome &&
+                     resolvedTallMissionLabel == missionLabel)
+            {
+                // Keep cached home; intro owns the live transform.
+            }
+            else
+            {
+                // Seed home from intended layout without fighting the animation.
+                resolvedTallMissionLabel = missionLabel;
+                resolvedTallMissionLabelHome = new RectTransformState
+                {
+                    key = BuildChildKey(missionLabel),
+                    parentKey = root.name,
+                    siblingIndex = missionLabel.GetSiblingIndex(),
+                    anchorMin = new Vector2(0.5f, 1f),
+                    anchorMax = new Vector2(0.5f, 1f),
+                    pivot = new Vector2(0.5f, 1f),
+                    anchoredPosition = new Vector2(0f, y),
+                    sizeDelta = size,
+                    localScale = scale,
+                    localEulerAngles = missionLabel.localEulerAngles
+                };
+                hasResolvedTallMissionLabelHome = true;
+            }
+
+            y -= lineH + localGap;
+            contentBottom = -y;
+        }
+
+        for (int i = 0; i < secondary.Count; i++)
+        {
+            RectTransform child = secondary[i];
+            Vector3 scale = Vector3.one;
+            Vector2 size = child.sizeDelta;
+            if (objectiveChildPhoneSnapshots.TryGetValue(child, out RectSnapshot snap))
+            {
+                scale = snap.LocalScale;
+                size = snap.SizeDelta;
+            }
+
+            float lineH = Mathf.Max(24f, Mathf.Abs(size.y) * Mathf.Abs(scale.y));
+            if (!metrics.HasSecondary)
+            {
+                metrics.SecondaryTopFromRootTopLocal = -y;
+                metrics.HasSecondary = true;
+            }
+
+            child.anchorMin = new Vector2(0.5f, 1f);
+            child.anchorMax = new Vector2(0.5f, 1f);
+            child.pivot = new Vector2(0.5f, 1f);
+            child.anchoredPosition = new Vector2(0f, y);
+            child.localScale = scale;
+
+            y -= lineH + localGap;
+            contentBottom = -y;
+        }
+
+        metrics.ContentHeightLocal = Mathf.Max(contentBottom, 40f);
+        return metrics;
+    }
+
+    private static bool IsTallSecondaryObjectiveChild(RectTransform child)
+    {
+        if (child == null)
+        {
+            return false;
+        }
+
+        if (IsMissionIntroLabel(child))
+        {
+            return false;
+        }
+
+        string n = child.name;
+        return n.IndexOf("Timer", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
+               n.IndexOf("MovesRemaining", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
+               n.IndexOf("Targets", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
+               n.IndexOf("Rule", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
+               n.IndexOf("Remaining", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
+               n.Equals("MovesText", System.StringComparison.OrdinalIgnoreCase) ||
+               n.IndexOf("Count", System.StringComparison.OrdinalIgnoreCase) >= 0;
+    }
+
+    private void ShiftTallMissionBlockUp(
+        RectTransform missionRoot,
+        float shift,
+        float minFromTop)
+    {
+        if (shift <= 0.01f ||
+            missionRoot == null ||
+            safeArea == null ||
+            missionRoot.parent != safeArea)
+        {
+            return;
+        }
+
+        float fromTop = -missionRoot.anchoredPosition.y;
+        missionRoot.anchoredPosition = new Vector2(
+            0f,
+            -Mathf.Max(minFromTop, fromTop - shift));
+    }
+
+    private float MeasureRectPivotFromSaTop(RectTransform rt, float safeH)
+    {
+        if (rt == null || safeArea == null)
+        {
+            return -1f;
+        }
+
+        Vector3[] corners = new Vector3[4];
+        rt.GetWorldCorners(corners);
+        Vector3 mid = (corners[0] + corners[2]) * 0.5f;
+        Vector3 local = safeArea.InverseTransformPoint(mid);
+        return safeArea.rect.yMax - local.y;
+    }
+
+    private float MeasureRectBottomFromSaTop(RectTransform rt, float safeH)
+    {
+        if (rt == null || safeArea == null)
+        {
+            return safeH * 0.2f;
+        }
+
+        Vector3[] corners = new Vector3[4];
+        rt.GetWorldCorners(corners);
+        float worldBottom = corners[0].y;
+        for (int i = 1; i < 4; i++)
+        {
+            if (corners[i].y < worldBottom)
+            {
+                worldBottom = corners[i].y;
+            }
+        }
+
+        Vector3 local = safeArea.InverseTransformPoint(
+            new Vector3(corners[0].x, worldBottom, corners[0].z));
+        return safeArea.rect.yMax - local.y;
+    }
+
+    private float MeasureTopHudBottomFromTop(float safeH)
+    {
+        if (topHud == null)
+        {
+            return safeH * 0.12f;
+        }
+
+        // Top-anchored: anchoredPosition.y is typically negative.
+        float pivotFromTop = -topHud.anchoredPosition.y;
+        float h = topHud.rect.height * Mathf.Abs(topHud.localScale.y);
+        float pivotY = topHud.pivot.y;
+        // Distance from pivot to bottom edge along +down in from-top space.
+        float pivotToBottom = h * pivotY;
+        return Mathf.Max(0f, pivotFromTop + pivotToBottom);
+    }
+
+    private float MeasureBoardTopFromSaTop(float safeH)
+    {
+        float topReserved = tallPhoneProfile != null
+            ? tallPhoneProfile.topReservedFraction
+            : 0.16f;
+        float screenH = Mathf.Max(1f, Screen.height);
+        float safePixelH = Mathf.Max(1f, Screen.safeArea.height);
+        float topInsetPx = Mathf.Max(0f, screenH - Screen.safeArea.yMax);
+        return safeH * ((topReserved * screenH - topInsetPx) / safePixelH);
+    }
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+    private void LogTallObjectiveLayout(
+        float difficultyBaselineY,
+        float difficultyBottom,
+        float missionY,
+        float secondaryY,
+        float secondaryBottom,
+        float boardTop,
+        float gapToBoard,
+        RectTransform activeRoot)
+    {
+        Debug.Log(
+            "[TallObjectiveLayout]\n" +
+            "kind=" + appliedKind + "\n" +
+            "difficultyBaselineY=" + difficultyBaselineY.ToString("0.0") + "\n" +
+            "difficultyBottom=" + difficultyBottom.ToString("0.0") + "\n" +
+            "missionY=" + missionY.ToString("0.0") + "\n" +
+            "secondaryY=" + secondaryY.ToString("0.0") + "\n" +
+            "secondaryBottom=" + secondaryBottom.ToString("0.0") + "\n" +
+            "boardTop=" + boardTop.ToString("0.0") + "\n" +
+            "gapToBoard=" + gapToBoard.ToString("0.0") + "\n" +
+            "activeRoot=" + (activeRoot != null ? activeRoot.name : "none")
+        );
+    }
+#endif
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+    private System.Collections.IEnumerator LogUILayoutAuditAfterFrames()
+    {
+        yield return null;
+        LogUILayoutAudit("Frame+1");
+        yield return null;
+        LogUILayoutAudit("Frame+2");
+    }
+
+    /// <summary>Legacy alias for Timed-only probes.</summary>
+    public void LogTimedLayoutDiagnostics(string stage)
+    {
+        LogUILayoutAudit(stage);
+    }
+
+    /// <summary>Dev-only Editor vs device layout probe.</summary>
+    public void LogUILayoutAudit(string stage)
+    {
+        Canvas canvas = safeArea != null ? safeArea.GetComponentInParent<Canvas>() : null;
+        RectTransform canvasRt = canvas != null ? canvas.transform as RectTransform : null;
+
+        System.Text.StringBuilder sb = new System.Text.StringBuilder(2048);
+        sb.AppendLine("[UILayoutAudit]");
+        sb.AppendLine("Stage=" + stage);
+        sb.AppendLine("Screen=" + Screen.width + "x" + Screen.height);
+        sb.AppendLine(
+            "SafeArea=" + Screen.safeArea.x + "," + Screen.safeArea.y + "," +
+            Screen.safeArea.width + "," + Screen.safeArea.height);
+        sb.AppendLine("CanvasRect=" + (canvasRt != null ? canvasRt.rect.ToString() : "null"));
+        sb.AppendLine(
+            "CanvasScaleFactor=" +
+            (canvas != null ? canvas.scaleFactor.ToString("0.###") : "n/a"));
+        sb.AppendLine("LayoutKind=" + appliedKind);
+        sb.AppendLine(
+            "SafeAreaRect=" + (safeArea != null ? safeArea.rect.ToString() : "null"));
+        sb.AppendLine("FullSafeCovering=" + IsScreenSafeAreaFullyCovering());
+        sb.AppendLine(
+            "BoardTopScreenYApprox=" +
+            (Screen.height * (1f - (tallPhoneProfile != null
+                ? tallPhoneProfile.topReservedFraction
+                : 0.16f))).ToString("0"));
+
+        if (objectiveHudRoots != null)
+        {
+            for (int i = 0; i < objectiveHudRoots.Length; i++)
+            {
+                RectTransform root = objectiveHudRoots[i];
+                if (root == null || !root.gameObject.activeInHierarchy)
+                {
+                    continue;
+                }
+
+                AppendHudRootAudit(sb, root);
+            }
+        }
+
+        AppendRectAudit(sb, "HintButton", hintButton);
+        AppendRectAudit(sb, "HintStatusText", hintStatusText);
+        if (hintStatusText != null)
+        {
+            sb.AppendLine(
+                "HintStatusText siblingIndex=" + hintStatusText.GetSiblingIndex());
+            sb.AppendLine(
+                "HintStatusText parent=" +
+                (hintStatusText.parent != null ? hintStatusText.parent.name : "null"));
+        }
+
+        Debug.Log(sb.ToString());
+    }
+
+    private static void AppendHudRootAudit(
+        System.Text.StringBuilder sb,
+        RectTransform root)
+    {
+        sb.AppendLine("--- " + root.name + " ---");
+        sb.AppendLine(
+            "parent=" + (root.parent != null ? root.parent.name : "null"));
+        sb.AppendLine(
+            "anchors=" + root.anchorMin + " → " + root.anchorMax);
+        sb.AppendLine("anchoredPosition=" + root.anchoredPosition);
+        sb.AppendLine("sizeDelta=" + root.sizeDelta);
+        sb.AppendLine("scale=" + root.localScale);
+
+        for (int c = 0; c < root.childCount; c++)
+        {
+            RectTransform child = root.GetChild(c) as RectTransform;
+            if (child == null)
+            {
+                continue;
+            }
+
+            string n = child.name;
+            bool interesting =
+                n.IndexOf("Mission", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
+                n.IndexOf("Timer", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
+                n.IndexOf("Rule", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
+                n.IndexOf("Target", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
+                n.IndexOf("Remaining", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
+                n.IndexOf("Label", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
+                n.IndexOf("Move", System.StringComparison.OrdinalIgnoreCase) >= 0;
+            if (!interesting)
+            {
+                continue;
+            }
+
+            sb.AppendLine(
+                "  " + n + " anchoredPosition=" + child.anchoredPosition +
+                " screenBounds=" + GetScreenBounds(child));
+        }
+    }
+
+    private static void AppendRectAudit(
+        System.Text.StringBuilder sb,
+        string label,
+        RectTransform rt)
+    {
+        if (rt == null)
+        {
+            sb.AppendLine(label + "=null");
+            return;
+        }
+
+        sb.AppendLine(label + " anchoredPosition=" + rt.anchoredPosition);
+        sb.AppendLine(label + " anchors=" + rt.anchorMin + " → " + rt.anchorMax);
+        sb.AppendLine(label + " screenBounds=" + GetScreenBounds(rt));
+    }
+
+    private static string GetScreenBounds(RectTransform rt)
+    {
+        if (rt == null)
+        {
+            return "null";
+        }
+
+        Vector3[] corners = new Vector3[4];
+        rt.GetWorldCorners(corners);
+        return "min=(" + corners[0].x.ToString("0") + "," + corners[0].y.ToString("0") +
+               ") max=(" + corners[2].x.ToString("0") + "," + corners[2].y.ToString("0") + ")";
+    }
+#endif
 
 #if UNITY_EDITOR
     private void OnValidate()

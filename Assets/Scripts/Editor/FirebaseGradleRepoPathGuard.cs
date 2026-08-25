@@ -54,6 +54,13 @@ public static class FirebaseGradleRepoPathGuard
         RegexOptions.Compiled);
 
     private static bool isPatchingTemplate;
+    private static bool deferredTemplateImportScheduled;
+
+    /// <summary>
+    /// True while EDM/GMA ResolveSync (or any AssetDatabase import wave) must not be
+    /// interrupted by a synchronous settingsTemplate ImportAsset/Refresh.
+    /// </summary>
+    public static bool SuppressSynchronousTemplateImport { get; set; }
 
     [MenuItem("RushOut/Release/Verify Firebase Gradle Repo Path", false, 500)]
     public static void VerifyFromMenu()
@@ -183,7 +190,19 @@ public static class FirebaseGradleRepoPathGuard
         try
         {
             File.WriteAllText(absolutePath, fixedContents);
-            AssetDatabase.ImportAsset(SettingsTemplateRelativePath);
+
+            // Never ImportAsset/Refresh while GMA/EDM ResolveSync is copying AARs —
+            // that races GeneratedLocalRepo/*.aar.meta writes (build failure).
+            // AssetPostprocessor sets SuppressSynchronousTemplateImport during resolve.
+            // PreprocessBuild order 50 clears it after ResolveSync and imports safely.
+            if (SuppressSynchronousTemplateImport)
+            {
+                ScheduleDeferredTemplateImport();
+            }
+            else
+            {
+                AssetDatabase.ImportAsset(SettingsTemplateRelativePath);
+            }
         }
         finally
         {
@@ -198,6 +217,46 @@ public static class FirebaseGradleRepoPathGuard
     }
 
     public static bool IsPatchingTemplate => isPatchingTemplate;
+
+    /// <summary>
+    /// Import settingsTemplate after the current AssetDatabase import/resolve batch.
+    /// Coalesces multiple schedule requests into one delayCall.
+    /// </summary>
+    public static void ScheduleDeferredTemplateImport()
+    {
+        if (deferredTemplateImportScheduled)
+        {
+            return;
+        }
+
+        deferredTemplateImportScheduled = true;
+        EditorApplication.delayCall += FlushDeferredTemplateImport;
+    }
+
+    private static void FlushDeferredTemplateImport()
+    {
+        deferredTemplateImportScheduled = false;
+        if (!File.Exists(GetTemplateAbsolutePath()))
+        {
+            return;
+        }
+
+        // Still inside player build preprocess — disk is source of truth until order 50.
+        if (BuildPipeline.isBuildingPlayer)
+        {
+            return;
+        }
+
+        isPatchingTemplate = true;
+        try
+        {
+            AssetDatabase.ImportAsset(SettingsTemplateRelativePath);
+        }
+        finally
+        {
+            isPatchingTemplate = false;
+        }
+    }
 
     /// <summary>
     /// Patches generated Gradle settings files under Library/Bee.
@@ -439,6 +498,9 @@ public static class FirebaseGradleRepoPathGuard
 
 /// <summary>
 /// Re-applies the safe repo path whenever EDM regenerates settingsTemplate.gradle.
+/// Must NOT call AssetDatabase.ImportAsset/Refresh synchronously — EDM's
+/// GradleTemplateResolver.CopySrcAars may still be writing GeneratedLocalRepo metas
+/// in the same import/resolve wave (GMA AndroidBuildPreProcessor.ResolveSync).
 /// </summary>
 public sealed class FirebaseGradleRepoPathAssetPostprocessor : AssetPostprocessor
 {
@@ -464,13 +526,23 @@ public sealed class FirebaseGradleRepoPathAssetPostprocessor : AssetPostprocesso
                 continue;
             }
 
-            FirebaseGradleRepoPathGuard.EnsureCustomGradleSettingsTemplateEnabled();
-            var result = FirebaseGradleRepoPathGuard.VerifyAndFixTemplate(applyFix: true);
-            if (result.Status == FirebaseGradleRepoPathGuard.VerifyStatus.Fixed)
+            bool previous = FirebaseGradleRepoPathGuard.SuppressSynchronousTemplateImport;
+            FirebaseGradleRepoPathGuard.SuppressSynchronousTemplateImport = true;
+            try
             {
-                Debug.LogWarning(
-                    "[FirebaseGradleRepoPath] EDM overwrite detected — auto-FIXED settingsTemplate.gradle."
-                );
+                FirebaseGradleRepoPathGuard.EnsureCustomGradleSettingsTemplateEnabled();
+                var result = FirebaseGradleRepoPathGuard.VerifyAndFixTemplate(applyFix: true);
+                if (result.Status == FirebaseGradleRepoPathGuard.VerifyStatus.Fixed)
+                {
+                    Debug.LogWarning(
+                        "[FirebaseGradleRepoPath] EDM overwrite detected — auto-FIXED " +
+                        "settingsTemplate.gradle (deferred ImportAsset; no mid-resolve Refresh)."
+                    );
+                }
+            }
+            finally
+            {
+                FirebaseGradleRepoPathGuard.SuppressSynchronousTemplateImport = previous;
             }
 
             break;
@@ -479,11 +551,14 @@ public sealed class FirebaseGradleRepoPathAssetPostprocessor : AssetPostprocesso
 }
 
 /// <summary>
-/// Android pre-build: patch template before Unity copies it into the Gradle project.
+/// Android pre-build: patch template AFTER GMA's ResolveSync (callbackOrder -1).
+/// Running before ResolveSync is useless — EDM rewrites the template during resolve.
+/// Sync ImportAsset during that resolve (via AssetPostprocessor) races AAR metas.
 /// </summary>
 public sealed class FirebaseGradleRepoPathPreprocessBuild : IPreprocessBuildWithReport
 {
-    public int callbackOrder => -1000;
+    // After GoogleMobileAds.AndroidBuildPreProcessor (-1) and ManifestProcessor (0).
+    public int callbackOrder => 50;
 
     public void OnPreprocessBuild(BuildReport report)
     {
@@ -493,10 +568,20 @@ public sealed class FirebaseGradleRepoPathPreprocessBuild : IPreprocessBuildWith
         }
 
         FirebaseGradleRepoPathGuard.EnsureCustomGradleSettingsTemplateEnabled();
+
+        // ResolveSync has finished; safe to sync-import the patched template now.
+        FirebaseGradleRepoPathGuard.SuppressSynchronousTemplateImport = false;
         var result = FirebaseGradleRepoPathGuard.VerifyAndFixTemplate(applyFix: true);
         if (result.Status == FirebaseGradleRepoPathGuard.VerifyStatus.Fixed ||
             result.Status == FirebaseGradleRepoPathGuard.VerifyStatus.Ok)
         {
+            // Bring AssetDatabase in sync with any disk-only postprocessor patch.
+            if (result.Status == FirebaseGradleRepoPathGuard.VerifyStatus.Ok)
+            {
+                AssetDatabase.ImportAsset(
+                    FirebaseGradleRepoPathGuard.SettingsTemplateRelativePath);
+            }
+
             Debug.Log(
                 "[FirebaseGradleRepoPath][prebuild] " + result.Status + " — " + result.Message
             );

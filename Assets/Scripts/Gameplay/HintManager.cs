@@ -935,8 +935,22 @@ public class HintManager : MonoBehaviour
 
     private IEnumerator ShowHintStatusRoutine(string message)
     {
+        GameplayLayoutController layout =
+            FindAnyObjectByType<GameplayLayoutController>();
+        if (layout != null)
+        {
+            layout.EnsureHintStatusLayout();
+        }
+
         hintStatusText.text = message;
         hintStatusText.gameObject.SetActive(true);
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        if (layout != null)
+        {
+            layout.LogUILayoutAudit("HintStatusText.show");
+        }
+#endif
 
         yield return new WaitForSecondsRealtime(Mathf.Max(0.1f, hintStatusDuration));
 

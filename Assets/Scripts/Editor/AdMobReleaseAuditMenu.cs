@@ -12,13 +12,13 @@ public static class AdMobReleaseAuditMenu
         "Assets/GoogleMobileAds/Resources/GoogleMobileAdsSettings.asset";
 
     private const string ExpectedAndroidAppId =
-        "ca-app-pub-865724589551337~6979159661";
+        "ca-app-pub-8657245895551337~6979159661";
 
     private const string ExpectedAndroidRewardedProduction =
-        "ca-app-pub-865724589551337/4707151288";
+        "ca-app-pub-8657245895551337/4707151288";
 
     private const string ExpectedAndroidInterstitialProduction =
-        "ca-app-pub-865724589551337/6318731373";
+        "ca-app-pub-8657245895551337/6318731373";
 
     private const string GoogleTestRewardedAndroid =
         "ca-app-pub-3940256099942544/5224354917";
