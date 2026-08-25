@@ -6819,7 +6819,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 198017802}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
   m_ConstrainProportionsScale: 1
@@ -7410,23 +7410,27 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!4 &234698232
-Transform:
+--- !u!224 &234698232
+RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 234698231}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 2.6370575, y: 2.6370575, z: 2.6370575}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 2082858835}
   - {fileID: 319634889}
   m_Father: {fileID: 741483061}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &234935146
 GameObject:
   m_ObjectHideFlags: 0
@@ -8045,7 +8049,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 319634888}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.72, y: 0.72, z: 0.72}
   m_ConstrainProportionsScale: 1
@@ -8157,39 +8161,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 319634888}
   m_CullTransparentMesh: 1
---- !u!1 &320224073
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 320224074}
-  m_Layer: 0
-  m_Name: MultiTargetHudRoot (1)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!4 &320224074
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 320224073}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2.6370575, y: 2.6370575, z: 2.6370575}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1858703108}
-  - {fileID: 1255664309}
-  m_Father: {fileID: 741483061}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &321159087
 GameObject:
   m_ObjectHideFlags: 0
@@ -8736,7 +8707,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 401855853}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.72, y: 0.72, z: 0.72}
   m_ConstrainProportionsScale: 1
@@ -8848,6 +8819,62 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 401855853}
   m_CullTransparentMesh: 1
+--- !u!1 &404537881
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 404537882}
+  - component: {fileID: 404537884}
+  m_Layer: 0
+  m_Name: TabletObjectiveSection
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &404537882
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 404537881}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1941938266}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 288.011, y: -16}
+  m_SizeDelta: {x: 544.022, y: 90}
+  m_Pivot: {x: 0.5, y: 1}
+--- !u!114 &404537884
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 404537881}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 306cc8c2b49d7114eaa3623786fc2126, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.LayoutElement
+  m_IgnoreLayout: 0
+  m_MinWidth: -1
+  m_MinHeight: 45
+  m_PreferredWidth: -1
+  m_PreferredHeight: 90
+  m_FlexibleWidth: 1
+  m_FlexibleHeight: -1
+  m_LayoutPriority: 1
 --- !u!1001 &405255312
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9054,7 +9081,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 417022861}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.72, y: 0.72, z: 0.72}
   m_ConstrainProportionsScale: 1
@@ -9905,23 +9932,27 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!4 &475948102
-Transform:
+--- !u!224 &475948102
+RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 475948101}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 2.6370575, y: 2.6370575, z: 2.6370575}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 737860361}
   - {fileID: 2018221612}
   m_Father: {fileID: 741483061}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &492011013
 GameObject:
   m_ObjectHideFlags: 0
@@ -9961,7 +9992,7 @@ RectTransform:
   - {fileID: 691426414}
   - {fileID: 1617108292}
   - {fileID: 2038745287}
-  m_Father: {fileID: 741483061}
+  m_Father: {fileID: 1689624386}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -10125,7 +10156,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 514650053}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1.3, y: 1.3, z: 1.3}
   m_ConstrainProportionsScale: 1
@@ -10133,9 +10164,9 @@ RectTransform:
   - {fileID: 1236607846}
   m_Father: {fileID: 741483061}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -796.8}
+  m_AnchorMin: {x: 0.5, y: 0}
+  m_AnchorMax: {x: 0.5, y: 0}
+  m_AnchoredPosition: {x: 0, y: 265.1}
   m_SizeDelta: {x: 330.007, y: 128.19}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &514650055
@@ -11178,6 +11209,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 591928463}
+  - component: {fileID: 591928464}
   m_Layer: 0
   m_Name: CoinCard
   m_TagString: Untagged
@@ -11194,7 +11226,7 @@ RectTransform:
   m_GameObject: {fileID: 591928462}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.44, y: 1.44, z: 1.44}
+  m_LocalScale: {x: 1.15, y: 1.15, z: 1.15}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 533346689}
@@ -11205,8 +11237,28 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_SizeDelta: {x: 257.7944, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &591928464
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 591928462}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 306cc8c2b49d7114eaa3623786fc2126, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.LayoutElement
+  m_IgnoreLayout: 0
+  m_MinWidth: 120
+  m_MinHeight: 120
+  m_PreferredWidth: 140
+  m_PreferredHeight: 130
+  m_FlexibleWidth: -1
+  m_FlexibleHeight: -1
+  m_LayoutPriority: 1
 --- !u!1 &592100555
 GameObject:
   m_ObjectHideFlags: 0
@@ -11232,7 +11284,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 592100555}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
   m_ConstrainProportionsScale: 1
@@ -12537,6 +12589,62 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &681501193
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 681501194}
+  - component: {fileID: 681501195}
+  m_Layer: 0
+  m_Name: TabletFlexSpacer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &681501194
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 681501193}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1941938266}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 288.011, y: -552}
+  m_SizeDelta: {x: 544.022, y: 20}
+  m_Pivot: {x: 0.5, y: 1}
+--- !u!114 &681501195
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 681501193}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 306cc8c2b49d7114eaa3623786fc2126, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.LayoutElement
+  m_IgnoreLayout: 0
+  m_MinWidth: -1
+  m_MinHeight: 8
+  m_PreferredWidth: -1
+  m_PreferredHeight: 8
+  m_FlexibleWidth: 1
+  m_FlexibleHeight: 1
+  m_LayoutPriority: 1
 --- !u!1001 &687019865
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -13061,23 +13169,27 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!4 &697825206
-Transform:
+--- !u!224 &697825206
+RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 697825205}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 2.6370575, y: 2.6370575, z: 2.6370575}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 198017803}
   - {fileID: 401855854}
   m_Father: {fileID: 741483061}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &703658269
 GameObject:
   m_ObjectHideFlags: 0
@@ -13388,7 +13500,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 737860360}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
   m_ConstrainProportionsScale: 1
@@ -13510,6 +13622,7 @@ GameObject:
   m_Component:
   - component: {fileID: 741483061}
   - component: {fileID: 741483062}
+  - component: {fileID: 741483063}
   m_Layer: 0
   m_Name: SafeArea
   m_TagString: Untagged
@@ -13532,24 +13645,23 @@ RectTransform:
   - {fileID: 234698232}
   - {fileID: 697825206}
   - {fileID: 1072541426}
-  - {fileID: 320224074}
   - {fileID: 1772033707}
   - {fileID: 1236260623}
   - {fileID: 475948102}
-  - {fileID: 1037384115}
-  - {fileID: 2118730885}
-  - {fileID: 1938524570}
-  - {fileID: 792576013}
-  - {fileID: 514650054}
-  - {fileID: 1765496332}
-  - {fileID: 492011014}
   - {fileID: 910020002}
+  - {fileID: 1941938266}
+  - {fileID: 2118730885}
+  - {fileID: 792576013}
+  - {fileID: 1037384115}
+  - {fileID: 514650054}
+  - {fileID: 1938524570}
+  - {fileID: 1765496332}
   m_Father: {fileID: 1689624386}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &741483062
 MonoBehaviour:
@@ -13558,11 +13670,1816 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 741483060}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5bf17ee345b829d4fb801eea2c693eeb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SafeArea
+--- !u!114 &741483063
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 741483060}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7077d13e45b37d42b5c8b10616736b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameplayLayoutController
+  tallPhoneProfile:
+    hasCapture: 0
+    topReservedFraction: 0.16
+    bottomReservedFraction: 0.16
+    leftHudWidthFraction: 0.3
+    entries: []
+  compactPhoneProfile:
+    hasCapture: 1
+    topReservedFraction: 0.18
+    bottomReservedFraction: 0.16
+    leftHudWidthFraction: 0.3
+    entries:
+    - key: TopHUD
+      parentKey: SafeArea
+      siblingIndex: 12
+      anchorMin: {x: 0.5, y: 1}
+      anchorMax: {x: 0.5, y: 1}
+      pivot: {x: 0.5, y: 1}
+      anchoredPosition: {x: 0, y: -153.4}
+      sizeDelta: {x: 956.895, y: 204.49353}
+      localScale: {x: 1, y: 1, z: 1}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 1
+      horizontalLayoutEnabled: 1
+      childAlignment: 4
+      spacing: -20
+      childForceExpandWidth: 1
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: PauseButton
+      parentKey: SafeArea
+      siblingIndex: 9
+      anchorMin: {x: 1, y: 1}
+      anchorMax: {x: 1, y: 1}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: -120, y: -161.5}
+      sizeDelta: {x: 60.4, y: 30}
+      localScale: {x: 1, y: 1, z: 1}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: UndoButton
+      parentKey: SafeArea
+      siblingIndex: 8
+      anchorMin: {x: 1, y: 1}
+      anchorMax: {x: 1, y: 1}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: -280, y: -191}
+      sizeDelta: {x: 100, y: 100}
+      localScale: {x: 1.85, y: 1.85, z: 1.85}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: HintButton
+      parentKey: SafeArea
+      siblingIndex: 10
+      anchorMin: {x: 0.5, y: 0}
+      anchorMax: {x: 0.5, y: 0}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: 370.6}
+      sizeDelta: {x: 240, y: 90.79}
+      localScale: {x: 1.45, y: 1.45, z: 1.45}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: RewardedHintButton
+      parentKey: SafeArea
+      siblingIndex: 11
+      anchorMin: {x: 0.5, y: 0}
+      anchorMax: {x: 0.5, y: 0}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: 202.8}
+      sizeDelta: {x: 330.007, y: 128.19}
+      localScale: {x: 1.15, y: 1.15, z: 1.15}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: DifficultyLabel
+      parentKey: SafeArea
+      siblingIndex: 7
+      anchorMin: {x: 0.5, y: 1}
+      anchorMax: {x: 0.5, y: 1}
+      pivot: {x: 0.5, y: 1}
+      anchoredPosition: {x: 0, y: -47.2}
+      sizeDelta: {x: 520, y: 83.65645}
+      localScale: {x: 1, y: 1, z: 1}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: LevelCard
+      parentKey: TopHUD
+      siblingIndex: 0
+      anchorMin: {x: 0, y: 1}
+      anchorMax: {x: 0, y: 1}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 166.14917, y: -102.246765}
+      sizeDelta: {x: 100, y: 100}
+      localScale: {x: 1.12, y: 1.12, z: 1.12}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: MovesCard
+      parentKey: TopHUD
+      siblingIndex: 1
+      anchorMin: {x: 0, y: 1}
+      anchorMax: {x: 0, y: 1}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 478.4475, y: -102.246765}
+      sizeDelta: {x: 100, y: 100}
+      localScale: {x: 1.12, y: 1.12, z: 1.12}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: CoinCard
+      parentKey: TopHUD
+      siblingIndex: 2
+      anchorMin: {x: 0, y: 1}
+      anchorMax: {x: 0, y: 1}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 790.74585, y: -102.246765}
+      sizeDelta: {x: 100, y: 100}
+      localScale: {x: 1.12, y: 1.12, z: 1.12}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: TimedHudRoot
+      parentKey: SafeArea
+      siblingIndex: 0
+      anchorMin: {x: 0.5, y: 0.5}
+      anchorMax: {x: 0.5, y: 0.5}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: 21.4}
+      sizeDelta: {x: 100, y: 100}
+      localScale: {x: 2.6370575, y: 2.6370575, z: 2.6370575}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: TimedHudRoot/Timer Text
+      parentKey: TimedHudRoot
+      siblingIndex: 0
+      anchorMin: {x: 0.5, y: 0.5}
+      anchorMax: {x: 0.5, y: 0.5}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: 162.9}
+      sizeDelta: {x: 200, y: 50}
+      localScale: {x: 0.8, y: 0.8, z: 0.8}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: TimedHudRoot/Mission Label
+      parentKey: TimedHudRoot
+      siblingIndex: 1
+      anchorMin: {x: 0.5, y: 0.5}
+      anchorMax: {x: 0.5, y: 0.5}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: 187.4}
+      sizeDelta: {x: 348.8, y: 50}
+      localScale: {x: 0.72, y: 0.72, z: 0.72}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: MoveLimitHudRoot
+      parentKey: SafeArea
+      siblingIndex: 1
+      anchorMin: {x: 0.5, y: 0.5}
+      anchorMax: {x: 0.5, y: 0.5}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: 21.4}
+      sizeDelta: {x: 100, y: 100}
+      localScale: {x: 2.6370575, y: 2.6370575, z: 2.6370575}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: MoveLimitHudRoot/MovesRemainingText
+      parentKey: MoveLimitHudRoot
+      siblingIndex: 0
+      anchorMin: {x: 0.5, y: 0.5}
+      anchorMax: {x: 0.5, y: 0.5}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: 162.9}
+      sizeDelta: {x: 200, y: 50}
+      localScale: {x: 0.8, y: 0.8, z: 0.8}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: MoveLimitHudRoot/Mission Label
+      parentKey: MoveLimitHudRoot
+      siblingIndex: 1
+      anchorMin: {x: 0.5, y: 0.5}
+      anchorMax: {x: 0.5, y: 0.5}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: 187.4}
+      sizeDelta: {x: 348.8, y: 50}
+      localScale: {x: 0.72, y: 0.72, z: 0.72}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: MultiTargetHudRoot
+      parentKey: SafeArea
+      siblingIndex: 2
+      anchorMin: {x: 0.5, y: 0.5}
+      anchorMax: {x: 0.5, y: 0.5}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: 21.4}
+      sizeDelta: {x: 100, y: 100}
+      localScale: {x: 2.6370575, y: 2.6370575, z: 2.6370575}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: MultiTargetHudRoot/TargetsText
+      parentKey: MultiTargetHudRoot
+      siblingIndex: 0
+      anchorMin: {x: 0.5, y: 0.5}
+      anchorMax: {x: 0.5, y: 0.5}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: 162.9}
+      sizeDelta: {x: 200, y: 50}
+      localScale: {x: 0.8, y: 0.8, z: 0.8}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: MultiTargetHudRoot/Mission Label
+      parentKey: MultiTargetHudRoot
+      siblingIndex: 1
+      anchorMin: {x: 0.5, y: 0.5}
+      anchorMax: {x: 0.5, y: 0.5}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: 187.4}
+      sizeDelta: {x: 348.8, y: 50}
+      localScale: {x: 0.72, y: 0.72, z: 0.72}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: MultiTargetHudRoot (1)
+      parentKey: SafeArea
+      siblingIndex: 3
+      anchorMin: {x: 0.5, y: 0.5}
+      anchorMax: {x: 0.5, y: 0.5}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: 21.4}
+      sizeDelta: {x: 100, y: 100}
+      localScale: {x: 2.6370575, y: 2.6370575, z: 2.6370575}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: MultiTargetHudRoot (1)/TargetsText
+      parentKey: MultiTargetHudRoot (1)
+      siblingIndex: 0
+      anchorMin: {x: 0.5, y: 0.5}
+      anchorMax: {x: 0.5, y: 0.5}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: 162.9}
+      sizeDelta: {x: 200, y: 50}
+      localScale: {x: 0.8, y: 0.8, z: 0.8}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: MultiTargetHudRoot (1)/Mission Label
+      parentKey: MultiTargetHudRoot (1)
+      siblingIndex: 1
+      anchorMin: {x: 0.5, y: 0.5}
+      anchorMax: {x: 0.5, y: 0.5}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: 187.4}
+      sizeDelta: {x: 348.8, y: 50}
+      localScale: {x: 0.72, y: 0.72, z: 0.72}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: NoTouchHudRoot
+      parentKey: SafeArea
+      siblingIndex: 4
+      anchorMin: {x: 0.5, y: 0.5}
+      anchorMax: {x: 0.5, y: 0.5}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: 21.4}
+      sizeDelta: {x: 100, y: 100}
+      localScale: {x: 2.6370575, y: 2.6370575, z: 2.6370575}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: NoTouchHudRoot/RuleText
+      parentKey: NoTouchHudRoot
+      siblingIndex: 0
+      anchorMin: {x: 0.5, y: 0.5}
+      anchorMax: {x: 0.5, y: 0.5}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: 162.9}
+      sizeDelta: {x: 354.3, y: 50}
+      localScale: {x: 0.8, y: 0.8, z: 0.8}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: NoTouchHudRoot/Mission Label
+      parentKey: NoTouchHudRoot
+      siblingIndex: 1
+      anchorMin: {x: 0.5, y: 0.5}
+      anchorMax: {x: 0.5, y: 0.5}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: 187.4}
+      sizeDelta: {x: 348.8, y: 50}
+      localScale: {x: 0.72, y: 0.72, z: 0.72}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: FragileCargoHudRoot
+      parentKey: SafeArea
+      siblingIndex: 5
+      anchorMin: {x: 0.5, y: 0.5}
+      anchorMax: {x: 0.5, y: 0.5}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: 21.4}
+      sizeDelta: {x: 100, y: 100}
+      localScale: {x: 2.6370575, y: 2.6370575, z: 2.6370575}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: FragileCargoHudRoot/RuleText
+      parentKey: FragileCargoHudRoot
+      siblingIndex: 0
+      anchorMin: {x: 0.5, y: 0.5}
+      anchorMax: {x: 0.5, y: 0.5}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: 162.9}
+      sizeDelta: {x: 354.3, y: 50}
+      localScale: {x: 0.8, y: 0.8, z: 0.8}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: FragileCargoHudRoot/Mission Label
+      parentKey: FragileCargoHudRoot
+      siblingIndex: 1
+      anchorMin: {x: 0.5, y: 0.5}
+      anchorMax: {x: 0.5, y: 0.5}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: 187.4}
+      sizeDelta: {x: 368.8, y: 50}
+      localScale: {x: 0.72, y: 0.72, z: 0.72}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: LimitedVehicleHudRoot
+      parentKey: SafeArea
+      siblingIndex: 6
+      anchorMin: {x: 0.5, y: 0.5}
+      anchorMax: {x: 0.5, y: 0.5}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: 21.4}
+      sizeDelta: {x: 100, y: 100}
+      localScale: {x: 2.6370575, y: 2.6370575, z: 2.6370575}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: LimitedVehicleHudRoot/MovesText
+      parentKey: LimitedVehicleHudRoot
+      siblingIndex: 0
+      anchorMin: {x: 0.5, y: 0.5}
+      anchorMax: {x: 0.5, y: 0.5}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: 162.9}
+      sizeDelta: {x: 354.3, y: 50}
+      localScale: {x: 0.8, y: 0.8, z: 0.8}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: LimitedVehicleHudRoot/Mission Label
+      parentKey: LimitedVehicleHudRoot
+      siblingIndex: 1
+      anchorMin: {x: 0.5, y: 0.5}
+      anchorMax: {x: 0.5, y: 0.5}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: 187.4}
+      sizeDelta: {x: 368.8, y: 50}
+      localScale: {x: 0.72, y: 0.72, z: 0.72}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: DifficultyLabel/Label
+      parentKey: DifficultyLabel
+      siblingIndex: 0
+      anchorMin: {x: 0.5, y: 1}
+      anchorMax: {x: 0.5, y: 1}
+      pivot: {x: 0.5, y: 1}
+      anchoredPosition: {x: 0, y: -36}
+      sizeDelta: {x: 500, y: 75}
+      localScale: {x: 1, y: 1, z: 1}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+  wideTabletProfile:
+    hasCapture: 1
+    topReservedFraction: 0.04
+    bottomReservedFraction: 0.04
+    leftHudWidthFraction: 0.3
+    entries:
+    - key: TopHUD
+      parentKey: SafeArea
+      siblingIndex: 3
+      anchorMin: {x: 0.5, y: 1}
+      anchorMax: {x: 0.5, y: 1}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: -365.2}
+      sizeDelta: {x: 956.895, y: 212.056}
+      localScale: {x: 1, y: 1, z: 1}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 1
+      horizontalLayoutEnabled: 0
+      childAlignment: 1
+      spacing: -38.29
+      childForceExpandWidth: 1
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: PauseButton
+      parentKey: TabletControlsRow
+      siblingIndex: 0
+      anchorMin: {x: 0, y: 1}
+      anchorMax: {x: 0, y: 1}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 196.96098, y: -65}
+      sizeDelta: {x: 110, y: 110}
+      localScale: {x: 1, y: 1, z: 1}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: UndoButton
+      parentKey: TabletControlsRow
+      siblingIndex: 1
+      anchorMin: {x: 0, y: 1}
+      anchorMax: {x: 0, y: 1}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 347.06097, y: -92.3}
+      sizeDelta: {x: 110, y: 110}
+      localScale: {x: 1.55, y: 1.55, z: 1.55}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: HintButton
+      parentKey: TabletHUDPanel
+      siblingIndex: 4
+      anchorMin: {x: 0, y: 1}
+      anchorMax: {x: 0, y: 1}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 288.011, y: -768.3}
+      sizeDelta: {x: 544.022, y: 90.79}
+      localScale: {x: 1.1, y: 1.1, z: 1.1}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: RewardedHintButton
+      parentKey: TabletHUDPanel
+      siblingIndex: 5
+      anchorMin: {x: 0, y: 1}
+      anchorMax: {x: 0, y: 1}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 288.011, y: -908.8}
+      sizeDelta: {x: 544.022, y: 128.19}
+      localScale: {x: 0.8, y: 0.8, z: 0.8}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: DifficultyLabel
+      parentKey: TabletObjectiveSection
+      siblingIndex: 6
+      anchorMin: {x: 0, y: 1}
+      anchorMax: {x: 0, y: 1}
+      pivot: {x: 0.5, y: 1}
+      anchoredPosition: {x: 272.011, y: -478.1}
+      sizeDelta: {x: 544.022, y: 120}
+      localScale: {x: 0.7, y: 0.7, z: 0.7}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: LevelCard
+      parentKey: TabletLevelMovesRow
+      siblingIndex: 0
+      anchorMin: {x: 0, y: 1}
+      anchorMax: {x: 0, y: 1}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 167.97098, y: -70}
+      sizeDelta: {x: 100, y: 100}
+      localScale: {x: 1.15, y: 1.15, z: 1.15}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: MovesCard
+      parentKey: TabletLevelMovesRow
+      siblingIndex: 1
+      anchorMin: {x: 0, y: 1}
+      anchorMax: {x: 0, y: 1}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 376.05096, y: -70}
+      sizeDelta: {x: 100, y: 100}
+      localScale: {x: 1.15, y: 1.15, z: 1.15}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: CoinCard
+      parentKey: TabletStatsSection
+      siblingIndex: 1
+      anchorMin: {x: 0, y: 1}
+      anchorMax: {x: 0, y: 1}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 272.011, y: -170.2}
+      sizeDelta: {x: 544.022, y: 100}
+      localScale: {x: 1.15, y: 1.15, z: 1.15}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: TabletHUDPanel
+      parentKey: SafeArea
+      siblingIndex: 0
+      anchorMin: {x: 0, y: 0}
+      anchorMax: {x: 0.3, y: 1}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: 0}
+      sizeDelta: {x: 0, y: 0}
+      localScale: {x: 1, y: 1, z: 1}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: TabletObjectiveSection
+      parentKey: TabletHUDPanel
+      siblingIndex: 0
+      anchorMin: {x: 0, y: 1}
+      anchorMax: {x: 0, y: 1}
+      pivot: {x: 0.5, y: 1}
+      anchoredPosition: {x: 288.011, y: -16}
+      sizeDelta: {x: 544.022, y: 90}
+      localScale: {x: 1, y: 1, z: 1}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: TabletStatsSection
+      parentKey: TabletHUDPanel
+      siblingIndex: 1
+      anchorMin: {x: 0, y: 1}
+      anchorMax: {x: 0, y: 1}
+      pivot: {x: 0.5, y: 1}
+      anchoredPosition: {x: 288.011, y: -74.6}
+      sizeDelta: {x: 544.022, y: 280}
+      localScale: {x: 1, y: 1, z: 1}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: TabletLevelMovesRow
+      parentKey: TabletStatsSection
+      siblingIndex: 0
+      anchorMin: {x: 0, y: 1}
+      anchorMax: {x: 0, y: 1}
+      pivot: {x: 0.5, y: 1}
+      anchoredPosition: {x: 272.011, y: 0}
+      sizeDelta: {x: 544.022, y: 140}
+      localScale: {x: 1, y: 1, z: 1}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 1
+      horizontalLayoutEnabled: 1
+      childAlignment: 4
+      spacing: 108.08
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: TabletControlsRow
+      parentKey: TabletHUDPanel
+      siblingIndex: 2
+      anchorMin: {x: 0, y: 1}
+      anchorMax: {x: 0, y: 1}
+      pivot: {x: 0.5, y: 1}
+      anchoredPosition: {x: 288.011, y: -554.2}
+      sizeDelta: {x: 544.022, y: 130}
+      localScale: {x: 1, y: 1, z: 1}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: TabletFlexSpacer
+      parentKey: TabletHUDPanel
+      siblingIndex: 3
+      anchorMin: {x: 0, y: 1}
+      anchorMax: {x: 0, y: 1}
+      pivot: {x: 0.5, y: 1}
+      anchoredPosition: {x: 288.011, y: -552}
+      sizeDelta: {x: 544.022, y: 20}
+      localScale: {x: 1, y: 1, z: 1}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: TimedHudRoot
+      parentKey: TabletObjectiveSection
+      siblingIndex: 0
+      anchorMin: {x: 0.5, y: 1}
+      anchorMax: {x: 0.5, y: 1}
+      pivot: {x: 0.5, y: 1}
+      anchoredPosition: {x: 0, y: -331.4}
+      sizeDelta: {x: 420, y: 120}
+      localScale: {x: 1.42, y: 1.42, z: 1.42}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: TimedHudRoot/Timer Text
+      parentKey: TimedHudRoot
+      siblingIndex: 0
+      anchorMin: {x: 0.5, y: 0.5}
+      anchorMax: {x: 0.5, y: 0.5}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: 20}
+      sizeDelta: {x: 200, y: 50}
+      localScale: {x: 0.8, y: 0.8, z: 0.8}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: TimedHudRoot/Mission Label
+      parentKey: TimedHudRoot
+      siblingIndex: 1
+      anchorMin: {x: 0.5, y: 0.5}
+      anchorMax: {x: 0.5, y: 0.5}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: -22}
+      sizeDelta: {x: 348.8, y: 50}
+      localScale: {x: 0.72, y: 0.72, z: 0.72}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: MoveLimitHudRoot
+      parentKey: TabletObjectiveSection
+      siblingIndex: 1
+      anchorMin: {x: 0.5, y: 1}
+      anchorMax: {x: 0.5, y: 1}
+      pivot: {x: 0.5, y: 1}
+      anchoredPosition: {x: 0, y: -331.4}
+      sizeDelta: {x: 420, y: 120}
+      localScale: {x: 1.42, y: 1.42, z: 1.42}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: MoveLimitHudRoot/MovesRemainingText
+      parentKey: MoveLimitHudRoot
+      siblingIndex: 0
+      anchorMin: {x: 0.5, y: 0.5}
+      anchorMax: {x: 0.5, y: 0.5}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: 20}
+      sizeDelta: {x: 200, y: 50}
+      localScale: {x: 0.8, y: 0.8, z: 0.8}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: MoveLimitHudRoot/Mission Label
+      parentKey: MoveLimitHudRoot
+      siblingIndex: 1
+      anchorMin: {x: 0.5, y: 0.5}
+      anchorMax: {x: 0.5, y: 0.5}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: -22}
+      sizeDelta: {x: 348.8, y: 50}
+      localScale: {x: 0.72, y: 0.72, z: 0.72}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: MultiTargetHudRoot
+      parentKey: TabletObjectiveSection
+      siblingIndex: 2
+      anchorMin: {x: 0.5, y: 1}
+      anchorMax: {x: 0.5, y: 1}
+      pivot: {x: 0.5, y: 1}
+      anchoredPosition: {x: 0, y: -331.4}
+      sizeDelta: {x: 420, y: 120}
+      localScale: {x: 1.42, y: 1.42, z: 1.42}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: MultiTargetHudRoot/TargetsText
+      parentKey: MultiTargetHudRoot
+      siblingIndex: 0
+      anchorMin: {x: 0.5, y: 0.5}
+      anchorMax: {x: 0.5, y: 0.5}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: 20}
+      sizeDelta: {x: 200, y: 50}
+      localScale: {x: 0.8, y: 0.8, z: 0.8}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: MultiTargetHudRoot/Mission Label
+      parentKey: MultiTargetHudRoot
+      siblingIndex: 1
+      anchorMin: {x: 0.5, y: 0.5}
+      anchorMax: {x: 0.5, y: 0.5}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: -22}
+      sizeDelta: {x: 348.8, y: 50}
+      localScale: {x: 0.72, y: 0.72, z: 0.72}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: NoTouchHudRoot
+      parentKey: TabletObjectiveSection
+      siblingIndex: 3
+      anchorMin: {x: 0.5, y: 1}
+      anchorMax: {x: 0.5, y: 1}
+      pivot: {x: 0.5, y: 1}
+      anchoredPosition: {x: 0, y: -331.4}
+      sizeDelta: {x: 420, y: 120}
+      localScale: {x: 1.42, y: 1.42, z: 1.42}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: NoTouchHudRoot/RuleText
+      parentKey: NoTouchHudRoot
+      siblingIndex: 0
+      anchorMin: {x: 0.5, y: 0.5}
+      anchorMax: {x: 0.5, y: 0.5}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: 20}
+      sizeDelta: {x: 354.3, y: 50}
+      localScale: {x: 0.8, y: 0.8, z: 0.8}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: NoTouchHudRoot/Mission Label
+      parentKey: NoTouchHudRoot
+      siblingIndex: 1
+      anchorMin: {x: 0.5, y: 0.5}
+      anchorMax: {x: 0.5, y: 0.5}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: -22}
+      sizeDelta: {x: 348.8, y: 50}
+      localScale: {x: 0.72, y: 0.72, z: 0.72}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: FragileCargoHudRoot
+      parentKey: TabletObjectiveSection
+      siblingIndex: 4
+      anchorMin: {x: 0.5, y: 1}
+      anchorMax: {x: 0.5, y: 1}
+      pivot: {x: 0.5, y: 1}
+      anchoredPosition: {x: 0, y: -331.4}
+      sizeDelta: {x: 420, y: 120}
+      localScale: {x: 1.42, y: 1.42, z: 1.42}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: FragileCargoHudRoot/RuleText
+      parentKey: FragileCargoHudRoot
+      siblingIndex: 0
+      anchorMin: {x: 0.5, y: 0.5}
+      anchorMax: {x: 0.5, y: 0.5}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: 20}
+      sizeDelta: {x: 354.3, y: 50}
+      localScale: {x: 0.8, y: 0.8, z: 0.8}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: FragileCargoHudRoot/Mission Label
+      parentKey: FragileCargoHudRoot
+      siblingIndex: 1
+      anchorMin: {x: 0.5, y: 0.5}
+      anchorMax: {x: 0.5, y: 0.5}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: -22}
+      sizeDelta: {x: 368.8, y: 50}
+      localScale: {x: 0.72, y: 0.72, z: 0.72}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: LimitedVehicleHudRoot
+      parentKey: TabletObjectiveSection
+      siblingIndex: 5
+      anchorMin: {x: 0.5, y: 1}
+      anchorMax: {x: 0.5, y: 1}
+      pivot: {x: 0.5, y: 1}
+      anchoredPosition: {x: 0, y: -331.4}
+      sizeDelta: {x: 420, y: 120}
+      localScale: {x: 1.42, y: 1.42, z: 1.42}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: LimitedVehicleHudRoot/MovesText
+      parentKey: LimitedVehicleHudRoot
+      siblingIndex: 0
+      anchorMin: {x: 0.5, y: 0.5}
+      anchorMax: {x: 0.5, y: 0.5}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: 20}
+      sizeDelta: {x: 354.3, y: 50}
+      localScale: {x: 0.8, y: 0.8, z: 0.8}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: LimitedVehicleHudRoot/Mission Label
+      parentKey: LimitedVehicleHudRoot
+      siblingIndex: 1
+      anchorMin: {x: 0.5, y: 0.5}
+      anchorMax: {x: 0.5, y: 0.5}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: -22}
+      sizeDelta: {x: 368.8, y: 50}
+      localScale: {x: 0.72, y: 0.72, z: 0.72}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: DifficultyLabel/Label
+      parentKey: DifficultyLabel
+      siblingIndex: 0
+      anchorMin: {x: 0.5, y: 0.5}
+      anchorMax: {x: 0.5, y: 0.5}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: 20}
+      sizeDelta: {x: 500, y: 75}
+      localScale: {x: 1, y: 1, z: 1}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+  allowCompactCapturedProfile: 1
+  allowWideCapturedProfile: 1
+  immutablePhoneBaseline:
+    hasCapture: 1
+    topReservedFraction: 0.16
+    bottomReservedFraction: 0.16
+    leftHudWidthFraction: 0.3
+    entries:
+    - key: TopHUD
+      parentKey: SafeArea
+      siblingIndex: 12
+      anchorMin: {x: 0.5, y: 1}
+      anchorMax: {x: 0.5, y: 1}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: -365.2}
+      sizeDelta: {x: 956.895, y: 212.056}
+      localScale: {x: 1, y: 1, z: 1}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 1
+      horizontalLayoutEnabled: 1
+      childAlignment: 1
+      spacing: -38.29
+      childForceExpandWidth: 1
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: PauseButton
+      parentKey: SafeArea
+      siblingIndex: 9
+      anchorMin: {x: 1, y: 1}
+      anchorMax: {x: 1, y: 1}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: -91.9, y: -211.2}
+      sizeDelta: {x: 60.4, y: 30}
+      localScale: {x: 1, y: 1, z: 1}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: UndoButton
+      parentKey: SafeArea
+      siblingIndex: 8
+      anchorMin: {x: 0.5, y: 0.5}
+      anchorMax: {x: 0.5, y: 0.5}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 228.2, y: 822.5}
+      sizeDelta: {x: 100, y: 100}
+      localScale: {x: 2.55918, y: 2.55918, z: 2.55918}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: HintButton
+      parentKey: SafeArea
+      siblingIndex: 10
+      anchorMin: {x: 0.5, y: 0}
+      anchorMax: {x: 0.5, y: 0}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: 492.8}
+      sizeDelta: {x: 240, y: 90.79}
+      localScale: {x: 1.7, y: 1.7, z: 1.7}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: RewardedHintButton
+      parentKey: SafeArea
+      siblingIndex: 11
+      anchorMin: {x: 0.5, y: 0}
+      anchorMax: {x: 0.5, y: 0}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: 265.1}
+      sizeDelta: {x: 330.007, y: 128.19}
+      localScale: {x: 1.3, y: 1.3, z: 1.3}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: DifficultyLabel
+      parentKey: SafeArea
+      siblingIndex: 7
+      anchorMin: {x: 0.5, y: 0.5}
+      anchorMax: {x: 0.5, y: 0.5}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: 90.7}
+      sizeDelta: {x: 100, y: 100}
+      localScale: {x: 1, y: 1, z: 1}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: LevelCard
+      parentKey: TopHUD
+      siblingIndex: 0
+      anchorMin: {x: 0, y: 1}
+      anchorMax: {x: 0, y: 1}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 172.24582, y: -50}
+      sizeDelta: {x: 100, y: 100}
+      localScale: {x: 1.44, y: 1.44, z: 1.44}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: MovesCard
+      parentKey: TopHUD
+      siblingIndex: 1
+      anchorMin: {x: 0, y: 1}
+      anchorMax: {x: 0, y: 1}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 478.44745, y: -50}
+      sizeDelta: {x: 100, y: 100}
+      localScale: {x: 1.44, y: 1.44, z: 1.44}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: CoinCard
+      parentKey: TopHUD
+      siblingIndex: 2
+      anchorMin: {x: 0, y: 1}
+      anchorMax: {x: 0, y: 1}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 784.64905, y: -50}
+      sizeDelta: {x: 100, y: 100}
+      localScale: {x: 1.44, y: 1.44, z: 1.44}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: TimedHudRoot
+      parentKey: SafeArea
+      siblingIndex: 0
+      anchorMin: {x: 0.5, y: 0.5}
+      anchorMax: {x: 0.5, y: 0.5}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: 0}
+      sizeDelta: {x: 100, y: 100}
+      localScale: {x: 2.6370575, y: 2.6370575, z: 2.6370575}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: TimedHudRoot/Timer Text
+      parentKey: TimedHudRoot
+      siblingIndex: 0
+      anchorMin: {x: 0.5, y: 0.5}
+      anchorMax: {x: 0.5, y: 0.5}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: 162.9}
+      sizeDelta: {x: 200, y: 50}
+      localScale: {x: 0.8, y: 0.8, z: 0.8}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: TimedHudRoot/Mission Label
+      parentKey: TimedHudRoot
+      siblingIndex: 1
+      anchorMin: {x: 0.5, y: 0.5}
+      anchorMax: {x: 0.5, y: 0.5}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: 187.4}
+      sizeDelta: {x: 348.8, y: 50}
+      localScale: {x: 0.72, y: 0.72, z: 0.72}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: MoveLimitHudRoot
+      parentKey: SafeArea
+      siblingIndex: 1
+      anchorMin: {x: 0.5, y: 0.5}
+      anchorMax: {x: 0.5, y: 0.5}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: 0}
+      sizeDelta: {x: 100, y: 100}
+      localScale: {x: 2.6370575, y: 2.6370575, z: 2.6370575}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: MoveLimitHudRoot/MovesRemainingText
+      parentKey: MoveLimitHudRoot
+      siblingIndex: 0
+      anchorMin: {x: 0.5, y: 0.5}
+      anchorMax: {x: 0.5, y: 0.5}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: 162.9}
+      sizeDelta: {x: 200, y: 50}
+      localScale: {x: 0.8, y: 0.8, z: 0.8}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: MoveLimitHudRoot/Mission Label
+      parentKey: MoveLimitHudRoot
+      siblingIndex: 1
+      anchorMin: {x: 0.5, y: 0.5}
+      anchorMax: {x: 0.5, y: 0.5}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: 187.4}
+      sizeDelta: {x: 348.8, y: 50}
+      localScale: {x: 0.72, y: 0.72, z: 0.72}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: MultiTargetHudRoot
+      parentKey: SafeArea
+      siblingIndex: 2
+      anchorMin: {x: 0.5, y: 0.5}
+      anchorMax: {x: 0.5, y: 0.5}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: 0}
+      sizeDelta: {x: 100, y: 100}
+      localScale: {x: 2.6370575, y: 2.6370575, z: 2.6370575}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: MultiTargetHudRoot/TargetsText
+      parentKey: MultiTargetHudRoot
+      siblingIndex: 0
+      anchorMin: {x: 0.5, y: 0.5}
+      anchorMax: {x: 0.5, y: 0.5}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: 162.9}
+      sizeDelta: {x: 200, y: 50}
+      localScale: {x: 0.8, y: 0.8, z: 0.8}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: MultiTargetHudRoot/Mission Label
+      parentKey: MultiTargetHudRoot
+      siblingIndex: 1
+      anchorMin: {x: 0.5, y: 0.5}
+      anchorMax: {x: 0.5, y: 0.5}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: 187.4}
+      sizeDelta: {x: 348.8, y: 50}
+      localScale: {x: 0.72, y: 0.72, z: 0.72}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: MultiTargetHudRoot (1)
+      parentKey: SafeArea
+      siblingIndex: 3
+      anchorMin: {x: 0.5, y: 0.5}
+      anchorMax: {x: 0.5, y: 0.5}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: 0}
+      sizeDelta: {x: 100, y: 100}
+      localScale: {x: 2.6370575, y: 2.6370575, z: 2.6370575}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: MultiTargetHudRoot (1)/TargetsText
+      parentKey: MultiTargetHudRoot (1)
+      siblingIndex: 0
+      anchorMin: {x: 0.5, y: 0.5}
+      anchorMax: {x: 0.5, y: 0.5}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: 162.9}
+      sizeDelta: {x: 200, y: 50}
+      localScale: {x: 0.8, y: 0.8, z: 0.8}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: MultiTargetHudRoot (1)/Mission Label
+      parentKey: MultiTargetHudRoot (1)
+      siblingIndex: 1
+      anchorMin: {x: 0.5, y: 0.5}
+      anchorMax: {x: 0.5, y: 0.5}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: 187.4}
+      sizeDelta: {x: 348.8, y: 50}
+      localScale: {x: 0.72, y: 0.72, z: 0.72}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: NoTouchHudRoot
+      parentKey: SafeArea
+      siblingIndex: 4
+      anchorMin: {x: 0.5, y: 0.5}
+      anchorMax: {x: 0.5, y: 0.5}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: 0}
+      sizeDelta: {x: 100, y: 100}
+      localScale: {x: 2.6370575, y: 2.6370575, z: 2.6370575}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: NoTouchHudRoot/RuleText
+      parentKey: NoTouchHudRoot
+      siblingIndex: 0
+      anchorMin: {x: 0.5, y: 0.5}
+      anchorMax: {x: 0.5, y: 0.5}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: 162.9}
+      sizeDelta: {x: 354.3, y: 50}
+      localScale: {x: 0.8, y: 0.8, z: 0.8}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: NoTouchHudRoot/Mission Label
+      parentKey: NoTouchHudRoot
+      siblingIndex: 1
+      anchorMin: {x: 0.5, y: 0.5}
+      anchorMax: {x: 0.5, y: 0.5}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: 187.4}
+      sizeDelta: {x: 348.8, y: 50}
+      localScale: {x: 0.72, y: 0.72, z: 0.72}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: FragileCargoHudRoot
+      parentKey: SafeArea
+      siblingIndex: 5
+      anchorMin: {x: 0.5, y: 0.5}
+      anchorMax: {x: 0.5, y: 0.5}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: 0}
+      sizeDelta: {x: 100, y: 100}
+      localScale: {x: 2.6370575, y: 2.6370575, z: 2.6370575}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: FragileCargoHudRoot/RuleText
+      parentKey: FragileCargoHudRoot
+      siblingIndex: 0
+      anchorMin: {x: 0.5, y: 0.5}
+      anchorMax: {x: 0.5, y: 0.5}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: 162.9}
+      sizeDelta: {x: 354.3, y: 50}
+      localScale: {x: 0.8, y: 0.8, z: 0.8}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: FragileCargoHudRoot/Mission Label
+      parentKey: FragileCargoHudRoot
+      siblingIndex: 1
+      anchorMin: {x: 0.5, y: 0.5}
+      anchorMax: {x: 0.5, y: 0.5}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: 187.4}
+      sizeDelta: {x: 368.8, y: 50}
+      localScale: {x: 0.72, y: 0.72, z: 0.72}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: LimitedVehicleHudRoot
+      parentKey: SafeArea
+      siblingIndex: 6
+      anchorMin: {x: 0.5, y: 0.5}
+      anchorMax: {x: 0.5, y: 0.5}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: 0}
+      sizeDelta: {x: 100, y: 100}
+      localScale: {x: 2.6370575, y: 2.6370575, z: 2.6370575}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: LimitedVehicleHudRoot/MovesText
+      parentKey: LimitedVehicleHudRoot
+      siblingIndex: 0
+      anchorMin: {x: 0.5, y: 0.5}
+      anchorMax: {x: 0.5, y: 0.5}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: 162.9}
+      sizeDelta: {x: 354.3, y: 50}
+      localScale: {x: 0.8, y: 0.8, z: 0.8}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: LimitedVehicleHudRoot/Mission Label
+      parentKey: LimitedVehicleHudRoot
+      siblingIndex: 1
+      anchorMin: {x: 0.5, y: 0.5}
+      anchorMax: {x: 0.5, y: 0.5}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: 187.4}
+      sizeDelta: {x: 368.8, y: 50}
+      localScale: {x: 0.72, y: 0.72, z: 0.72}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+    - key: DifficultyLabel/Label
+      parentKey: DifficultyLabel
+      siblingIndex: 0
+      anchorMin: {x: 0.5, y: 0.5}
+      anchorMax: {x: 0.5, y: 0.5}
+      pivot: {x: 0.5, y: 0.5}
+      anchoredPosition: {x: 0, y: 836.1}
+      sizeDelta: {x: 500, y: 75}
+      localScale: {x: 1, y: 1, z: 1}
+      localEulerAngles: {x: -0, y: 0, z: 0}
+      hasHorizontalLayout: 0
+      horizontalLayoutEnabled: 0
+      childAlignment: 0
+      spacing: 0
+      childForceExpandWidth: 0
+      childForceExpandHeight: 0
+      childControlWidth: 0
+      childControlHeight: 0
+  wideAspectThreshold: 1.25
+  tallPhoneMaxAspect: 0.5
+  compactTopHudPaddingFrac: 0.015
+  compactTopHudHeightFrac: 0.11
+  compactObjectiveGapFrac: 0.01
+  compactDifficultyBlockFrac: 0.045
+  compactMissionBlockFrac: 0.085
+  compactObjectiveScale: 1.55
+  compactCardScale: 1.12
+  compactHintFrac: 0.155
+  compactRewardedHintFrac: 0.075
+  compactPauseTopFrac: 0.07
+  leftHudWidthFraction: 0.3
+  tabletPanelPadding: 16
+  tabletSectionSpacing: 12
+  tabletControlSpacing: 24
+  objectiveHudTabletScale: 1.05
+  widePausePanelScale: 0.75
+  wideWinPanelScale: 0.8
+  widePausePanelOffset: {x: 0, y: 0}
+  wideWinPanelOffset: {x: 0, y: 0}
+  cameraFitter: {fileID: 1042777857}
+  safeArea: {fileID: 741483061}
+  topHud: {fileID: 1765496332}
+  pauseButton: {fileID: 1938524570}
+  undoButton: {fileID: 2118730885}
+  hintButton: {fileID: 792576013}
+  rewardedHintButton: {fileID: 514650054}
+  pausePanel: {fileID: 492011014}
+  winPanel: {fileID: 2047863326}
+  objectiveHudRoots:
+  - {fileID: 234698232}
+  - {fileID: 697825206}
+  - {fileID: 1072541426}
+  - {fileID: 0}
+  - {fileID: 1772033707}
+  - {fileID: 1236260623}
+  - {fileID: 475948102}
+  - {fileID: 1037384115}
 --- !u!1 &782501623
 GameObject:
   m_ObjectHideFlags: 0
@@ -13666,7 +15583,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 792576012}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1.7, y: 1.7, z: 1.7}
   m_ConstrainProportionsScale: 1
@@ -13674,9 +15591,9 @@ RectTransform:
   - {fileID: 2143328664}
   m_Father: {fileID: 741483061}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -608}
+  m_AnchorMin: {x: 0.5, y: 0}
+  m_AnchorMax: {x: 0.5, y: 0}
+  m_AnchoredPosition: {x: 0, y: 492.8}
   m_SizeDelta: {x: 240, y: 90.79}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &792576014
@@ -15244,7 +17161,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1145.7971, y: 2035.8903}
+  m_SizeDelta: {x: 1920.0732, y: 3413.4631}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &910010022
 CanvasRenderer:
@@ -16687,15 +18604,14 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1037384115
-Transform:
+--- !u!224 &1037384115
+RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1037384114}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
@@ -16703,6 +18619,11 @@ Transform:
   - {fileID: 1691293305}
   m_Father: {fileID: 741483061}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 90.7}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1042777852
 GameObject:
   m_ObjectHideFlags: 0
@@ -16864,6 +18785,12 @@ MonoBehaviour:
   safetyMultiplier: 1.03
   topReservedFraction: 0.16
   bottomReservedFraction: 0.16
+  wideAspectThreshold: 1.25
+  leftHudWidthFraction: 0.3
+  wideTopReservedFraction: 0.04
+  wideBottomReservedFraction: 0.04
+  compactTopReservedFraction: 0.18
+  compactBottomReservedFraction: 0.16
   minOrthographicSize: 4.5
   maxOrthographicSize: 50
   drawBoundsGizmo: 1
@@ -17228,23 +19155,27 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!4 &1072541426
-Transform:
+--- !u!224 &1072541426
+RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1072541425}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 2.6370575, y: 2.6370575, z: 2.6370575}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 1361920495}
   - {fileID: 1126477078}
   m_Father: {fileID: 741483061}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1077441634
 GameObject:
   m_ObjectHideFlags: 0
@@ -18195,7 +20126,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1126477077}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.72, y: 0.72, z: 0.72}
   m_ConstrainProportionsScale: 1
@@ -18802,7 +20733,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1178096783}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
   m_ConstrainProportionsScale: 1
@@ -18989,6 +20920,63 @@ RectTransform:
   m_AnchoredPosition: {x: 201.36583, y: -50}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &1204678211
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1204678212}
+  - component: {fileID: 1204678214}
+  m_Layer: 0
+  m_Name: TabletStatsSection
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1204678212
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1204678211}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1941293354}
+  m_Father: {fileID: 1941938266}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 288.011, y: -74.6}
+  m_SizeDelta: {x: 544.022, y: 280}
+  m_Pivot: {x: 0.5, y: 1}
+--- !u!114 &1204678214
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1204678211}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 306cc8c2b49d7114eaa3623786fc2126, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.LayoutElement
+  m_IgnoreLayout: 0
+  m_MinWidth: -1
+  m_MinHeight: 140
+  m_PreferredWidth: -1
+  m_PreferredHeight: 280
+  m_FlexibleWidth: 1
+  m_FlexibleHeight: -1
+  m_LayoutPriority: 1
 --- !u!1 &1205482901
 GameObject:
   m_ObjectHideFlags: 0
@@ -19313,23 +21301,27 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!4 &1236260623
-Transform:
+--- !u!224 &1236260623
+RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1236260622}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 2.6370575, y: 2.6370575, z: 2.6370575}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 1178096784}
   - {fileID: 2124030934}
   m_Father: {fileID: 741483061}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1236607845
 GameObject:
   m_ObjectHideFlags: 0
@@ -19662,143 +21654,6 @@ CanvasRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1255432853}
-  m_CullTransparentMesh: 1
---- !u!1 &1255664308
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1255664309}
-  - component: {fileID: 1255664311}
-  - component: {fileID: 1255664310}
-  m_Layer: 5
-  m_Name: Mission Label
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &1255664309
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1255664308}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.72, y: 0.72, z: 0.72}
-  m_ConstrainProportionsScale: 1
-  m_Children: []
-  m_Father: {fileID: 320224074}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 187.4}
-  m_SizeDelta: {x: 348.8, y: 50}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1255664310
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1255664308}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_text: RESCUE
-  m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 2c91d7ab60b3e9e43ba878f2b7f64a83, type: 2}
-  m_sharedMaterial: {fileID: -4434231809896357490, guid: 2c91d7ab60b3e9e43ba878f2b7f64a83, type: 2}
-  m_fontSharedMaterials: []
-  m_fontMaterial: {fileID: 0}
-  m_fontMaterials: []
-  m_fontColor32:
-    serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
-  m_enableVertexGradient: 0
-  m_colorMode: 3
-  m_fontColorGradient:
-    topLeft: {r: 1, g: 1, b: 1, a: 1}
-    topRight: {r: 1, g: 1, b: 1, a: 1}
-    bottomLeft: {r: 1, g: 1, b: 1, a: 1}
-    bottomRight: {r: 1, g: 1, b: 1, a: 1}
-  m_fontColorGradientPreset: {fileID: 0}
-  m_spriteAsset: {fileID: 0}
-  m_tintAllSprites: 0
-  m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: -1183493901
-  m_overrideHtmlColors: 0
-  m_faceColor:
-    serializedVersion: 2
-    rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
-  m_fontWeight: 400
-  m_enableAutoSizing: 0
-  m_fontSizeMin: 18
-  m_fontSizeMax: 72
-  m_fontStyle: 0
-  m_HorizontalAlignment: 2
-  m_VerticalAlignment: 256
-  m_textAlignment: 65535
-  m_characterSpacing: 0
-  m_characterHorizontalScale: 1
-  m_wordSpacing: 0
-  m_lineSpacing: 0
-  m_lineSpacingMax: 0
-  m_paragraphSpacing: 0
-  m_charWidthMaxAdj: 0
-  m_TextWrappingMode: 1
-  m_wordWrappingRatios: 0.4
-  m_overflowMode: 0
-  m_linkedTextComponent: {fileID: 0}
-  parentLinkedComponent: {fileID: 0}
-  m_enableKerning: 0
-  m_ActiveFontFeatures: 6e72656b
-  m_enableExtraPadding: 0
-  checkPaddingRequired: 0
-  m_isRichText: 1
-  m_EmojiFallbackSupport: 1
-  m_parseCtrlCharacters: 1
-  m_isOrthographic: 1
-  m_isCullingEnabled: 0
-  m_horizontalMapping: 0
-  m_verticalMapping: 0
-  m_uvLineOffset: 0
-  m_geometrySortingOrder: 0
-  m_IsTextObjectScaleStatic: 0
-  m_VertexBufferAutoSizeReduction: 0
-  m_useMaxVisibleDescender: 1
-  m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
-  m_isUsingLegacyAnimationComponent: 0
-  m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
-  m_baseMaterial: {fileID: 0}
-  m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!222 &1255664311
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1255664308}
   m_CullTransparentMesh: 1
 --- !u!1 &1278522091
 GameObject:
@@ -20616,7 +22471,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1361920494}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
   m_ConstrainProportionsScale: 1
@@ -21234,6 +23089,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1426148383}
+  - component: {fileID: 1426148384}
   m_Layer: 0
   m_Name: LevelCard
   m_TagString: Untagged
@@ -21250,7 +23106,7 @@ RectTransform:
   m_GameObject: {fileID: 1426148382}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.44, y: 1.44, z: 1.44}
+  m_LocalScale: {x: 1.15, y: 1.15, z: 1.15}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 2139434707}
@@ -21263,6 +23119,26 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1426148384
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1426148382}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 306cc8c2b49d7114eaa3623786fc2126, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.LayoutElement
+  m_IgnoreLayout: 0
+  m_MinWidth: 120
+  m_MinHeight: 120
+  m_PreferredWidth: 140
+  m_PreferredHeight: 130
+  m_FlexibleWidth: -1
+  m_FlexibleHeight: -1
+  m_LayoutPriority: 1
 --- !u!1 &1426320550
 GameObject:
   m_ObjectHideFlags: 0
@@ -23245,6 +25121,7 @@ RectTransform:
   - {fileID: 2047863326}
   - {fileID: 1937149501}
   - {fileID: 1079136723}
+  - {fileID: 492011014}
   - {fileID: 2124195272}
   - {fileID: 707487414}
   - {fileID: 676117546}
@@ -23285,7 +25162,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1691293304}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -24036,9 +25913,9 @@ RectTransform:
   - {fileID: 591928463}
   m_Father: {fileID: 741483061}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 616.1}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: 0, y: -365.2}
   m_SizeDelta: {x: 956.895, y: 212.056}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1765496333
@@ -24083,23 +25960,27 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!4 &1772033707
-Transform:
+--- !u!224 &1772033707
+RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1772033706}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 2.6370575, y: 2.6370575, z: 2.6370575}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 592100556}
   - {fileID: 417022862}
   m_Father: {fileID: 741483061}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1777216314
 GameObject:
   m_ObjectHideFlags: 0
@@ -24716,143 +26597,6 @@ CanvasRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1856883999}
-  m_CullTransparentMesh: 1
---- !u!1 &1858703107
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1858703108}
-  - component: {fileID: 1858703110}
-  - component: {fileID: 1858703109}
-  m_Layer: 5
-  m_Name: TargetsText
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &1858703108
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1858703107}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
-  m_ConstrainProportionsScale: 1
-  m_Children: []
-  m_Father: {fileID: 320224074}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 162.9}
-  m_SizeDelta: {x: 200, y: 50}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1858703109
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1858703107}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_text: 2 / 2
-  m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 2c91d7ab60b3e9e43ba878f2b7f64a83, type: 2}
-  m_sharedMaterial: {fileID: -4434231809896357490, guid: 2c91d7ab60b3e9e43ba878f2b7f64a83, type: 2}
-  m_fontSharedMaterials: []
-  m_fontMaterial: {fileID: 0}
-  m_fontMaterials: []
-  m_fontColor32:
-    serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
-  m_enableVertexGradient: 0
-  m_colorMode: 3
-  m_fontColorGradient:
-    topLeft: {r: 1, g: 1, b: 1, a: 1}
-    topRight: {r: 1, g: 1, b: 1, a: 1}
-    bottomLeft: {r: 1, g: 1, b: 1, a: 1}
-    bottomRight: {r: 1, g: 1, b: 1, a: 1}
-  m_fontColorGradientPreset: {fileID: 0}
-  m_spriteAsset: {fileID: 0}
-  m_tintAllSprites: 0
-  m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: -1183493901
-  m_overrideHtmlColors: 0
-  m_faceColor:
-    serializedVersion: 2
-    rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
-  m_fontWeight: 400
-  m_enableAutoSizing: 0
-  m_fontSizeMin: 18
-  m_fontSizeMax: 72
-  m_fontStyle: 0
-  m_HorizontalAlignment: 2
-  m_VerticalAlignment: 256
-  m_textAlignment: 65535
-  m_characterSpacing: 0
-  m_characterHorizontalScale: 1
-  m_wordSpacing: 0
-  m_lineSpacing: 0
-  m_lineSpacingMax: 0
-  m_paragraphSpacing: 0
-  m_charWidthMaxAdj: 0
-  m_TextWrappingMode: 1
-  m_wordWrappingRatios: 0.4
-  m_overflowMode: 0
-  m_linkedTextComponent: {fileID: 0}
-  parentLinkedComponent: {fileID: 0}
-  m_enableKerning: 0
-  m_ActiveFontFeatures: 6e72656b
-  m_enableExtraPadding: 0
-  checkPaddingRequired: 0
-  m_isRichText: 1
-  m_EmojiFallbackSupport: 1
-  m_parseCtrlCharacters: 1
-  m_isOrthographic: 1
-  m_isCullingEnabled: 0
-  m_horizontalMapping: 0
-  m_verticalMapping: 0
-  m_uvLineOffset: 0
-  m_geometrySortingOrder: 0
-  m_IsTextObjectScaleStatic: 0
-  m_VertexBufferAutoSizeReduction: 0
-  m_useMaxVisibleDescender: 1
-  m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
-  m_isUsingLegacyAnimationComponent: 0
-  m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
-  m_baseMaterial: {fileID: 0}
-  m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!222 &1858703110
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1858703107}
   m_CullTransparentMesh: 1
 --- !u!1 &1859934680
 GameObject:
@@ -25518,6 +27262,62 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1885628589}
   m_CullTransparentMesh: 1
+--- !u!1 &1887664490
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1887664491}
+  - component: {fileID: 1887664493}
+  m_Layer: 0
+  m_Name: TabletControlsRow
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1887664491
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1887664490}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1941938266}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 288.011, y: -554.2}
+  m_SizeDelta: {x: 544.022, y: 130}
+  m_Pivot: {x: 0.5, y: 1}
+--- !u!114 &1887664493
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1887664490}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 306cc8c2b49d7114eaa3623786fc2126, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.LayoutElement
+  m_IgnoreLayout: 0
+  m_MinWidth: -1
+  m_MinHeight: 65
+  m_PreferredWidth: -1
+  m_PreferredHeight: 130
+  m_FlexibleWidth: 1
+  m_FlexibleHeight: -1
+  m_LayoutPriority: 1
 --- !u!1001 &1906829633
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -26229,7 +28029,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1938524569}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -26237,9 +28037,9 @@ RectTransform:
   - {fileID: 520421668}
   m_Father: {fileID: 741483061}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 393.3, y: 790.4}
+  m_AnchorMin: {x: 1, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -91.8999, y: -211.19995}
   m_SizeDelta: {x: 60.4, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1938524571
@@ -26366,6 +28166,128 @@ MonoBehaviour:
   pressDuration: 0.06
   releaseDuration: 0.1
   releaseOvershoot: 1.04
+--- !u!1 &1941293353
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1941293354}
+  - component: {fileID: 1941293356}
+  - component: {fileID: 1941293355}
+  m_Layer: 0
+  m_Name: TabletLevelMovesRow
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1941293354
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1941293353}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1204678212}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 272.011, y: 0}
+  m_SizeDelta: {x: 544.022, y: 140}
+  m_Pivot: {x: 0.5, y: 1}
+--- !u!114 &1941293355
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1941293353}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.HorizontalLayoutGroup
+  m_Padding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
+  m_ChildAlignment: 4
+  m_Spacing: 108.08
+  m_ChildForceExpandWidth: 0
+  m_ChildForceExpandHeight: 0
+  m_ChildControlWidth: 0
+  m_ChildControlHeight: 0
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
+  m_ReverseArrangement: 0
+--- !u!114 &1941293356
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1941293353}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 306cc8c2b49d7114eaa3623786fc2126, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.LayoutElement
+  m_IgnoreLayout: 0
+  m_MinWidth: -1
+  m_MinHeight: 70
+  m_PreferredWidth: -1
+  m_PreferredHeight: 140
+  m_FlexibleWidth: 1
+  m_FlexibleHeight: -1
+  m_LayoutPriority: 1
+--- !u!1 &1941938265
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1941938266}
+  m_Layer: 0
+  m_Name: TabletHUDPanel
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &1941938266
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1941938265}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 404537882}
+  - {fileID: 1204678212}
+  - {fileID: 1887664491}
+  - {fileID: 681501194}
+  m_Father: {fileID: 741483061}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0.3, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1950394459
 GameObject:
   m_ObjectHideFlags: 0
@@ -27580,6 +29502,7 @@ MonoBehaviour:
   gameManager: {fileID: 1988114883}
   levelManager: {fileID: 1990499621}
   audioManager: {fileID: 0}
+  safeArea: {fileID: 0}
   timedMissionUI: {fileID: 2010639861}
   moveLimitMissionUI: {fileID: 2010639862}
   multiTargetMissionUI: {fileID: 2010639863}
@@ -27810,7 +29733,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2018221611}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.72, y: 0.72, z: 0.72}
   m_ConstrainProportionsScale: 1
@@ -28957,6 +30880,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2069917185}
+  - component: {fileID: 2069917186}
   m_Layer: 0
   m_Name: MovesCard
   m_TagString: Untagged
@@ -28973,7 +30897,7 @@ RectTransform:
   m_GameObject: {fileID: 2069917184}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.44, y: 1.44, z: 1.44}
+  m_LocalScale: {x: 1.15, y: 1.15, z: 1.15}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 610187050}
@@ -28986,6 +30910,26 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &2069917186
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2069917184}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 306cc8c2b49d7114eaa3623786fc2126, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.LayoutElement
+  m_IgnoreLayout: 0
+  m_MinWidth: 120
+  m_MinHeight: 120
+  m_PreferredWidth: 140
+  m_PreferredHeight: 130
+  m_FlexibleWidth: -1
+  m_FlexibleHeight: -1
+  m_LayoutPriority: 1
 --- !u!1 &2082858834
 GameObject:
   m_ObjectHideFlags: 0
@@ -29011,7 +30955,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2082858834}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
   m_ConstrainProportionsScale: 1
@@ -29409,22 +31353,26 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &2118730885
-Transform:
+--- !u!224 &2118730885
+RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2118730884}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 228.2, y: 738.3, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 2.55918, y: 2.55918, z: 2.55918}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1080998147}
   m_Father: {fileID: 741483061}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 228.2, y: 822.5}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2118730886
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -29524,7 +31472,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2124030933}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.72, y: 0.72, z: 0.72}
   m_ConstrainProportionsScale: 1

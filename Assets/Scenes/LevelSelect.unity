@@ -361,7 +361,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 118993973}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -544,7 +544,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 189167369}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -975,6 +975,7 @@ GameObject:
   m_Component:
   - component: {fileID: 532029716}
   - component: {fileID: 532029715}
+  - component: {fileID: 532029717}
   m_Layer: 0
   m_Name: LevelSelectUI
   m_TagString: Untagged
@@ -1033,6 +1034,59 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &532029717
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 532029714}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9f5e13a4b6d4f8a9e1f2a3b4c5d6e7f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LevelSelectLayoutController
+  wideAspectThreshold: 1.25
+  tallPhoneMaxAspect: 0.5
+  topBar: {fileID: 526811959}
+  titleText: {fileID: 852886432}
+  backButton: {fileID: 1331594141}
+  difficultyTabs: {fileID: 1474552990}
+  levelScrollView: {fileID: 118993974}
+  levelGrid: {fileID: 1687835299}
+  viewport: {fileID: 189167370}
+  levelSelectUI: {fileID: 532029715}
+  background: {fileID: 912514462}
+  backgroundOverlay: {fileID: 1018482008}
+  backgroundImage: {fileID: 912514463}
+  wideTitle:
+    anchoredPosition: {x: 0, y: 40}
+    sizeDelta: {x: 900, y: 100}
+    localScale: {x: 0.55, y: 0.55, z: 0.55}
+    hasSizeDelta: 1
+  wideBackButtonPosition: {x: -484.5, y: 50}
+  wideBackButtonScale: {x: 0.45, y: 0.45, z: 0.45}
+  wideDifficultyTabs:
+    anchoredPosition: {x: 0, y: 318.6}
+    sizeDelta: {x: 1400, y: 160}
+    localScale: {x: 1, y: 1, z: 1}
+    hasSizeDelta: 1
+  wideLevelScrollView:
+    anchoredPosition: {x: 0, y: 0}
+    sizeDelta: {x: 0, y: 0.000061035156}
+    localScale: {x: 1, y: 1, z: 1}
+    hasSizeDelta: 1
+  wideTopBarLocalPosition: {x: 0, y: 383, z: 0}
+  wideTopBarLocalScale: {x: 1.6, y: 1.6, z: 1.6}
+  wideScrollAnchorMin: {x: 0.03, y: 0.03}
+  wideScrollAnchorMax: {x: 0.97, y: 0.7}
+  wideColumnCount: 6
+  wideCellSize: {x: 200, y: 200}
+  wideSpacing: {x: 28, y: 28}
+  widePaddingLeft: 24
+  widePaddingRight: 24
+  widePaddingTop: 16
+  widePaddingBottom: 16
 --- !u!1 &576772230
 GameObject:
   m_ObjectHideFlags: 0
@@ -1531,7 +1585,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 852886431}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.40778333, y: 0.40778333, z: 0.40778333}
   m_ConstrainProportionsScale: 0
@@ -1990,7 +2044,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1331594140}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.40778333, y: 0.40778333, z: 0.40778333}
   m_ConstrainProportionsScale: 0
@@ -2688,7 +2742,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1687835297}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0

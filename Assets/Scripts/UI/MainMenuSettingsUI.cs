@@ -2,8 +2,8 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// Klein settingspanel op het MainMenu voor Music/Sound + Analytics toggles.
-/// Gebruikt de bestaande AudioManager + PrivacyConsentManager (geen tweede manager).
+/// MainMenu Settings panel: Music/Sound, anonymous usage data, Ad Privacy (UMP),
+/// and Privacy Policy URL. Uses AudioManager + PrivacyConsentManager (no second manager).
 /// </summary>
 public class MainMenuSettingsUI : MonoBehaviour
 {
@@ -23,6 +23,10 @@ public class MainMenuSettingsUI : MonoBehaviour
     [Header("Analytics (optional Inspector wire)")]
     [Tooltip("Label in UI: SHARE ANONYMOUS USAGE DATA")]
     [SerializeField] private Toggle analyticsToggle;
+
+    [Header("Privacy Policy")]
+    [Tooltip("Public HTTPS URL for the Grid Drive Privacy Policy. Leave empty until configured.")]
+    [SerializeField] private string privacyPolicyUrl = "";
 
     private void Awake()
     {
@@ -94,13 +98,29 @@ public class MainMenuSettingsUI : MonoBehaviour
     }
 
     /// <summary>
-    /// Optional Privacy options button OnClick.
-    /// Wire in the Inspector when needed — no scene YAML edits from code.
+    /// Ad Privacy Settings button OnClick (Google UMP privacy options).
     /// Safe no-op when UMP does not require privacy options.
     /// </summary>
     public void OnPrivacyOptionsButton()
     {
         PrivacyConsentManager.ShowPrivacyOptions();
+    }
+
+    /// <summary>
+    /// Privacy Policy button OnClick. Always available; opens the policy URL in the browser.
+    /// Does not change UMP or analytics consent.
+    /// </summary>
+    public void OnPrivacyPolicyButton()
+    {
+        if (string.IsNullOrWhiteSpace(privacyPolicyUrl))
+        {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            Debug.LogWarning("[Privacy] Privacy Policy URL is not configured.");
+#endif
+            return;
+        }
+
+        Application.OpenURL(privacyPolicyUrl.Trim());
     }
 
     /// <summary>

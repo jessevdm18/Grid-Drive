@@ -21,11 +21,18 @@ public class SpecialMissionIntroController : MonoBehaviour
         public Color Color;
     }
 
+    /// <summary>
+    /// True while the special-title intro coroutine owns the Mission Label transform.
+    /// GameplayLayoutController must not restack that label during this window.
+    /// </summary>
+    public static bool IsIntroPlaying { get; private set; }
+
     [Header("Refs")]
     [SerializeField] private LevelObjectiveController objectiveController;
     [SerializeField] private GameManager gameManager;
     [SerializeField] private LevelManager levelManager;
     [SerializeField] private AudioManager audioManager;
+    [SerializeField] private RectTransform safeArea;
 
     [Header("Mission UIs (MissionLabel via public Rect)")]
     [SerializeField] private TimedMissionUI timedMissionUI;
@@ -60,6 +67,9 @@ public class SpecialMissionIntroController : MonoBehaviour
     private LabelHomeState homeState;
     private bool homeCached;
 
+    private int introOriginalRootSibling = -1;
+    private RectTransform introRaisedRoot;
+
     private void Awake()
     {
         if (objectiveController == null)
@@ -81,11 +91,21 @@ public class SpecialMissionIntroController : MonoBehaviour
         {
             audioManager = FindAnyObjectByType<AudioManager>();
         }
+
+        if (safeArea == null)
+        {
+            SafeArea sa = FindAnyObjectByType<SafeArea>();
+            if (sa != null)
+            {
+                safeArea = sa.transform as RectTransform;
+            }
+        }
     }
 
     private void OnDisable()
     {
         StopIntroImmediate(restoreLabel: true, notifyComplete: false);
+        IsIntroPlaying = false;
     }
 
     private void LateUpdate()
@@ -116,6 +136,8 @@ public class SpecialMissionIntroController : MonoBehaviour
 
     private IEnumerator RunIntroSequence(int sessionId)
     {
+        // Do NOT set IsIntroPlaying yet — GameplayLayoutController must still be
+        // allowed to stack Compact Difficulty / secondary / Mission Label home.
         OnSpecialMissionIntroStarted?.Invoke();
 
         // Wacht op scene fade (unscaled) vóór label-animatie.
@@ -123,6 +145,7 @@ public class SpecialMissionIntroController : MonoBehaviour
         {
             if (!StillCurrentSession(sessionId))
             {
+                CleanupIntroOwnership();
                 introCoroutine = null;
                 yield break;
             }
@@ -135,6 +158,7 @@ public class SpecialMissionIntroController : MonoBehaviour
 
         if (!StillCurrentSession(sessionId))
         {
+            CleanupIntroOwnership();
             introCoroutine = null;
             yield break;
         }
@@ -147,17 +171,55 @@ public class SpecialMissionIntroController : MonoBehaviour
         {
             // Geen label gekoppeld: gate alsnog openen (geen hangende input-block).
             CompleteIntro(sessionId);
+            CleanupIntroOwnership();
             introCoroutine = null;
             yield break;
         }
 
         EnsureLabelHierarchyActive(label);
+
+        // Give layout one more pass now that the mission HUD is active.
+        GameplayLayoutController layout =
+            FindAnyObjectByType<GameplayLayoutController>();
+        if (layout != null)
+        {
+            layout.EnsureCompactObjectiveLayoutUpToDate();
+        }
+
+        yield return null;
+
+        if (!StillCurrentSession(sessionId))
+        {
+            CleanupIntroOwnership();
+            introCoroutine = null;
+            yield break;
+        }
+
+        if (GameplayLayoutMode.Resolve() == GameplayLayoutKind.CompactPhonePortrait)
+        {
+            RaiseIntroDrawOrder(label);
+        }
+
         CacheHomeState(label);
+        ResolveIntroHomeFromLayout(label);
         activeLabel = label;
+
+        // Ownership begins only when we are about to move the Mission Label.
+        IsIntroPlaying = true;
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        Debug.Log(
+            "[MissionIntro] START\n" +
+            "mode=" + GameplayLayoutMode.Resolve() + "\n" +
+            "homePos=" + homeState.AnchoredPosition + "\n" +
+            "homeScale=" + homeState.LocalScale + "\n" +
+            "homeAnchors=" + homeState.AnchorMin + "→" + homeState.AnchorMax
+        );
+#endif
 
         Vector3 homeScale = homeState.LocalScale;
 
-        // Center in root-canvas screen space (via parent local), geen SafeArea.
+        // Center start: SafeArea/canvas mid — not the compact HUD-parent local mid.
         Vector2 introCenterLocal = ApplyIntroCenterLayout(label);
 
         // Eén keer berekenen; dezelfde introScale voor appear / hold / move-start.
@@ -182,6 +244,7 @@ public class SpecialMissionIntroController : MonoBehaviour
             if (!StillCurrentSession(sessionId))
             {
                 RestoreHomeState();
+                CleanupIntroOwnership();
                 introCoroutine = null;
                 yield break;
             }
@@ -215,6 +278,7 @@ public class SpecialMissionIntroController : MonoBehaviour
             if (!StillCurrentSession(sessionId))
             {
                 RestoreHomeState();
+                CleanupIntroOwnership();
                 introCoroutine = null;
                 yield break;
             }
@@ -237,6 +301,7 @@ public class SpecialMissionIntroController : MonoBehaviour
             if (!StillCurrentSession(sessionId))
             {
                 RestoreHomeState();
+                CleanupIntroOwnership();
                 introCoroutine = null;
                 yield break;
             }
@@ -257,8 +322,27 @@ public class SpecialMissionIntroController : MonoBehaviour
             yield return null;
         }
 
+        Vector2 expectedHomePos = homeState.AnchoredPosition;
+        Vector3 expectedHomeScale = homeState.LocalScale;
         RestoreHomeState();
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        if (label != null)
+        {
+            Vector2 delta = label.anchoredPosition - expectedHomePos;
+            Debug.Log(
+                "[MissionIntro] END\n" +
+                "mode=" + GameplayLayoutMode.Resolve() + "\n" +
+                "actualPos=" + label.anchoredPosition + "\n" +
+                "expectedHome=" + expectedHomePos + "\n" +
+                "delta=" + delta + "\n" +
+                "scaleDelta=" + (label.localScale - expectedHomeScale)
+            );
+        }
+#endif
+
         CompleteIntro(sessionId);
+        CleanupIntroOwnership();
         introCoroutine = null;
     }
 
@@ -300,6 +384,8 @@ public class SpecialMissionIntroController : MonoBehaviour
         {
             RestoreHomeState();
         }
+
+        CleanupIntroOwnership();
 
         if (notifyComplete &&
             objectiveController != null &&
@@ -390,9 +476,85 @@ public class SpecialMissionIntroController : MonoBehaviour
     }
 
     /// <summary>
-    /// Zet label-anchors op center en plaatst het op het root-canvas midden,
+    /// Compact / Wide home must come from GameplayLayoutController when captured.
+    /// Tall: keep CacheHomeState (authored) values.
+    /// </summary>
+    private void ResolveIntroHomeFromLayout(RectTransform label)
+    {
+        if (label == null)
+        {
+            return;
+        }
+
+        GameplayLayoutController layout =
+            FindAnyObjectByType<GameplayLayoutController>();
+        if (layout != null &&
+            layout.TryGetMissionLabelHomeState(label, out RectTransformState home))
+        {
+            homeState.AnchorMin = home.anchorMin;
+            homeState.AnchorMax = home.anchorMax;
+            homeState.Pivot = home.pivot;
+            homeState.AnchoredPosition = home.anchoredPosition;
+            homeState.LocalScale = home.localScale;
+            homeState.SiblingIndex = home.siblingIndex;
+            return;
+        }
+
+        // TallPhone / uncaptured Wide: authored CacheHomeState already correct.
+    }
+
+    /// <summary>
+    /// Raise the mission HUD root above TopHUD for the intro so the title never
+    /// draws underneath Level/Moves while traveling.
+    /// </summary>
+    private void RaiseIntroDrawOrder(RectTransform label)
+    {
+        introRaisedRoot = null;
+        introOriginalRootSibling = -1;
+
+        if (label == null)
+        {
+            return;
+        }
+
+        RectTransform root = label.parent as RectTransform;
+        if (root == null)
+        {
+            return;
+        }
+
+        Transform safe = safeArea != null ? safeArea : root.parent;
+        if (safe == null || root.parent != safe)
+        {
+            return;
+        }
+
+        introRaisedRoot = root;
+        introOriginalRootSibling = root.GetSiblingIndex();
+        root.SetAsLastSibling();
+        label.SetAsLastSibling();
+    }
+
+    private void CleanupIntroOwnership()
+    {
+        if (introRaisedRoot != null &&
+            introOriginalRootSibling >= 0 &&
+            introRaisedRoot.parent != null)
+        {
+            int max = introRaisedRoot.parent.childCount - 1;
+            introRaisedRoot.SetSiblingIndex(Mathf.Clamp(introOriginalRootSibling, 0, max));
+        }
+
+        introRaisedRoot = null;
+        introOriginalRootSibling = -1;
+        IsIntroPlaying = false;
+    }
+
+    /// <summary>
+    /// Zet label-anchors op center en plaatst het op SafeArea/root-canvas midden,
     /// omgerekend naar MissionLabel.parent local/anchored space. Geen reparent.
-    /// Gebruikt géén SafeArea.
+    /// CompactPhone prefers SafeArea center so a top-anchored mission root does
+    /// not map "center" down toward the board.
     /// </summary>
     private Vector2 ApplyIntroCenterLayout(RectTransform label)
     {
@@ -401,9 +563,64 @@ public class SpecialMissionIntroController : MonoBehaviour
         label.anchorMax = new Vector2(0.5f, 0.5f);
         label.pivot = new Vector2(0.5f, 0.5f);
 
-        Vector2 centerLocal = ComputeRootCanvasCenterAnchoredInParent(label);
+        Vector2 centerLocal = ComputeIntroCenterAnchoredInParent(label);
         label.anchoredPosition = centerLocal + introAnchoredPosition;
         return label.anchoredPosition;
+    }
+
+    private Vector2 ComputeIntroCenterAnchoredInParent(RectTransform label)
+    {
+        RectTransform parent = label.parent as RectTransform;
+        if (parent == null)
+        {
+            return Vector2.zero;
+        }
+
+        GameplayLayoutKind kind = GameplayLayoutMode.Resolve();
+        RectTransform space = null;
+        if (kind == GameplayLayoutKind.CompactPhonePortrait && safeArea != null)
+        {
+            space = safeArea;
+        }
+        else
+        {
+            space = ResolveRootCanvasRect(label);
+        }
+
+        if (space == null)
+        {
+            return Vector2.zero;
+        }
+
+        Canvas rootCanvas = space.GetComponentInParent<Canvas>();
+        if (rootCanvas != null)
+        {
+            rootCanvas = rootCanvas.rootCanvas;
+        }
+
+        Camera eventCam = null;
+        if (rootCanvas != null &&
+            rootCanvas.renderMode != RenderMode.ScreenSpaceOverlay)
+        {
+            eventCam = rootCanvas.worldCamera;
+        }
+
+        Vector3 worldCenter = space.TransformPoint(space.rect.center);
+        Vector2 screenPoint = RectTransformUtility.WorldToScreenPoint(eventCam, worldCenter);
+
+        Vector2 parentLocal;
+        if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                parent,
+                screenPoint,
+                eventCam,
+                out parentLocal))
+        {
+            Vector3 fallback = parent.InverseTransformPoint(worldCenter);
+            parentLocal = new Vector2(fallback.x, fallback.y);
+        }
+
+        // Child anchors (0.5,0.5): anchoredPosition is offset t.o.v. parent.rect.center.
+        return parentLocal - parent.rect.center;
     }
 
     /// <summary>

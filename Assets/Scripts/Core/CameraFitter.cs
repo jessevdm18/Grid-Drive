@@ -5,7 +5,8 @@ using UnityEngine;
 
 /// <summary>
 /// Enige eigenaar van gameplay orthographic framing.
-/// Camera X = boardBounds.center.x (nooit exit).
+/// Phone: camera X = boardBounds.center.x (nooit exit); UI top/bottom reserved.
+/// Wide tablet landscape: board framed in the right gameplay column (HUD on left).
 /// ExitArrow telt volledig mee; ExitRoad alleen tot maxExitExtensionBeyondBoard.
 ///
 /// Belangrijk: iedere FitToGrid zet orthographicSize ABSOLUUT (geen Mathf.Max op vorige size).
@@ -38,9 +39,26 @@ public class CameraFitter : MonoBehaviour
     [SerializeField] private float boardVerticalPadding = 0.15f;
     [SerializeField] private float safetyMultiplier = 1.03f;
 
-    [Header("UI Reserved Viewport (normalized 0-1 of view height)")]
+    [Header("UI Reserved Viewport (phone — normalized 0-1 of view height)")]
     [SerializeField, Range(0f, 0.45f)] private float topReservedFraction = 0.16f;
     [SerializeField, Range(0f, 0.45f)] private float bottomReservedFraction = 0.16f;
+
+    [Header("Wide Tablet Landscape")]
+    [Tooltip("Must match GameplayLayoutController / GameplayLayoutMode.")]
+    [SerializeField] private float wideAspectThreshold = GameplayLayoutMode.DefaultWideAspectThreshold;
+
+    [Tooltip("Left HUD column width (0-1). Board uses the remaining width.")]
+    [SerializeField, Range(0.22f, 0.36f)] private float leftHudWidthFraction = 0.30f;
+
+    [Tooltip("Small vertical inset when HUD sits in the left column.")]
+    [SerializeField, Range(0f, 0.2f)] private float wideTopReservedFraction = 0.04f;
+    [SerializeField, Range(0f, 0.2f)] private float wideBottomReservedFraction = 0.04f;
+
+    [Header("Compact Phone Portrait")]
+    [Tooltip("Extra top UI reserve on shorter portrait phones.")]
+    [SerializeField, Range(0f, 0.45f)] private float compactTopReservedFraction = 0.18f;
+    [Tooltip("Extra bottom UI reserve on shorter portrait phones.")]
+    [SerializeField, Range(0f, 0.45f)] private float compactBottomReservedFraction = 0.16f;
 
     [Header("Orthographic Limits")]
     [SerializeField] private float minOrthographicSize = 4.5f;
@@ -78,6 +96,9 @@ public class CameraFitter : MonoBehaviour
     private Coroutine verifyOverrideRoutine;
     private Coroutine deferredRefitRoutine;
 
+    private bool hasLayoutKindOverride;
+    private GameplayLayoutKind layoutKindOverride = GameplayLayoutKind.TallPhonePortrait;
+
     private void Awake()
     {
         if (targetCamera == null)
@@ -86,6 +107,18 @@ public class CameraFitter : MonoBehaviour
         }
 
         CacheBaselineIfNeeded();
+    }
+
+    private GameplayLayoutKind ResolveLayoutKind()
+    {
+        if (hasLayoutKindOverride)
+        {
+            return layoutKindOverride;
+        }
+
+        return GameplayLayoutMode.Resolve(
+            GameplayLayoutMode.DefaultTallPhoneMaxAspect,
+            wideAspectThreshold);
     }
 
     private void Start()
@@ -104,6 +137,70 @@ public class CameraFitter : MonoBehaviour
     private void OnDisable()
     {
         StopFitCoroutines();
+        if (targetCamera != null)
+        {
+            targetCamera.rect = new Rect(0f, 0f, 1f, 1f);
+        }
+    }
+
+    public void ApplyModeCameraValues(
+        GameplayLayoutKind kind,
+        float topReserved,
+        float bottomReserved,
+        float leftHudFraction)
+    {
+        leftHudWidthFraction = Mathf.Clamp(leftHudFraction, 0.15f, 0.45f);
+
+        switch (kind)
+        {
+            case GameplayLayoutKind.WideTabletLandscape:
+                wideTopReservedFraction = Mathf.Clamp(topReserved, 0f, 0.45f);
+                wideBottomReservedFraction = Mathf.Clamp(bottomReserved, 0f, 0.45f);
+                break;
+            case GameplayLayoutKind.CompactPhonePortrait:
+                compactTopReservedFraction = Mathf.Clamp(topReserved, 0f, 0.45f);
+                compactBottomReservedFraction = Mathf.Clamp(bottomReserved, 0f, 0.45f);
+                break;
+            default:
+                topReservedFraction = Mathf.Clamp(topReserved, 0f, 0.45f);
+                bottomReservedFraction = Mathf.Clamp(bottomReserved, 0f, 0.45f);
+                break;
+        }
+
+        SetLayoutKind(kind, leftHudWidthFraction);
+    }
+
+    /// <summary>
+    /// Called by GameplayLayoutController. Drives wide/compact/tall framing.
+    /// Full camera rect is always kept (background is Screen Space–Camera).
+    /// </summary>
+    public void SetLayoutKind(GameplayLayoutKind kind, float leftHudFraction)
+    {
+        hasLayoutKindOverride = true;
+        layoutKindOverride = kind;
+        leftHudWidthFraction = Mathf.Clamp(leftHudFraction, 0.15f, 0.45f);
+
+        if (targetCamera != null)
+        {
+            targetCamera.rect = new Rect(0f, 0f, 1f, 1f);
+        }
+
+        if (hasFit)
+        {
+            FitToCurrentBoard();
+        }
+    }
+
+    /// <summary>Backward-compatible wrapper.</summary>
+    public void SetWideGameplayLayout(bool enabled, float leftHudFraction)
+    {
+        SetLayoutKind(
+            enabled
+                ? GameplayLayoutKind.WideTabletLandscape
+                : GameplayLayoutMode.Resolve(
+                    GameplayLayoutMode.DefaultTallPhoneMaxAspect,
+                    wideAspectThreshold),
+            leftHudFraction);
     }
 
     private void CacheBaselineIfNeeded()
@@ -212,11 +309,16 @@ public class CameraFitter : MonoBehaviour
 
         CacheBaselineIfNeeded();
 
+        // Never leave a cropped rect from experimental setups.
+        targetCamera.rect = new Rect(0f, 0f, 1f, 1f);
+
         StringBuilder log = logVerboseFit ? new StringBuilder(2048) : null;
         if (log != null)
         {
             log.AppendLine("--- CAMERA FIT START ---");
             log.AppendLine("Screen = " + Screen.width + "x" + Screen.height);
+            log.AppendLine("LayoutKind = " + ResolveLayoutKind());
+            log.AppendLine("LeftHudFraction = " + leftHudWidthFraction.ToString("0.000"));
             log.AppendLine("Camera aspect = " + targetCamera.aspect.ToString("0.0000"));
             log.AppendLine("Camera rect = " + targetCamera.rect);
             log.AppendLine("Camera pixelRect = " + targetCamera.pixelRect);
@@ -310,12 +412,24 @@ public class CameraFitter : MonoBehaviour
         float requiredHalfWidth = Mathf.Max(leftRequirement, rightRequirement);
         requiredHalfWidth += exitPadding;
 
-        // Width + height: limiting axis wins (rectangular-safe).
-        float availableAspect = Mathf.Max(0.01f, targetCamera.aspect);
-        float requiredForWidth = requiredHalfWidth / availableAspect;
+        float fullAspect = Mathf.Max(0.01f, targetCamera.aspect);
+        GameplayLayoutKind layoutKind = ResolveLayoutKind();
+        bool wideGameplayLayout = layoutKind == GameplayLayoutKind.WideTabletLandscape;
+        float hudFraction = Mathf.Clamp(leftHudWidthFraction, 0.15f, 0.45f);
+        float gameplayWidthFraction = wideGameplayLayout
+            ? Mathf.Clamp01(1f - hudFraction)
+            : 1f;
+        gameplayWidthFraction = Mathf.Max(0.4f, gameplayWidthFraction);
+
+        // Width limited to the usable gameplay column.
+        float requiredForWidth = requiredHalfWidth / (fullAspect * gameplayWidthFraction);
+
+        float topReserved;
+        float bottomReserved;
+        ResolveReservedFractions(layoutKind, out topReserved, out bottomReserved);
 
         float usableHeightFraction = Mathf.Clamp01(
-            1f - topReservedFraction - bottomReservedFraction
+            1f - topReserved - bottomReserved
         );
         usableHeightFraction = Mathf.Max(0.2f, usableHeightFraction);
         float requiredHalfHeight = boardBounds.extents.y + boardVerticalPadding;
@@ -341,10 +455,21 @@ public class CameraFitter : MonoBehaviour
         );
 
         float playCenterOffsetY =
-            finalOrthographicSize * (bottomReservedFraction - topReservedFraction);
+            finalOrthographicSize * (bottomReserved - topReserved);
+
+        float visibleWidth = 2f * finalOrthographicSize * fullAspect;
+        float cameraX = boardCenterX;
+        float gameplayCenterScreenX = 0.5f;
+        if (wideGameplayLayout)
+        {
+            // Place board center at the horizontal center of the right gameplay column.
+            // e.g. hud=0.30 → screen X ≈ 0.65
+            gameplayCenterScreenX = hudFraction + gameplayWidthFraction * 0.5f;
+            cameraX = boardCenterX - (gameplayCenterScreenX - 0.5f) * visibleWidth;
+        }
 
         Vector3 camPos = targetCamera.transform.position;
-        camPos.x = boardCenterX;
+        camPos.x = cameraX;
         camPos.y = boardBounds.center.y - playCenterOffsetY;
         // Keep baseline Z if available.
         if (hasBaseline)
@@ -366,6 +491,14 @@ public class CameraFitter : MonoBehaviour
         Debug.Log(
             "[LevelFraming]\n" +
             "Grid=" + lastGridWidth + "x" + lastGridHeight + "\n" +
+            "Aspect=" + fullAspect.ToString("0.000") + "\n" +
+            "LayoutKind=" + layoutKind + "\n" +
+            "WideLayout=" + wideGameplayLayout + "\n" +
+            "HudFraction=" + hudFraction.ToString("0.000") + "\n" +
+            "GameplayCenterScreenX=" + gameplayCenterScreenX.ToString("0.000") + "\n" +
+            "GameplayWidthFraction=" + gameplayWidthFraction.ToString("0.000") + "\n" +
+            "TopReserved=" + topReserved.ToString("0.000") + "\n" +
+            "BottomReserved=" + bottomReserved.ToString("0.000") + "\n" +
             "BaseOrtho=" +
             (hasBaseline ? baselineOrthographicSize.ToString("0.000") : "n/a") + "\n" +
             "RequiredOrtho=" + requiredSizeBeforeClamp.ToString("0.000") + "\n" +
@@ -386,7 +519,7 @@ public class CameraFitter : MonoBehaviour
             log.AppendLine("boardCenterX = " + boardCenterX.ToString("0.000"));
             log.AppendLine("boardHalfWidth = " + boardHalfWidth.ToString("0.000"));
             log.AppendLine("Required Half Width = " + requiredHalfWidth.ToString("0.000"));
-            log.AppendLine("Available Aspect = " + availableAspect.ToString("0.0000"));
+            log.AppendLine("Full Aspect = " + fullAspect.ToString("0.0000"));
             log.AppendLine("Required For Width = " + requiredForWidth.ToString("0.000"));
             log.AppendLine("Required For Height = " + requiredForHeight.ToString("0.000"));
             log.AppendLine(
@@ -406,6 +539,28 @@ public class CameraFitter : MonoBehaviour
             }
 
             verifyOverrideRoutine = StartCoroutine(VerifyNoOverrideNextFrame(fitGeneration));
+        }
+    }
+
+    private void ResolveReservedFractions(
+        GameplayLayoutKind layoutKind,
+        out float topReserved,
+        out float bottomReserved)
+    {
+        switch (layoutKind)
+        {
+            case GameplayLayoutKind.WideTabletLandscape:
+                topReserved = wideTopReservedFraction;
+                bottomReserved = wideBottomReservedFraction;
+                break;
+            case GameplayLayoutKind.CompactPhonePortrait:
+                topReserved = compactTopReservedFraction;
+                bottomReserved = compactBottomReservedFraction;
+                break;
+            default:
+                topReserved = topReservedFraction;
+                bottomReserved = bottomReservedFraction;
+                break;
         }
     }
 

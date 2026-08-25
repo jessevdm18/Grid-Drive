@@ -71,7 +71,8 @@ public class SafeArea : MonoBehaviour
         anchorMax.x /= Screen.width;
         anchorMax.y /= Screen.height;
 
-        // Tijdelijke debug — verwijder later.
+        // Dev-only: confirm safe-area insets on device.
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
         Debug.Log(
             "SafeArea apply\n" +
             "Screen.width = " + Screen.width + "\n" +
@@ -80,6 +81,7 @@ public class SafeArea : MonoBehaviour
             "anchorMin = " + anchorMin + "\n" +
             "anchorMax = " + anchorMax
         );
+#endif
 
         rectTransform.anchorMin = anchorMin;
         rectTransform.anchorMax = anchorMax;

@@ -11,7 +11,7 @@ using UnityEngine.UI;
 /// </summary>
 public class LevelSelectUI : MonoBehaviour
 {
-    private const int GridColumns = 3;
+    private const int FallbackGridColumns = 3;
 
     [Header("UI")]
     [Tooltip("Prefab van één levelknop (LevelButtonUI + hierarchy).")]
@@ -197,6 +197,18 @@ public class LevelSelectUI : MonoBehaviour
     {
         RefreshTabChrome();
         RebuildLevelButtonsForSelectedDifficulty();
+
+        // Layout owns presentation — re-apply after tiles so Wide is not lost.
+        LevelSelectLayoutController layout = GetComponent<LevelSelectLayoutController>();
+        if (layout == null)
+        {
+            layout = FindAnyObjectByType<LevelSelectLayoutController>();
+        }
+
+        if (layout != null)
+        {
+            layout.ApplyAfterContentReady();
+        }
     }
 
     private void RefreshTabChrome()
@@ -448,7 +460,8 @@ public class LevelSelectUI : MonoBehaviour
             return;
         }
 
-        int rows = Mathf.Max(1, Mathf.CeilToInt(levelCount / (float)GridColumns));
+        int columns = GetGridColumnCount();
+        int rows = Mathf.Max(1, Mathf.CeilToInt(levelCount / (float)columns));
         if (levelCount == 0)
         {
             rows = 1;
@@ -470,6 +483,39 @@ public class LevelSelectUI : MonoBehaviour
         {
             scrollRect.content = gridRect;
         }
+    }
+
+    /// <summary>
+    /// Prefer live GridLayoutGroup constraint so Wide layout can change columns
+    /// without touching unlock/data logic.
+    /// </summary>
+    private int GetGridColumnCount()
+    {
+        if (levelGrid != null)
+        {
+            GridLayoutGroup grid = levelGrid.GetComponent<GridLayoutGroup>();
+            if (grid != null &&
+                grid.constraint == GridLayoutGroup.Constraint.FixedColumnCount &&
+                grid.constraintCount > 0)
+            {
+                return grid.constraintCount;
+            }
+        }
+
+        return FallbackGridColumns;
+    }
+
+    /// <summary>
+    /// Called by LevelSelectLayoutController after Wide/phone grid settings change.
+    /// </summary>
+    public void RefreshScrollContentForCurrentGrid()
+    {
+        if (levelGrid == null)
+        {
+            return;
+        }
+
+        UpdateScrollContentHeight(levelGrid.childCount);
     }
 
     private void OnLevelButtonClicked(LevelButtonUI buttonUI)
