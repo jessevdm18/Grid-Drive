@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 /// <summary>
@@ -93,10 +94,20 @@ public class GameplayLayoutController : MonoBehaviour
     [SerializeField, Min(0.1f)] private float phoneMissionLabelScale = 1f;
     [Tooltip("Tall + Compact only. Multiplier on secondary text localScale (timer, count, rule text). 1 = current size.")]
     [SerializeField, Min(0.1f)] private float phoneSecondaryTextScale = 1f;
-    [Tooltip("Screen-pixel gap between Mission Label and secondary text.")]
-    [SerializeField, Min(0f)] private float phoneObjectiveInternalGapPx = 8f;
-    [Tooltip("Screen-pixel gap between secondary objective bottom and board top.")]
-    [SerializeField, Min(0f)] private float phoneObjectiveBoardGapPx = 30f;
+    [Tooltip("SafeArea-local canvas units between Mission Label and secondary text.")]
+    [FormerlySerializedAs("phoneObjectiveInternalGapPx")]
+    [SerializeField, Min(0f)] private float phoneObjectiveInternalGap = 8f;
+    [Tooltip("SafeArea-local canvas units between secondary bottom and board top.")]
+    [FormerlySerializedAs("phoneObjectiveBoardGapPx")]
+    [SerializeField, Min(0f)] private float phoneObjectiveBoardGap = 24f;
+    [Tooltip("SafeArea-local canvas units between TopHUD bottom and mission block top.")]
+    [SerializeField, Min(0f)] private float phoneObjectiveTopHudGap = 8f;
+    [Tooltip("Minimum SafeArea-local board gap when fitting into the TopHUD→board band.")]
+    [SerializeField, Min(0f)] private float phoneObjectiveMinBoardGap = 6f;
+    [Tooltip("Minimum SafeArea-local internal gap when fitting.")]
+    [SerializeField, Min(0f)] private float phoneObjectiveMinInternalGap = 2f;
+    [Tooltip("Floor for mission/secondary scale multipliers when fitting (never below this).")]
+    [SerializeField, Range(0.35f, 1f)] private float phoneObjectiveMinFitScale = 0.55f;
 
     [Header("Tablet Column")]
     [SerializeField, Range(0.22f, 0.36f)] private float leftHudWidthFraction = 0.30f;
@@ -182,6 +193,11 @@ public class GameplayLayoutController : MonoBehaviour
     private RectTransform resolvedPhoneMissionLabel;
     private RectTransformState resolvedPhoneMissionLabelHome;
     private bool hasResolvedPhoneMissionLabelHome;
+
+    // Final fitted scales after TopHUD↔board band resolve (pulse/intro must use these).
+    private Vector3 lastResolvedMissionScale = Vector3.one;
+    private Vector3 lastResolvedSecondaryScale = Vector3.one;
+    private bool hasResolvedPhoneObjectiveScales;
 
     public bool IsWideLayoutActive =>
         appliedKind == GameplayLayoutKind.WideTabletLandscape;
@@ -1178,16 +1194,9 @@ public class GameplayLayoutController : MonoBehaviour
                     break;
                 default:
                     // TallPhonePortrait: immutable baseline owns Difficulty + other HUD.
-                    // Special mission text is applied below via board-relative pass.
+                    // Special mission text is applied below after camera fit.
                     break;
             }
-        }
-
-        // Phone special mission text ONLY — never DifficultyLabel / EASY.
-        if (wantKind == GameplayLayoutKind.TallPhonePortrait ||
-            wantKind == GameplayLayoutKind.CompactPhonePortrait)
-        {
-            ApplyPhoneMissionLayoutRelativeToBoard();
         }
 
         // Final ownership sync — survives EnsureTabletScaffold / cleanup side effects.
@@ -1195,7 +1204,16 @@ public class GameplayLayoutController : MonoBehaviour
         ApplyModalPanelsForKind(wantKind);
         ApplyHintStatusLayout();
 
+        // Camera fit BEFORE phone mission measure — board top must match final framing.
         NotifyCameraFitter(wantKind, profile);
+
+        // Phone special mission text ONLY — never DifficultyLabel / EASY.
+        // Single owner: SafeArea-local band between TopHUD bottom and board top.
+        if (wantKind == GameplayLayoutKind.TallPhonePortrait ||
+            wantKind == GameplayLayoutKind.CompactPhonePortrait)
+        {
+            ApplyPhoneMissionLayoutRelativeToBoard();
+        }
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         LogUILayoutAudit("ApplyLayout." + wantKind);
@@ -3835,11 +3853,14 @@ public class GameplayLayoutController : MonoBehaviour
     }
 
     /// <summary>
-    /// Phone (Tall + Compact) only: place ACTIVE special Mission Label + secondary
-    /// relative to actual board top. NEVER touches DifficultyLabel / EASY.
+    /// Phone (Tall + Compact) ONLY owner of special Mission Label + secondary transforms.
+    /// Places the block in SafeArea-local space between actual TopHUD bottom and board top.
+    /// NEVER writes DifficultyLabel / EASY.
     /// </summary>
     private void ApplyPhoneMissionLayoutRelativeToBoard()
     {
+        hasResolvedPhoneObjectiveScales = false;
+
         if (safeArea == null ||
             objectiveHudRoots == null ||
             (appliedKind != GameplayLayoutKind.TallPhonePortrait &&
@@ -3851,19 +3872,10 @@ public class GameplayLayoutController : MonoBehaviour
         ParkInactiveTallMissionRoots();
 
         RectTransform activeRoot = FindActiveTallMissionRoot();
-        float difficultyY = MeasureRectPivotFromSaTop(difficultyLabelRoot, safeArea.rect.height);
-
         if (activeRoot == null)
         {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-            LogPhoneMissionLayout(
-                null,
-                0f,
-                0f,
-                -1f,
-                -1f,
-                phoneObjectiveBoardGapPx,
-                difficultyY);
+            LogPhoneLayoutDiagnostics(null, 0f, 0f, 0f, 0f, 0f, 0f, Vector3.one, Vector3.one);
 #endif
             return;
         }
@@ -3874,49 +3886,108 @@ public class GameplayLayoutController : MonoBehaviour
         {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             Debug.LogWarning(
-                "[PhoneMissionLayout] Board top unavailable — special mission text not placed.");
+                "[PhoneLayout] Board top unavailable — special mission text not placed.");
 #endif
             return;
         }
 
-        Canvas canvas = safeArea.GetComponentInParent<Canvas>();
-        float scaleFactor = canvas != null ? Mathf.Max(0.001f, canvas.scaleFactor) : 1f;
-        float boardGapLocal = phoneObjectiveBoardGapPx / scaleFactor;
-        float internalGapLocal = phoneObjectiveInternalGapPx / scaleFactor;
+        // Entire mission solve stays in SafeArea-local canvas units (no px÷scaleFactor).
+        float boardGap = phoneObjectiveBoardGap;
+        float internalGap = phoneObjectiveInternalGap;
+        float topHudGap = phoneObjectiveTopHudGap;
+
+        float topHudBottomLocal;
+        if (!TryMeasureRectBottomLocalY(topHud, out topHudBottomLocal))
+        {
+            // Fallback: leave a conservative band below SafeArea top.
+            topHudBottomLocal = safeArea.rect.yMax - Mathf.Max(120f, safeArea.rect.height * 0.22f);
+        }
+
+        float maxMissionTopLocal = topHudBottomLocal - topHudGap;
+        float minContentBottomLocal = boardLocalY + phoneObjectiveMinBoardGap;
+
+        if (maxMissionTopLocal <= minContentBottomLocal + 1f)
+        {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            Debug.LogWarning(
+                "[PhoneLayout] TopHUD↔board band too small for mission text. " +
+                "topHudBottom=" + topHudBottomLocal.ToString("0.0") +
+                " boardTop=" + boardLocalY.ToString("0.0"));
+#endif
+            // Still place as low as possible with minimum gaps / min fit scale.
+            maxMissionTopLocal = Mathf.Max(maxMissionTopLocal, minContentBottomLocal + 8f);
+        }
 
         RectTransform missionLabel;
         RectTransform secondary;
         ResolvePhoneMissionTexts(activeRoot, out missionLabel, out secondary);
 
-        // Inspector multipliers on top of restored/captured base scale (default 1 = unchanged).
-        Vector3 missionScale =
-            GetPhoneObjectiveTextBaseScale(missionLabel, 0.72f) * phoneMissionLabelScale;
-        Vector3 secondaryScale =
-            GetPhoneObjectiveTextBaseScale(secondary, 1f) * phoneSecondaryTextScale;
+        Vector3 missionBase = GetPhoneObjectiveTextBaseScale(missionLabel, 0.72f);
+        Vector3 secondaryBase = GetPhoneObjectiveTextBaseScale(secondary, 1f);
+        Vector3 preferredMissionScale = missionBase * phoneMissionLabelScale;
+        Vector3 preferredSecondaryScale = secondaryBase * phoneSecondaryTextScale;
+
         Vector2 missionSize = GetPhoneChildSize(missionLabel, new Vector2(350f, 50f));
         Vector2 secondarySize = GetPhoneChildSize(secondary, new Vector2(200f, 50f));
+
+        float fitMul = 1f;
+        ResolvePhoneMissionBandFit(
+            preferredMissionScale,
+            preferredSecondaryScale,
+            missionSize,
+            secondarySize,
+            secondary != null,
+            boardLocalY,
+            maxMissionTopLocal,
+            ref boardGap,
+            ref internalGap,
+            ref fitMul);
+
+        Vector3 missionScale = preferredMissionScale * fitMul;
+        Vector3 secondaryScale = preferredSecondaryScale * fitMul;
+        lastResolvedMissionScale = missionScale;
+        lastResolvedSecondaryScale = secondaryScale;
+        hasResolvedPhoneObjectiveScales = true;
 
         float missionH = Mathf.Max(20f, Mathf.Abs(missionSize.y) * Mathf.Abs(missionScale.y));
         float secondaryH = secondary != null
             ? Mathf.Max(16f, Mathf.Abs(secondarySize.y) * Mathf.Abs(secondaryScale.y))
             : 0f;
 
-        // SafeArea local Y increases upward. Stack upward from board top.
-        float secondaryBottomLocal = boardLocalY + boardGapLocal;
+        // Stack upward from board top inside the clamped band.
+        float secondaryBottomLocal = boardLocalY + boardGap;
         float secondaryTopLocal = secondaryBottomLocal + secondaryH;
         float missionBottomLocal = secondary != null
-            ? secondaryTopLocal + internalGapLocal
+            ? secondaryTopLocal + internalGap
             : secondaryBottomLocal;
         float missionTopLocal = missionBottomLocal + missionH;
 
-        // Parent root under SafeArea; children stacked with top anchors inside root.
+        // Final hard clamp: never overlap TopHUD or board.
+        if (missionTopLocal > maxMissionTopLocal)
+        {
+            float shift = missionTopLocal - maxMissionTopLocal;
+            secondaryBottomLocal -= shift;
+            secondaryTopLocal -= shift;
+            missionBottomLocal -= shift;
+            missionTopLocal -= shift;
+        }
+
+        if (secondaryBottomLocal < boardLocalY + phoneObjectiveMinBoardGap * 0.5f)
+        {
+            float lift = (boardLocalY + phoneObjectiveMinBoardGap * 0.5f) - secondaryBottomLocal;
+            secondaryBottomLocal += lift;
+            secondaryTopLocal += lift;
+            missionBottomLocal += lift;
+            missionTopLocal += lift;
+        }
+
         if (activeRoot.parent != safeArea)
         {
             activeRoot.SetParent(safeArea, false);
         }
 
         float contentHeight = missionH +
-            (secondary != null ? internalGapLocal + secondaryH : 0f);
+            (secondary != null ? internalGap + secondaryH : 0f);
         float rootTopLocal = missionTopLocal;
         float fromTop = safeArea.rect.yMax - rootTopLocal;
 
@@ -3943,7 +4014,7 @@ public class GameplayLayoutController : MonoBehaviour
             }
 
             CachePhoneMissionLabelHome(missionLabel, activeRoot, missionScale, y);
-            y -= missionH + (secondary != null ? internalGapLocal : 0f);
+            y -= missionH + (secondary != null ? internalGap : 0f);
         }
 
         if (secondary != null)
@@ -3955,44 +4026,170 @@ public class GameplayLayoutController : MonoBehaviour
             secondary.localScale = secondaryScale;
         }
 
-        float missionY = missionTopLocal;
-        float secondaryY = secondary != null ? secondaryTopLocal : -1f;
-
-        // Diagnostic only — never move DifficultyLabel.
-        if (difficultyLabelRoot != null &&
-            difficultyLabelRoot.gameObject.activeInHierarchy)
-        {
-            float difficultyBottom = MeasureRectBottomFromSaTop(
-                difficultyLabelRoot,
-                safeArea.rect.height);
-            float missionTopFromSaTop = safeArea.rect.yMax - missionTopLocal;
-            if (missionTopFromSaTop < difficultyBottom + (8f / scaleFactor))
-            {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-                Debug.LogWarning(
-                    "[PhoneMissionLayout] Mission text is close to DifficultyLabel/EASY — " +
-                    "Difficulty was NOT moved. missionTopFromTop=" +
-                    missionTopFromSaTop.ToString("0.0") +
-                    " difficultyBottom=" + difficultyBottom.ToString("0.0"));
-#endif
-            }
-        }
-
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
-        LogPhoneMissionLayout(
+        LogPhoneLayoutDiagnostics(
             activeRoot,
-            boardTopScreenY,
+            topHudBottomLocal,
             boardLocalY,
-            missionY,
-            secondaryY,
-            phoneObjectiveBoardGapPx,
-            difficultyY);
+            missionTopLocal,
+            secondary != null ? secondaryBottomLocal : missionBottomLocal,
+            boardTopScreenY,
+            fitMul,
+            missionScale,
+            secondaryScale);
 #endif
     }
 
     /// <summary>
+    /// Fit gaps then scale so preferred mission block fits in
+    /// [boardTop + minBoardGap, maxMissionTop]. Pure SafeArea-local units.
+    /// </summary>
+    private void ResolvePhoneMissionBandFit(
+        Vector3 preferredMissionScale,
+        Vector3 preferredSecondaryScale,
+        Vector2 missionSize,
+        Vector2 secondarySize,
+        bool hasSecondary,
+        float boardLocalY,
+        float maxMissionTopLocal,
+        ref float boardGap,
+        ref float internalGap,
+        ref float fitMul)
+    {
+        // Locals: C# forbids capturing ref/out/in params inside local functions (CS1628).
+        float workingBoardGap = boardGap;
+        float workingInternalGap = internalGap;
+        float workingFitMul = fitMul;
+
+        float minBoard = Mathf.Min(workingBoardGap, phoneObjectiveMinBoardGap);
+        float minInternal = hasSecondary
+            ? Mathf.Min(workingInternalGap, phoneObjectiveMinInternalGap)
+            : 0f;
+        float available = maxMissionTopLocal - boardLocalY;
+        if (available <= 1f)
+        {
+            boardGap = minBoard;
+            internalGap = minInternal;
+            fitMul = phoneObjectiveMinFitScale;
+            return;
+        }
+
+        float PrefHeight(float scaleMul)
+        {
+            float mH = Mathf.Max(
+                20f,
+                Mathf.Abs(missionSize.y) * Mathf.Abs(preferredMissionScale.y) * scaleMul);
+            float sH = hasSecondary
+                ? Mathf.Max(
+                    16f,
+                    Mathf.Abs(secondarySize.y) * Mathf.Abs(preferredSecondaryScale.y) * scaleMul)
+                : 0f;
+            float iGap = hasSecondary ? workingInternalGap : 0f;
+            return workingBoardGap + sH + iGap + mH;
+        }
+
+        // 1) Preferred gaps + preferred scales.
+        if (PrefHeight(1f) <= available)
+        {
+            workingFitMul = 1f;
+            boardGap = workingBoardGap;
+            internalGap = workingInternalGap;
+            fitMul = workingFitMul;
+            return;
+        }
+
+        // 2) Shrink gaps toward mins (keep scales).
+        workingBoardGap = minBoard;
+        workingInternalGap = minInternal;
+        if (PrefHeight(1f) <= available)
+        {
+            workingFitMul = 1f;
+            boardGap = workingBoardGap;
+            internalGap = workingInternalGap;
+            fitMul = workingFitMul;
+            return;
+        }
+
+        // 3) Uniform scale down to floor.
+        float contentAtOne = PrefHeight(1f) - workingBoardGap;
+        float roomForContent = Mathf.Max(1f, available - workingBoardGap);
+        workingFitMul = Mathf.Clamp(
+            roomForContent / Mathf.Max(1f, contentAtOne),
+            phoneObjectiveMinFitScale,
+            1f);
+
+        boardGap = workingBoardGap;
+        internalGap = workingInternalGap;
+        fitMul = workingFitMul;
+    }
+
+    /// <summary>
+    /// World-corners → SafeArea-local Y of the rect's bottom edge.
+    /// </summary>
+    private bool TryMeasureRectBottomLocalY(RectTransform rt, out float bottomLocalY)
+    {
+        bottomLocalY = 0f;
+        if (rt == null || safeArea == null || !rt.gameObject.activeInHierarchy)
+        {
+            return false;
+        }
+
+        Vector3[] corners = new Vector3[4];
+        rt.GetWorldCorners(corners);
+        float minY = float.PositiveInfinity;
+        for (int i = 0; i < 4; i++)
+        {
+            float y = safeArea.InverseTransformPoint(corners[i]).y;
+            if (y < minY)
+            {
+                minY = y;
+            }
+        }
+
+        if (float.IsInfinity(minY))
+        {
+            return false;
+        }
+
+        bottomLocalY = minY;
+        return true;
+    }
+
+    /// <summary>
+    /// World-corners → SafeArea-local Y of the rect's top edge (diagnostic).
+    /// </summary>
+    private bool TryMeasureRectTopLocalY(RectTransform rt, out float topLocalY)
+    {
+        topLocalY = 0f;
+        if (rt == null || safeArea == null || !rt.gameObject.activeInHierarchy)
+        {
+            return false;
+        }
+
+        Vector3[] corners = new Vector3[4];
+        rt.GetWorldCorners(corners);
+        float maxY = float.NegativeInfinity;
+        for (int i = 0; i < 4; i++)
+        {
+            float y = safeArea.InverseTransformPoint(corners[i]).y;
+            if (y > maxY)
+            {
+                maxY = y;
+            }
+        }
+
+        if (float.IsNegativeInfinity(maxY))
+        {
+            return false;
+        }
+
+        topLocalY = maxY;
+        return true;
+    }
+
+    /// <summary>
     /// Phone-only: configured secondary text localScale (timer / moves / rule).
-    /// Used by mission UIs so pulse resets do not snap back to authored scale.
+    /// Returns the last band-fitted scale when available so pulse cannot restore stale size.
     /// </summary>
     public bool TryGetPhoneSecondaryLocalScale(
         RectTransform secondary,
@@ -4004,6 +4201,12 @@ public class GameplayLayoutController : MonoBehaviour
              appliedKind != GameplayLayoutKind.CompactPhonePortrait))
         {
             return false;
+        }
+
+        if (hasResolvedPhoneObjectiveScales)
+        {
+            localScale = lastResolvedSecondaryScale;
+            return true;
         }
 
         localScale =
@@ -4163,6 +4366,13 @@ public class GameplayLayoutController : MonoBehaviour
         return fallback;
     }
 
+    /// <summary>
+    /// Board top → SafeArea-local Y.
+    /// Path: world Y → Camera.main.WorldToScreenPoint (screen px) →
+    /// RectTransformUtility.ScreenPointToLocalPointInRectangle(safeArea, eventCam).
+    /// For Overlay canvases eventCam is null. The result is already SafeArea-local
+    /// canvas units — do NOT divide by Canvas.scaleFactor.
+    /// </summary>
     private bool TryMeasureBoardTopInSafeArea(
         out float boardLocalY,
         out float boardTopScreenY)
@@ -4191,6 +4401,17 @@ public class GameplayLayoutController : MonoBehaviour
             else if (tallPhoneProfile != null)
             {
                 topReserved = tallPhoneProfile.topReservedFraction;
+            }
+
+            // Match CameraFitter phone compose so fallback agrees with final framing.
+            if (Screen.height > 0 &&
+                appliedKind != GameplayLayoutKind.WideTabletLandscape)
+            {
+                Rect safe = Screen.safeArea;
+                float safeBottom = Mathf.Clamp01(safe.yMin / Screen.height);
+                float safeTop = Mathf.Clamp01(1f - safe.yMax / Screen.height);
+                float safeSpan = Mathf.Max(0.2f, 1f - safeTop - safeBottom);
+                topReserved = safeTop + Mathf.Clamp01(topReserved) * safeSpan;
             }
 
             worldBoardTopY = cam.transform.position.y +
@@ -4222,25 +4443,66 @@ public class GameplayLayoutController : MonoBehaviour
     }
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-    private void LogPhoneMissionLayout(
+    /// <summary>
+    /// Concise Unity-vs-device phone layout probe. SafeArea-local Y unless noted.
+    /// </summary>
+    private void LogPhoneLayoutDiagnostics(
         RectTransform activeRoot,
+        float topHudBottomLocal,
+        float boardTopLocal,
+        float missionTopLocal,
+        float missionBottomLocal,
         float boardTopScreenY,
-        float boardTopLocalY,
-        float missionY,
-        float secondaryY,
-        float gapToBoardPx,
-        float difficultyY)
+        float fitMul,
+        Vector3 missionScale,
+        Vector3 secondaryScale)
     {
+        Canvas canvas = safeArea != null ? safeArea.GetComponentInParent<Canvas>() : null;
+        CanvasScaler scaler = canvas != null ? canvas.GetComponent<CanvasScaler>() : null;
+
+        float easyTop = 0f;
+        float easyBottom = 0f;
+        bool hasEasy =
+            TryMeasureRectTopLocalY(difficultyLabelRoot, out easyTop) &&
+            TryMeasureRectBottomLocalY(difficultyLabelRoot, out easyBottom);
+
+        float gapTopHudToMission = missionTopLocal > 0f
+            ? topHudBottomLocal - missionTopLocal
+            : float.NaN;
+        float gapMissionToBoard = missionBottomLocal > 0f || boardTopLocal != 0f
+            ? missionBottomLocal - boardTopLocal
+            : float.NaN;
+
         Debug.Log(
-            "[PhoneMissionLayout]\n" +
-            "kind=" + appliedKind + "\n" +
-            "activeRoot=" + (activeRoot != null ? activeRoot.name : "none") + "\n" +
+            "[PhoneLayout]\n" +
+            "profile=" + appliedKind + "\n" +
+            "screen=" + Screen.width + "x" + Screen.height + "\n" +
+            "safeArea=" + Screen.safeArea + "\n" +
+            "canvasScale=" +
+            (canvas != null ? canvas.scaleFactor.ToString("0.###") : "n/a") + "\n" +
+            "scalerMode=" +
+            (scaler != null ? scaler.uiScaleMode.ToString() : "n/a") + "\n" +
+            "refRes=" +
+            (scaler != null ? scaler.referenceResolution.ToString() : "n/a") + "\n" +
+            "match=" +
+            (scaler != null ? scaler.matchWidthOrHeight.ToString("0.##") : "n/a") + "\n" +
+            "safeAreaHeight=" +
+            (safeArea != null ? safeArea.rect.height.ToString("0.0") : "n/a") + "\n" +
+            "topHudBottom=" + topHudBottomLocal.ToString("0.0") + "\n" +
+            "easyBounds=" +
+            (hasEasy
+                ? easyBottom.ToString("0.0") + ".." + easyTop.ToString("0.0")
+                : "n/a") + "\n" +
+            "missionTop=" + missionTopLocal.ToString("0.0") + "\n" +
+            "missionBottom=" + missionBottomLocal.ToString("0.0") + "\n" +
+            "boardTop=" + boardTopLocal.ToString("0.0") + "\n" +
             "boardTopScreenY=" + boardTopScreenY.ToString("0.0") + "\n" +
-            "boardTopLocalY=" + boardTopLocalY.ToString("0.0") + "\n" +
-            "missionY=" + missionY.ToString("0.0") + "\n" +
-            "secondaryY=" + secondaryY.ToString("0.0") + "\n" +
-            "gapToBoardPx=" + gapToBoardPx.ToString("0.0") + "\n" +
-            "difficultyY=" + difficultyY.ToString("0.0")
+            "gapTopHudToMission=" + gapTopHudToMission.ToString("0.0") + "\n" +
+            "gapMissionToBoard=" + gapMissionToBoard.ToString("0.0") + "\n" +
+            "missionScale=" + missionScale.x.ToString("0.###") + "\n" +
+            "secondaryScale=" + secondaryScale.x.ToString("0.###") + "\n" +
+            "fitMul=" + fitMul.ToString("0.###") + "\n" +
+            "activeRoot=" + (activeRoot != null ? activeRoot.name : "none")
         );
     }
 #endif

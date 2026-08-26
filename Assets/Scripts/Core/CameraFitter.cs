@@ -439,6 +439,7 @@ public class CameraFitter : MonoBehaviour
         float topReserved;
         float bottomReserved;
         ResolveReservedFractions(layoutKind, out topReserved, out bottomReserved);
+        ComposePhoneReservedWithSafeArea(layoutKind, ref topReserved, ref bottomReserved);
 
         float usableHeightFraction = Mathf.Clamp01(
             1f - topReserved - bottomReserved
@@ -573,6 +574,43 @@ public class CameraFitter : MonoBehaviour
                 topReserved = topReservedFraction;
                 bottomReserved = bottomReservedFraction;
                 break;
+        }
+    }
+
+    /// <summary>
+    /// Phone only: map HUD reserved fractions into the SafeArea span and add
+    /// unsafe chrome (status/nav). Editor with no insets is unchanged.
+    /// Keeps board framing in the same vertical band as SafeArea UI — no device constants.
+    /// </summary>
+    private static void ComposePhoneReservedWithSafeArea(
+        GameplayLayoutKind layoutKind,
+        ref float topReserved,
+        ref float bottomReserved)
+    {
+        if (layoutKind == GameplayLayoutKind.WideTabletLandscape)
+        {
+            return;
+        }
+
+        if (Screen.width <= 0 || Screen.height <= 0)
+        {
+            return;
+        }
+
+        Rect safe = Screen.safeArea;
+        float safeBottom = Mathf.Clamp01(safe.yMin / Screen.height);
+        float safeTop = Mathf.Clamp01(1f - safe.yMax / Screen.height);
+        float safeSpan = Mathf.Max(0.2f, 1f - safeTop - safeBottom);
+
+        topReserved = safeTop + Mathf.Clamp01(topReserved) * safeSpan;
+        bottomReserved = safeBottom + Mathf.Clamp01(bottomReserved) * safeSpan;
+
+        float sum = topReserved + bottomReserved;
+        if (sum > 0.8f && sum > 0.0001f)
+        {
+            float scale = 0.8f / sum;
+            topReserved *= scale;
+            bottomReserved *= scale;
         }
     }
 

@@ -15455,8 +15455,12 @@ MonoBehaviour:
   compactPauseTopFrac: 0.07
   phoneMissionLabelScale: 2
   phoneSecondaryTextScale: 2
-  phoneObjectiveInternalGapPx: 0
-  phoneObjectiveBoardGapPx: 1
+  phoneObjectiveInternalGap: 8
+  phoneObjectiveBoardGap: 30
+  phoneObjectiveTopHudGap: 8
+  phoneObjectiveMinBoardGap: 6
+  phoneObjectiveMinInternalGap: 2
+  phoneObjectiveMinFitScale: 0.55
   leftHudWidthFraction: 0.3
   tabletPanelPadding: 16
   tabletSectionSpacing: 12
