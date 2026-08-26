@@ -63,8 +63,10 @@ public class FragileCargoMissionUI : MonoBehaviour
 
     private Vector3 originalMovesScale = Vector3.one;
     private Color originalMovesColor = Color.white;
-    private bool visualsCached;
+    private bool colorCached;
+    private bool authoredScaleCached;
     private bool pulseActive;
+    private GameplayLayoutController layoutController;
     private bool failurePresentationPlayed;
 
     private void Awake()
@@ -89,7 +91,7 @@ public class FragileCargoMissionUI : MonoBehaviour
             missionFailedPanel.SetActive(false);
         }
 
-        CacheMovesVisualsIfNeeded();
+        CachePulseColorIfNeeded();
         SetFragileCargoHudVisible(false);
         lastKnownFragileCargo = false;
         lastKnownState = LevelObjectiveController.RuntimeState.Inactive;
@@ -175,7 +177,7 @@ public class FragileCargoMissionUI : MonoBehaviour
 
         float wave = (Mathf.Sin(Time.unscaledTime * criticalPulseSpeed * Mathf.PI * 2f) + 1f) * 0.5f;
         float scaleMul = Mathf.Lerp(1f, criticalPulseScale, wave);
-        movesText.rectTransform.localScale = originalMovesScale * scaleMul;
+        movesText.rectTransform.localScale = ResolvePulseBaseScale() * scaleMul;
     }
 
     /// <summary>
@@ -392,7 +394,7 @@ public class FragileCargoMissionUI : MonoBehaviour
     /// </summary>
     private void ApplyUrgencyVisuals(int remaining)
     {
-        CacheMovesVisualsIfNeeded();
+        CachePulseColorIfNeeded();
 
         if (movesText == null)
         {
@@ -432,16 +434,49 @@ public class FragileCargoMissionUI : MonoBehaviour
         ApplyMovesColor(normalColor);
     }
 
-    private void CacheMovesVisualsIfNeeded()
+    private void CachePulseColorIfNeeded()
     {
-        if (visualsCached || movesText == null)
+        if (colorCached || movesText == null)
         {
             return;
         }
 
-        originalMovesScale = movesText.rectTransform.localScale;
         originalMovesColor = movesText.color;
-        visualsCached = true;
+        colorCached = true;
+    }
+
+    /// <summary>
+    /// Phone: GameplayLayoutController.phoneSecondaryTextScale owns resting scale.
+    /// Pulse multiplies that base. Fallback: one-time authored scale off-phone.
+    /// </summary>
+    private Vector3 ResolvePulseBaseScale()
+    {
+        if (movesText == null)
+        {
+            return Vector3.one;
+        }
+
+        if (layoutController == null)
+        {
+            layoutController = FindAnyObjectByType<GameplayLayoutController>();
+        }
+
+        if (layoutController != null &&
+            layoutController.TryGetPhoneSecondaryLocalScale(
+                movesText.rectTransform,
+                out Vector3 configured))
+        {
+            originalMovesScale = configured;
+            return configured;
+        }
+
+        if (!authoredScaleCached)
+        {
+            originalMovesScale = movesText.rectTransform.localScale;
+            authoredScaleCached = true;
+        }
+
+        return originalMovesScale;
     }
 
     private void ApplyMovesColor(Color color)
@@ -463,8 +498,7 @@ public class FragileCargoMissionUI : MonoBehaviour
             return;
         }
 
-        CacheMovesVisualsIfNeeded();
-        movesText.rectTransform.localScale = originalMovesScale;
+        movesText.rectTransform.localScale = ResolvePulseBaseScale();
     }
 
     private void ApplyFailureCopy()

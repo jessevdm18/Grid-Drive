@@ -88,13 +88,15 @@ public class GameplayLayoutController : MonoBehaviour
     [SerializeField, Range(0.05f, 0.12f)] private float compactRewardedHintFrac = 0.075f;
     [SerializeField, Range(0.05f, 0.12f)] private float compactPauseTopFrac = 0.07f;
 
-    [Header("Tall Phone Portrait — objective block (SafeArea-relative)")]
-    [SerializeField, Range(0.004f, 0.03f)] private float tallTopHudGapFrac = 0.012f;
-    [SerializeField, Range(0.004f, 0.025f)] private float tallInternalGapFrac = 0.01f;
-    [SerializeField, Range(0.008f, 0.04f)] private float tallBoardClearGapFrac = 0.018f;
-    [Tooltip("Max SA-height fraction for the objective band when TopHUD already fills the camera reserve.")]
-    [SerializeField, Range(0.08f, 0.22f)] private float tallMaxObjectiveBandFrac = 0.14f;
-    [SerializeField, Range(1.0f, 2.2f)] private float tallObjectiveRootScale = 1.65f;
+    [Header("Phone Special Objective Layout")]
+    [Tooltip("Tall + Compact only. Multiplier on Mission Label localScale (AMBULANCE RESCUE, etc.). 1 = current size.")]
+    [SerializeField, Min(0.1f)] private float phoneMissionLabelScale = 1f;
+    [Tooltip("Tall + Compact only. Multiplier on secondary text localScale (timer, count, rule text). 1 = current size.")]
+    [SerializeField, Min(0.1f)] private float phoneSecondaryTextScale = 1f;
+    [Tooltip("Screen-pixel gap between Mission Label and secondary text.")]
+    [SerializeField, Min(0f)] private float phoneObjectiveInternalGapPx = 8f;
+    [Tooltip("Screen-pixel gap between secondary objective bottom and board top.")]
+    [SerializeField, Min(0f)] private float phoneObjectiveBoardGapPx = 30f;
 
     [Header("Tablet Column")]
     [SerializeField, Range(0.22f, 0.36f)] private float leftHudWidthFraction = 0.30f;
@@ -136,6 +138,10 @@ public class GameplayLayoutController : MonoBehaviour
     private readonly Dictionary<RectTransform, RectSnapshot> objectiveChildPhoneSnapshots =
         new Dictionary<RectTransform, RectSnapshot>(32);
 
+    // Base localScale after restore/capture; Inspector multipliers apply without compounding.
+    private readonly Dictionary<RectTransform, Vector3> phoneObjectiveTextBaseScales =
+        new Dictionary<RectTransform, Vector3>(8);
+
     private RectTransform tabletHudPanel;
     private RectTransform objectiveSection;
     private RectTransform statsSection;
@@ -162,15 +168,20 @@ public class GameplayLayoutController : MonoBehaviour
     private bool safeAreaReapplyPending;
     private SafeArea safeAreaComponent;
 
-    // Compact Mission Label final/home — written only by StackCompact / CompactObjectiveChildren.
+    // Compact Mission Label final/home — written by board-relative phone mission layout.
     private RectTransform resolvedCompactMissionLabel;
     private RectTransformState resolvedCompactMissionLabelHome;
     private bool hasResolvedCompactMissionLabelHome;
 
-    // Tall Mission Label final/home — written only by ApplyTallObjectiveBlockLayout.
+    // Tall / phone Mission Label final/home — written by ApplyPhoneMissionLayoutRelativeToBoard.
     private RectTransform resolvedTallMissionLabel;
     private RectTransformState resolvedTallMissionLabelHome;
     private bool hasResolvedTallMissionLabelHome;
+
+    // Shared phone mission home alias (Tall + Compact board-relative).
+    private RectTransform resolvedPhoneMissionLabel;
+    private RectTransformState resolvedPhoneMissionLabelHome;
+    private bool hasResolvedPhoneMissionLabelHome;
 
     public bool IsWideLayoutActive =>
         appliedKind == GameplayLayoutKind.WideTabletLandscape;
@@ -348,8 +359,7 @@ public class GameplayLayoutController : MonoBehaviour
         {
             int mask = BuildActiveObjectiveMask();
 
-            // Intro owns Mission Label transforms only. Absorb HUD activation so we do
-            // NOT restack Difficulty / RuleText / roots when intro ends.
+            // Intro owns Mission Label transforms only.
             if (SpecialMissionIntroController.IsIntroPlaying)
             {
                 lastCompactObjectiveActiveMask = mask;
@@ -363,32 +373,37 @@ public class GameplayLayoutController : MonoBehaviour
 
             lastCompactObjectiveActiveMask = mask;
 
-            // Captured Compact is source of truth — never restack with procedural formulas.
+            // Keep Compact non-mission HUD (incl. Difficulty) from capture/procedural,
+            // then override ONLY active special mission text to board-relative.
             if (HasUsableCompactCapture())
             {
                 RestoreAuthoredPhoneBaseline();
                 ApplyCapturedProfile(
                     GameplayLayoutKind.CompactPhonePortrait,
                     compactPhoneProfile);
-                ApplyHintStatusLayout();
-                return;
+                ClearPhoneObjectiveTextBaseScales();
+            }
+            else
+            {
+                float safeH = Mathf.Max(1f, safeArea != null ? safeArea.rect.height : 1f);
+                float topPad = safeH * compactTopHudPaddingFrac;
+                float topHudH = safeH * compactTopHudHeightFrac;
+                StackCompactDifficultyOnly(
+                    topPad + topHudH + safeH * compactObjectiveGapFrac,
+                    safeH);
+                ClearPhoneObjectiveTextBaseScales();
             }
 
-            float safeH = Mathf.Max(1f, safeArea != null ? safeArea.rect.height : 1f);
-            float topPad = safeH * compactTopHudPaddingFrac;
-            float topHudH = safeH * compactTopHudHeightFrac;
-            StackCompactObjectiveBlock(topPad + topHudH + safeH * compactObjectiveGapFrac, safeH);
+            ApplyPhoneMissionLayoutRelativeToBoard();
             ApplyHintStatusLayout();
         }
         else if (appliedKind == GameplayLayoutKind.TallPhonePortrait)
         {
-            // Mission roots often activate after first layout. Re-apply Tall ownership
-            // even during intro (roots only — Mission Label animation is separate).
             int mask = BuildActiveObjectiveMask();
             if (mask != lastCompactObjectiveActiveMask)
             {
                 lastCompactObjectiveActiveMask = mask;
-                ApplyTallObjectiveBlockLayout();
+                ApplyPhoneMissionLayoutRelativeToBoard();
                 ApplyHintStatusLayout();
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
                 LogUILayoutAudit("TallObjectiveActivated");
@@ -1124,6 +1139,13 @@ public class GameplayLayoutController : MonoBehaviour
             resolvedTallMissionLabel = null;
         }
 
+        if (wantKind != GameplayLayoutKind.TallPhonePortrait &&
+            wantKind != GameplayLayoutKind.CompactPhonePortrait)
+        {
+            hasResolvedPhoneMissionLabelHome = false;
+            resolvedPhoneMissionLabel = null;
+        }
+
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         Debug.Log(
             "[GameplayLayout] Apply\n" +
@@ -1136,11 +1158,13 @@ public class GameplayLayoutController : MonoBehaviour
         // Always restore immutable authored baseline first — prevents drift when
         // switching Tall ↔ Compact ↔ Tablet repeatedly in Game View.
         RestoreAuthoredPhoneBaseline();
+        ClearPhoneObjectiveTextBaseScales();
 
         GameplayLayoutProfile profile = GetProfile(wantKind);
         if (ShouldApplyCapturedProfile(wantKind, profile))
         {
             ApplyCapturedProfile(wantKind, profile);
+            ClearPhoneObjectiveTextBaseScales();
         }
         else
         {
@@ -1153,10 +1177,17 @@ public class GameplayLayoutController : MonoBehaviour
                     ApplyCompactPhoneLayout();
                     break;
                 default:
-                    // TallPhonePortrait: baseline restored, then deterministic objective block.
-                    ApplyTallObjectiveBlockLayout();
+                    // TallPhonePortrait: immutable baseline owns Difficulty + other HUD.
+                    // Special mission text is applied below via board-relative pass.
                     break;
             }
+        }
+
+        // Phone special mission text ONLY — never DifficultyLabel / EASY.
+        if (wantKind == GameplayLayoutKind.TallPhonePortrait ||
+            wantKind == GameplayLayoutKind.CompactPhonePortrait)
+        {
+            ApplyPhoneMissionLayoutRelativeToBoard();
         }
 
         // Final ownership sync — survives EnsureTabletScaffold / cleanup side effects.
@@ -1296,9 +1327,9 @@ public class GameplayLayoutController : MonoBehaviour
             ScaleCard(coinCard, compactCardScale);
         }
 
-        // Difficulty + ACTIVE mission objective stacked as one block under TopHUD.
+        // Difficulty only — special mission text is board-relative (ApplyPhoneMissionLayoutRelativeToBoard).
         float objectiveCursor = topPad + topHudH + safeH * compactObjectiveGapFrac;
-        StackCompactObjectiveBlock(objectiveCursor, safeH);
+        StackCompactDifficultyOnly(objectiveCursor, safeH);
         lastCompactObjectiveActiveMask = BuildActiveObjectiveMask();
 
         // Pause: top-right, closer to the top edge.
@@ -1353,23 +1384,18 @@ public class GameplayLayoutController : MonoBehaviour
     }
 
     /// <summary>
-    /// Tall phone keeps DifficultyLabel and mission roots as separate center-anchored
-    /// objects. Compact must stack them: Difficulty → active mission text, never
-    /// overlapping at the same Y (which made the mission text look "missing").
+    /// Compact: place DifficultyLabel only. Active special mission text is owned by
+    /// ApplyPhoneMissionLayoutRelativeToBoard (board-relative).
     /// </summary>
-    private void StackCompactObjectiveBlock(float startFromTop, float safeH)
+    private void StackCompactDifficultyOnly(float startFromTop, float safeH)
     {
         if (safeArea == null || objectiveHudRoots == null)
         {
             return;
         }
 
-        float cursor = startFromTop;
         float difficultyH = safeH * compactDifficultyBlockFrac;
-        float missionH = safeH * compactMissionBlockFrac;
 
-        // Park inactive mission roots back at authored baseline so they don't
-        // reserve/steal the compact objective slot.
         for (int i = 0; i < objectiveHudRoots.Length; i++)
         {
             RectTransform root = objectiveHudRoots[i];
@@ -1387,28 +1413,18 @@ public class GameplayLayoutController : MonoBehaviour
 
         if (difficultyLabelRoot != null && difficultyLabelRoot.gameObject.activeInHierarchy)
         {
-            PlaceCompactObjectiveRoot(difficultyLabelRoot, cursor, difficultyH);
+            PlaceCompactObjectiveRoot(difficultyLabelRoot, startFromTop, difficultyH);
             CompactObjectiveChildrenForPhone(difficultyLabelRoot);
-            cursor += difficultyH + safeH * 0.005f;
         }
+    }
 
-        for (int i = 0; i < objectiveHudRoots.Length; i++)
-        {
-            RectTransform root = objectiveHudRoots[i];
-            if (root == null || root == difficultyLabelRoot)
-            {
-                continue;
-            }
-
-            if (!root.gameObject.activeInHierarchy)
-            {
-                continue;
-            }
-
-            PlaceCompactObjectiveRoot(root, cursor, missionH);
-            CompactObjectiveChildrenForPhone(root);
-            cursor += missionH;
-        }
+    /// <summary>
+    /// Legacy Compact stack entry. Mission Y is owned by
+    /// ApplyPhoneMissionLayoutRelativeToBoard — only Difficulty is placed here.
+    /// </summary>
+    private void StackCompactObjectiveBlock(float startFromTop, float safeH)
+    {
+        StackCompactDifficultyOnly(startFromTop, safeH);
     }
 
     private void PlaceCompactObjectiveRoot(RectTransform root, float fromTop, float height)
@@ -1465,7 +1481,13 @@ public class GameplayLayoutController : MonoBehaviour
             child.sizeDelta = snap.SizeDelta;
             child.localScale = snap.LocalScale;
             child.localRotation = snap.LocalRotation;
+            phoneObjectiveTextBaseScales.Remove(child);
         }
+    }
+
+    private void ClearPhoneObjectiveTextBaseScales()
+    {
+        phoneObjectiveTextBaseScales.Clear();
     }
 
     private static void ScaleCard(RectTransform card, float scale)
@@ -2323,18 +2345,22 @@ public class GameplayLayoutController : MonoBehaviour
             ApplyCapturedProfile(
                 GameplayLayoutKind.CompactPhonePortrait,
                 compactPhoneProfile);
+            ClearPhoneObjectiveTextBaseScales();
+            ApplyPhoneMissionLayoutRelativeToBoard();
             return;
         }
 
         float safeH = Mathf.Max(1f, safeArea != null ? safeArea.rect.height : 1f);
         float topPad = safeH * compactTopHudPaddingFrac;
         float topHudH = safeH * compactTopHudHeightFrac;
-        StackCompactObjectiveBlock(topPad + topHudH + safeH * compactObjectiveGapFrac, safeH);
+        StackCompactDifficultyOnly(topPad + topHudH + safeH * compactObjectiveGapFrac, safeH);
+        ClearPhoneObjectiveTextBaseScales();
+        ApplyPhoneMissionLayoutRelativeToBoard();
     }
 
     /// <summary>
-    /// Permanent Mission Label home for Compact / Wide when a capture exists.
-    /// Tall: live post-layout child state (after GameplayLayoutController settle).
+    /// Permanent Mission Label home. Phone (Tall/Compact): board-relative layout.
+    /// Wide: captured profile when present.
     /// </summary>
     public bool TryGetMissionLabelHomeState(
         RectTransform label,
@@ -2355,21 +2381,35 @@ public class GameplayLayoutController : MonoBehaviour
             return true;
         }
 
-        if (appliedKind == GameplayLayoutKind.TallPhonePortrait)
+        if (appliedKind == GameplayLayoutKind.TallPhonePortrait ||
+            appliedKind == GameplayLayoutKind.CompactPhonePortrait)
         {
-            if (hasResolvedTallMissionLabelHome &&
-                resolvedTallMissionLabel == label)
+            if (hasResolvedPhoneMissionLabelHome &&
+                resolvedPhoneMissionLabel == label)
+            {
+                state = resolvedPhoneMissionLabelHome;
+                return true;
+            }
+
+            ApplyPhoneMissionLayoutRelativeToBoard();
+            if (hasResolvedPhoneMissionLabelHome &&
+                resolvedPhoneMissionLabel == label)
+            {
+                state = resolvedPhoneMissionLabelHome;
+                return true;
+            }
+
+            // Fall back to Tall/Compact caches if set by the same pass.
+            if (hasResolvedTallMissionLabelHome && resolvedTallMissionLabel == label)
             {
                 state = resolvedTallMissionLabelHome;
                 return true;
             }
 
-            // Ensure layout-owned home exists (e.g. intro before LateUpdate mask apply).
-            ApplyTallObjectiveBlockLayout();
-            if (hasResolvedTallMissionLabelHome &&
-                resolvedTallMissionLabel == label)
+            if (hasResolvedCompactMissionLabelHome &&
+                resolvedCompactMissionLabel == label)
             {
-                state = resolvedTallMissionLabelHome;
+                state = resolvedCompactMissionLabelHome;
                 return true;
             }
 
@@ -2380,52 +2420,7 @@ public class GameplayLayoutController : MonoBehaviour
             return true;
         }
 
-        if (appliedKind != GameplayLayoutKind.CompactPhonePortrait)
-        {
-            return false;
-        }
-
-        // Captured Compact Mission Label is the FINAL/HOME source of truth.
-        if (HasUsableCompactCapture())
-        {
-            if (compactPhoneProfile.TryGet(key, out state))
-            {
-                resolvedCompactMissionLabel = label;
-                resolvedCompactMissionLabelHome = state;
-                hasResolvedCompactMissionLabelHome = true;
-                return true;
-            }
-        }
-
-        if (hasResolvedCompactMissionLabelHome &&
-            resolvedCompactMissionLabel == label)
-        {
-            state = resolvedCompactMissionLabelHome;
-            return true;
-        }
-
-        if (SpecialMissionIntroController.IsIntroPlaying)
-        {
-            return false;
-        }
-
-        RectTransform root = label.parent as RectTransform;
-        if (root == null)
-        {
-            return false;
-        }
-
-        float titleReserve = Mathf.Max(36f, root.sizeDelta.y * 0.42f);
-        PlaceCompactMissionLabelHome(label, titleReserve);
-
-        if (!hasResolvedCompactMissionLabelHome ||
-            resolvedCompactMissionLabel != label)
-        {
-            return false;
-        }
-
-        state = resolvedCompactMissionLabelHome;
-        return true;
+        return false;
     }
 
     /// <summary>
@@ -3840,184 +3835,416 @@ public class GameplayLayoutController : MonoBehaviour
     }
 
     /// <summary>
-    /// TallPhone only: keep DifficultyLabel on immutable baseline; place active mission
-    /// Mission Label + secondary BELOW the live Difficulty bottom. Never moves Difficulty.
-    /// Compact / Wide / Hint are untouched.
+    /// Phone (Tall + Compact) only: place ACTIVE special Mission Label + secondary
+    /// relative to actual board top. NEVER touches DifficultyLabel / EASY.
     /// </summary>
-    private void ApplyTallObjectiveBlockLayout()
+    private void ApplyPhoneMissionLayoutRelativeToBoard()
     {
-        if (appliedKind != GameplayLayoutKind.TallPhonePortrait ||
-            safeArea == null ||
-            objectiveHudRoots == null)
+        if (safeArea == null ||
+            objectiveHudRoots == null ||
+            (appliedKind != GameplayLayoutKind.TallPhonePortrait &&
+             appliedKind != GameplayLayoutKind.CompactPhonePortrait))
         {
             return;
         }
 
-        float safeH = Mathf.Max(1f, safeArea.rect.height);
-        float boardTop = MeasureBoardTopFromSaTop(safeH);
-        float gapInternal = safeH * tallInternalGapFrac;
-        float gapBoard = safeH * tallBoardClearGapFrac;
-
-        // Difficulty is authored Tall ownership — restore baseline, never recompute from TopHUD.
-        RestoreTallDifficultyLabelBaseline();
-        float difficultyBaselineY = MeasureRectPivotFromSaTop(difficultyLabelRoot, safeH);
-        float difficultyBottom = MeasureRectBottomFromSaTop(difficultyLabelRoot, safeH);
-
         ParkInactiveTallMissionRoots();
 
-        float missionY = -1f;
-        float secondaryY = -1f;
-        float secondaryBottom = difficultyBottom;
-        RectTransform activeMissionRoot = null;
+        RectTransform activeRoot = FindActiveTallMissionRoot();
+        float difficultyY = MeasureRectPivotFromSaTop(difficultyLabelRoot, safeArea.rect.height);
 
-        activeMissionRoot = FindActiveTallMissionRoot();
-        if (activeMissionRoot == null)
+        if (activeRoot == null)
         {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-            LogTallObjectiveLayout(
-                difficultyBaselineY,
-                difficultyBottom,
-                missionY,
-                secondaryY,
-                secondaryBottom,
-                boardTop,
-                boardTop - secondaryBottom,
-                null);
+            LogPhoneMissionLayout(
+                null,
+                0f,
+                0f,
+                -1f,
+                -1f,
+                phoneObjectiveBoardGapPx,
+                difficultyY);
 #endif
             return;
         }
 
-        Vector3 rootScale = Vector3.one * tallObjectiveRootScale;
-        if (immutablePhoneBaseline != null &&
-            immutablePhoneBaseline.TryGet(
-                activeMissionRoot.name,
-                out RectTransformState baseline) &&
-            baseline.localScale.y > 0.01f)
+        if (!TryMeasureBoardTopInSafeArea(
+                out float boardLocalY,
+                out float boardTopScreenY))
         {
-            float authored = Mathf.Abs(baseline.localScale.y);
-            rootScale = Vector3.one * Mathf.Clamp(
-                authored * 0.62f,
-                1.15f,
-                tallObjectiveRootScale);
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            Debug.LogWarning(
+                "[PhoneMissionLayout] Board top unavailable — special mission text not placed.");
+#endif
+            return;
         }
 
-        float localGap = gapInternal / Mathf.Max(0.01f, rootScale.y);
-        // Prefer fitting under board by tightening internal gap before shifting.
-        TallMissionStackMetrics metrics =
-            StackTallMissionChildren(activeMissionRoot, localGap);
+        Canvas canvas = safeArea.GetComponentInParent<Canvas>();
+        float scaleFactor = canvas != null ? Mathf.Max(0.001f, canvas.scaleFactor) : 1f;
+        float boardGapLocal = phoneObjectiveBoardGapPx / scaleFactor;
+        float internalGapLocal = phoneObjectiveInternalGapPx / scaleFactor;
 
-        float contentH = Mathf.Max(
-            metrics.ContentHeightLocal * rootScale.y,
-            safeH * 0.06f);
+        RectTransform missionLabel;
+        RectTransform secondary;
+        ResolvePhoneMissionTexts(activeRoot, out missionLabel, out secondary);
 
-        float cursor = difficultyBottom + gapInternal;
-        float clearLimit = boardTop;
-        if (clearLimit <= difficultyBottom + gapInternal)
+        // Inspector multipliers on top of restored/captured base scale (default 1 = unchanged).
+        Vector3 missionScale =
+            GetPhoneObjectiveTextBaseScale(missionLabel, 0.72f) * phoneMissionLabelScale;
+        Vector3 secondaryScale =
+            GetPhoneObjectiveTextBaseScale(secondary, 1f) * phoneSecondaryTextScale;
+        Vector2 missionSize = GetPhoneChildSize(missionLabel, new Vector2(350f, 50f));
+        Vector2 secondarySize = GetPhoneChildSize(secondary, new Vector2(200f, 50f));
+
+        float missionH = Mathf.Max(20f, Mathf.Abs(missionSize.y) * Mathf.Abs(missionScale.y));
+        float secondaryH = secondary != null
+            ? Mathf.Max(16f, Mathf.Abs(secondarySize.y) * Mathf.Abs(secondaryScale.y))
+            : 0f;
+
+        // SafeArea local Y increases upward. Stack upward from board top.
+        float secondaryBottomLocal = boardLocalY + boardGapLocal;
+        float secondaryTopLocal = secondaryBottomLocal + secondaryH;
+        float missionBottomLocal = secondary != null
+            ? secondaryTopLocal + internalGapLocal
+            : secondaryBottomLocal;
+        float missionTopLocal = missionBottomLocal + missionH;
+
+        // Parent root under SafeArea; children stacked with top anchors inside root.
+        if (activeRoot.parent != safeArea)
         {
-            clearLimit = difficultyBottom + safeH * tallMaxObjectiveBandFrac;
+            activeRoot.SetParent(safeArea, false);
         }
 
-        float overflow = (cursor + contentH + gapBoard) - clearLimit;
-        if (overflow > 0.5f)
-        {
-            // 1) Shrink internal gap (mission may approach Difficulty, must not overlap).
-            float minGap = Mathf.Max(4f, safeH * 0.004f);
-            float reducedGap = Mathf.Max(minGap, gapInternal - overflow);
-            float gapSaved = gapInternal - reducedGap;
-            cursor = difficultyBottom + reducedGap;
-            overflow = (cursor + contentH + gapBoard) - clearLimit;
+        float contentHeight = missionH +
+            (secondary != null ? internalGapLocal + secondaryH : 0f);
+        float rootTopLocal = missionTopLocal;
+        float fromTop = safeArea.rect.yMax - rootTopLocal;
 
-            if (gapSaved > 0.01f)
+        activeRoot.anchorMin = new Vector2(0.5f, 1f);
+        activeRoot.anchorMax = new Vector2(0.5f, 1f);
+        activeRoot.pivot = new Vector2(0.5f, 1f);
+        activeRoot.anchoredPosition = new Vector2(0f, -fromTop);
+        activeRoot.sizeDelta = new Vector2(
+            Mathf.Max(activeRoot.sizeDelta.x, 520f),
+            Mathf.Max(contentHeight, 40f));
+        activeRoot.localScale = Vector3.one;
+
+        float y = 0f;
+        if (missionLabel != null)
+        {
+            if (!SpecialMissionIntroController.IsIntroPlaying)
             {
-                localGap = reducedGap / Mathf.Max(0.01f, rootScale.y);
-                metrics = StackTallMissionChildren(activeMissionRoot, localGap);
-                contentH = Mathf.Max(
-                    metrics.ContentHeightLocal * rootScale.y,
-                    safeH * 0.06f);
-                overflow = (cursor + contentH + gapBoard) - clearLimit;
+                missionLabel.anchorMin = new Vector2(0.5f, 1f);
+                missionLabel.anchorMax = new Vector2(0.5f, 1f);
+                missionLabel.pivot = new Vector2(0.5f, 1f);
+                missionLabel.anchoredPosition = new Vector2(0f, y);
+                missionLabel.localScale = missionScale;
+                missionLabel.SetAsFirstSibling();
             }
+
+            CachePhoneMissionLabelHome(missionLabel, activeRoot, missionScale, y);
+            y -= missionH + (secondary != null ? internalGapLocal : 0f);
         }
 
-        PlaceTallAnchoredRoot(
-            activeMissionRoot,
-            cursor,
-            Mathf.Max(contentH / Mathf.Max(0.01f, rootScale.y), 80f),
-            rootScale);
-
-        missionY = cursor + metrics.MissionTopFromRootTopLocal * rootScale.y;
-        if (metrics.HasSecondary)
+        if (secondary != null)
         {
-            secondaryY =
-                cursor + metrics.SecondaryTopFromRootTopLocal * rootScale.y;
-            secondaryBottom = cursor + contentH;
-        }
-        else
-        {
-            secondaryBottom = cursor + contentH;
+            secondary.anchorMin = new Vector2(0.5f, 1f);
+            secondary.anchorMax = new Vector2(0.5f, 1f);
+            secondary.pivot = new Vector2(0.5f, 1f);
+            secondary.anchoredPosition = new Vector2(0f, y);
+            secondary.localScale = secondaryScale;
         }
 
-        // 2) If still overflowing, shift ONLY the mission root upward toward Difficulty.
-        overflow = (secondaryBottom + gapBoard) - clearLimit;
-        if (overflow > 0.5f)
+        float missionY = missionTopLocal;
+        float secondaryY = secondary != null ? secondaryTopLocal : -1f;
+
+        // Diagnostic only — never move DifficultyLabel.
+        if (difficultyLabelRoot != null &&
+            difficultyLabelRoot.gameObject.activeInHierarchy)
         {
-            float minFromTop = difficultyBottom + Mathf.Max(4f, safeH * 0.004f);
-            float missionFromTop = -activeMissionRoot.anchoredPosition.y;
-            float maxShift = Mathf.Max(0f, missionFromTop - minFromTop);
-            float shift = Mathf.Min(overflow, maxShift);
-            if (shift > 0.5f)
+            float difficultyBottom = MeasureRectBottomFromSaTop(
+                difficultyLabelRoot,
+                safeArea.rect.height);
+            float missionTopFromSaTop = safeArea.rect.yMax - missionTopLocal;
+            if (missionTopFromSaTop < difficultyBottom + (8f / scaleFactor))
             {
-                ShiftTallMissionBlockUp(activeMissionRoot, shift, minFromTop);
-                missionY = Mathf.Max(minFromTop, missionY - shift);
-                if (secondaryY >= 0f)
-                {
-                    secondaryY = Mathf.Max(minFromTop, secondaryY - shift);
-                }
-
-                secondaryBottom = Mathf.Max(minFromTop, secondaryBottom - shift);
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                Debug.LogWarning(
+                    "[PhoneMissionLayout] Mission text is close to DifficultyLabel/EASY — " +
+                    "Difficulty was NOT moved. missionTopFromTop=" +
+                    missionTopFromSaTop.ToString("0.0") +
+                    " difficultyBottom=" + difficultyBottom.ToString("0.0"));
+#endif
             }
         }
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-        LogTallObjectiveLayout(
-            difficultyBaselineY,
-            difficultyBottom,
+        LogPhoneMissionLayout(
+            activeRoot,
+            boardTopScreenY,
+            boardLocalY,
             missionY,
             secondaryY,
-            secondaryBottom,
-            boardTop,
-            boardTop - secondaryBottom,
-            activeMissionRoot);
+            phoneObjectiveBoardGapPx,
+            difficultyY);
 #endif
     }
 
     /// <summary>
-    /// Restores DifficultyLabel (+ Label child) from immutable Tall baseline / phone snapshot.
-    /// Tall SafeArea must not rewrite Difficulty Y.
+    /// Phone-only: configured secondary text localScale (timer / moves / rule).
+    /// Used by mission UIs so pulse resets do not snap back to authored scale.
     /// </summary>
-    private void RestoreTallDifficultyLabelBaseline()
+    public bool TryGetPhoneSecondaryLocalScale(
+        RectTransform secondary,
+        out Vector3 localScale)
     {
-        if (difficultyLabelRoot == null)
+        localScale = Vector3.one;
+        if (secondary == null ||
+            (appliedKind != GameplayLayoutKind.TallPhonePortrait &&
+             appliedKind != GameplayLayoutKind.CompactPhonePortrait))
+        {
+            return false;
+        }
+
+        localScale =
+            GetPhoneObjectiveTextBaseScale(secondary, 1f) * phoneSecondaryTextScale;
+        return true;
+    }
+
+    /// <summary>
+    /// Re-apply phone board-relative mission/secondary after intro releases Mission Label.
+    /// Does not touch DifficultyLabel.
+    /// </summary>
+    public void ReapplyPhoneSpecialObjectiveLayout()
+    {
+        if (appliedKind != GameplayLayoutKind.TallPhonePortrait &&
+            appliedKind != GameplayLayoutKind.CompactPhonePortrait)
         {
             return;
         }
 
-        if (immutablePhoneBaseline != null &&
-            immutablePhoneBaseline.TryGet("DifficultyLabel", out RectTransformState state))
+        ApplyPhoneMissionLayoutRelativeToBoard();
+    }
+
+    private void CachePhoneMissionLabelHome(
+        RectTransform missionLabel,
+        RectTransform root,
+        Vector3 scale,
+        float localY)
+    {
+        if (missionLabel == null)
         {
-            if (safeArea != null)
+            return;
+        }
+
+        RectTransformState home = new RectTransformState
+        {
+            key = BuildChildKey(missionLabel),
+            parentKey = root != null ? root.name : string.Empty,
+            siblingIndex = missionLabel.GetSiblingIndex(),
+            anchorMin = new Vector2(0.5f, 1f),
+            anchorMax = new Vector2(0.5f, 1f),
+            pivot = new Vector2(0.5f, 1f),
+            anchoredPosition = new Vector2(0f, localY),
+            sizeDelta = missionLabel.sizeDelta,
+            localScale = scale,
+            localEulerAngles = missionLabel.localEulerAngles
+        };
+
+        resolvedPhoneMissionLabel = missionLabel;
+        resolvedPhoneMissionLabelHome = home;
+        hasResolvedPhoneMissionLabelHome = true;
+
+        resolvedTallMissionLabel = missionLabel;
+        resolvedTallMissionLabelHome = home;
+        hasResolvedTallMissionLabelHome = true;
+
+        resolvedCompactMissionLabel = missionLabel;
+        resolvedCompactMissionLabelHome = home;
+        hasResolvedCompactMissionLabelHome = true;
+    }
+
+    private void ResolvePhoneMissionTexts(
+        RectTransform root,
+        out RectTransform missionLabel,
+        out RectTransform secondary)
+    {
+        missionLabel = null;
+        secondary = null;
+        if (root == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < root.childCount; i++)
+        {
+            RectTransform child = root.GetChild(i) as RectTransform;
+            if (child == null || !child.gameObject.activeSelf)
             {
-                difficultyLabelRoot.SetParent(safeArea, false);
+                continue;
             }
 
-            state.ApplyTo(difficultyLabelRoot);
+            if (IsMissionIntroLabel(child))
+            {
+                missionLabel = child;
+                continue;
+            }
+
+            if (secondary == null && IsTallSecondaryObjectiveChild(child))
+            {
+                secondary = child;
+            }
         }
-        else
+    }
+
+    /// <summary>
+    /// Base localScale for phone mission/secondary text, captured once after
+    /// restore/capture so Inspector multipliers do not compound on re-layout.
+    /// </summary>
+    private Vector3 GetPhoneObjectiveTextBaseScale(RectTransform child, float fallback)
+    {
+        if (child == null)
         {
-            RestoreFromCache(difficultyLabelRoot);
+            return Vector3.one * fallback;
         }
 
-        RestoreObjectiveChildrenForRoot(difficultyLabelRoot);
+        if (phoneObjectiveTextBaseScales.TryGetValue(child, out Vector3 cached) &&
+            cached.sqrMagnitude > 0.0001f)
+        {
+            return cached;
+        }
+
+        Vector3 baseScale = GetPhoneChildScale(child, fallback);
+        phoneObjectiveTextBaseScales[child] = baseScale;
+        return baseScale;
     }
+
+    private Vector3 GetPhoneChildScale(RectTransform child, float fallback)
+    {
+        if (child == null)
+        {
+            return Vector3.one * fallback;
+        }
+
+        // Prefer live scale (Compact capture / prior layout) so board-relative
+        // placement does not shrink Compact mission text back to Tall baseline.
+        if (child.localScale.sqrMagnitude > 0.0001f)
+        {
+            return child.localScale;
+        }
+
+        if (objectiveChildPhoneSnapshots.TryGetValue(child, out RectSnapshot snap) &&
+            Mathf.Abs(snap.LocalScale.x) > 0.01f)
+        {
+            return snap.LocalScale;
+        }
+
+        return Vector3.one * fallback;
+    }
+
+    private Vector2 GetPhoneChildSize(RectTransform child, Vector2 fallback)
+    {
+        if (child == null)
+        {
+            return fallback;
+        }
+
+        if (child.sizeDelta.sqrMagnitude > 0.01f)
+        {
+            return child.sizeDelta;
+        }
+
+        if (objectiveChildPhoneSnapshots.TryGetValue(child, out RectSnapshot snap) &&
+            snap.SizeDelta.sqrMagnitude > 0.01f)
+        {
+            return snap.SizeDelta;
+        }
+
+        return fallback;
+    }
+
+    private bool TryMeasureBoardTopInSafeArea(
+        out float boardLocalY,
+        out float boardTopScreenY)
+    {
+        boardLocalY = 0f;
+        boardTopScreenY = 0f;
+
+        Camera cam = Camera.main;
+        if (cam == null)
+        {
+            return false;
+        }
+
+        float worldBoardTopY;
+        if (cameraFitter == null ||
+            !cameraFitter.TryGetBoardWorldTop(out worldBoardTopY))
+        {
+            float topReserved = appliedKind == GameplayLayoutKind.CompactPhonePortrait
+                ? 0.18f
+                : 0.16f;
+            if (appliedKind == GameplayLayoutKind.CompactPhonePortrait &&
+                compactPhoneProfile != null)
+            {
+                topReserved = compactPhoneProfile.topReservedFraction;
+            }
+            else if (tallPhoneProfile != null)
+            {
+                topReserved = tallPhoneProfile.topReservedFraction;
+            }
+
+            worldBoardTopY = cam.transform.position.y +
+                cam.orthographicSize * (1f - 2f * topReserved);
+        }
+
+        Vector3 screen = cam.WorldToScreenPoint(
+            new Vector3(cam.transform.position.x, worldBoardTopY, 0f));
+        boardTopScreenY = screen.y;
+
+        Canvas canvas = safeArea.GetComponentInParent<Canvas>();
+        Camera eventCam = null;
+        if (canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay)
+        {
+            eventCam = canvas.worldCamera;
+        }
+
+        if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                safeArea,
+                new Vector2(screen.x, screen.y),
+                eventCam,
+                out Vector2 local))
+        {
+            return false;
+        }
+
+        boardLocalY = local.y;
+        return true;
+    }
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+    private void LogPhoneMissionLayout(
+        RectTransform activeRoot,
+        float boardTopScreenY,
+        float boardTopLocalY,
+        float missionY,
+        float secondaryY,
+        float gapToBoardPx,
+        float difficultyY)
+    {
+        Debug.Log(
+            "[PhoneMissionLayout]\n" +
+            "kind=" + appliedKind + "\n" +
+            "activeRoot=" + (activeRoot != null ? activeRoot.name : "none") + "\n" +
+            "boardTopScreenY=" + boardTopScreenY.ToString("0.0") + "\n" +
+            "boardTopLocalY=" + boardTopLocalY.ToString("0.0") + "\n" +
+            "missionY=" + missionY.ToString("0.0") + "\n" +
+            "secondaryY=" + secondaryY.ToString("0.0") + "\n" +
+            "gapToBoardPx=" + gapToBoardPx.ToString("0.0") + "\n" +
+            "difficultyY=" + difficultyY.ToString("0.0")
+        );
+    }
+#endif
+
     private void ParkInactiveTallMissionRoots()
     {
         if (objectiveHudRoots == null)
@@ -4067,163 +4294,6 @@ public class GameplayLayoutController : MonoBehaviour
         return null;
     }
 
-    private void PlaceTallAnchoredRoot(
-        RectTransform root,
-        float fromTop,
-        float height,
-        Vector3 scale)
-    {
-        if (root == null || safeArea == null)
-        {
-            return;
-        }
-
-        root.SetParent(safeArea, false);
-        root.anchorMin = new Vector2(0.5f, 1f);
-        root.anchorMax = new Vector2(0.5f, 1f);
-        root.pivot = new Vector2(0.5f, 1f);
-        root.anchoredPosition = new Vector2(0f, -fromTop);
-        root.sizeDelta = new Vector2(Mathf.Max(root.sizeDelta.x, 520f), height);
-        root.localScale = scale;
-    }
-
-    private struct TallMissionStackMetrics
-    {
-        public float ContentHeightLocal;
-        public float MissionTopFromRootTopLocal;
-        public float SecondaryTopFromRootTopLocal;
-        public bool HasSecondary;
-    }
-
-    private TallMissionStackMetrics StackTallMissionChildren(
-        RectTransform root,
-        float localGap)
-    {
-        TallMissionStackMetrics metrics = default;
-        if (root == null)
-        {
-            return metrics;
-        }
-
-        RectTransform missionLabel = null;
-        List<RectTransform> secondary = new List<RectTransform>(4);
-        for (int i = 0; i < root.childCount; i++)
-        {
-            RectTransform child = root.GetChild(i) as RectTransform;
-            if (child == null || !child.gameObject.activeSelf)
-            {
-                continue;
-            }
-
-            if (IsMissionIntroLabel(child))
-            {
-                missionLabel = child;
-                continue;
-            }
-
-            if (IsTallSecondaryObjectiveChild(child))
-            {
-                secondary.Add(child);
-            }
-        }
-
-        float y = 0f;
-        float contentBottom = 0f;
-
-        if (missionLabel != null)
-        {
-            Vector3 scale = Vector3.one * 0.72f;
-            Vector2 size = missionLabel.sizeDelta;
-            if (objectiveChildPhoneSnapshots.TryGetValue(missionLabel, out RectSnapshot snap))
-            {
-                scale = snap.LocalScale;
-                size = snap.SizeDelta;
-                if (Mathf.Abs(scale.x) < 0.01f)
-                {
-                    scale = Vector3.one * 0.72f;
-                }
-            }
-
-            float lineH = Mathf.Max(28f, Mathf.Abs(size.y) * Mathf.Abs(scale.y));
-            metrics.MissionTopFromRootTopLocal = 0f;
-
-            if (!SpecialMissionIntroController.IsIntroPlaying)
-            {
-                missionLabel.anchorMin = new Vector2(0.5f, 1f);
-                missionLabel.anchorMax = new Vector2(0.5f, 1f);
-                missionLabel.pivot = new Vector2(0.5f, 1f);
-                missionLabel.anchoredPosition = new Vector2(0f, y);
-                missionLabel.localScale = scale;
-                missionLabel.SetAsFirstSibling();
-
-                resolvedTallMissionLabel = missionLabel;
-                resolvedTallMissionLabelHome = RectTransformState.From(
-                    BuildChildKey(missionLabel),
-                    root.name,
-                    missionLabel);
-                hasResolvedTallMissionLabelHome = true;
-            }
-            else if (hasResolvedTallMissionLabelHome &&
-                     resolvedTallMissionLabel == missionLabel)
-            {
-                // Keep cached home; intro owns the live transform.
-            }
-            else
-            {
-                // Seed home from intended layout without fighting the animation.
-                resolvedTallMissionLabel = missionLabel;
-                resolvedTallMissionLabelHome = new RectTransformState
-                {
-                    key = BuildChildKey(missionLabel),
-                    parentKey = root.name,
-                    siblingIndex = missionLabel.GetSiblingIndex(),
-                    anchorMin = new Vector2(0.5f, 1f),
-                    anchorMax = new Vector2(0.5f, 1f),
-                    pivot = new Vector2(0.5f, 1f),
-                    anchoredPosition = new Vector2(0f, y),
-                    sizeDelta = size,
-                    localScale = scale,
-                    localEulerAngles = missionLabel.localEulerAngles
-                };
-                hasResolvedTallMissionLabelHome = true;
-            }
-
-            y -= lineH + localGap;
-            contentBottom = -y;
-        }
-
-        for (int i = 0; i < secondary.Count; i++)
-        {
-            RectTransform child = secondary[i];
-            Vector3 scale = Vector3.one;
-            Vector2 size = child.sizeDelta;
-            if (objectiveChildPhoneSnapshots.TryGetValue(child, out RectSnapshot snap))
-            {
-                scale = snap.LocalScale;
-                size = snap.SizeDelta;
-            }
-
-            float lineH = Mathf.Max(24f, Mathf.Abs(size.y) * Mathf.Abs(scale.y));
-            if (!metrics.HasSecondary)
-            {
-                metrics.SecondaryTopFromRootTopLocal = -y;
-                metrics.HasSecondary = true;
-            }
-
-            child.anchorMin = new Vector2(0.5f, 1f);
-            child.anchorMax = new Vector2(0.5f, 1f);
-            child.pivot = new Vector2(0.5f, 1f);
-            child.anchoredPosition = new Vector2(0f, y);
-            child.localScale = scale;
-
-            y -= lineH + localGap;
-            contentBottom = -y;
-        }
-
-        metrics.ContentHeightLocal = Mathf.Max(contentBottom, 40f);
-        return metrics;
-    }
-
     private static bool IsTallSecondaryObjectiveChild(RectTransform child)
     {
         if (child == null)
@@ -4237,69 +4307,20 @@ public class GameplayLayoutController : MonoBehaviour
         }
 
         string n = child.name;
+        if (n.IndexOf("SecondaryVehicle", System.StringComparison.OrdinalIgnoreCase) >= 0)
+        {
+            return false;
+        }
+
         return n.IndexOf("Timer", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
                n.IndexOf("MovesRemaining", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
                n.IndexOf("Targets", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
                n.IndexOf("Rule", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
                n.IndexOf("Remaining", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
                n.Equals("MovesText", System.StringComparison.OrdinalIgnoreCase) ||
+               n.Equals("SecondaryText", System.StringComparison.OrdinalIgnoreCase) ||
+               n.IndexOf("Secondary", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
                n.IndexOf("Count", System.StringComparison.OrdinalIgnoreCase) >= 0;
-    }
-
-    private void ShiftTallMissionBlockUp(
-        RectTransform missionRoot,
-        float shift,
-        float minFromTop)
-    {
-        if (shift <= 0.01f ||
-            missionRoot == null ||
-            safeArea == null ||
-            missionRoot.parent != safeArea)
-        {
-            return;
-        }
-
-        float fromTop = -missionRoot.anchoredPosition.y;
-        missionRoot.anchoredPosition = new Vector2(
-            0f,
-            -Mathf.Max(minFromTop, fromTop - shift));
-    }
-
-    private float MeasureRectPivotFromSaTop(RectTransform rt, float safeH)
-    {
-        if (rt == null || safeArea == null)
-        {
-            return -1f;
-        }
-
-        Vector3[] corners = new Vector3[4];
-        rt.GetWorldCorners(corners);
-        Vector3 mid = (corners[0] + corners[2]) * 0.5f;
-        Vector3 local = safeArea.InverseTransformPoint(mid);
-        return safeArea.rect.yMax - local.y;
-    }
-
-    private float MeasureRectBottomFromSaTop(RectTransform rt, float safeH)
-    {
-        if (rt == null || safeArea == null)
-        {
-            return safeH * 0.2f;
-        }
-
-        Vector3[] corners = new Vector3[4];
-        rt.GetWorldCorners(corners);
-        float worldBottom = corners[0].y;
-        for (int i = 1; i < 4; i++)
-        {
-            if (corners[i].y < worldBottom)
-            {
-                worldBottom = corners[i].y;
-            }
-        }
-
-        Vector3 local = safeArea.InverseTransformPoint(
-            new Vector3(corners[0].x, worldBottom, corners[0].z));
-        return safeArea.rect.yMax - local.y;
     }
 
     private float MeasureTopHudBottomFromTop(float safeH)
@@ -4318,42 +4339,45 @@ public class GameplayLayoutController : MonoBehaviour
         return Mathf.Max(0f, pivotFromTop + pivotToBottom);
     }
 
-    private float MeasureBoardTopFromSaTop(float safeH)
+    /// <summary>
+    /// Distance from SafeArea top edge down to the rect's pivot (diagnostic / proximity).
+    /// </summary>
+    private float MeasureRectPivotFromSaTop(RectTransform rt, float safeH)
     {
-        float topReserved = tallPhoneProfile != null
-            ? tallPhoneProfile.topReservedFraction
-            : 0.16f;
-        float screenH = Mathf.Max(1f, Screen.height);
-        float safePixelH = Mathf.Max(1f, Screen.safeArea.height);
-        float topInsetPx = Mathf.Max(0f, screenH - Screen.safeArea.yMax);
-        return safeH * ((topReserved * screenH - topInsetPx) / safePixelH);
+        if (rt == null || safeArea == null)
+        {
+            return 0f;
+        }
+
+        Vector3 world = rt.TransformPoint(rt.rect.center);
+        Vector3 local = safeArea.InverseTransformPoint(world);
+        return safeArea.rect.yMax - local.y;
     }
 
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
-    private void LogTallObjectiveLayout(
-        float difficultyBaselineY,
-        float difficultyBottom,
-        float missionY,
-        float secondaryY,
-        float secondaryBottom,
-        float boardTop,
-        float gapToBoard,
-        RectTransform activeRoot)
+    /// <summary>
+    /// Distance from SafeArea top edge down to the rect's bottom edge.
+    /// </summary>
+    private float MeasureRectBottomFromSaTop(RectTransform rt, float safeH)
     {
-        Debug.Log(
-            "[TallObjectiveLayout]\n" +
-            "kind=" + appliedKind + "\n" +
-            "difficultyBaselineY=" + difficultyBaselineY.ToString("0.0") + "\n" +
-            "difficultyBottom=" + difficultyBottom.ToString("0.0") + "\n" +
-            "missionY=" + missionY.ToString("0.0") + "\n" +
-            "secondaryY=" + secondaryY.ToString("0.0") + "\n" +
-            "secondaryBottom=" + secondaryBottom.ToString("0.0") + "\n" +
-            "boardTop=" + boardTop.ToString("0.0") + "\n" +
-            "gapToBoard=" + gapToBoard.ToString("0.0") + "\n" +
-            "activeRoot=" + (activeRoot != null ? activeRoot.name : "none")
-        );
+        if (rt == null || safeArea == null)
+        {
+            return 0f;
+        }
+
+        Vector3[] corners = new Vector3[4];
+        rt.GetWorldCorners(corners);
+        float minLocalY = float.PositiveInfinity;
+        for (int i = 0; i < 4; i++)
+        {
+            float y = safeArea.InverseTransformPoint(corners[i]).y;
+            if (y < minLocalY)
+            {
+                minLocalY = y;
+            }
+        }
+
+        return safeArea.rect.yMax - minLocalY;
     }
-#endif
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
     private System.Collections.IEnumerator LogUILayoutAuditAfterFrames()

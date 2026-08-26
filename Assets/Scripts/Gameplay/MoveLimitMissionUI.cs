@@ -56,8 +56,10 @@ public class MoveLimitMissionUI : MonoBehaviour
 
     private Vector3 originalRemainingScale = Vector3.one;
     private Color originalRemainingColor = Color.white;
-    private bool visualsCached;
+    private bool colorCached;
+    private bool authoredScaleCached;
     private bool pulseActive;
+    private GameplayLayoutController layoutController;
     private bool warningSfxPlayed;
     private bool failurePresentationPlayed;
 
@@ -83,7 +85,7 @@ public class MoveLimitMissionUI : MonoBehaviour
             missionFailedPanel.SetActive(false);
         }
 
-        CacheRemainingVisualsIfNeeded();
+        CachePulseColorIfNeeded();
         SetMoveLimitHudVisible(false);
     }
 
@@ -166,7 +168,7 @@ public class MoveLimitMissionUI : MonoBehaviour
 
         float wave = (Mathf.Sin(Time.unscaledTime * criticalPulseSpeed * Mathf.PI * 2f) + 1f) * 0.5f;
         float scaleMul = Mathf.Lerp(1f, criticalPulseScale, wave);
-        movesRemainingText.rectTransform.localScale = originalRemainingScale * scaleMul;
+        movesRemainingText.rectTransform.localScale = ResolvePulseBaseScale() * scaleMul;
     }
 
     private void OnMovesRemainingChanged(int remaining)
@@ -357,7 +359,7 @@ public class MoveLimitMissionUI : MonoBehaviour
 
     private void ApplyUrgencyVisuals(int remaining)
     {
-        CacheRemainingVisualsIfNeeded();
+        CachePulseColorIfNeeded();
 
         if (movesRemainingText == null)
         {
@@ -403,16 +405,49 @@ public class MoveLimitMissionUI : MonoBehaviour
         ApplyRemainingColor(normalColor);
     }
 
-    private void CacheRemainingVisualsIfNeeded()
+    private void CachePulseColorIfNeeded()
     {
-        if (visualsCached || movesRemainingText == null)
+        if (colorCached || movesRemainingText == null)
         {
             return;
         }
 
-        originalRemainingScale = movesRemainingText.rectTransform.localScale;
         originalRemainingColor = movesRemainingText.color;
-        visualsCached = true;
+        colorCached = true;
+    }
+
+    /// <summary>
+    /// Phone: GameplayLayoutController.phoneSecondaryTextScale owns resting scale.
+    /// Pulse multiplies that base. Fallback: one-time authored scale off-phone.
+    /// </summary>
+    private Vector3 ResolvePulseBaseScale()
+    {
+        if (movesRemainingText == null)
+        {
+            return Vector3.one;
+        }
+
+        if (layoutController == null)
+        {
+            layoutController = FindAnyObjectByType<GameplayLayoutController>();
+        }
+
+        if (layoutController != null &&
+            layoutController.TryGetPhoneSecondaryLocalScale(
+                movesRemainingText.rectTransform,
+                out Vector3 configured))
+        {
+            originalRemainingScale = configured;
+            return configured;
+        }
+
+        if (!authoredScaleCached)
+        {
+            originalRemainingScale = movesRemainingText.rectTransform.localScale;
+            authoredScaleCached = true;
+        }
+
+        return originalRemainingScale;
     }
 
     private void ApplyRemainingColor(Color color)
@@ -434,8 +469,7 @@ public class MoveLimitMissionUI : MonoBehaviour
             return;
         }
 
-        CacheRemainingVisualsIfNeeded();
-        movesRemainingText.rectTransform.localScale = originalRemainingScale;
+        movesRemainingText.rectTransform.localScale = ResolvePulseBaseScale();
     }
 
     private void ApplyFailureCopy()

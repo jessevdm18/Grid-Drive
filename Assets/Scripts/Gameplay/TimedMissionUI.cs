@@ -43,8 +43,10 @@ public class TimedMissionUI : MonoBehaviour
 
     private Vector3 originalTimerScale = Vector3.one;
     private Color originalTimerColor = Color.white;
-    private bool visualsCached;
+    private bool colorCached;
+    private bool authoredScaleCached;
     private bool pulseActive;
+    private GameplayLayoutController layoutController;
 
     // Countdown beep: CeilToInt-grenzen 3/2/1, één keer per seconde.
     private int lastCountdownCeil = -1;
@@ -76,7 +78,7 @@ public class TimedMissionUI : MonoBehaviour
             missionFailedPanel.SetActive(false);
         }
 
-        CacheTimerVisualsIfNeeded();
+        CacheTimerColorIfNeeded();
         SetTimedHudVisible(false);
     }
 
@@ -153,7 +155,8 @@ public class TimedMissionUI : MonoBehaviour
 
         float wave = (Mathf.Sin(Time.unscaledTime * criticalPulseSpeed * Mathf.PI * 2f) + 1f) * 0.5f;
         float scaleMul = Mathf.Lerp(1f, criticalPulseScale, wave);
-        timerText.rectTransform.localScale = originalTimerScale * scaleMul;
+        // Pulse relative to layout-configured base (phoneSecondaryTextScale), never authored-only.
+        timerText.rectTransform.localScale = ResolveTimerBaseScale() * scaleMul;
     }
 
     private void OnTimedMissionStarted()
@@ -416,7 +419,7 @@ public class TimedMissionUI : MonoBehaviour
 
     private void ApplyUrgencyVisuals(float remainingSeconds)
     {
-        CacheTimerVisualsIfNeeded();
+        CacheTimerColorIfNeeded();
 
         if (timerText == null)
         {
@@ -457,16 +460,49 @@ public class TimedMissionUI : MonoBehaviour
         ApplyTimerColor(normalColor);
     }
 
-    private void CacheTimerVisualsIfNeeded()
+    private void CacheTimerColorIfNeeded()
     {
-        if (visualsCached || timerText == null)
+        if (colorCached || timerText == null)
         {
             return;
         }
 
-        originalTimerScale = timerText.rectTransform.localScale;
         originalTimerColor = timerText.color;
-        visualsCached = true;
+        colorCached = true;
+    }
+
+    /// <summary>
+    /// Phone: GameplayLayoutController.phoneSecondaryTextScale owns resting scale.
+    /// Pulse multiplies that base. Fallback: one-time authored scale off-phone.
+    /// </summary>
+    private Vector3 ResolveTimerBaseScale()
+    {
+        if (timerText == null)
+        {
+            return Vector3.one;
+        }
+
+        if (layoutController == null)
+        {
+            layoutController = FindAnyObjectByType<GameplayLayoutController>();
+        }
+
+        if (layoutController != null &&
+            layoutController.TryGetPhoneSecondaryLocalScale(
+                timerText.rectTransform,
+                out Vector3 configured))
+        {
+            originalTimerScale = configured;
+            return configured;
+        }
+
+        if (!authoredScaleCached)
+        {
+            originalTimerScale = timerText.rectTransform.localScale;
+            authoredScaleCached = true;
+        }
+
+        return originalTimerScale;
     }
 
     private void ApplyTimerColor(Color color)
@@ -488,8 +524,7 @@ public class TimedMissionUI : MonoBehaviour
             return;
         }
 
-        CacheTimerVisualsIfNeeded();
-        timerText.rectTransform.localScale = originalTimerScale;
+        timerText.rectTransform.localScale = ResolveTimerBaseScale();
     }
 
     private void SetTimedHudVisible(bool visible)

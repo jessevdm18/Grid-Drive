@@ -143,6 +143,18 @@ public class CameraFitter : MonoBehaviour
         }
     }
 
+    public bool TryGetBoardWorldTop(out float worldY)
+    {
+        worldY = 0f;
+        if (!hasBoardBounds)
+        {
+            return false;
+        }
+
+        worldY = lastBoardBounds.max.y;
+        return true;
+    }
+
     public void ApplyModeCameraValues(
         GameplayLayoutKind kind,
         float topReserved,

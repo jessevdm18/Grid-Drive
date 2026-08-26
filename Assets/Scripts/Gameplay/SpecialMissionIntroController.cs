@@ -482,8 +482,8 @@ public class SpecialMissionIntroController : MonoBehaviour
     }
 
     /// <summary>
-    /// Compact / Wide home must come from GameplayLayoutController when captured.
-    /// Tall: keep CacheHomeState (authored) values.
+    /// Compact / Wide / Tall Mission Label home from GameplayLayoutController when available.
+    /// Phone homes are board-relative (never DifficultyLabel).
     /// </summary>
     private void ResolveIntroHomeFromLayout(RectTransform label)
     {
@@ -506,8 +506,7 @@ public class SpecialMissionIntroController : MonoBehaviour
             return;
         }
 
-        // Uncaptured Wide: authored CacheHomeState already correct.
-        // Tall home comes from GameplayLayoutController.TryGetMissionLabelHomeState.
+        // Fallback: authored CacheHomeState already set.
     }
 
     /// <summary>
@@ -556,9 +555,13 @@ public class SpecialMissionIntroController : MonoBehaviour
         introOriginalRootSibling = -1;
         IsIntroPlaying = false;
 
+        // Re-apply phone mission/secondary scales after intro releases Mission Label ownership.
+        GameplayLayoutController layoutAfterIntro =
+            FindAnyObjectByType<GameplayLayoutController>();
+        layoutAfterIntro?.ReapplyPhoneSpecialObjectiveLayout();
+
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-        GameplayLayoutController layout = FindAnyObjectByType<GameplayLayoutController>();
-        layout?.LogUILayoutAudit("MissionIntro.end");
+        layoutAfterIntro?.LogUILayoutAudit("MissionIntro.end");
 #endif
     }
 

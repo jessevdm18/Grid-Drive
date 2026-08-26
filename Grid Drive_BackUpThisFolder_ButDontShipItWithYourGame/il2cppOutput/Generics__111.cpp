@@ -22339,7 +22339,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void NavigationEventBase_1_Dispatch_m905EA024
 #pragma clang diagnostic ignored "-Winvalid-offsetof"
 #pragma clang diagnostic ignored "-Wunused-variable"
 #endif
-// Method Definition Index: 59224
+// Method Definition Index: 59266
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR Il2CppSharedGenericObject* Node_get_Key_m9347632E7B8EB740E394C650FB8E93D69F23B4B1_gshared (Node_t7DE7C6DB19EDA1CB6E59AA4A59064C2D6D47FB41* __this, const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>
@@ -22348,7 +22348,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR Il2CppSharedGenericObject* Node_get_Key_m9347
 		return L_0;
 	}
 }
-// Method Definition Index: 59225
+// Method Definition Index: 59267
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR Node_t7DE7C6DB19EDA1CB6E59AA4A59064C2D6D47FB41* Node_get_Prev_m1A2B637944F6A1B43F5B3392335385C931E5302A_gshared (Node_t7DE7C6DB19EDA1CB6E59AA4A59064C2D6D47FB41* __this, const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>
@@ -22357,7 +22357,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR Node_t7DE7C6DB19EDA1CB6E59AA4A59064C2D6D47FB4
 		return L_0;
 	}
 }
-// Method Definition Index: 59226
+// Method Definition Index: 59268
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR Node_t7DE7C6DB19EDA1CB6E59AA4A59064C2D6D47FB41* Node_get_Next_mC4D6F39733753234E4CCBA256AAC33FB9525A921_gshared (Node_t7DE7C6DB19EDA1CB6E59AA4A59064C2D6D47FB41* __this, const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>
@@ -22366,7 +22366,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR Node_t7DE7C6DB19EDA1CB6E59AA4A59064C2D6D47FB4
 		return L_0;
 	}
 }
-// Method Definition Index: 59227
+// Method Definition Index: 59269
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void Node__ctor_m4042E75221E9348966CA5D92109D17BCEC4723FE_gshared (Node_t7DE7C6DB19EDA1CB6E59AA4A59064C2D6D47FB41* __this, const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>
