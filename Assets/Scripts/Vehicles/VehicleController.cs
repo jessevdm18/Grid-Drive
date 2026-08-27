@@ -154,6 +154,9 @@ public class VehicleController : MonoBehaviour
     private Vector2Int dragStartGridPosition;
     private Vector3 dragStartMouseWorld;
 
+    /// <summary>True while an external Input System drag session is active on this vehicle.</summary>
+    private bool dragSessionActive;
+
     private Camera mainCamera;
     private BoxCollider2D boxCollider;
 
@@ -734,8 +737,151 @@ public class VehicleController : MonoBehaviour
         isInitialized = true;
     }
 
-    private void OnMouseDown()
+    /// <summary>
+    /// True if this vehicle can start accepting a drag (gates only — no session start).
+    /// </summary>
+    public bool CanAcceptDragInput()
     {
+        if (isExiting || isLimitedVehicleLocked || gridManager == null)
+        {
+            return false;
+        }
+
+        if (gameManager != null && !gameManager.CanAcceptVehicleInput)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// Begin a drag session from an explicit world position (Input System path).
+    /// </summary>
+    public bool TryBeginDrag(Vector3 worldPosition)
+    {
+        if (!CanAcceptDragInput())
+        {
+            return false;
+        }
+
+        if (gridManager == null)
+        {
+            Debug.LogError("Geen GridManager gekoppeld aan " + name);
+            return false;
+        }
+
+        EnsureCamera();
+        dragStartGridPosition = gridPosition;
+        dragStartMouseWorld = worldPosition;
+        dragStartMouseWorld.z = 0f;
+        dragSessionActive = true;
+        return true;
+    }
+
+    /// <summary>
+    /// Continue drag using an explicit world position. Preserves existing move/exit rules.
+    /// </summary>
+    public void UpdateDrag(Vector3 worldPosition)
+    {
+        if (!dragSessionActive)
+        {
+            return;
+        }
+
+        if (isExiting || gridManager == null)
+        {
+            return;
+        }
+
+        if (isLimitedVehicleLocked)
+        {
+            return;
+        }
+
+        if (gameManager != null && !gameManager.CanAcceptVehicleInput)
+        {
+            return;
+        }
+
+        worldPosition.z = 0f;
+        Vector3 dragDifference = worldPosition - dragStartMouseWorld;
+
+        // Enig toegestane exit-pad: via CanPerformExitRight → TryExitRight → ExitBoard.
+        if (TryExitRight(dragDifference))
+        {
+            return;
+        }
+
+        Vector2Int wantedPosition = dragStartGridPosition;
+
+        // Threshold i.p.v. RoundToInt: sneller reageren op touch,
+        // maar nog steeds alleen hele gridstappen.
+        int cellSteps = 0;
+
+        if (orientation == VehicleOrientation.Horizontal)
+        {
+            cellSteps = GetDragCellSteps(dragDifference.x);
+            wantedPosition.x += cellSteps;
+        }
+        else
+        {
+            cellSteps = GetDragCellSteps(dragDifference.y);
+            wantedPosition.y += cellSteps;
+        }
+
+        // Ongeclampte wens — nodig om rand-blokkades te detecteren.
+        Vector2Int unclampedWanted = wantedPosition;
+
+        // Zorg eerst dat de gewenste positie niet buiten het bord kan liggen.
+        wantedPosition = ClampGridPosition(wantedPosition);
+
+        // Zoek vanuit de oorspronkelijke positie cel voor cel
+        // hoe ver we daadwerkelijk mogen bewegen.
+        Vector2Int validPosition =
+            FindFarthestValidPosition(
+                dragStartGridPosition,
+                wantedPosition
+            );
+
+        // Alleen als de logische positie verandert.
+        if (validPosition != gridPosition)
+        {
+            // Root springt direct; Visual glijdt soepel mee.
+            MoveRootToGridPosition(validPosition, animateVisual: true);
+            audioManager?.PlayMove();
+
+            // NIEUWE occupancy registreren.
+            gridManager.RegisterVehicle(
+                this,
+                GetOccupiedCells(gridPosition)
+            );
+        }
+        else
+        {
+            // Root blijft op de logische gridpositie.
+            transform.position = GetWorldPosition(gridPosition);
+
+            // Speler wil verder, maar kan niet (obstakel of rand).
+            if (IsBlockedMoveAttempt(unclampedWanted))
+            {
+                TryPlayBlockedFeedback(unclampedWanted);
+            }
+        }
+    }
+
+    /// <summary>
+    /// End drag session — snap, move register, undo, assisted exit (same as legacy OnMouseUp).
+    /// </summary>
+    public void EndDrag()
+    {
+        if (!dragSessionActive)
+        {
+            return;
+        }
+
+        dragSessionActive = false;
+
         if (isExiting)
         {
             return;
@@ -753,12 +899,116 @@ public class VehicleController : MonoBehaviour
 
         if (gridManager == null)
         {
-            Debug.LogError("Geen GridManager gekoppeld aan " + name);
             return;
         }
 
-        dragStartGridPosition = gridPosition;
-        dragStartMouseWorld = GetMouseWorldPosition();
+        // Voor de zekerheid exact snap naar het grid.
+        transform.position = GetWorldPosition(gridPosition);
+
+        gridManager.RegisterVehicle(
+            this,
+            GetOccupiedCells(gridPosition)
+        );
+
+        // Target Exit Assist: vóór normale move-registratie (één move = deze exit).
+        if (TryAssistedExitRight())
+        {
+            return;
+        }
+
+        // Eén move per drag, alleen als de gridpositie echt veranderde.
+        if (gridPosition != dragStartGridPosition)
+        {
+            Vector2Int fromPosition = dragStartGridPosition;
+            Vector2Int toPosition = gridPosition;
+
+            if (gameManager != null)
+            {
+                gameManager.RegisterMove(this);
+            }
+
+            // Alleen normale board-moves (geen exit): record ná RegisterMove.
+            GameplayUndoManager.RecordValidBoardMoveStatic(this, fromPosition, toPosition);
+
+            NotifyVehicleMoved();
+        }
+    }
+
+    /// <summary>Cancel an in-progress drag without registering a move (e.g. mid-fail gate).</summary>
+    public void CancelDrag()
+    {
+        if (!dragSessionActive)
+        {
+            return;
+        }
+
+        dragSessionActive = false;
+        if (gridManager != null && !isExiting)
+        {
+            transform.position = GetWorldPosition(gridPosition);
+            gridManager.RegisterVehicle(this, GetOccupiedCells(gridPosition));
+        }
+    }
+
+    public bool IsDragSessionActive => dragSessionActive;
+
+    private void EnsureCamera()
+    {
+        if (mainCamera == null)
+        {
+            mainCamera = Camera.main;
+        }
+    }
+
+    private void OnMouseDown()
+    {
+        // Production path is VehicleInputRouter (Input System). Never double-fire with it.
+        if (VehicleInputRouter.OwnsVehicleInput)
+        {
+            return;
+        }
+
+#if !UNITY_EDITOR
+        return;
+#else
+        if (!TryBeginDrag(GetMouseWorldPosition()))
+        {
+            return;
+        }
+#endif
+    }
+
+    private void OnMouseDrag()
+    {
+        if (VehicleInputRouter.OwnsVehicleInput)
+        {
+            return;
+        }
+
+#if !UNITY_EDITOR
+        return;
+#else
+        if (!dragSessionActive)
+        {
+            return;
+        }
+
+        UpdateDrag(GetMouseWorldPosition());
+#endif
+    }
+
+    private void OnMouseUp()
+    {
+        if (VehicleInputRouter.OwnsVehicleInput)
+        {
+            return;
+        }
+
+#if !UNITY_EDITOR
+        return;
+#else
+        EndDrag();
+#endif
     }
 
 private bool CanPerformExitRight(Vector3 dragDifference)
@@ -953,85 +1203,6 @@ private bool CanPerformExitRight(Vector3 dragDifference)
 
         // Zelfde eindresultaat als voorheen: auto van het bord.
         gameObject.SetActive(false);
-    }
-
-    private void OnMouseDrag()
-    {
-        if (isExiting || gridManager == null)
-            return;
-
-        if (isLimitedVehicleLocked)
-            return;
-
-        if (gameManager != null && !gameManager.CanAcceptVehicleInput)
-            return;
-
-        Vector3 currentMouseWorld = GetMouseWorldPosition();
-
-        Vector3 dragDifference =
-            currentMouseWorld - dragStartMouseWorld;
-
-        // Enig toegestane exit-pad: via CanPerformExitRight → TryExitRight → ExitBoard.
-        if (TryExitRight(dragDifference))
-        {
-            return;
-        }
-
-        Vector2Int wantedPosition = dragStartGridPosition;
-
-        // Threshold i.p.v. RoundToInt: sneller reageren op touch,
-        // maar nog steeds alleen hele gridstappen.
-        int cellSteps = 0;
-
-        if (orientation == VehicleOrientation.Horizontal)
-        {
-            cellSteps = GetDragCellSteps(dragDifference.x);
-            wantedPosition.x += cellSteps;
-        }
-        else
-        {
-            cellSteps = GetDragCellSteps(dragDifference.y);
-            wantedPosition.y += cellSteps;
-        }
-
-        // Ongeclampte wens — nodig om rand-blokkades te detecteren.
-        Vector2Int unclampedWanted = wantedPosition;
-
-        // Zorg eerst dat de gewenste positie niet buiten het bord kan liggen.
-        wantedPosition = ClampGridPosition(wantedPosition);
-
-        // Zoek vanuit de oorspronkelijke positie cel voor cel
-        // hoe ver we daadwerkelijk mogen bewegen.
-        Vector2Int validPosition =
-            FindFarthestValidPosition(
-                dragStartGridPosition,
-                wantedPosition
-            );
-
-        // Alleen als de logische positie verandert.
-        if (validPosition != gridPosition)
-        {
-            // Root springt direct; Visual glijdt soepel mee.
-            MoveRootToGridPosition(validPosition, animateVisual: true);
-            audioManager?.PlayMove();
-
-            // NIEUWE occupancy registreren.
-            gridManager.RegisterVehicle(
-                this,
-                GetOccupiedCells(gridPosition)
-            );
-        }
-        else
-        {
-            // Root blijft op de logische gridpositie.
-            transform.position = GetWorldPosition(gridPosition);
-
-            // Speler wil verder, maar kan niet (obstakel of rand).
-            if (IsBlockedMoveAttempt(unclampedWanted))
-            {
-                TryPlayBlockedFeedback(unclampedWanted);
-            }
-        }
     }
 
     /// <summary>
@@ -1256,55 +1427,6 @@ private bool CanPerformExitRight(Vector3 dragDifference)
         return (int)Mathf.Sign(distanceInCells) * steps;
     }
 
-    private void OnMouseUp()
-    {
-        if (isExiting)
-        {
-            return;
-        }
-
-        if (isLimitedVehicleLocked)
-        {
-            return;
-        }
-
-        if (gameManager != null && !gameManager.CanAcceptVehicleInput)
-        {
-            return;
-        }
-
-        // Voor de zekerheid exact snap naar het grid.
-        transform.position = GetWorldPosition(gridPosition);
-
-        gridManager.RegisterVehicle(
-            this,
-            GetOccupiedCells(gridPosition)
-        );
-
-        // Target Exit Assist: vóór normale move-registratie (één move = deze exit).
-        if (TryAssistedExitRight())
-        {
-            return;
-        }
-
-        // Eén move per drag, alleen als de gridpositie echt veranderde.
-        if (gridPosition != dragStartGridPosition)
-        {
-            Vector2Int fromPosition = dragStartGridPosition;
-            Vector2Int toPosition = gridPosition;
-
-            if (gameManager != null)
-            {
-                gameManager.RegisterMove(this);
-            }
-
-            // Alleen normale board-moves (geen exit): record ná RegisterMove.
-            GameplayUndoManager.RecordValidBoardMoveStatic(this, fromPosition, toPosition);
-
-            NotifyVehicleMoved();
-        }
-    }
-
     /// <summary>
     /// Notify listeners dat dit voertuig echt van gridpositie is veranderd.
     /// </summary>
@@ -1315,20 +1437,28 @@ private bool CanPerformExitRight(Vector3 dragDifference)
 
    private Vector3 GetMouseWorldPosition()
 {
+    // Editor OnMouse* fallback only. Prefer active touch over phantom Mouse.
     Vector2 screenPosition;
-
-    // Muis / editor
-    if (Mouse.current != null)
+    Touchscreen touchscreen = Touchscreen.current;
+    if (touchscreen != null && touchscreen.primaryTouch.press.isPressed)
+    {
+        screenPosition = touchscreen.primaryTouch.position.ReadValue();
+    }
+    else if (Mouse.current != null)
     {
         screenPosition = Mouse.current.position.ReadValue();
     }
-    // Touchscreen / mobiel
-    else if (Touchscreen.current != null)
+    else if (touchscreen != null)
     {
-        screenPosition =
-            Touchscreen.current.primaryTouch.position.ReadValue();
+        screenPosition = touchscreen.primaryTouch.position.ReadValue();
     }
     else
+    {
+        return transform.position;
+    }
+
+    EnsureCamera();
+    if (mainCamera == null)
     {
         return transform.position;
     }

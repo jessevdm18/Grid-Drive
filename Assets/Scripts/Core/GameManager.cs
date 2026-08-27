@@ -166,6 +166,20 @@ public class GameManager : MonoBehaviour
         {
             undoManager = FindAnyObjectByType<GameplayUndoManager>();
         }
+
+        EnsureVehicleInputRouter();
+    }
+
+    private void EnsureVehicleInputRouter()
+    {
+        if (VehicleInputRouter.Instance != null ||
+            GetComponent<VehicleInputRouter>() != null ||
+            FindAnyObjectByType<VehicleInputRouter>() != null)
+        {
+            return;
+        }
+
+        gameObject.AddComponent<VehicleInputRouter>();
     }
 
     private void Start()
