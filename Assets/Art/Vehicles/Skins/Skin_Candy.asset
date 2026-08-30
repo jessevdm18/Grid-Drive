@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VehicleSkinData
   skinId: candy
   displayName: Candy
-  coinPrice: 2500
+  coinPrice: 1000
   previewSprite: {fileID: 21300000, guid: 7a696ba940a0d6a42ba6f7da0a90c575, type: 3}
   unlockedByDefault: 0
   spriteLibrary: {fileID: 11400000, guid: cae7d83fac17f4b4ebd524acac18ec9c, type: 2}

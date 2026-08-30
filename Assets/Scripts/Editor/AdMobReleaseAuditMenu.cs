@@ -14,8 +14,11 @@ public static class AdMobReleaseAuditMenu
     private const string ExpectedAndroidAppId =
         "ca-app-pub-8657245895551337~6979159661";
 
-    private const string ExpectedAndroidRewardedProduction =
+    private const string ExpectedAndroidRewardedHintProduction =
         "ca-app-pub-8657245895551337/4707151288";
+
+    private const string ExpectedAndroidRewardedFreeCoinsProduction =
+        "ca-app-pub-8657245895551337/7369665574";
 
     private const string ExpectedAndroidInterstitialProduction =
         "ca-app-pub-8657245895551337/6318731373";
@@ -33,7 +36,10 @@ public static class AdMobReleaseAuditMenu
         bool androidAppIdOk = androidAppId == ExpectedAndroidAppId;
 
         // Menu always runs in Editor → AdsManager selection is TEST.
-        string editorRewarded = AdsManager.GetRewardedAdUnitId();
+        string editorRewardedHint =
+            AdsManager.GetRewardedAdUnitId(AdsManager.PlacementHint);
+        string editorRewardedCoins =
+            AdsManager.GetRewardedAdUnitId(AdsManager.PlacementShopFreeCoins);
         string editorInterstitial = AdsManager.GetInterstitialAdUnitId();
 
         Debug.Log(
@@ -44,9 +50,11 @@ public static class AdMobReleaseAuditMenu
             "AndroidAppId=" + (string.IsNullOrEmpty(androidAppId) ? "(empty)" : androidAppId) + "\n" +
             "RewardedIdMode=TEST (Editor/Dev)\n" +
             "InterstitialIdMode=TEST (Editor/Dev)\n" +
-            "EditorRewarded=" + editorRewarded + "\n" +
+            "EditorRewardedHint=" + editorRewardedHint + "\n" +
+            "EditorRewardedFreeCoins=" + editorRewardedCoins + "\n" +
             "EditorInterstitial=" + editorInterstitial + "\n" +
-            "AndroidReleaseRewarded=" + ExpectedAndroidRewardedProduction + "\n" +
+            "AndroidReleaseRewardedHint=" + ExpectedAndroidRewardedHintProduction + "\n" +
+            "AndroidReleaseRewardedFreeCoins=" + ExpectedAndroidRewardedFreeCoinsProduction + "\n" +
             "AndroidReleaseInterstitial=" + ExpectedAndroidInterstitialProduction + "\n" +
             "GoogleTestRewarded=" + GoogleTestRewardedAndroid + "\n" +
             "GoogleTestInterstitial=" + GoogleTestInterstitialAndroid + "\n" +
@@ -64,11 +72,19 @@ public static class AdMobReleaseAuditMenu
             );
         }
 
-        if (editorRewarded != GoogleTestRewardedAndroid &&
-            editorRewarded != "ca-app-pub-3940256099942544/1712485313")
+        if (editorRewardedHint != GoogleTestRewardedAndroid &&
+            editorRewardedHint != "ca-app-pub-3940256099942544/1712485313")
         {
             Debug.LogWarning(
-                "[AdMobAudit] Editor rewarded ID is unexpectedly not a Google test unit."
+                "[AdMobAudit] Editor hint rewarded ID is unexpectedly not a Google test unit."
+            );
+        }
+
+        if (editorRewardedCoins != GoogleTestRewardedAndroid &&
+            editorRewardedCoins != "ca-app-pub-3940256099942544/1712485313")
+        {
+            Debug.LogWarning(
+                "[AdMobAudit] Editor free-coins rewarded ID is unexpectedly not a Google test unit."
             );
         }
 

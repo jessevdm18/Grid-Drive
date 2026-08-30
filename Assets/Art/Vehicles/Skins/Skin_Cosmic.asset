@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a836af6d5637554aa4394737576f32d, type: 3}
+  m_Name: Skin_Cosmic
+  m_EditorClassIdentifier: Assembly-CSharp::VehicleSkinData
+  skinId: cosmic
+  displayName: Galaxy
+  coinPrice: 6000
+  previewSprite: {fileID: 21300000, guid: b7b6b18ce10042747aca4f7630f8acce, type: 3}
+  unlockedByDefault: 0
+  spriteLibrary: {fileID: 11400000, guid: 4e77e0850431048488544e146fff1a23, type: 2}
+  backgroundTheme: {fileID: 11400000, guid: 44d28af02cf4e4d4188a18cd098394c9, type: 2}

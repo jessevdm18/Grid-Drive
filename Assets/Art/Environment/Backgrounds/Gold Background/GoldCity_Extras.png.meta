@@ -1,0 +1,2912 @@
+fileFormatVersion: 2
+guid: df7901637c87c2641a10d67d92a97134
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 2498819075217967398
+    second: GoldCity_Extras_0
+  - first:
+      213: -3545673594583518
+    second: GoldCity_Extras_1
+  - first:
+      213: 7037758520432916990
+    second: GoldCity_Extras_2
+  - first:
+      213: -6807683738481865763
+    second: GoldCity_Extras_3
+  - first:
+      213: 2021382641906073714
+    second: GoldCity_Extras_4
+  - first:
+      213: -6216253647971087386
+    second: GoldCity_Extras_5
+  - first:
+      213: -1269143986609519545
+    second: GoldCity_Extras_6
+  - first:
+      213: 5948855716823647507
+    second: GoldCity_Extras_7
+  - first:
+      213: -6514933579113106408
+    second: GoldCity_Extras_8
+  - first:
+      213: 4400077675529422731
+    second: GoldCity_Extras_9
+  - first:
+      213: 5962839247426062418
+    second: GoldCity_Extras_10
+  - first:
+      213: 3698678132553723240
+    second: GoldCity_Extras_11
+  - first:
+      213: 3280349766221879751
+    second: GoldCity_Extras_12
+  - first:
+      213: -2424196287070147413
+    second: GoldCity_Extras_13
+  - first:
+      213: -3555702840992254978
+    second: GoldCity_Extras_14
+  - first:
+      213: -1515253838848263992
+    second: GoldCity_Extras_15
+  - first:
+      213: 6214861350832479182
+    second: GoldCity_Extras_16
+  - first:
+      213: 6628324081628592696
+    second: GoldCity_Extras_17
+  - first:
+      213: 1457323146715716179
+    second: GoldCity_Extras_18
+  - first:
+      213: 1278393482294251118
+    second: GoldCity_Extras_19
+  - first:
+      213: -1314779013021980275
+    second: GoldCity_Extras_20
+  - first:
+      213: -7632894262007517605
+    second: GoldCity_Extras_21
+  - first:
+      213: -4606874133174858579
+    second: GoldCity_Extras_22
+  - first:
+      213: 3188353608079757534
+    second: GoldCity_Extras_23
+  - first:
+      213: 690715416807938503
+    second: GoldCity_Extras_24
+  - first:
+      213: -3804569890287201127
+    second: GoldCity_Extras_25
+  - first:
+      213: 546270010734399883
+    second: GoldCity_Extras_26
+  - first:
+      213: 1496310721201562322
+    second: GoldCity_Extras_27
+  - first:
+      213: -3141146240774409335
+    second: GoldCity_Extras_28
+  - first:
+      213: -6535513911759875655
+    second: GoldCity_Extras_29
+  - first:
+      213: 840523456094095117
+    second: GoldCity_Extras_30
+  - first:
+      213: -157939229356012169
+    second: GoldCity_Extras_31
+  - first:
+      213: -6462934046728506339
+    second: GoldCity_Extras_32
+  - first:
+      213: 3658005071616489490
+    second: GoldCity_Extras_33
+  - first:
+      213: 3093446833352907335
+    second: GoldCity_Extras_34
+  - first:
+      213: 75818191693376041
+    second: GoldCity_Extras_35
+  - first:
+      213: 8651894376277666644
+    second: GoldCity_Extras_36
+  - first:
+      213: -1466353658874854704
+    second: GoldCity_Extras_37
+  - first:
+      213: 5234910203067936343
+    second: GoldCity_Extras_38
+  - first:
+      213: 1212145779804614527
+    second: GoldCity_Extras_39
+  - first:
+      213: -5287938700124267753
+    second: GoldCity_Extras_40
+  - first:
+      213: 3919007426365583492
+    second: GoldCity_Extras_41
+  - first:
+      213: -3517864078399239590
+    second: GoldCity_Extras_42
+  - first:
+      213: 7564686078065361103
+    second: GoldCity_Extras_43
+  - first:
+      213: 1241303244308227415
+    second: GoldCity_Extras_44
+  - first:
+      213: -2927094810428682824
+    second: GoldCity_Extras_45
+  - first:
+      213: -8427061806955661828
+    second: GoldCity_Extras_46
+  - first:
+      213: -6308205991136850546
+    second: GoldCity_Extras_47
+  - first:
+      213: -1681034155810880287
+    second: GoldCity_Extras_48
+  - first:
+      213: 402915318126253658
+    second: GoldCity_Extras_49
+  - first:
+      213: -6989301495537359086
+    second: GoldCity_Extras_50
+  - first:
+      213: 2010617771205621029
+    second: GoldCity_Extras_51
+  - first:
+      213: -710919926649475681
+    second: GoldCity_Extras_52
+  - first:
+      213: -26305105360625874
+    second: GoldCity_Extras_53
+  - first:
+      213: -400576848392636120
+    second: GoldCity_Extras_54
+  - first:
+      213: -1126949900617415214
+    second: GoldCity_Extras_55
+  - first:
+      213: -6505440682569022666
+    second: GoldCity_Extras_56
+  - first:
+      213: 6492438123663062530
+    second: GoldCity_Extras_57
+  - first:
+      213: 7348428687946862588
+    second: GoldCity_Extras_58
+  - first:
+      213: 4689953945789398813
+    second: GoldCity_Extras_59
+  - first:
+      213: 2592647675016716376
+    second: GoldCity_Extras_60
+  - first:
+      213: 7100387987827945044
+    second: GoldCity_Extras_61
+  - first:
+      213: 7655622619042013148
+    second: GoldCity_Extras_62
+  - first:
+      213: 8733422189660939298
+    second: GoldCity_Extras_63
+  - first:
+      213: 6860899800149784191
+    second: GoldCity_Extras_64
+  - first:
+      213: 3023575269086131675
+    second: GoldCity_Extras_65
+  - first:
+      213: -4341761099804398437
+    second: GoldCity_Extras_66
+  - first:
+      213: 6587358817108495726
+    second: GoldCity_Extras_67
+  - first:
+      213: -1337910735134816860
+    second: GoldCity_Extras_68
+  - first:
+      213: 2594028944228844544
+    second: GoldCity_Extras_69
+  - first:
+      213: 8320783479951121833
+    second: GoldCity_Extras_70
+  - first:
+      213: -8081107839587447904
+    second: GoldCity_Extras_71
+  - first:
+      213: -4331495768421928435
+    second: GoldCity_Extras_72
+  - first:
+      213: -7772245656629631098
+    second: GoldCity_Extras_73
+  - first:
+      213: -5833117590316438155
+    second: GoldCity_Extras_74
+  - first:
+      213: 3769874650766514440
+    second: GoldCity_Extras_75
+  - first:
+      213: -5598629815833234147
+    second: GoldCity_Extras_76
+  - first:
+      213: -7253627713592396864
+    second: GoldCity_Extras_77
+  - first:
+      213: -7165210634567788615
+    second: GoldCity_Extras_78
+  - first:
+      213: -1701516792584690392
+    second: GoldCity_Extras_79
+  - first:
+      213: 6183479596349809403
+    second: GoldCity_Extras_80
+  - first:
+      213: -6535888675504962415
+    second: GoldCity_Extras_81
+  - first:
+      213: 8102200260859809841
+    second: GoldCity_Extras_82
+  - first:
+      213: -5194891366545448630
+    second: GoldCity_Extras_83
+  - first:
+      213: 5305198238236447043
+    second: GoldCity_Extras_84
+  - first:
+      213: 5959097394046343404
+    second: GoldCity_Extras_85
+  - first:
+      213: 110033849265364721
+    second: GoldCity_Extras_86
+  - first:
+      213: -4163755682099896000
+    second: GoldCity_Extras_87
+  - first:
+      213: 1650816472130219305
+    second: GoldCity_Extras_88
+  - first:
+      213: 4349352580783756746
+    second: GoldCity_Extras_89
+  - first:
+      213: 4187457339777313474
+    second: GoldCity_Extras_90
+  - first:
+      213: -5238210033287922872
+    second: GoldCity_Extras_91
+  - first:
+      213: -3723943901722712189
+    second: GoldCity_Extras_92
+  - first:
+      213: 4229721443515812220
+    second: GoldCity_Extras_93
+  - first:
+      213: -3058372022167535197
+    second: GoldCity_Extras_94
+  - first:
+      213: -3872519617668720984
+    second: GoldCity_Extras_95
+  - first:
+      213: 5755433729112849162
+    second: GoldCity_Extras_96
+  - first:
+      213: -491242191377715860
+    second: GoldCity_Extras_97
+  - first:
+      213: 7921952947657051417
+    second: GoldCity_Extras_98
+  - first:
+      213: -622430514965824450
+    second: GoldCity_Extras_99
+  - first:
+      213: -537813600729921709
+    second: GoldCity_Extras_100
+  - first:
+      213: -6757266921613545288
+    second: GoldCity_Extras_101
+  - first:
+      213: 3671422981665535322
+    second: GoldCity_Extras_102
+  - first:
+      213: -9159023107112209070
+    second: GoldCity_Extras_103
+  - first:
+      213: -8943330102287577209
+    second: GoldCity_Extras_104
+  - first:
+      213: -5335343416316454348
+    second: GoldCity_Extras_105
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: GoldCity_Extras_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1420
+        width: 127
+        height: 252
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6294658a5b69da220800000000000000
+      internalID: 2498819075217967398
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_1
+      rect:
+        serializedVersion: 2
+        x: 122
+        y: 0
+        width: 696
+        height: 1638
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 226c7e88a3763fff0800000000000000
+      internalID: -3545673594583518
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_2
+      rect:
+        serializedVersion: 2
+        x: 154
+        y: 1561
+        width: 70
+        height: 83
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ef9f16136142ba160800000000000000
+      internalID: 7037758520432916990
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_3
+      rect:
+        serializedVersion: 2
+        x: 641
+        y: 1550
+        width: 94
+        height: 68
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ddbc59065bf3681a0800000000000000
+      internalID: -6807683738481865763
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_4
+      rect:
+        serializedVersion: 2
+        x: 732
+        y: 1601
+        width: 50
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 270c3f59dc46d0c10800000000000000
+      internalID: 2021382641906073714
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_5
+      rect:
+        serializedVersion: 2
+        x: 779
+        y: 1492
+        width: 162
+        height: 180
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6eb05f60e3e6bb9a0800000000000000
+      internalID: -6216253647971087386
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_6
+      rect:
+        serializedVersion: 2
+        x: 124
+        y: 1550
+        width: 25
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7440155b448136ee0800000000000000
+      internalID: -1269143986609519545
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_7
+      rect:
+        serializedVersion: 2
+        x: 223
+        y: 1572
+        width: 15
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 315435d81c49e8250800000000000000
+      internalID: 5948855716823647507
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_8
+      rect:
+        serializedVersion: 2
+        x: 130
+        y: 1486
+        width: 53
+        height: 67
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 814f2b96d6e4695a0800000000000000
+      internalID: -6514933579113106408
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_9
+      rect:
+        serializedVersion: 2
+        x: 651
+        y: 1398
+        width: 116
+        height: 133
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b87ce025557301d30800000000000000
+      internalID: 4400077675529422731
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_10
+      rect:
+        serializedVersion: 2
+        x: 882
+        y: 1476
+        width: 46
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 258869bf3b240c250800000000000000
+      internalID: 5962839247426062418
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_11
+      rect:
+        serializedVersion: 2
+        x: 24
+        y: 1416
+        width: 8
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 86dae554a28545330800000000000000
+      internalID: 3698678132553723240
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_12
+      rect:
+        serializedVersion: 2
+        x: 30
+        y: 1420
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7c9d0ba7bb4268d20800000000000000
+      internalID: 3280349766221879751
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_13
+      rect:
+        serializedVersion: 2
+        x: 47
+        y: 1355
+        width: 66
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bacec5322568b5ed0800000000000000
+      internalID: -2424196287070147413
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_14
+      rect:
+        serializedVersion: 2
+        x: 97
+        y: 1400
+        width: 68
+        height: 72
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ef33fc3ea1b97aec0800000000000000
+      internalID: -3555702840992254978
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_15
+      rect:
+        serializedVersion: 2
+        x: 266
+        y: 1402
+        width: 11
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8c8f6e669acb8fae0800000000000000
+      internalID: -1515253838848263992
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_16
+      rect:
+        serializedVersion: 2
+        x: 687
+        y: 1245
+        width: 119
+        height: 166
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ecb9ca8887f9f3650800000000000000
+      internalID: 6214861350832479182
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_17
+      rect:
+        serializedVersion: 2
+        x: 702
+        y: 1430
+        width: 15
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 83ab3a542a98cfb50800000000000000
+      internalID: 6628324081628592696
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_18
+      rect:
+        serializedVersion: 2
+        x: 718
+        y: 1398
+        width: 11
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 35ad1f24ea3793410800000000000000
+      internalID: 1457323146715716179
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_19
+      rect:
+        serializedVersion: 2
+        x: 756
+        y: 1441
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e6ec2535914cdb110800000000000000
+      internalID: 1278393482294251118
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_20
+      rect:
+        serializedVersion: 2
+        x: 762
+        y: 1408
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d89afa22477f0cde0800000000000000
+      internalID: -1314779013021980275
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_21
+      rect:
+        serializedVersion: 2
+        x: 767
+        y: 1393
+        width: 43
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b5eace80c13821690800000000000000
+      internalID: -7632894262007517605
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_22
+      rect:
+        serializedVersion: 2
+        x: 825
+        y: 1406
+        width: 46
+        height: 77
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dac4d2752681110c0800000000000000
+      internalID: -4606874133174858579
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_23
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1132
+        width: 163
+        height: 269
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ed0dde3c6be4f3c20800000000000000
+      internalID: 3188353608079757534
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_24
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 1299
+        width: 118
+        height: 96
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7c919b3130ae59900800000000000000
+      internalID: 690715416807938503
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_25
+      rect:
+        serializedVersion: 2
+        x: 249
+        y: 1275
+        width: 34
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 994d84e97d3733bc0800000000000000
+      internalID: -3804569890287201127
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_26
+      rect:
+        serializedVersion: 2
+        x: 284
+        y: 1288
+        width: 9
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b81d5453eadb49700800000000000000
+      internalID: 546270010734399883
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_27
+      rect:
+        serializedVersion: 2
+        x: 825
+        y: 1262
+        width: 106
+        height: 113
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2d2e3d25ca6f3c410800000000000000
+      internalID: 1496310721201562322
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_28
+      rect:
+        serializedVersion: 2
+        x: 251
+        y: 1287
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9837613f2286864d0800000000000000
+      internalID: -3141146240774409335
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_29
+      rect:
+        serializedVersion: 2
+        x: 255
+        y: 1277
+        width: 8
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9b1dde059b03d45a0800000000000000
+      internalID: -6535513911759875655
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_30
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1090
+        width: 100
+        height: 136
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d074fd941a32aab00800000000000000
+      internalID: 840523456094095117
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_31
+      rect:
+        serializedVersion: 2
+        x: 170
+        y: 1169
+        width: 26
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 77dc2229b13eecdf0800000000000000
+      internalID: -157939229356012169
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_32
+      rect:
+        serializedVersion: 2
+        x: 174
+        y: 1197
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d1438f10abb0f46a0800000000000000
+      internalID: -6462934046728506339
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_33
+      rect:
+        serializedVersion: 2
+        x: 191
+        y: 1205
+        width: 15
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 21837405b38d3c230800000000000000
+      internalID: 3658005071616489490
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_34
+      rect:
+        serializedVersion: 2
+        x: 767
+        y: 1052
+        width: 174
+        height: 212
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 74a9e8151812eea20800000000000000
+      internalID: 3093446833352907335
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_35
+      rect:
+        serializedVersion: 2
+        x: 136
+        y: 1082
+        width: 44
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 92a656f5e3c5d0100800000000000000
+      internalID: 75818191693376041
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_36
+      rect:
+        serializedVersion: 2
+        x: 685
+        y: 1112
+        width: 77
+        height: 68
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 45bea347814b11870800000000000000
+      internalID: 8651894376277666644
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_37
+      rect:
+        serializedVersion: 2
+        x: 758
+        y: 1160
+        width: 12
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0d28ba7cd1776abe0800000000000000
+      internalID: -1466353658874854704
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_38
+      rect:
+        serializedVersion: 2
+        x: 773
+        y: 1108
+        width: 31
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 75eaeec081326a840800000000000000
+      internalID: 5234910203067936343
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_39
+      rect:
+        serializedVersion: 2
+        x: 45
+        y: 1046
+        width: 70
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f7f2e3d1a2862d010800000000000000
+      internalID: 1212145779804614527
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_40
+      rect:
+        serializedVersion: 2
+        x: 844
+        y: 1094
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 71b5d09d4c77d96b0800000000000000
+      internalID: -5287938700124267753
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_41
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 898
+        width: 64
+        height: 165
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 48073a09d7c136630800000000000000
+      internalID: 3919007426365583492
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_42
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 1008
+        width: 56
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a5a08e652490e2fc0800000000000000
+      internalID: -3517864078399239590
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_43
+      rect:
+        serializedVersion: 2
+        x: 135
+        y: 988
+        width: 30
+        height: 71
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fc0cd6898e92bf860800000000000000
+      internalID: 7564686078065361103
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_44
+      rect:
+        serializedVersion: 2
+        x: 174
+        y: 1026
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 755288759bef93110800000000000000
+      internalID: 1241303244308227415
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_45
+      rect:
+        serializedVersion: 2
+        x: 900
+        y: 1029
+        width: 41
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8bd428047ced067d0800000000000000
+      internalID: -2927094810428682824
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_46
+      rect:
+        serializedVersion: 2
+        x: 103
+        y: 996
+        width: 14
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cf575206fef0d0b80800000000000000
+      internalID: -8427061806955661828
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_47
+      rect:
+        serializedVersion: 2
+        x: 169
+        y: 1004
+        width: 16
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e8d0c48c210c478a0800000000000000
+      internalID: -6308205991136850546
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_48
+      rect:
+        serializedVersion: 2
+        x: 76
+        y: 937
+        width: 58
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1e4089f7754cba8e0800000000000000
+      internalID: -1681034155810880287
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_49
+      rect:
+        serializedVersion: 2
+        x: 827
+        y: 917
+        width: 70
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a569a7bd851779500800000000000000
+      internalID: 402915318126253658
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_50
+      rect:
+        serializedVersion: 2
+        x: 868
+        y: 835
+        width: 63
+        height: 83
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 217a36a1253010f90800000000000000
+      internalID: -6989301495537359086
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_51
+      rect:
+        serializedVersion: 2
+        x: 18
+        y: 801
+        width: 115
+        height: 115
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5257ccfc53627eb10800000000000000
+      internalID: 2010617771205621029
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_52
+      rect:
+        serializedVersion: 2
+        x: 172
+        y: 877
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f9daf44e71e4226f0800000000000000
+      internalID: -710919926649475681
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_53
+      rect:
+        serializedVersion: 2
+        x: 775
+        y: 795
+        width: 89
+        height: 93
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e2f533365ab82aff0800000000000000
+      internalID: -26305105360625874
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_54
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 688
+        width: 96
+        height: 116
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 829bf4e8a7dd07af0800000000000000
+      internalID: -400576848392636120
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_55
+      rect:
+        serializedVersion: 2
+        x: 89
+        y: 714
+        width: 52
+        height: 125
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2d5890649054c50f0800000000000000
+      internalID: -1126949900617415214
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_56
+      rect:
+        serializedVersion: 2
+        x: 203
+        y: 757
+        width: 13
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6334910aa2808b5a0800000000000000
+      internalID: -6505440682569022666
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_57
+      rect:
+        serializedVersion: 2
+        x: 771
+        y: 738
+        width: 29
+        height: 55
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 206f3273316c91a50800000000000000
+      internalID: 6492438123663062530
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_58
+      rect:
+        serializedVersion: 2
+        x: 803
+        y: 634
+        width: 125
+        height: 160
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cffcc5245fcdaf560800000000000000
+      internalID: 7348428687946862588
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_59
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 638
+        width: 50
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d1ff7b7e340161140800000000000000
+      internalID: 4689953945789398813
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_60
+      rect:
+        serializedVersion: 2
+        x: 754
+        y: 594
+        width: 58
+        height: 77
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8502d11f25feaf320800000000000000
+      internalID: 2592647675016716376
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_61
+      rect:
+        serializedVersion: 2
+        x: 842
+        y: 658
+        width: 12
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 45e6fe56145a98260800000000000000
+      internalID: 7100387987827945044
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_62
+      rect:
+        serializedVersion: 2
+        x: 65
+        y: 595
+        width: 36
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cdfd176f53c3e3a60800000000000000
+      internalID: 7655622619042013148
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_63
+      rect:
+        serializedVersion: 2
+        x: 791
+        y: 628
+        width: 11
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2242148b539533970800000000000000
+      internalID: 8733422189660939298
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_64
+      rect:
+        serializedVersion: 2
+        x: 840
+        y: 618
+        width: 17
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f76f9738400d63f50800000000000000
+      internalID: 6860899800149784191
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_65
+      rect:
+        serializedVersion: 2
+        x: 852
+        y: 546
+        width: 89
+        height: 82
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bd5f88900b5e5f920800000000000000
+      internalID: 3023575269086131675
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_66
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 521
+        width: 64
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b9cac8a8847feb3c0800000000000000
+      internalID: -4341761099804398437
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_67
+      rect:
+        serializedVersion: 2
+        x: 237
+        y: 568
+        width: 24
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e6d0acd51fffa6b50800000000000000
+      internalID: 6587358817108495726
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_68
+      rect:
+        serializedVersion: 2
+        x: 81
+        y: 501
+        width: 36
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4a58b136649ce6de0800000000000000
+      internalID: -1337910735134816860
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_69
+      rect:
+        serializedVersion: 2
+        x: 105
+        y: 513
+        width: 8
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 00487ddb497dff320800000000000000
+      internalID: 2594028944228844544
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_70
+      rect:
+        serializedVersion: 2
+        x: 245
+        y: 517
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9addc675d7c597370800000000000000
+      internalID: 8320783479951121833
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_71
+      rect:
+        serializedVersion: 2
+        x: 706
+        y: 521
+        width: 7
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0ab04c54c332adf80800000000000000
+      internalID: -8081107839587447904
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_72
+      rect:
+        serializedVersion: 2
+        x: 823
+        y: 413
+        width: 109
+        height: 116
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d027a114c8f63e3c0800000000000000
+      internalID: -4331495768421928435
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_73
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 495
+        width: 17
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 687a48121cf632490800000000000000
+      internalID: -7772245656629631098
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_74
+      rect:
+        serializedVersion: 2
+        x: 24
+        y: 353
+        width: 98
+        height: 131
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 57d2b10f47a9c0fa0800000000000000
+      internalID: -5833117590316438155
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_75
+      rect:
+        serializedVersion: 2
+        x: 805
+        y: 338
+        width: 43
+        height: 55
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 80910be6509415430800000000000000
+      internalID: 3769874650766514440
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_76
+      rect:
+        serializedVersion: 2
+        x: 882
+        y: 377
+        width: 54
+        height: 43
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d15795668dbad42b0800000000000000
+      internalID: -5598629815833234147
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_77
+      rect:
+        serializedVersion: 2
+        x: 38
+        y: 361
+        width: 10
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0c3756e9600f55b90800000000000000
+      internalID: -7253627713592396864
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_78
+      rect:
+        serializedVersion: 2
+        x: 101
+        y: 357
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9b75cb904ee009c90800000000000000
+      internalID: -7165210634567788615
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_79
+      rect:
+        serializedVersion: 2
+        x: 103
+        y: 353
+        width: 10
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 825a0aefd7ff268e0800000000000000
+      internalID: -1701516792584690392
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_80
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 285
+        width: 66
+        height: 55
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bf26e407ee120d550800000000000000
+      internalID: 6183479596349809403
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_81
+      rect:
+        serializedVersion: 2
+        x: 65
+        y: 264
+        width: 54
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1944705d0ebdb45a0800000000000000
+      internalID: -6535888675504962415
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_82
+      rect:
+        serializedVersion: 2
+        x: 170
+        y: 306
+        width: 10
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 13050afb53cc07070800000000000000
+      internalID: 8102200260859809841
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_83
+      rect:
+        serializedVersion: 2
+        x: 174
+        y: 296
+        width: 8
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a41a05a63d908e7b0800000000000000
+      internalID: -5194891366545448630
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_84
+      rect:
+        serializedVersion: 2
+        x: 870
+        y: 246
+        width: 71
+        height: 94
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3419c1580b9df9940800000000000000
+      internalID: 5305198238236447043
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_85
+      rect:
+        serializedVersion: 2
+        x: 203
+        y: 276
+        width: 7
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ce8961ad187f2b250800000000000000
+      internalID: 5959097394046343404
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_86
+      rect:
+        serializedVersion: 2
+        x: 809
+        y: 220
+        width: 56
+        height: 71
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1fe1bb2f33be68100800000000000000
+      internalID: 110033849265364721
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_87
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 182
+        height: 255
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 041ebe4844e5736c0800000000000000
+      internalID: -4163755682099896000
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_88
+      rect:
+        serializedVersion: 2
+        x: 81
+        y: 206
+        width: 54
+        height: 67
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 92d6fa2c5d0e8e610800000000000000
+      internalID: 1650816472130219305
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_89
+      rect:
+        serializedVersion: 2
+        x: 146
+        y: 172
+        width: 50
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ac55b8cd0210c5c30800000000000000
+      internalID: 4349352580783756746
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_90
+      rect:
+        serializedVersion: 2
+        x: 535
+        y: 216
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2ca6781b346dc1a30800000000000000
+      internalID: 4187457339777313474
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_91
+      rect:
+        serializedVersion: 2
+        x: 748
+        y: 17
+        width: 193
+        height: 225
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 84b7cfa5ab32e47b0800000000000000
+      internalID: -5238210033287922872
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_92
+      rect:
+        serializedVersion: 2
+        x: 694
+        y: 170
+        width: 21
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 387e55e60c4e15cc0800000000000000
+      internalID: -3723943901722712189
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_93
+      rect:
+        serializedVersion: 2
+        x: 710
+        y: 160
+        width: 41
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c79cc9b2e3df2ba30800000000000000
+      internalID: 4229721443515812220
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_94
+      rect:
+        serializedVersion: 2
+        x: 756
+        y: 170
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3a106bb89da7e85d0800000000000000
+      internalID: -3058372022167535197
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_95
+      rect:
+        serializedVersion: 2
+        x: 249
+        y: 128
+        width: 28
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8a6df1bdceb024ac0800000000000000
+      internalID: -3872519617668720984
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_96
+      rect:
+        serializedVersion: 2
+        x: 276
+        y: 130
+        width: 9
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a0bb218ab786fdf40800000000000000
+      internalID: 5755433729112849162
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_97
+      rect:
+        serializedVersion: 2
+        x: 314
+        y: 111
+        width: 12
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c6d2f3464d1ce29f0800000000000000
+      internalID: -491242191377715860
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_98
+      rect:
+        serializedVersion: 2
+        x: 207
+        y: 47
+        width: 37
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 91d057ccb3e60fd60800000000000000
+      internalID: 7921952947657051417
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_99
+      rect:
+        serializedVersion: 2
+        x: 251
+        y: 82
+        width: 16
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e3c39129ebeac57f0800000000000000
+      internalID: -622430514965824450
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_100
+      rect:
+        serializedVersion: 2
+        x: 676
+        y: 47
+        width: 53
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3578e1d216d4988f0800000000000000
+      internalID: -537813600729921709
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_101
+      rect:
+        serializedVersion: 2
+        x: 237
+        y: 7
+        width: 45
+        height: 43
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8b03abc498d5932a0800000000000000
+      internalID: -6757266921613545288
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_102
+      rect:
+        serializedVersion: 2
+        x: 831
+        y: 0
+        width: 73
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a553162ffb383f230800000000000000
+      internalID: 3671422981665535322
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_103
+      rect:
+        serializedVersion: 2
+        x: 900
+        y: 31
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2557bfab20d94e080800000000000000
+      internalID: -9159023107112209070
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_104
+      rect:
+        serializedVersion: 2
+        x: 847
+        y: 0
+        width: 16
+        height: 5
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 78f4710e7a8e2e380800000000000000
+      internalID: -8943330102287577209
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Extras_105
+      rect:
+        serializedVersion: 2
+        x: 866
+        y: 0
+        width: 15
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 43a1db34e6d05f5b0800000000000000
+      internalID: -5335343416316454348
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      GoldCity_Extras_0: 2498819075217967398
+      GoldCity_Extras_1: -3545673594583518
+      GoldCity_Extras_10: 5962839247426062418
+      GoldCity_Extras_100: -537813600729921709
+      GoldCity_Extras_101: -6757266921613545288
+      GoldCity_Extras_102: 3671422981665535322
+      GoldCity_Extras_103: -9159023107112209070
+      GoldCity_Extras_104: -8943330102287577209
+      GoldCity_Extras_105: -5335343416316454348
+      GoldCity_Extras_11: 3698678132553723240
+      GoldCity_Extras_12: 3280349766221879751
+      GoldCity_Extras_13: -2424196287070147413
+      GoldCity_Extras_14: -3555702840992254978
+      GoldCity_Extras_15: -1515253838848263992
+      GoldCity_Extras_16: 6214861350832479182
+      GoldCity_Extras_17: 6628324081628592696
+      GoldCity_Extras_18: 1457323146715716179
+      GoldCity_Extras_19: 1278393482294251118
+      GoldCity_Extras_2: 7037758520432916990
+      GoldCity_Extras_20: -1314779013021980275
+      GoldCity_Extras_21: -7632894262007517605
+      GoldCity_Extras_22: -4606874133174858579
+      GoldCity_Extras_23: 3188353608079757534
+      GoldCity_Extras_24: 690715416807938503
+      GoldCity_Extras_25: -3804569890287201127
+      GoldCity_Extras_26: 546270010734399883
+      GoldCity_Extras_27: 1496310721201562322
+      GoldCity_Extras_28: -3141146240774409335
+      GoldCity_Extras_29: -6535513911759875655
+      GoldCity_Extras_3: -6807683738481865763
+      GoldCity_Extras_30: 840523456094095117
+      GoldCity_Extras_31: -157939229356012169
+      GoldCity_Extras_32: -6462934046728506339
+      GoldCity_Extras_33: 3658005071616489490
+      GoldCity_Extras_34: 3093446833352907335
+      GoldCity_Extras_35: 75818191693376041
+      GoldCity_Extras_36: 8651894376277666644
+      GoldCity_Extras_37: -1466353658874854704
+      GoldCity_Extras_38: 5234910203067936343
+      GoldCity_Extras_39: 1212145779804614527
+      GoldCity_Extras_4: 2021382641906073714
+      GoldCity_Extras_40: -5287938700124267753
+      GoldCity_Extras_41: 3919007426365583492
+      GoldCity_Extras_42: -3517864078399239590
+      GoldCity_Extras_43: 7564686078065361103
+      GoldCity_Extras_44: 1241303244308227415
+      GoldCity_Extras_45: -2927094810428682824
+      GoldCity_Extras_46: -8427061806955661828
+      GoldCity_Extras_47: -6308205991136850546
+      GoldCity_Extras_48: -1681034155810880287
+      GoldCity_Extras_49: 402915318126253658
+      GoldCity_Extras_5: -6216253647971087386
+      GoldCity_Extras_50: -6989301495537359086
+      GoldCity_Extras_51: 2010617771205621029
+      GoldCity_Extras_52: -710919926649475681
+      GoldCity_Extras_53: -26305105360625874
+      GoldCity_Extras_54: -400576848392636120
+      GoldCity_Extras_55: -1126949900617415214
+      GoldCity_Extras_56: -6505440682569022666
+      GoldCity_Extras_57: 6492438123663062530
+      GoldCity_Extras_58: 7348428687946862588
+      GoldCity_Extras_59: 4689953945789398813
+      GoldCity_Extras_6: -1269143986609519545
+      GoldCity_Extras_60: 2592647675016716376
+      GoldCity_Extras_61: 7100387987827945044
+      GoldCity_Extras_62: 7655622619042013148
+      GoldCity_Extras_63: 8733422189660939298
+      GoldCity_Extras_64: 6860899800149784191
+      GoldCity_Extras_65: 3023575269086131675
+      GoldCity_Extras_66: -4341761099804398437
+      GoldCity_Extras_67: 6587358817108495726
+      GoldCity_Extras_68: -1337910735134816860
+      GoldCity_Extras_69: 2594028944228844544
+      GoldCity_Extras_7: 5948855716823647507
+      GoldCity_Extras_70: 8320783479951121833
+      GoldCity_Extras_71: -8081107839587447904
+      GoldCity_Extras_72: -4331495768421928435
+      GoldCity_Extras_73: -7772245656629631098
+      GoldCity_Extras_74: -5833117590316438155
+      GoldCity_Extras_75: 3769874650766514440
+      GoldCity_Extras_76: -5598629815833234147
+      GoldCity_Extras_77: -7253627713592396864
+      GoldCity_Extras_78: -7165210634567788615
+      GoldCity_Extras_79: -1701516792584690392
+      GoldCity_Extras_8: -6514933579113106408
+      GoldCity_Extras_80: 6183479596349809403
+      GoldCity_Extras_81: -6535888675504962415
+      GoldCity_Extras_82: 8102200260859809841
+      GoldCity_Extras_83: -5194891366545448630
+      GoldCity_Extras_84: 5305198238236447043
+      GoldCity_Extras_85: 5959097394046343404
+      GoldCity_Extras_86: 110033849265364721
+      GoldCity_Extras_87: -4163755682099896000
+      GoldCity_Extras_88: 1650816472130219305
+      GoldCity_Extras_89: 4349352580783756746
+      GoldCity_Extras_9: 4400077675529422731
+      GoldCity_Extras_90: 4187457339777313474
+      GoldCity_Extras_91: -5238210033287922872
+      GoldCity_Extras_92: -3723943901722712189
+      GoldCity_Extras_93: 4229721443515812220
+      GoldCity_Extras_94: -3058372022167535197
+      GoldCity_Extras_95: -3872519617668720984
+      GoldCity_Extras_96: 5755433729112849162
+      GoldCity_Extras_97: -491242191377715860
+      GoldCity_Extras_98: 7921952947657051417
+      GoldCity_Extras_99: -622430514965824450
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -1,0 +1,1560 @@
+fileFormatVersion: 2
+guid: 7bb3936b0acd92c42b3e8d6278b61449
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 2180925655238882965
+    second: RacingCity_Decorations_0
+  - first:
+      213: -8094279182831226589
+    second: RacingCity_Decorations_1
+  - first:
+      213: 6942109196474118675
+    second: RacingCity_Decorations_2
+  - first:
+      213: -5572666752755438754
+    second: RacingCity_Decorations_3
+  - first:
+      213: 3408767481220848940
+    second: RacingCity_Decorations_4
+  - first:
+      213: -3893113976518678782
+    second: RacingCity_Decorations_5
+  - first:
+      213: -8633628353596084953
+    second: RacingCity_Decorations_6
+  - first:
+      213: 2692590508487989540
+    second: RacingCity_Decorations_7
+  - first:
+      213: 1933062581418189793
+    second: RacingCity_Decorations_8
+  - first:
+      213: -5304286964366261509
+    second: RacingCity_Decorations_9
+  - first:
+      213: 8609240552341982045
+    second: RacingCity_Decorations_10
+  - first:
+      213: -7321824475122479753
+    second: RacingCity_Decorations_11
+  - first:
+      213: -3046329276489213104
+    second: RacingCity_Decorations_12
+  - first:
+      213: -253182266911680680
+    second: RacingCity_Decorations_13
+  - first:
+      213: -555978824240976197
+    second: RacingCity_Decorations_14
+  - first:
+      213: 8581916850737010984
+    second: RacingCity_Decorations_15
+  - first:
+      213: 7649874720529179996
+    second: RacingCity_Decorations_16
+  - first:
+      213: -8421020501250138313
+    second: RacingCity_Decorations_17
+  - first:
+      213: -6735308498241502966
+    second: RacingCity_Decorations_18
+  - first:
+      213: -1699559473445106989
+    second: RacingCity_Decorations_19
+  - first:
+      213: -5343718983048419360
+    second: RacingCity_Decorations_20
+  - first:
+      213: 7224631062197352120
+    second: RacingCity_Decorations_21
+  - first:
+      213: -2113118089918864294
+    second: RacingCity_Decorations_22
+  - first:
+      213: 8766482825357910398
+    second: RacingCity_Decorations_23
+  - first:
+      213: 8215074813257493600
+    second: RacingCity_Decorations_24
+  - first:
+      213: -9212220043792416755
+    second: RacingCity_Decorations_25
+  - first:
+      213: 3706177761222746119
+    second: RacingCity_Decorations_26
+  - first:
+      213: -7209437986787647218
+    second: RacingCity_Decorations_27
+  - first:
+      213: 2390962995666045923
+    second: RacingCity_Decorations_28
+  - first:
+      213: -5043022004584183703
+    second: RacingCity_Decorations_29
+  - first:
+      213: -704452175684607715
+    second: RacingCity_Decorations_30
+  - first:
+      213: 3386151591297269679
+    second: RacingCity_Decorations_31
+  - first:
+      213: -1014769036587552238
+    second: RacingCity_Decorations_32
+  - first:
+      213: 8776809492693719600
+    second: RacingCity_Decorations_33
+  - first:
+      213: -5179647467668262975
+    second: RacingCity_Decorations_34
+  - first:
+      213: -8006384302616177292
+    second: RacingCity_Decorations_35
+  - first:
+      213: -2264145615563229747
+    second: RacingCity_Decorations_36
+  - first:
+      213: -2959642857286733837
+    second: RacingCity_Decorations_37
+  - first:
+      213: 596450320533001381
+    second: RacingCity_Decorations_38
+  - first:
+      213: -5996264437201617496
+    second: RacingCity_Decorations_39
+  - first:
+      213: 5566430073403960124
+    second: RacingCity_Decorations_40
+  - first:
+      213: -951044952378129983
+    second: RacingCity_Decorations_41
+  - first:
+      213: 4260261752108124582
+    second: RacingCity_Decorations_42
+  - first:
+      213: 8641684940239864309
+    second: RacingCity_Decorations_43
+  - first:
+      213: 3466305645991570924
+    second: RacingCity_Decorations_44
+  - first:
+      213: 8334032095302783646
+    second: RacingCity_Decorations_45
+  - first:
+      213: -630719005066725064
+    second: RacingCity_Decorations_46
+  - first:
+      213: 5028636319001500914
+    second: RacingCity_Decorations_47
+  - first:
+      213: 6400745761357776033
+    second: RacingCity_Decorations_48
+  - first:
+      213: 7055703891903053218
+    second: RacingCity_Decorations_49
+  - first:
+      213: 3419929473339950475
+    second: RacingCity_Decorations_50
+  - first:
+      213: 7476551297133542452
+    second: RacingCity_Decorations_51
+  - first:
+      213: -2648022982150389430
+    second: RacingCity_Decorations_52
+  - first:
+      213: 3816715259474311114
+    second: RacingCity_Decorations_53
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: RacingCity_Decorations_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1631
+        width: 6
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 596bc021454344e10800000000000000
+      internalID: 2180925655238882965
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RacingCity_Decorations_1
+      rect:
+        serializedVersion: 2
+        x: 5
+        y: 1605
+        width: 51
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3217182f7f75baf80800000000000000
+      internalID: -8094279182831226589
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RacingCity_Decorations_2
+      rect:
+        serializedVersion: 2
+        x: 182
+        y: 1564
+        width: 176
+        height: 108
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 312ffc78883575060800000000000000
+      internalID: 6942109196474118675
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RacingCity_Decorations_3
+      rect:
+        serializedVersion: 2
+        x: 568
+        y: 1550
+        width: 258
+        height: 96
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e5be1661d19e9a2b0800000000000000
+      internalID: -5572666752755438754
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RacingCity_Decorations_4
+      rect:
+        serializedVersion: 2
+        x: 827
+        y: 1540
+        width: 114
+        height: 117
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c2d5218b6ff5e4f20800000000000000
+      internalID: 3408767481220848940
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RacingCity_Decorations_5
+      rect:
+        serializedVersion: 2
+        x: 13
+        y: 1446
+        width: 150
+        height: 146
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 207ee770771e8f9c0800000000000000
+      internalID: -3893113976518678782
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RacingCity_Decorations_6
+      rect:
+        serializedVersion: 2
+        x: 111
+        y: 1570
+        width: 55
+        height: 56
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 72d2a2d51c03f2880800000000000000
+      internalID: -8633628353596084953
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RacingCity_Decorations_7
+      rect:
+        serializedVersion: 2
+        x: 170
+        y: 1529
+        width: 52
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 429d3003dc00e5520800000000000000
+      internalID: 2692590508487989540
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RacingCity_Decorations_8
+      rect:
+        serializedVersion: 2
+        x: 704
+        y: 1436
+        width: 72
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1e3e70e0d2e93da10800000000000000
+      internalID: 1933062581418189793
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RacingCity_Decorations_9
+      rect:
+        serializedVersion: 2
+        x: 795
+        y: 1462
+        width: 64
+        height: 57
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bf2c636fb136366b0800000000000000
+      internalID: -5304286964366261509
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RacingCity_Decorations_10
+      rect:
+        serializedVersion: 2
+        x: 842
+        y: 1401
+        width: 99
+        height: 143
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d5b4b3c2baa2a7770800000000000000
+      internalID: 8609240552341982045
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RacingCity_Decorations_11
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1353
+        width: 67
+        height: 107
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 77d409cbe67a36a90800000000000000
+      internalID: -7321824475122479753
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RacingCity_Decorations_12
+      rect:
+        serializedVersion: 2
+        x: 65
+        y: 1422
+        width: 52
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 05bdcf5c9a349b5d0800000000000000
+      internalID: -3046329276489213104
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RacingCity_Decorations_13
+      rect:
+        serializedVersion: 2
+        x: 170
+        y: 732
+        width: 271
+        height: 719
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8571d45d1148c7cf0800000000000000
+      internalID: -253182266911680680
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RacingCity_Decorations_14
+      rect:
+        serializedVersion: 2
+        x: 779
+        y: 1369
+        width: 66
+        height: 57
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bbe2a7e7434c848f0800000000000000
+      internalID: -555978824240976197
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RacingCity_Decorations_15
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1221
+        width: 116
+        height: 99
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8295e1428e7191770800000000000000
+      internalID: 8581916850737010984
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RacingCity_Decorations_16
+      rect:
+        serializedVersion: 2
+        x: 95
+        y: 1317
+        width: 70
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c55e16d0780d92a60800000000000000
+      internalID: 7649874720529179996
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RacingCity_Decorations_17
+      rect:
+        serializedVersion: 2
+        x: 842
+        y: 1291
+        width: 99
+        height: 82
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 73f14b87876822b80800000000000000
+      internalID: -8421020501250138313
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RacingCity_Decorations_18
+      rect:
+        serializedVersion: 2
+        x: 794
+        y: 1227
+        width: 51
+        height: 59
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a0145a52b906782a0800000000000000
+      internalID: -6735308498241502966
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RacingCity_Decorations_19
+      rect:
+        serializedVersion: 2
+        x: 30
+        y: 1130
+        width: 83
+        height: 78
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3da87aed9a3f968e0800000000000000
+      internalID: -1699559473445106989
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RacingCity_Decorations_20
+      rect:
+        serializedVersion: 2
+        x: 801
+        y: 1107
+        width: 126
+        height: 118
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0e723eba5eb47d5b0800000000000000
+      internalID: -5343718983048419360
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RacingCity_Decorations_21
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1034
+        width: 61
+        height: 88
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8b6b68f5cab034460800000000000000
+      internalID: 7224631062197352120
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RacingCity_Decorations_22
+      rect:
+        serializedVersion: 2
+        x: 76
+        y: 1074
+        width: 62
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a542fe10b42bca2e0800000000000000
+      internalID: -2113118089918864294
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RacingCity_Decorations_23
+      rect:
+        serializedVersion: 2
+        x: 886
+        y: 1044
+        width: 43
+        height: 41
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e71650fceadc8a970800000000000000
+      internalID: 8766482825357910398
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RacingCity_Decorations_24
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 949
+        width: 119
+        height: 84
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 06ca87f640fc10270800000000000000
+      internalID: 8215074813257493600
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RacingCity_Decorations_25
+      rect:
+        serializedVersion: 2
+        x: 641
+        y: 955
+        width: 198
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d000509bdae972080800000000000000
+      internalID: -9212220043792416755
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RacingCity_Decorations_26
+      rect:
+        serializedVersion: 2
+        x: 908
+        y: 1016
+        width: 18
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7006224a90dfe6330800000000000000
+      internalID: 3706177761222746119
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RacingCity_Decorations_27
+      rect:
+        serializedVersion: 2
+        x: 853
+        y: 895
+        width: 88
+        height: 89
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e01a057295ee2fb90800000000000000
+      internalID: -7209437986787647218
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RacingCity_Decorations_28
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 789
+        width: 98
+        height: 72
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3eb47cb3d286e2120800000000000000
+      internalID: 2390962995666045923
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RacingCity_Decorations_29
+      rect:
+        serializedVersion: 2
+        x: 80
+        y: 848
+        width: 35
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9680846b436930ab0800000000000000
+      internalID: -5043022004584183703
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RacingCity_Decorations_30
+      rect:
+        serializedVersion: 2
+        x: 852
+        y: 819
+        width: 64
+        height: 56
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d1161138a784936f0800000000000000
+      internalID: -704452175684607715
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RacingCity_Decorations_31
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 690
+        width: 66
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fafb5e28ee60efe20800000000000000
+      internalID: 3386151591297269679
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RacingCity_Decorations_32
+      rect:
+        serializedVersion: 2
+        x: 874
+        y: 733
+        width: 39
+        height: 41
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 212322d00f0dae1f0800000000000000
+      internalID: -1014769036587552238
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RacingCity_Decorations_33
+      rect:
+        serializedVersion: 2
+        x: 805
+        y: 655
+        width: 64
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 03a19496bbd7dc970800000000000000
+      internalID: 8776809492693719600
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RacingCity_Decorations_34
+      rect:
+        serializedVersion: 2
+        x: 17
+        y: 590
+        width: 47
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1cfa1e332123e18b0800000000000000
+      internalID: -5179647467668262975
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RacingCity_Decorations_35
+      rect:
+        serializedVersion: 2
+        x: 84
+        y: 19
+        width: 444
+        height: 626
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4759c4b75eb93e090800000000000000
+      internalID: -8006384302616177292
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RacingCity_Decorations_36
+      rect:
+        serializedVersion: 2
+        x: 592
+        y: 248
+        width: 349
+        height: 352
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dc578900f832490e0800000000000000
+      internalID: -2264145615563229747
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RacingCity_Decorations_37
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 463
+        width: 63
+        height: 55
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3ffe66d808c3de6d0800000000000000
+      internalID: -2959642857286733837
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RacingCity_Decorations_38
+      rect:
+        serializedVersion: 2
+        x: 839
+        y: 443
+        width: 48
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5a499890864074800800000000000000
+      internalID: 596450320533001381
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RacingCity_Decorations_39
+      rect:
+        serializedVersion: 2
+        x: 13
+        y: 361
+        width: 60
+        height: 57
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8ad3a41934df8cca0800000000000000
+      internalID: -5996264437201617496
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RacingCity_Decorations_40
+      rect:
+        serializedVersion: 2
+        x: 799
+        y: 361
+        width: 48
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c3b6b48d8aeef3d40800000000000000
+      internalID: 5566430073403960124
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RacingCity_Decorations_41
+      rect:
+        serializedVersion: 2
+        x: 890
+        y: 367
+        width: 51
+        height: 61
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1c1c21897a53dc2f0800000000000000
+      internalID: -951044952378129983
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RacingCity_Decorations_42
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 204
+        width: 118
+        height: 104
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6a98690ed7d7f1b30800000000000000
+      internalID: 4260261752108124582
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RacingCity_Decorations_43
+      rect:
+        serializedVersion: 2
+        x: 140
+        y: 222
+        width: 56
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5f107d3eaae6de770800000000000000
+      internalID: 8641684940239864309
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RacingCity_Decorations_44
+      rect:
+        serializedVersion: 2
+        x: 764
+        y: 228
+        width: 166
+        height: 111
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ced2248ae9aca1030800000000000000
+      internalID: 3466305645991570924
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RacingCity_Decorations_45
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 49
+        width: 82
+        height: 141
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e921a3bf80e68a370800000000000000
+      internalID: 8334032095302783646
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RacingCity_Decorations_46
+      rect:
+        serializedVersion: 2
+        x: 43
+        y: 174
+        width: 57
+        height: 43
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 839f8e5186c3f37f0800000000000000
+      internalID: -630719005066725064
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RacingCity_Decorations_47
+      rect:
+        serializedVersion: 2
+        x: 113
+        y: 146
+        width: 50
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2fc56bad61e49c540800000000000000
+      internalID: 5028636319001500914
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RacingCity_Decorations_48
+      rect:
+        serializedVersion: 2
+        x: 787
+        y: 124
+        width: 154
+        height: 103
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1a4415b7b5404d850800000000000000
+      internalID: 6400745761357776033
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RacingCity_Decorations_49
+      rect:
+        serializedVersion: 2
+        x: 172
+        y: 71
+        width: 41
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2adf8359e45eae160800000000000000
+      internalID: 7055703891903053218
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RacingCity_Decorations_50
+      rect:
+        serializedVersion: 2
+        x: 763
+        y: 95
+        width: 66
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b8501578cb7067f20800000000000000
+      internalID: 3419929473339950475
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RacingCity_Decorations_51
+      rect:
+        serializedVersion: 2
+        x: 840
+        y: 0
+        width: 101
+        height: 121
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 43c71a2dacb02c760800000000000000
+      internalID: 7476551297133542452
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RacingCity_Decorations_52
+      rect:
+        serializedVersion: 2
+        x: 49
+        y: 0
+        width: 80
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a410bd7a025504bd0800000000000000
+      internalID: -2648022982150389430
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RacingCity_Decorations_53
+      rect:
+        serializedVersion: 2
+        x: 681
+        y: 0
+        width: 115
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ac777c18e42b7f430800000000000000
+      internalID: 3816715259474311114
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      RacingCity_Decorations_0: 2180925655238882965
+      RacingCity_Decorations_1: -8094279182831226589
+      RacingCity_Decorations_10: 8609240552341982045
+      RacingCity_Decorations_11: -7321824475122479753
+      RacingCity_Decorations_12: -3046329276489213104
+      RacingCity_Decorations_13: -253182266911680680
+      RacingCity_Decorations_14: -555978824240976197
+      RacingCity_Decorations_15: 8581916850737010984
+      RacingCity_Decorations_16: 7649874720529179996
+      RacingCity_Decorations_17: -8421020501250138313
+      RacingCity_Decorations_18: -6735308498241502966
+      RacingCity_Decorations_19: -1699559473445106989
+      RacingCity_Decorations_2: 6942109196474118675
+      RacingCity_Decorations_20: -5343718983048419360
+      RacingCity_Decorations_21: 7224631062197352120
+      RacingCity_Decorations_22: -2113118089918864294
+      RacingCity_Decorations_23: 8766482825357910398
+      RacingCity_Decorations_24: 8215074813257493600
+      RacingCity_Decorations_25: -9212220043792416755
+      RacingCity_Decorations_26: 3706177761222746119
+      RacingCity_Decorations_27: -7209437986787647218
+      RacingCity_Decorations_28: 2390962995666045923
+      RacingCity_Decorations_29: -5043022004584183703
+      RacingCity_Decorations_3: -5572666752755438754
+      RacingCity_Decorations_30: -704452175684607715
+      RacingCity_Decorations_31: 3386151591297269679
+      RacingCity_Decorations_32: -1014769036587552238
+      RacingCity_Decorations_33: 8776809492693719600
+      RacingCity_Decorations_34: -5179647467668262975
+      RacingCity_Decorations_35: -8006384302616177292
+      RacingCity_Decorations_36: -2264145615563229747
+      RacingCity_Decorations_37: -2959642857286733837
+      RacingCity_Decorations_38: 596450320533001381
+      RacingCity_Decorations_39: -5996264437201617496
+      RacingCity_Decorations_4: 3408767481220848940
+      RacingCity_Decorations_40: 5566430073403960124
+      RacingCity_Decorations_41: -951044952378129983
+      RacingCity_Decorations_42: 4260261752108124582
+      RacingCity_Decorations_43: 8641684940239864309
+      RacingCity_Decorations_44: 3466305645991570924
+      RacingCity_Decorations_45: 8334032095302783646
+      RacingCity_Decorations_46: -630719005066725064
+      RacingCity_Decorations_47: 5028636319001500914
+      RacingCity_Decorations_48: 6400745761357776033
+      RacingCity_Decorations_49: 7055703891903053218
+      RacingCity_Decorations_5: -3893113976518678782
+      RacingCity_Decorations_50: 3419929473339950475
+      RacingCity_Decorations_51: 7476551297133542452
+      RacingCity_Decorations_52: -2648022982150389430
+      RacingCity_Decorations_53: 3816715259474311114
+      RacingCity_Decorations_6: -8633628353596084953
+      RacingCity_Decorations_7: 2692590508487989540
+      RacingCity_Decorations_8: 1933062581418189793
+      RacingCity_Decorations_9: -5304286964366261509
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

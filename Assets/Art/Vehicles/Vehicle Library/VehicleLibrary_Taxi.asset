@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a0b1a7b68e7e43644b22fbf7f60a427f, type: 3}
+  m_Name: VehicleLibrary_Taxi
+  m_EditorClassIdentifier: Assembly-CSharp::VehicleSpriteLibrary
+  targetCarSprite: {fileID: 21300000, guid: d11c7a16a92270342b5854e18dd6512a, type: 3}
+  horizontalLength2Sprites:
+  - {fileID: 21300000, guid: ff664bec97ee25647add6ae4b1203a1d, type: 3}
+  horizontalLength3Sprites:
+  - {fileID: 21300000, guid: 86064056d33924946b442e93746ad221, type: 3}
+  horizontalLength4Sprites:
+  - {fileID: 21300000, guid: 8cdfeb97fdd9a934ea9df43beff523b5, type: 3}
+  verticalLength2Sprites:
+  - {fileID: 21300000, guid: ff664bec97ee25647add6ae4b1203a1d, type: 3}
+  verticalLength3Sprites:
+  - {fileID: 21300000, guid: 86064056d33924946b442e93746ad221, type: 3}
+  verticalLength4Sprites:
+  - {fileID: 21300000, guid: 8cdfeb97fdd9a934ea9df43beff523b5, type: 3}

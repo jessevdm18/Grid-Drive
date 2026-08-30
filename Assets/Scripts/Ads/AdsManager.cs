@@ -25,17 +25,30 @@ public class AdsManager : MonoBehaviour
         "ca-app-pub-3940256099942544/4411468910";
 
     // Grid Drive v1 Android production ad units (Release builds only).
-    private const string ProductionRewardedAndroid =
+    private const string ProductionRewardedHintAndroid =
         "ca-app-pub-8657245895551337/4707151288";
+    private const string ProductionRewardedFreeCoinsAndroid =
+        "ca-app-pub-8657245895551337/7369665574";
     private const string ProductionInterstitialAndroid =
         "ca-app-pub-8657245895551337/6318731373";
 
-    private RewardedAd rewardedAd;
+    /// <summary>Gameplay FREE HINT placement id (also analytics).</summary>
+    public const string PlacementHint = "hint";
+
+    /// <summary>Shop FREE COINS placement id (also analytics).</summary>
+    public const string PlacementShopFreeCoins = "shop_free_coins";
+
+    private RewardedAd rewardedHintAd;
+    private RewardedAd rewardedFreeCoinsAd;
     private InterstitialAd interstitialAd;
 
     // Callback after interstitial close/fail — at most once.
     private Action interstitialClosedCallback;
     private bool interstitialCallbackInvoked;
+
+    /// <summary>Optional one-shot after rewarded fullscreen closes/fails (shop UI unlock).</summary>
+    private Action pendingRewardedFlowEnded;
+    private bool rewardedFlowEndedInvoked;
 
     private bool adsInitialized;
     private bool subscribedToConsent;
@@ -51,10 +64,11 @@ public class AdsManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Central rewarded ad unit selection.
-    /// Editor / Development → Google test. Android Release → production.
+    /// Central rewarded ad unit selection for a placement.
+    /// Editor / Development → Google test (same test unit for both placements).
+    /// Android Release → hint vs shop_free_coins production units.
     /// </summary>
-    public static string GetRewardedAdUnitId()
+    public static string GetRewardedAdUnitId(string placement = PlacementHint)
     {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
 #if UNITY_IOS
@@ -63,13 +77,26 @@ public class AdsManager : MonoBehaviour
         return GoogleTestRewardedAndroid;
 #endif
 #elif UNITY_ANDROID
-        return ProductionRewardedAndroid;
+        if (IsShopFreeCoinsPlacement(placement))
+        {
+            return ProductionRewardedFreeCoinsAndroid;
+        }
+
+        return ProductionRewardedHintAndroid;
 #elif UNITY_IOS
         // iOS production IDs not configured yet — keep Google test / no live fill.
         return GoogleTestRewardedIos;
 #else
         return "unused";
 #endif
+    }
+
+    private static bool IsShopFreeCoinsPlacement(string placement)
+    {
+        return string.Equals(
+            placement,
+            PlacementShopFreeCoins,
+            StringComparison.Ordinal);
     }
 
     /// <summary>
@@ -208,75 +235,112 @@ public class AdsManager : MonoBehaviour
     // --- Rewarded Ads ---
 
     /// <summary>
-    /// Loads a new rewarded ad. Destroys any previous ad first.
-    /// No-op when ads are not allowed yet.
+    /// Preloads rewarded ads for hint and shop_free_coins placements.
     /// </summary>
     public void LoadRewardedAd()
+    {
+        LoadRewardedAdForPlacement(PlacementHint);
+        LoadRewardedAdForPlacement(PlacementShopFreeCoins);
+    }
+
+    /// <summary>
+    /// Loads one rewarded placement. Destroys any previous ad for that placement first.
+    /// No-op when ads are not allowed yet.
+    /// </summary>
+    public void LoadRewardedAdForPlacement(string placement)
     {
         if (!adsInitialized || !PrivacyConsentManager.CanRequestAds)
         {
             return;
         }
 
-        if (rewardedAd != null)
-        {
-            rewardedAd.Destroy();
-            rewardedAd = null;
-        }
+        string resolvedPlacement = ResolveRewardedPlacement(placement);
+        DestroyRewardedAdForPlacement(resolvedPlacement);
 
+        string adUnitId = GetRewardedAdUnitId(resolvedPlacement);
         AdRequest request = new AdRequest();
 
-        RewardedAd.Load(GetRewardedAdUnitId(), request, (RewardedAd ad, LoadAdError error) =>
+        RewardedAd.Load(adUnitId, request, (RewardedAd ad, LoadAdError error) =>
         {
             RunOnMainThread(() =>
             {
                 if (error != null)
                 {
-                    Debug.Log("Rewarded ad failed to load");
+                    Debug.Log(
+                        "Rewarded ad failed to load placement=" + resolvedPlacement);
                     Debug.Log(error.ToString());
                     return;
                 }
 
                 if (ad == null)
                 {
-                    Debug.Log("Rewarded ad failed to load");
+                    Debug.Log(
+                        "Rewarded ad failed to load placement=" + resolvedPlacement);
                     return;
                 }
 
-                rewardedAd = ad;
-                RegisterFullScreenCallbacks(rewardedAd);
+                SetRewardedAdForPlacement(resolvedPlacement, ad);
+                RegisterFullScreenCallbacks(ad, resolvedPlacement);
 
-                Debug.Log("Rewarded ad loaded");
+                Debug.Log(
+                    "Rewarded ad loaded placement=" + resolvedPlacement +
+                    " unit=" + adUnitId);
             });
         });
     }
 
     /// <summary>
-    /// True when a rewarded ad is ready to show.
+    /// True when the FREE HINT rewarded ad is ready (backward-compatible default).
     /// </summary>
     public bool IsRewardedAdReady()
     {
-        return adsInitialized &&
-               PrivacyConsentManager.CanRequestAds &&
-               rewardedAd != null &&
-               rewardedAd.CanShowAd();
+        return IsRewardedAdReady(PlacementHint);
     }
 
     /// <summary>
-    /// Shows the rewarded ad. onRewardEarned is only called when the reward is earned.
+    /// True when a rewarded ad for the given placement is ready to show.
     /// </summary>
-    public void ShowRewardedAd(Action onRewardEarned, string placement = "unknown")
+    public bool IsRewardedAdReady(string placement)
     {
-        if (!IsRewardedAdReady())
+        RewardedAd ad = GetRewardedAdForPlacement(ResolveRewardedPlacement(placement));
+        return adsInitialized &&
+               PrivacyConsentManager.CanRequestAds &&
+               ad != null &&
+               ad.CanShowAd();
+    }
+
+    /// <summary>
+    /// Shows the rewarded ad for the given placement.
+    /// onRewardEarned is only called when the reward is earned.
+    /// onFlowEnded (optional) is called once when the fullscreen closes or fails to show —
+    /// used by shop free-coins to re-enable the CTA. FREE HINT may omit it.
+    /// </summary>
+    public void ShowRewardedAd(
+        Action onRewardEarned,
+        string placement = "unknown",
+        Action onFlowEnded = null)
+    {
+        string resolvedPlacement = ResolveRewardedPlacement(placement);
+        RewardedAd ad = GetRewardedAdForPlacement(resolvedPlacement);
+
+        if (!adsInitialized ||
+            !PrivacyConsentManager.CanRequestAds ||
+            ad == null ||
+            !ad.CanShowAd())
         {
-            Debug.Log("Rewarded ad not ready");
+            Debug.Log(
+                "Rewarded ad not ready placement=" + resolvedPlacement);
+            onFlowEnded?.Invoke();
             return;
         }
 
-        GameAnalytics.LogRewardedAdStarted(placement);
+        pendingRewardedFlowEnded = onFlowEnded;
+        rewardedFlowEndedInvoked = false;
+
+        GameAnalytics.LogRewardedAdStarted(resolvedPlacement);
 
         bool rewardCallbackInvoked = false;
-        rewardedAd.Show(reward =>
+        ad.Show(reward =>
         {
             RunOnMainThread(() =>
             {
@@ -286,29 +350,40 @@ public class AdsManager : MonoBehaviour
                 }
 
                 rewardCallbackInvoked = true;
-                Debug.Log("Reward earned");
-                GameAnalytics.LogRewardedAdCompleted(placement);
+                Debug.Log("Reward earned placement=" + resolvedPlacement);
+                GameAnalytics.LogRewardedAdCompleted(resolvedPlacement);
                 onRewardEarned?.Invoke();
             });
         });
     }
 
-    /// <summary>
-    /// After close or error: destroy old rewarded ad and reload.
-    /// </summary>
-    private void RegisterFullScreenCallbacks(RewardedAd ad)
+    private void NotifyRewardedFlowEnded()
     {
+        if (rewardedFlowEndedInvoked)
+        {
+            return;
+        }
+
+        rewardedFlowEndedInvoked = true;
+        Action ended = pendingRewardedFlowEnded;
+        pendingRewardedFlowEnded = null;
+        ended?.Invoke();
+    }
+
+    /// <summary>
+    /// After close or error: destroy that placement's ad, end flow, reload that placement only.
+    /// </summary>
+    private void RegisterFullScreenCallbacks(RewardedAd ad, string placement)
+    {
+        string boundPlacement = placement;
+
         ad.OnAdFullScreenContentClosed += () =>
         {
             RunOnMainThread(() =>
             {
-                if (rewardedAd != null)
-                {
-                    rewardedAd.Destroy();
-                    rewardedAd = null;
-                }
-
-                LoadRewardedAd();
+                DestroyRewardedAdForPlacement(boundPlacement);
+                NotifyRewardedFlowEnded();
+                LoadRewardedAdForPlacement(boundPlacement);
             });
         };
 
@@ -316,17 +391,62 @@ public class AdsManager : MonoBehaviour
         {
             RunOnMainThread(() =>
             {
-                Debug.Log("Rewarded ad failed to show: " + error);
+                Debug.Log(
+                    "Rewarded ad failed to show placement=" + boundPlacement +
+                    ": " + error);
 
-                if (rewardedAd != null)
-                {
-                    rewardedAd.Destroy();
-                    rewardedAd = null;
-                }
-
-                LoadRewardedAd();
+                DestroyRewardedAdForPlacement(boundPlacement);
+                NotifyRewardedFlowEnded();
+                LoadRewardedAdForPlacement(boundPlacement);
             });
         };
+    }
+
+    private static string ResolveRewardedPlacement(string placement)
+    {
+        if (IsShopFreeCoinsPlacement(placement))
+        {
+            return PlacementShopFreeCoins;
+        }
+
+        // Default / unknown / "hint" → hint unit (preserves FREE HINT callers).
+        return PlacementHint;
+    }
+
+    private RewardedAd GetRewardedAdForPlacement(string placement)
+    {
+        return IsShopFreeCoinsPlacement(placement)
+            ? rewardedFreeCoinsAd
+            : rewardedHintAd;
+    }
+
+    private void SetRewardedAdForPlacement(string placement, RewardedAd ad)
+    {
+        if (IsShopFreeCoinsPlacement(placement))
+        {
+            rewardedFreeCoinsAd = ad;
+        }
+        else
+        {
+            rewardedHintAd = ad;
+        }
+    }
+
+    private void DestroyRewardedAdForPlacement(string placement)
+    {
+        if (IsShopFreeCoinsPlacement(placement))
+        {
+            if (rewardedFreeCoinsAd != null)
+            {
+                rewardedFreeCoinsAd.Destroy();
+                rewardedFreeCoinsAd = null;
+            }
+        }
+        else if (rewardedHintAd != null)
+        {
+            rewardedHintAd.Destroy();
+            rewardedHintAd = null;
+        }
     }
 
     // --- Interstitial Ads ---

@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a3d69fd3ca8b7c4b89d3508349118de, type: 3}
+  m_Name: Theme_TaxiCity
+  m_EditorClassIdentifier: Assembly-CSharp::GameplayBackgroundThemeData
+  themeId: taxicity
+  displayName: Taxi City
+  baseBackground: {fileID: 21300000, guid: 2ec4280eeab352944b6143b1ec4cb493, type: 3}
+  backgroundDimAlpha: 0.638
+  animatedLayers:
+  - sprite: {fileID: 0}
+    animationMode: 0
+    alsoPulseAlpha: 0
+    alsoPulseScale: 0
+    movementDirection: {x: 0, y: 0}
+    movementSpeed: 0
+    movementDistance: 0
+    pulseSpeed: 0
+    minAlpha: 0
+    maxAlpha: 0
+    scalePulseAmount: 0
+    loop: 0
+  - sprite: {fileID: 21300000, guid: 4199d781d60ab704eae0c03b9166c57a, type: 3}
+    animationMode: 1
+    alsoPulseAlpha: 0
+    alsoPulseScale: 0
+    movementDirection: {x: 1, y: 0}
+    movementSpeed: 3
+    movementDistance: 30
+    pulseSpeed: 0
+    minAlpha: 0
+    maxAlpha: 1
+    scalePulseAmount: 0
+    loop: 1
+  - sprite: {fileID: 21300000, guid: 4f1c9a4453edf4541a6a8e3312866dde, type: 3}
+    animationMode: 1
+    alsoPulseAlpha: 0
+    alsoPulseScale: 0
+    movementDirection: {x: -1, y: -0.3}
+    movementSpeed: 5
+    movementDistance: 10
+    pulseSpeed: 0
+    minAlpha: 0
+    maxAlpha: 0
+    scalePulseAmount: 0
+    loop: 0

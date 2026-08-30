@@ -1,0 +1,7046 @@
+fileFormatVersion: 2
+guid: d9386ce37356e324990f9861d59c77dc
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 333710603584492264
+    second: GoldCity_Sparkle_0
+  - first:
+      213: 5520994784183309816
+    second: GoldCity_Sparkle_1
+  - first:
+      213: 3348238691854855755
+    second: GoldCity_Sparkle_2
+  - first:
+      213: 4880479294292693327
+    second: GoldCity_Sparkle_3
+  - first:
+      213: -6773418708976506234
+    second: GoldCity_Sparkle_4
+  - first:
+      213: 1234112449274760865
+    second: GoldCity_Sparkle_5
+  - first:
+      213: -9085594702935969041
+    second: GoldCity_Sparkle_6
+  - first:
+      213: 5068304793976640184
+    second: GoldCity_Sparkle_7
+  - first:
+      213: -867867383677607218
+    second: GoldCity_Sparkle_8
+  - first:
+      213: 3501376579650073481
+    second: GoldCity_Sparkle_9
+  - first:
+      213: 2976614104071062551
+    second: GoldCity_Sparkle_10
+  - first:
+      213: 3286306668211333527
+    second: GoldCity_Sparkle_11
+  - first:
+      213: 6993464757610959725
+    second: GoldCity_Sparkle_12
+  - first:
+      213: -6930542724864866059
+    second: GoldCity_Sparkle_13
+  - first:
+      213: 1276924849143786658
+    second: GoldCity_Sparkle_14
+  - first:
+      213: 8277941148375231227
+    second: GoldCity_Sparkle_15
+  - first:
+      213: -7045232813614989906
+    second: GoldCity_Sparkle_16
+  - first:
+      213: 8984809788759999340
+    second: GoldCity_Sparkle_17
+  - first:
+      213: -1913808921338041774
+    second: GoldCity_Sparkle_18
+  - first:
+      213: 1747769337202850826
+    second: GoldCity_Sparkle_19
+  - first:
+      213: -8200820061642467580
+    second: GoldCity_Sparkle_20
+  - first:
+      213: 5348277494295159701
+    second: GoldCity_Sparkle_21
+  - first:
+      213: 578448294045037401
+    second: GoldCity_Sparkle_22
+  - first:
+      213: 7160801431770497882
+    second: GoldCity_Sparkle_23
+  - first:
+      213: -6618429480125564894
+    second: GoldCity_Sparkle_24
+  - first:
+      213: -1727559974799951864
+    second: GoldCity_Sparkle_25
+  - first:
+      213: 437233627468296669
+    second: GoldCity_Sparkle_26
+  - first:
+      213: -2971418174769642827
+    second: GoldCity_Sparkle_27
+  - first:
+      213: 8664611574813868786
+    second: GoldCity_Sparkle_28
+  - first:
+      213: -216178482061620081
+    second: GoldCity_Sparkle_29
+  - first:
+      213: -1998919038066869145
+    second: GoldCity_Sparkle_30
+  - first:
+      213: 2993978961249874818
+    second: GoldCity_Sparkle_31
+  - first:
+      213: -5408137826921316020
+    second: GoldCity_Sparkle_32
+  - first:
+      213: -4186984048755130986
+    second: GoldCity_Sparkle_33
+  - first:
+      213: 4072055405369211893
+    second: GoldCity_Sparkle_34
+  - first:
+      213: 3636225822946015072
+    second: GoldCity_Sparkle_35
+  - first:
+      213: 8644725854344787563
+    second: GoldCity_Sparkle_36
+  - first:
+      213: -3095729643263731793
+    second: GoldCity_Sparkle_37
+  - first:
+      213: -2255859237685706005
+    second: GoldCity_Sparkle_38
+  - first:
+      213: -325767602254827709
+    second: GoldCity_Sparkle_39
+  - first:
+      213: 7300568664917245351
+    second: GoldCity_Sparkle_40
+  - first:
+      213: 5432588143435181465
+    second: GoldCity_Sparkle_41
+  - first:
+      213: -3524353626755176256
+    second: GoldCity_Sparkle_42
+  - first:
+      213: -5262259785392722859
+    second: GoldCity_Sparkle_43
+  - first:
+      213: 6152304480301747641
+    second: GoldCity_Sparkle_44
+  - first:
+      213: 1694010662540657802
+    second: GoldCity_Sparkle_45
+  - first:
+      213: 4670411126872478402
+    second: GoldCity_Sparkle_46
+  - first:
+      213: 8405712243118227804
+    second: GoldCity_Sparkle_47
+  - first:
+      213: 7583717884721850995
+    second: GoldCity_Sparkle_48
+  - first:
+      213: 6786176260284214331
+    second: GoldCity_Sparkle_49
+  - first:
+      213: -8676793672541715032
+    second: GoldCity_Sparkle_50
+  - first:
+      213: -6090573395192446470
+    second: GoldCity_Sparkle_51
+  - first:
+      213: -711040684480252907
+    second: GoldCity_Sparkle_52
+  - first:
+      213: 1992347104585395996
+    second: GoldCity_Sparkle_53
+  - first:
+      213: -3261784296917368924
+    second: GoldCity_Sparkle_54
+  - first:
+      213: -4661088681193498693
+    second: GoldCity_Sparkle_55
+  - first:
+      213: -3920934293025911697
+    second: GoldCity_Sparkle_56
+  - first:
+      213: 6756226638950560426
+    second: GoldCity_Sparkle_57
+  - first:
+      213: 8431396495461493244
+    second: GoldCity_Sparkle_58
+  - first:
+      213: 3870603697916989501
+    second: GoldCity_Sparkle_59
+  - first:
+      213: -1579161378690014846
+    second: GoldCity_Sparkle_60
+  - first:
+      213: 8147629111361610290
+    second: GoldCity_Sparkle_61
+  - first:
+      213: -5491143840231877451
+    second: GoldCity_Sparkle_62
+  - first:
+      213: -6305752661072290023
+    second: GoldCity_Sparkle_63
+  - first:
+      213: 7169931772475329147
+    second: GoldCity_Sparkle_64
+  - first:
+      213: 5029745146321644531
+    second: GoldCity_Sparkle_65
+  - first:
+      213: 6361607826713188052
+    second: GoldCity_Sparkle_66
+  - first:
+      213: 2357739172103216489
+    second: GoldCity_Sparkle_67
+  - first:
+      213: 8874966755606711727
+    second: GoldCity_Sparkle_68
+  - first:
+      213: -2497417550948895237
+    second: GoldCity_Sparkle_69
+  - first:
+      213: 5003363643887841677
+    second: GoldCity_Sparkle_70
+  - first:
+      213: -42835835647681917
+    second: GoldCity_Sparkle_71
+  - first:
+      213: -6275028730720827924
+    second: GoldCity_Sparkle_72
+  - first:
+      213: 7717887044402261063
+    second: GoldCity_Sparkle_73
+  - first:
+      213: -1993588969429024468
+    second: GoldCity_Sparkle_74
+  - first:
+      213: 4581900795753752782
+    second: GoldCity_Sparkle_75
+  - first:
+      213: -8147711621934972501
+    second: GoldCity_Sparkle_76
+  - first:
+      213: -3333502231520315603
+    second: GoldCity_Sparkle_77
+  - first:
+      213: 8060656372605182473
+    second: GoldCity_Sparkle_78
+  - first:
+      213: -1355580466947643314
+    second: GoldCity_Sparkle_79
+  - first:
+      213: -5878377708469704559
+    second: GoldCity_Sparkle_80
+  - first:
+      213: 805524839917381699
+    second: GoldCity_Sparkle_81
+  - first:
+      213: 1889122298018989788
+    second: GoldCity_Sparkle_82
+  - first:
+      213: 7169942326385567727
+    second: GoldCity_Sparkle_83
+  - first:
+      213: 9070734761296370894
+    second: GoldCity_Sparkle_84
+  - first:
+      213: 6665286950605465558
+    second: GoldCity_Sparkle_85
+  - first:
+      213: -281927126297348508
+    second: GoldCity_Sparkle_86
+  - first:
+      213: -2682703534242570664
+    second: GoldCity_Sparkle_87
+  - first:
+      213: -4895216133780430426
+    second: GoldCity_Sparkle_88
+  - first:
+      213: 2416000378055245868
+    second: GoldCity_Sparkle_89
+  - first:
+      213: -8570466248828837302
+    second: GoldCity_Sparkle_90
+  - first:
+      213: 7524448257381729864
+    second: GoldCity_Sparkle_91
+  - first:
+      213: -5393245220026162796
+    second: GoldCity_Sparkle_92
+  - first:
+      213: 9076915471720784631
+    second: GoldCity_Sparkle_93
+  - first:
+      213: -1958907496417167244
+    second: GoldCity_Sparkle_94
+  - first:
+      213: 5593540490369657410
+    second: GoldCity_Sparkle_95
+  - first:
+      213: -5472601563285780228
+    second: GoldCity_Sparkle_96
+  - first:
+      213: -2365950408622824975
+    second: GoldCity_Sparkle_97
+  - first:
+      213: 70603336814342940
+    second: GoldCity_Sparkle_98
+  - first:
+      213: -7358797168573570510
+    second: GoldCity_Sparkle_99
+  - first:
+      213: -3663669555481088509
+    second: GoldCity_Sparkle_100
+  - first:
+      213: 5013533769895069081
+    second: GoldCity_Sparkle_101
+  - first:
+      213: 829401744204214239
+    second: GoldCity_Sparkle_102
+  - first:
+      213: 119968694217200305
+    second: GoldCity_Sparkle_103
+  - first:
+      213: -5836131558101315386
+    second: GoldCity_Sparkle_104
+  - first:
+      213: -8204267565464470196
+    second: GoldCity_Sparkle_105
+  - first:
+      213: -1008255620373790242
+    second: GoldCity_Sparkle_106
+  - first:
+      213: 4483020485104528448
+    second: GoldCity_Sparkle_107
+  - first:
+      213: -4071057453683328577
+    second: GoldCity_Sparkle_108
+  - first:
+      213: 5953854655984925783
+    second: GoldCity_Sparkle_109
+  - first:
+      213: -8820017448168707182
+    second: GoldCity_Sparkle_110
+  - first:
+      213: 1101379824281432643
+    second: GoldCity_Sparkle_111
+  - first:
+      213: -1559180924826518449
+    second: GoldCity_Sparkle_112
+  - first:
+      213: -4854853992326770632
+    second: GoldCity_Sparkle_113
+  - first:
+      213: -2403828435898059451
+    second: GoldCity_Sparkle_114
+  - first:
+      213: -1756560495176156939
+    second: GoldCity_Sparkle_115
+  - first:
+      213: 4492763641808667345
+    second: GoldCity_Sparkle_116
+  - first:
+      213: 9036312718016659309
+    second: GoldCity_Sparkle_117
+  - first:
+      213: -2777876263796424346
+    second: GoldCity_Sparkle_118
+  - first:
+      213: -6368050232861755865
+    second: GoldCity_Sparkle_119
+  - first:
+      213: -2064397515717593006
+    second: GoldCity_Sparkle_120
+  - first:
+      213: -8035889939564808851
+    second: GoldCity_Sparkle_121
+  - first:
+      213: -8802817964095317596
+    second: GoldCity_Sparkle_122
+  - first:
+      213: -540634038377744106
+    second: GoldCity_Sparkle_123
+  - first:
+      213: 3529111264930558964
+    second: GoldCity_Sparkle_124
+  - first:
+      213: 3801687940046625562
+    second: GoldCity_Sparkle_125
+  - first:
+      213: 499062134542084700
+    second: GoldCity_Sparkle_126
+  - first:
+      213: -4102548510798100069
+    second: GoldCity_Sparkle_127
+  - first:
+      213: -2327580918202454113
+    second: GoldCity_Sparkle_128
+  - first:
+      213: 5654817425136489
+    second: GoldCity_Sparkle_129
+  - first:
+      213: 6942829142882578612
+    second: GoldCity_Sparkle_130
+  - first:
+      213: -1170905567719737181
+    second: GoldCity_Sparkle_131
+  - first:
+      213: 3233490414921331999
+    second: GoldCity_Sparkle_132
+  - first:
+      213: -7667830380226327902
+    second: GoldCity_Sparkle_133
+  - first:
+      213: -4664263115622020657
+    second: GoldCity_Sparkle_134
+  - first:
+      213: -5365873686611146444
+    second: GoldCity_Sparkle_135
+  - first:
+      213: -2620134491450141990
+    second: GoldCity_Sparkle_136
+  - first:
+      213: 6365564697035097232
+    second: GoldCity_Sparkle_137
+  - first:
+      213: 5414261337088760528
+    second: GoldCity_Sparkle_138
+  - first:
+      213: 2915008197082177204
+    second: GoldCity_Sparkle_139
+  - first:
+      213: -5109084215351823560
+    second: GoldCity_Sparkle_140
+  - first:
+      213: 7730241368363723566
+    second: GoldCity_Sparkle_141
+  - first:
+      213: 2322715622135598581
+    second: GoldCity_Sparkle_142
+  - first:
+      213: -4306967997089728525
+    second: GoldCity_Sparkle_143
+  - first:
+      213: 572653341929286184
+    second: GoldCity_Sparkle_144
+  - first:
+      213: -210282393268977379
+    second: GoldCity_Sparkle_145
+  - first:
+      213: -1119578241517093853
+    second: GoldCity_Sparkle_146
+  - first:
+      213: -808456380008371153
+    second: GoldCity_Sparkle_147
+  - first:
+      213: -4805671514372505443
+    second: GoldCity_Sparkle_148
+  - first:
+      213: -6742653244904246536
+    second: GoldCity_Sparkle_149
+  - first:
+      213: 152097114937298716
+    second: GoldCity_Sparkle_150
+  - first:
+      213: 29698260280739768
+    second: GoldCity_Sparkle_151
+  - first:
+      213: -6362873786990202120
+    second: GoldCity_Sparkle_152
+  - first:
+      213: -2128629857167337970
+    second: GoldCity_Sparkle_153
+  - first:
+      213: -3420859659223342146
+    second: GoldCity_Sparkle_154
+  - first:
+      213: -3009164490732415031
+    second: GoldCity_Sparkle_155
+  - first:
+      213: 2376337055013425924
+    second: GoldCity_Sparkle_156
+  - first:
+      213: 3126806139425194841
+    second: GoldCity_Sparkle_157
+  - first:
+      213: 4009650938941948214
+    second: GoldCity_Sparkle_158
+  - first:
+      213: 582459671737749357
+    second: GoldCity_Sparkle_159
+  - first:
+      213: 4982830466051819847
+    second: GoldCity_Sparkle_160
+  - first:
+      213: 324026614262697636
+    second: GoldCity_Sparkle_161
+  - first:
+      213: -3744464290343770455
+    second: GoldCity_Sparkle_162
+  - first:
+      213: 7425465191808157684
+    second: GoldCity_Sparkle_163
+  - first:
+      213: -2599372216653302722
+    second: GoldCity_Sparkle_164
+  - first:
+      213: -2646784716190212967
+    second: GoldCity_Sparkle_165
+  - first:
+      213: -5430948843486380310
+    second: GoldCity_Sparkle_166
+  - first:
+      213: 1405256420619716161
+    second: GoldCity_Sparkle_167
+  - first:
+      213: 4702452522015526267
+    second: GoldCity_Sparkle_168
+  - first:
+      213: -6387843320723358342
+    second: GoldCity_Sparkle_169
+  - first:
+      213: -8771302745306054928
+    second: GoldCity_Sparkle_170
+  - first:
+      213: 7049961072387670748
+    second: GoldCity_Sparkle_171
+  - first:
+      213: -714213288250777534
+    second: GoldCity_Sparkle_172
+  - first:
+      213: -2775913492545901580
+    second: GoldCity_Sparkle_173
+  - first:
+      213: -1506024498071136830
+    second: GoldCity_Sparkle_174
+  - first:
+      213: -778434891023712597
+    second: GoldCity_Sparkle_175
+  - first:
+      213: 1840557634622641782
+    second: GoldCity_Sparkle_176
+  - first:
+      213: 8659571238904864732
+    second: GoldCity_Sparkle_177
+  - first:
+      213: -2032931533784959609
+    second: GoldCity_Sparkle_178
+  - first:
+      213: 3951816869656095193
+    second: GoldCity_Sparkle_179
+  - first:
+      213: -7800703741119902469
+    second: GoldCity_Sparkle_180
+  - first:
+      213: 8992209261155260905
+    second: GoldCity_Sparkle_181
+  - first:
+      213: 2364855092945075445
+    second: GoldCity_Sparkle_182
+  - first:
+      213: 3390937834412449427
+    second: GoldCity_Sparkle_183
+  - first:
+      213: 1066727965623051355
+    second: GoldCity_Sparkle_184
+  - first:
+      213: 8809361205546953464
+    second: GoldCity_Sparkle_185
+  - first:
+      213: 292553994785139038
+    second: GoldCity_Sparkle_186
+  - first:
+      213: -3288280936830963501
+    second: GoldCity_Sparkle_187
+  - first:
+      213: -7657451862582567508
+    second: GoldCity_Sparkle_188
+  - first:
+      213: 6153126118453673202
+    second: GoldCity_Sparkle_189
+  - first:
+      213: 7558389642620588157
+    second: GoldCity_Sparkle_190
+  - first:
+      213: -1082591774810013293
+    second: GoldCity_Sparkle_191
+  - first:
+      213: -6463536563745373122
+    second: GoldCity_Sparkle_192
+  - first:
+      213: 3861106568773692937
+    second: GoldCity_Sparkle_193
+  - first:
+      213: 6556444732247185031
+    second: GoldCity_Sparkle_194
+  - first:
+      213: -680365712603676824
+    second: GoldCity_Sparkle_195
+  - first:
+      213: -7256725017061706340
+    second: GoldCity_Sparkle_196
+  - first:
+      213: 8126195199998892601
+    second: GoldCity_Sparkle_197
+  - first:
+      213: 299422308356696836
+    second: GoldCity_Sparkle_198
+  - first:
+      213: 7453271546272548240
+    second: GoldCity_Sparkle_199
+  - first:
+      213: 8059674977704557206
+    second: GoldCity_Sparkle_200
+  - first:
+      213: 4659450344082401835
+    second: GoldCity_Sparkle_201
+  - first:
+      213: -8261337826867651659
+    second: GoldCity_Sparkle_202
+  - first:
+      213: 6255599449313322970
+    second: GoldCity_Sparkle_203
+  - first:
+      213: -6694782702381521779
+    second: GoldCity_Sparkle_204
+  - first:
+      213: -1869289425500984083
+    second: GoldCity_Sparkle_205
+  - first:
+      213: -8005711250698893607
+    second: GoldCity_Sparkle_206
+  - first:
+      213: 4841899866277553657
+    second: GoldCity_Sparkle_207
+  - first:
+      213: 7178610269651320032
+    second: GoldCity_Sparkle_208
+  - first:
+      213: 7694083594417913697
+    second: GoldCity_Sparkle_209
+  - first:
+      213: -2952565272337488406
+    second: GoldCity_Sparkle_210
+  - first:
+      213: -2123868557093043486
+    second: GoldCity_Sparkle_211
+  - first:
+      213: 850387377071611488
+    second: GoldCity_Sparkle_212
+  - first:
+      213: -4873045497907968112
+    second: GoldCity_Sparkle_213
+  - first:
+      213: 3278652395905329182
+    second: GoldCity_Sparkle_214
+  - first:
+      213: -3271045977089012563
+    second: GoldCity_Sparkle_215
+  - first:
+      213: -7811860816057073393
+    second: GoldCity_Sparkle_216
+  - first:
+      213: 6166937230507839560
+    second: GoldCity_Sparkle_217
+  - first:
+      213: -7400776747321172196
+    second: GoldCity_Sparkle_218
+  - first:
+      213: -4406863362927618760
+    second: GoldCity_Sparkle_219
+  - first:
+      213: -4180875361712986706
+    second: GoldCity_Sparkle_220
+  - first:
+      213: -6102662040876201471
+    second: GoldCity_Sparkle_221
+  - first:
+      213: -5913117621315856859
+    second: GoldCity_Sparkle_222
+  - first:
+      213: -2959575254150888165
+    second: GoldCity_Sparkle_223
+  - first:
+      213: 6196765339028995327
+    second: GoldCity_Sparkle_224
+  - first:
+      213: -5377995215624081509
+    second: GoldCity_Sparkle_225
+  - first:
+      213: 530151325779143958
+    second: GoldCity_Sparkle_226
+  - first:
+      213: 3803055414161531545
+    second: GoldCity_Sparkle_227
+  - first:
+      213: 6256256771834447468
+    second: GoldCity_Sparkle_228
+  - first:
+      213: 2956144244451703520
+    second: GoldCity_Sparkle_229
+  - first:
+      213: 794687832033961412
+    second: GoldCity_Sparkle_230
+  - first:
+      213: 7593791640642968329
+    second: GoldCity_Sparkle_231
+  - first:
+      213: 3254564952767725478
+    second: GoldCity_Sparkle_232
+  - first:
+      213: -4611151999460434259
+    second: GoldCity_Sparkle_233
+  - first:
+      213: 8528667341005676533
+    second: GoldCity_Sparkle_234
+  - first:
+      213: -370385644874713126
+    second: GoldCity_Sparkle_235
+  - first:
+      213: -5425695336901999361
+    second: GoldCity_Sparkle_236
+  - first:
+      213: 7466315468096190488
+    second: GoldCity_Sparkle_237
+  - first:
+      213: 831102032693606983
+    second: GoldCity_Sparkle_238
+  - first:
+      213: -3425115194378962641
+    second: GoldCity_Sparkle_239
+  - first:
+      213: -1557199929030042609
+    second: GoldCity_Sparkle_240
+  - first:
+      213: -5267571631835633607
+    second: GoldCity_Sparkle_241
+  - first:
+      213: 864260832126704869
+    second: GoldCity_Sparkle_242
+  - first:
+      213: -3128321148400721936
+    second: GoldCity_Sparkle_243
+  - first:
+      213: 1721933066590458644
+    second: GoldCity_Sparkle_244
+  - first:
+      213: 1528532544261848688
+    second: GoldCity_Sparkle_245
+  - first:
+      213: 7125095775691932530
+    second: GoldCity_Sparkle_246
+  - first:
+      213: 2886271218512661710
+    second: GoldCity_Sparkle_247
+  - first:
+      213: -2866524011191741893
+    second: GoldCity_Sparkle_248
+  - first:
+      213: 4824483549039885282
+    second: GoldCity_Sparkle_249
+  - first:
+      213: -454385143853765328
+    second: GoldCity_Sparkle_250
+  - first:
+      213: 8816830099288060098
+    second: GoldCity_Sparkle_251
+  - first:
+      213: -7755667298249525375
+    second: GoldCity_Sparkle_252
+  - first:
+      213: -4590786211072578000
+    second: GoldCity_Sparkle_253
+  - first:
+      213: 6340920329931130245
+    second: GoldCity_Sparkle_254
+  - first:
+      213: -5666354876474058979
+    second: GoldCity_Sparkle_255
+  - first:
+      213: 2755033982640422085
+    second: GoldCity_Sparkle_256
+  - first:
+      213: 2886834722112741806
+    second: GoldCity_Sparkle_257
+  - first:
+      213: -2379868551264133989
+    second: GoldCity_Sparkle_258
+  - first:
+      213: -2867996882809770460
+    second: GoldCity_Sparkle_259
+  - first:
+      213: 921048464322606771
+    second: GoldCity_Sparkle_260
+  - first:
+      213: -3216445711724774013
+    second: GoldCity_Sparkle_261
+  - first:
+      213: 6445424733627862730
+    second: GoldCity_Sparkle_262
+  - first:
+      213: 3121491415603130143
+    second: GoldCity_Sparkle_263
+  - first:
+      213: 2201256366108994807
+    second: GoldCity_Sparkle_264
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 357
+        width: 555
+        height: 1315
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8e25f60a60491a400800000000000000
+      internalID: 333710603584492264
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_1
+      rect:
+        serializedVersion: 2
+        x: 300
+        y: 1570
+        width: 56
+        height: 62
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8f5d70631838e9c40800000000000000
+      internalID: 5520994784183309816
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_2
+      rect:
+        serializedVersion: 2
+        x: 316
+        y: 1629
+        width: 24
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b4e2a3bb955577e20800000000000000
+      internalID: 3348238691854855755
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_3
+      rect:
+        serializedVersion: 2
+        x: 339
+        y: 1630
+        width: 21
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f4117fd6f02fab340800000000000000
+      internalID: 4880479294292693327
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_4
+      rect:
+        serializedVersion: 2
+        x: 452
+        y: 1621
+        width: 34
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 68a6870429bfff1a0800000000000000
+      internalID: -6773418708976506234
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_5
+      rect:
+        serializedVersion: 2
+        x: 738
+        y: 1358
+        width: 203
+        height: 314
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1aec8e7ebb2702110800000000000000
+      internalID: 1234112449274760865
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_6
+      rect:
+        serializedVersion: 2
+        x: 746
+        y: 1620
+        width: 36
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fe2b45651cb79e180800000000000000
+      internalID: -9085594702935969041
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_7
+      rect:
+        serializedVersion: 2
+        x: 324
+        y: 1585
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8b2136a6b5c365640800000000000000
+      internalID: 5068304793976640184
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_8
+      rect:
+        serializedVersion: 2
+        x: 330
+        y: 1582
+        width: 8
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ec2afb37637b4f3f0800000000000000
+      internalID: -867867383677607218
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_9
+      rect:
+        serializedVersion: 2
+        x: 649
+        y: 1566
+        width: 137
+        height: 59
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9833ae6b273679030800000000000000
+      internalID: 3501376579650073481
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_10
+      rect:
+        serializedVersion: 2
+        x: 241
+        y: 1460
+        width: 22
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 714c292c1ce0f4920800000000000000
+      internalID: 2976614104071062551
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_11
+      rect:
+        serializedVersion: 2
+        x: 306
+        y: 1494
+        width: 76
+        height: 78
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 799ebbdc08e4b9d20800000000000000
+      internalID: 3286306668211333527
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_12
+      rect:
+        serializedVersion: 2
+        x: 460
+        y: 1375
+        width: 137
+        height: 189
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d635d92e427cd0160800000000000000
+      internalID: 6993464757610959725
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_13
+      rect:
+        serializedVersion: 2
+        x: 633
+        y: 1494
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5f803cf7c14c1df90800000000000000
+      internalID: -6930542724864866059
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_14
+      rect:
+        serializedVersion: 2
+        x: 729
+        y: 1514
+        width: 69
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2aca516826c88b110800000000000000
+      internalID: 1276924849143786658
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_15
+      rect:
+        serializedVersion: 2
+        x: 211
+        y: 1408
+        width: 34
+        height: 59
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bfaae74bd9721e270800000000000000
+      internalID: 8277941148375231227
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_16
+      rect:
+        serializedVersion: 2
+        x: 681
+        y: 1430
+        width: 20
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ead7d80551e4a3e90800000000000000
+      internalID: -7045232813614989906
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_17
+      rect:
+        serializedVersion: 2
+        x: 754
+        y: 1427
+        width: 46
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c630e7936e470bc70800000000000000
+      internalID: 8984809788759999340
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_18
+      rect:
+        serializedVersion: 2
+        x: 253
+        y: 1396
+        width: 26
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 25a2ca30de8c075e0800000000000000
+      internalID: -1913808921338041774
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_19
+      rect:
+        serializedVersion: 2
+        x: 552
+        y: 1406
+        width: 33
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a0cbb4db3f2514810800000000000000
+      internalID: 1747769337202850826
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_20
+      rect:
+        serializedVersion: 2
+        x: 566
+        y: 1285
+        width: 198
+        height: 99
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 40757ee8a95d03e80800000000000000
+      internalID: -8200820061642467580
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_21
+      rect:
+        serializedVersion: 2
+        x: 576
+        y: 1373
+        width: 38
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 593edaf6b06e83a40800000000000000
+      internalID: 5348277494295159701
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_22
+      rect:
+        serializedVersion: 2
+        x: 245
+        y: 1351
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9533c7f98af070800800000000000000
+      internalID: 578448294045037401
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_23
+      rect:
+        serializedVersion: 2
+        x: 760
+        y: 1339
+        width: 20
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a530acf66f6406360800000000000000
+      internalID: 7160801431770497882
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_24
+      rect:
+        serializedVersion: 2
+        x: 827
+        y: 1357
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 228742a247d9624a0800000000000000
+      internalID: -6618429480125564894
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_25
+      rect:
+        serializedVersion: 2
+        x: 898
+        y: 1351
+        width: 12
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 808bddd1b597608e0800000000000000
+      internalID: -1727559974799951864
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_26
+      rect:
+        serializedVersion: 2
+        x: 906
+        y: 1338
+        width: 18
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dd17a19eaad511600800000000000000
+      internalID: 437233627468296669
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_27
+      rect:
+        serializedVersion: 2
+        x: 923
+        y: 1345
+        width: 9
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5b247bdc9e663c6d0800000000000000
+      internalID: -2971418174769642827
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_28
+      rect:
+        serializedVersion: 2
+        x: 243
+        y: 1193
+        width: 66
+        height: 123
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2f2c489f152ee3870800000000000000
+      internalID: 8664611574813868786
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_29
+      rect:
+        serializedVersion: 2
+        x: 322
+        y: 1298
+        width: 18
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f8c42a0e0dafffcf0800000000000000
+      internalID: -216178482061620081
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_30
+      rect:
+        serializedVersion: 2
+        x: 322
+        y: 1285
+        width: 12
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 76c3241c9b96244e0800000000000000
+      internalID: -1998919038066869145
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_31
+      rect:
+        serializedVersion: 2
+        x: 880
+        y: 1271
+        width: 46
+        height: 67
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 283ba42a000cc8920800000000000000
+      internalID: 2993978961249874818
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_32
+      rect:
+        serializedVersion: 2
+        x: 49
+        y: 1201
+        width: 118
+        height: 87
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c41800acc4f62f4b0800000000000000
+      internalID: -5408137826921316020
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_33
+      rect:
+        serializedVersion: 2
+        x: 316
+        y: 1287
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 69d39b5f038d4e5c0800000000000000
+      internalID: -4186984048755130986
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_34
+      rect:
+        serializedVersion: 2
+        x: 363
+        y: 1270
+        width: 9
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5fbbdb601d8d28830800000000000000
+      internalID: 4072055405369211893
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_35
+      rect:
+        serializedVersion: 2
+        x: 643
+        y: 1128
+        width: 74
+        height: 152
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 067bcc3de18767230800000000000000
+      internalID: 3636225822946015072
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_36
+      rect:
+        serializedVersion: 2
+        x: 305
+        y: 1237
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b663bd0ec5c38f770800000000000000
+      internalID: 8644725854344787563
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_37
+      rect:
+        serializedVersion: 2
+        x: 558
+        y: 1243
+        width: 35
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fa75e949a42c905d0800000000000000
+      internalID: -3095729643263731793
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_38
+      rect:
+        serializedVersion: 2
+        x: 840
+        y: 1209
+        width: 70
+        height: 59
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: be2c572b9f391b0e0800000000000000
+      internalID: -2255859237685706005
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_39
+      rect:
+        serializedVersion: 2
+        x: 247
+        y: 1227
+        width: 14
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 34f254c7714aa7bf0800000000000000
+      internalID: -325767602254827709
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_40
+      rect:
+        serializedVersion: 2
+        x: 525
+        y: 1148
+        width: 123
+        height: 86
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7ad7dba4584d05560800000000000000
+      internalID: 7300568664917245351
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_41
+      rect:
+        serializedVersion: 2
+        x: 324
+        y: 1215
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 99de374222e646b40800000000000000
+      internalID: 5432588143435181465
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_42
+      rect:
+        serializedVersion: 2
+        x: 225
+        y: 1158
+        width: 21
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0c8e56e9c0bf61fc0800000000000000
+      internalID: -3524353626755176256
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_43
+      rect:
+        serializedVersion: 2
+        x: 225
+        y: 1179
+        width: 9
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 55ce7d71b92b8f6b0800000000000000
+      internalID: -5262259785392722859
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_44
+      rect:
+        serializedVersion: 2
+        x: 736
+        y: 1022
+        width: 139
+        height: 162
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9bd0e6a1450616550800000000000000
+      internalID: 6152304480301747641
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_45
+      rect:
+        serializedVersion: 2
+        x: 885
+        y: 1151
+        width: 56
+        height: 59
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a84c57ae8b5528710800000000000000
+      internalID: 1694010662540657802
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_46
+      rect:
+        serializedVersion: 2
+        x: 328
+        y: 1162
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2c2144ccc22a0d040800000000000000
+      internalID: 4670411126872478402
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_47
+      rect:
+        serializedVersion: 2
+        x: 22
+        y: 1130
+        width: 44
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c51c63fefb617a470800000000000000
+      internalID: 8405712243118227804
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_48
+      rect:
+        serializedVersion: 2
+        x: 142
+        y: 1130
+        width: 25
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 37a6f936c37ce3960800000000000000
+      internalID: 7583717884721850995
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_49
+      rect:
+        serializedVersion: 2
+        x: 249
+        y: 1143
+        width: 6
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b3ced61aa575d2e50800000000000000
+      internalID: 6786176260284214331
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_50
+      rect:
+        serializedVersion: 2
+        x: 254
+        y: 1142
+        width: 15
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8a54bce5026d59780800000000000000
+      internalID: -8676793672541715032
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_51
+      rect:
+        serializedVersion: 2
+        x: 566
+        y: 811
+        width: 145
+        height: 333
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: af10c1d24cfe97ba0800000000000000
+      internalID: -6090573395192446470
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_52
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1076
+        width: 38
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 51434b4c340e126f0800000000000000
+      internalID: -711040684480252907
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_53
+      rect:
+        serializedVersion: 2
+        x: 111
+        y: 1100
+        width: 38
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c1f271eb22d36ab10800000000000000
+      internalID: 1992347104585395996
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_54
+      rect:
+        serializedVersion: 2
+        x: 176
+        y: 1094
+        width: 14
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4affa40b670dbb2d0800000000000000
+      internalID: -3261784296917368924
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_55
+      rect:
+        serializedVersion: 2
+        x: 187
+        y: 1096
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bb71eda3a8c705fb0800000000000000
+      internalID: -4661088681193498693
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_56
+      rect:
+        serializedVersion: 2
+        x: 193
+        y: 1092
+        width: 17
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f6c0b84d80b0699c0800000000000000
+      internalID: -3920934293025911697
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_57
+      rect:
+        serializedVersion: 2
+        x: 631
+        y: 1092
+        width: 35
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aa2fda40550f2cd50800000000000000
+      internalID: 6756226638950560426
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_58
+      rect:
+        serializedVersion: 2
+        x: 103
+        y: 1078
+        width: 10
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cf9a470f076520570800000000000000
+      internalID: 8431396495461493244
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_59
+      rect:
+        serializedVersion: 2
+        x: 249
+        y: 1076
+        width: 14
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d30d7a05e8527b530800000000000000
+      internalID: 3870603697916989501
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_60
+      rect:
+        serializedVersion: 2
+        x: 876
+        y: 1026
+        width: 52
+        height: 61
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2816a24c711b51ae0800000000000000
+      internalID: -1579161378690014846
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_61
+      rect:
+        serializedVersion: 2
+        x: 75
+        y: 1016
+        width: 46
+        height: 61
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 23227504281321170800000000000000
+      internalID: 8147629111361610290
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_62
+      rect:
+        serializedVersion: 2
+        x: 249
+        y: 1016
+        width: 12
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5b4976845c98bc3b0800000000000000
+      internalID: -5491143840231877451
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_63
+      rect:
+        serializedVersion: 2
+        x: 771
+        y: 1024
+        width: 41
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 91fdf433d577d78a0800000000000000
+      internalID: -6305752661072290023
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_64
+      rect:
+        serializedVersion: 2
+        x: 890
+        y: 981
+        width: 51
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b7acd2a85f6b08360800000000000000
+      internalID: 7169931772475329147
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_65
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 839
+        width: 90
+        height: 178
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3fb2f35df8e3dc540800000000000000
+      internalID: 5029745146321644531
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_66
+      rect:
+        serializedVersion: 2
+        x: 249
+        y: 1012
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4d69597fc98f84850800000000000000
+      internalID: 6361607826713188052
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_67
+      rect:
+        serializedVersion: 2
+        x: 89
+        y: 990
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 96d5c32094f58b020800000000000000
+      internalID: 2357739172103216489
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_68
+      rect:
+        serializedVersion: 2
+        x: 235
+        y: 980
+        width: 7
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fadc65d1e373a2b70800000000000000
+      internalID: 8874966755606711727
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_69
+      rect:
+        serializedVersion: 2
+        x: 826
+        y: 827
+        width: 115
+        height: 164
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bf57dd328f3675dd0800000000000000
+      internalID: -2497417550948895237
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_70
+      rect:
+        serializedVersion: 2
+        x: 233
+        y: 968
+        width: 13
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d81f904a9b48f6540800000000000000
+      internalID: 5003363643887841677
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_71
+      rect:
+        serializedVersion: 2
+        x: 247
+        y: 970
+        width: 14
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 38a1090d801d76ff0800000000000000
+      internalID: -42835835647681917
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_72
+      rect:
+        serializedVersion: 2
+        x: 134
+        y: 917
+        width: 7
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ce5c30ead9e9ae8a0800000000000000
+      internalID: -6275028730720827924
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_73
+      rect:
+        serializedVersion: 2
+        x: 144
+        y: 901
+        width: 21
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 74caf2230617b1b60800000000000000
+      internalID: 7717887044402261063
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_74
+      rect:
+        serializedVersion: 2
+        x: 157
+        y: 923
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c21cb0115695554e0800000000000000
+      internalID: -1993588969429024468
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_75
+      rect:
+        serializedVersion: 2
+        x: 257
+        y: 908
+        width: 30
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ec86bfe6f7e269f30800000000000000
+      internalID: 4581900795753752782
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_76
+      rect:
+        serializedVersion: 2
+        x: 466
+        y: 927
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ba18e32c2738dee80800000000000000
+      internalID: -8147711621934972501
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_77
+      rect:
+        serializedVersion: 2
+        x: 466
+        y: 921
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d277240d1650db1d0800000000000000
+      internalID: -3333502231520315603
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_78
+      rect:
+        serializedVersion: 2
+        x: 489
+        y: 909
+        width: 25
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 902ee9183443ddf60800000000000000
+      internalID: 8060656372605182473
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_79
+      rect:
+        serializedVersion: 2
+        x: 176
+        y: 903
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e48a02b5fb2003de0800000000000000
+      internalID: -1355580466947643314
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_80
+      rect:
+        serializedVersion: 2
+        x: 239
+        y: 905
+        width: 22
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 198a61f7e9ecb6ea0800000000000000
+      internalID: -5878377708469704559
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_81
+      rect:
+        serializedVersion: 2
+        x: 355
+        y: 885
+        width: 21
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3486705f29ccd2b00800000000000000
+      internalID: 805524839917381699
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_82
+      rect:
+        serializedVersion: 2
+        x: 379
+        y: 869
+        width: 36
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cd601b698b2873a10800000000000000
+      internalID: 1889122298018989788
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_83
+      rect:
+        serializedVersion: 2
+        x: 409
+        y: 851
+        width: 44
+        height: 63
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fe7ef30de80c08360800000000000000
+      internalID: 7169942326385567727
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_84
+      rect:
+        serializedVersion: 2
+        x: 101
+        y: 843
+        width: 64
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ecc9bd2e439b1ed70800000000000000
+      internalID: 9070734761296370894
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_85
+      rect:
+        serializedVersion: 2
+        x: 168
+        y: 875
+        width: 20
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6d7a2e8da2bdf7c50800000000000000
+      internalID: 6665286950605465558
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_86
+      rect:
+        serializedVersion: 2
+        x: 227
+        y: 875
+        width: 7
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 466ff78b5c4661cf0800000000000000
+      internalID: -281927126297348508
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_87
+      rect:
+        serializedVersion: 2
+        x: 233
+        y: 874
+        width: 22
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 85e59c3695f15cad0800000000000000
+      internalID: -2682703534242570664
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_88
+      rect:
+        serializedVersion: 2
+        x: 460
+        y: 859
+        width: 14
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6a1a14fbcd2b01cb0800000000000000
+      internalID: -4895216133780430426
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_89
+      rect:
+        serializedVersion: 2
+        x: 481
+        y: 863
+        width: 23
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c2041371b8b578120800000000000000
+      internalID: 2416000378055245868
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_90
+      rect:
+        serializedVersion: 2
+        x: 539
+        y: 865
+        width: 16
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a42251fda569f0980800000000000000
+      internalID: -8570466248828837302
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_91
+      rect:
+        serializedVersion: 2
+        x: 172
+        y: 857
+        width: 10
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8468b08e2d53c6860800000000000000
+      internalID: 7524448257381729864
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_92
+      rect:
+        serializedVersion: 2
+        x: 249
+        y: 835
+        width: 12
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 49164c90c085725b0800000000000000
+      internalID: -5393245220026162796
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_93
+      rect:
+        serializedVersion: 2
+        x: 257
+        y: 859
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7f22a2ca78ea7fd70800000000000000
+      internalID: 9076915471720784631
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_94
+      rect:
+        serializedVersion: 2
+        x: 318
+        y: 859
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4787430c20090d4e0800000000000000
+      internalID: -1958907496417167244
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_95
+      rect:
+        serializedVersion: 2
+        x: 365
+        y: 833
+        width: 32
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 24a6f3da07f30ad40800000000000000
+      internalID: 5593540490369657410
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_96
+      rect:
+        serializedVersion: 2
+        x: 373
+        y: 859
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cf88a1f8fd96d04b0800000000000000
+      internalID: -5472601563285780228
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_97
+      rect:
+        serializedVersion: 2
+        x: 535
+        y: 843
+        width: 18
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1f1a8d183a47a2fd0800000000000000
+      internalID: -2365950408622824975
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_98
+      rect:
+        serializedVersion: 2
+        x: 761
+        y: 811
+        width: 23
+        height: 61
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c13b6ca5c55daf000800000000000000
+      internalID: 70603336814342940
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_99
+      rect:
+        serializedVersion: 2
+        x: 79
+        y: 819
+        width: 23
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 232a509b6fc40e990800000000000000
+      internalID: -7358797168573570510
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_100
+      rect:
+        serializedVersion: 2
+        x: 132
+        y: 837
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 30ee22343f7082dc0800000000000000
+      internalID: -3663669555481088509
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_101
+      rect:
+        serializedVersion: 2
+        x: 308
+        y: 805
+        width: 54
+        height: 50
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9954500a666a39540800000000000000
+      internalID: 5013533769895069081
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_102
+      rect:
+        serializedVersion: 2
+        x: 428
+        y: 805
+        width: 41
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fdfa163fd70a28b00800000000000000
+      internalID: 829401744204214239
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_103
+      rect:
+        serializedVersion: 2
+        x: 485
+        y: 793
+        width: 66
+        height: 61
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1b2dbfa44e63aa100800000000000000
+      internalID: 119968694217200305
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_104
+      rect:
+        serializedVersion: 2
+        x: 464
+        y: 819
+        width: 8
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6c09ce0e445e10fa0800000000000000
+      internalID: -5836131558101315386
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_105
+      rect:
+        serializedVersion: 2
+        x: 466
+        y: 813
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c4d3b360e16942e80800000000000000
+      internalID: -8204267565464470196
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_106
+      rect:
+        serializedVersion: 2
+        x: 468
+        y: 787
+        width: 30
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ed144d0fad4f102f0800000000000000
+      internalID: -1008255620373790242
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_107
+      rect:
+        serializedVersion: 2
+        x: 535
+        y: 811
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 04c647f0163e63e30800000000000000
+      internalID: 4483020485104528448
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_108
+      rect:
+        serializedVersion: 2
+        x: 26
+        y: 755
+        width: 41
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fb9bff4b0d2b087c0800000000000000
+      internalID: -4071057453683328577
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_109
+      rect:
+        serializedVersion: 2
+        x: 401
+        y: 787
+        width: 20
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 75c7946c34750a250800000000000000
+      internalID: 5953854655984925783
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_110
+      rect:
+        serializedVersion: 2
+        x: 527
+        y: 769
+        width: 38
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 29b28218cd0099580800000000000000
+      internalID: -8820017448168707182
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_111
+      rect:
+        serializedVersion: 2
+        x: 687
+        y: 789
+        width: 8
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 342b3156d13e84f00800000000000000
+      internalID: 1101379824281432643
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_112
+      rect:
+        serializedVersion: 2
+        x: 842
+        y: 724
+        width: 68
+        height: 68
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f4c7623b53dac5ae0800000000000000
+      internalID: -1559180924826518449
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_113
+      rect:
+        serializedVersion: 2
+        x: 564
+        y: 758
+        width: 23
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 830d9fe140810acb0800000000000000
+      internalID: -4854853992326770632
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_114
+      rect:
+        serializedVersion: 2
+        x: 592
+        y: 763
+        width: 24
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 545305906c2e3aed0800000000000000
+      internalID: -2403828435898059451
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_115
+      rect:
+        serializedVersion: 2
+        x: 614
+        y: 779
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5f87a8a49817f97e0800000000000000
+      internalID: -1756560495176156939
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_116
+      rect:
+        serializedVersion: 2
+        x: 631
+        y: 658
+        width: 120
+        height: 125
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1d2cbc18ab0895e30800000000000000
+      internalID: 4492763641808667345
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_117
+      rect:
+        serializedVersion: 2
+        x: 209
+        y: 738
+        width: 23
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d6f3ab46a8e676d70800000000000000
+      internalID: 9036312718016659309
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_118
+      rect:
+        serializedVersion: 2
+        x: 552
+        y: 632
+        width: 53
+        height: 125
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 661cc6281400379d0800000000000000
+      internalID: -2777876263796424346
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_119
+      rect:
+        serializedVersion: 2
+        x: 558
+        y: 751
+        width: 11
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7267e667d0420a7a0800000000000000
+      internalID: -6368050232861755865
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_120
+      rect:
+        serializedVersion: 2
+        x: 892
+        y: 690
+        width: 36
+        height: 69
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2583478a569c953e0800000000000000
+      internalID: -2064397515717593006
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_121
+      rect:
+        serializedVersion: 2
+        x: 11
+        y: 739
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d65ba1a0da8ca7090800000000000000
+      internalID: -8035889939564808851
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_122
+      rect:
+        serializedVersion: 2
+        x: 45
+        y: 716
+        width: 28
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4a9dba373bb16d580800000000000000
+      internalID: -8802817964095317596
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_123
+      rect:
+        serializedVersion: 2
+        x: 233
+        y: 741
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 619720dd4384f78f0800000000000000
+      internalID: -540634038377744106
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_124
+      rect:
+        serializedVersion: 2
+        x: 397
+        y: 728
+        width: 16
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4f3f3075ffbe9f030800000000000000
+      internalID: 3529111264930558964
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_125
+      rect:
+        serializedVersion: 2
+        x: 406
+        y: 712
+        width: 37
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a1b9d5d0a0f42c430800000000000000
+      internalID: 3801687940046625562
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_126
+      rect:
+        serializedVersion: 2
+        x: 608
+        y: 736
+        width: 20
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c5aaa320e560de600800000000000000
+      internalID: 499062134542084700
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_127
+      rect:
+        serializedVersion: 2
+        x: 393
+        y: 726
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b99421c9dd1d017c0800000000000000
+      internalID: -4102548510798100069
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_128
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 704
+        width: 21
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f9fa098ac75c2bfd0800000000000000
+      internalID: -2327580918202454113
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_129
+      rect:
+        serializedVersion: 2
+        x: 395
+        y: 706
+        width: 6
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 96b15e7c607141000800000000000000
+      internalID: 5654817425136489
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_130
+      rect:
+        serializedVersion: 2
+        x: 500
+        y: 688
+        width: 22
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4b0febd1252e95060800000000000000
+      internalID: 6942829142882578612
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_131
+      rect:
+        serializedVersion: 2
+        x: 574
+        y: 698
+        width: 13
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3a8b982079b10cfe0800000000000000
+      internalID: -1170905567719737181
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_132
+      rect:
+        serializedVersion: 2
+        x: 598
+        y: 697
+        width: 16
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f15340e866aafdc20800000000000000
+      internalID: 3233490414921331999
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_133
+      rect:
+        serializedVersion: 2
+        x: 606
+        y: 712
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2aa49a425e4669590800000000000000
+      internalID: -7667830380226327902
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_134
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 484
+        width: 86
+        height: 225
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fc9846e9865354fb0800000000000000
+      internalID: -4664263115622020657
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_135
+      rect:
+        serializedVersion: 2
+        x: 176
+        y: 602
+        width: 85
+        height: 95
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4394de7cf469885b0800000000000000
+      internalID: -5365873686611146444
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_136
+      rect:
+        serializedVersion: 2
+        x: 225
+        y: 696
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ad29d55ef8963abd0800000000000000
+      internalID: -2620134491450141990
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_137
+      rect:
+        serializedVersion: 2
+        x: 233
+        y: 687
+        width: 11
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0944b81ad57075850800000000000000
+      internalID: 6365564697035097232
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_138
+      rect:
+        serializedVersion: 2
+        x: 428
+        y: 674
+        width: 11
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0da9e460002532b40800000000000000
+      internalID: 5414261337088760528
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_139
+      rect:
+        serializedVersion: 2
+        x: 371
+        y: 676
+        width: 9
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4be5f68c280347820800000000000000
+      internalID: 2915008197082177204
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_140
+      rect:
+        serializedVersion: 2
+        x: 420
+        y: 672
+        width: 9
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8333668a9f2e819b0800000000000000
+      internalID: -5109084215351823560
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_141
+      rect:
+        serializedVersion: 2
+        x: 468
+        y: 682
+        width: 10
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e2b69556195574b60800000000000000
+      internalID: 7730241368363723566
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_142
+      rect:
+        serializedVersion: 2
+        x: 507
+        y: 674
+        width: 7
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5fd84a35d81fb3020800000000000000
+      internalID: 2322715622135598581
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_143
+      rect:
+        serializedVersion: 2
+        x: 594
+        y: 678
+        width: 20
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3f7bd7a0d639a34c0800000000000000
+      internalID: -4306967997089728525
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_144
+      rect:
+        serializedVersion: 2
+        x: 598
+        y: 650
+        width: 22
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 82aa2213e2972f700800000000000000
+      internalID: 572653341929286184
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_145
+      rect:
+        serializedVersion: 2
+        x: 791
+        y: 552
+        width: 52
+        height: 141
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d110fa6074de41df0800000000000000
+      internalID: -210282393268977379
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_146
+      rect:
+        serializedVersion: 2
+        x: 257
+        y: 664
+        width: 18
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 32cfd1865857670f0800000000000000
+      internalID: -1119578241517093853
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_147
+      rect:
+        serializedVersion: 2
+        x: 300
+        y: 558
+        width: 77
+        height: 106
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f2ce33da439c7c4f0800000000000000
+      internalID: -808456380008371153
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_148
+      rect:
+        serializedVersion: 2
+        x: 175
+        y: 640
+        width: 11
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d900d9e1833de4db0800000000000000
+      internalID: -4805671514372505443
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_149
+      rect:
+        serializedVersion: 2
+        x: 328
+        y: 652
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8f2f8dd09984d62a0800000000000000
+      internalID: -6742653244904246536
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_150
+      rect:
+        serializedVersion: 2
+        x: 460
+        y: 632
+        width: 14
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c1f033b258b5c1200800000000000000
+      internalID: 152097114937298716
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_151
+      rect:
+        serializedVersion: 2
+        x: 533
+        y: 640
+        width: 22
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8b70b7e0962896000800000000000000
+      internalID: 29698260280739768
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_152
+      rect:
+        serializedVersion: 2
+        x: 614
+        y: 617
+        width: 68
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8f2fdcfa00882b7a0800000000000000
+      internalID: -6362873786990202120
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_153
+      rect:
+        serializedVersion: 2
+        x: 81
+        y: 622
+        width: 17
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e0610414c669572e0800000000000000
+      internalID: -2128629857167337970
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_154
+      rect:
+        serializedVersion: 2
+        x: 82
+        y: 612
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eb36781b34aa680d0800000000000000
+      internalID: -3420859659223342146
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_155
+      rect:
+        serializedVersion: 2
+        x: 373
+        y: 618
+        width: 9
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9c7dc23c6dc4d36d0800000000000000
+      internalID: -3009164490732415031
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_156
+      rect:
+        serializedVersion: 2
+        x: 379
+        y: 620
+        width: 9
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4035cae06f17af020800000000000000
+      internalID: 2376337055013425924
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_157
+      rect:
+        serializedVersion: 2
+        x: 517
+        y: 594
+        width: 64
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 95303f50e95a46b20800000000000000
+      internalID: 3126806139425194841
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_158
+      rect:
+        serializedVersion: 2
+        x: 584
+        y: 521
+        width: 92
+        height: 92
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 63142f0f84425a730800000000000000
+      internalID: 4009650938941948214
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_159
+      rect:
+        serializedVersion: 2
+        x: 746
+        y: 562
+        width: 37
+        height: 85
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d6f4be54cff451800800000000000000
+      internalID: 582459671737749357
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_160
+      rect:
+        serializedVersion: 2
+        x: 906
+        y: 612
+        width: 35
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7494301a8e1962540800000000000000
+      internalID: 4982830466051819847
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_161
+      rect:
+        serializedVersion: 2
+        x: 172
+        y: 580
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4ae86e82d7c2f7400800000000000000
+      internalID: 324026614262697636
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_162
+      rect:
+        serializedVersion: 2
+        x: 286
+        y: 550
+        width: 29
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9a6ace3219df80cc0800000000000000
+      internalID: -3744464290343770455
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_163
+      rect:
+        serializedVersion: 2
+        x: 395
+        y: 586
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4f7c0c9004d8c0760800000000000000
+      internalID: 7425465191808157684
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_164
+      rect:
+        serializedVersion: 2
+        x: 401
+        y: 580
+        width: 28
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e343c53bdbc2debd0800000000000000
+      internalID: -2599372216653302722
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_165
+      rect:
+        serializedVersion: 2
+        x: 427
+        y: 580
+        width: 10
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 99c9c8ae25bb44bd0800000000000000
+      internalID: -2646784716190212967
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_166
+      rect:
+        serializedVersion: 2
+        x: 906
+        y: 579
+        width: 16
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aeefcae1dc461a4b0800000000000000
+      internalID: -5430948843486380310
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_167
+      rect:
+        serializedVersion: 2
+        x: 249
+        y: 570
+        width: 8
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1460069e449708310800000000000000
+      internalID: 1405256420619716161
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_168
+      rect:
+        serializedVersion: 2
+        x: 353
+        y: 561
+        width: 33
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b7d00e377a7724140800000000000000
+      internalID: 4702452522015526267
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_169
+      rect:
+        serializedVersion: 2
+        x: 89
+        y: 553
+        width: 16
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a7dbe631852d957a0800000000000000
+      internalID: -6387843320723358342
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_170
+      rect:
+        serializedVersion: 2
+        x: 389
+        y: 548
+        width: 22
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0febf9020a2164680800000000000000
+      internalID: -8771302745306054928
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_171
+      rect:
+        serializedVersion: 2
+        x: 403
+        y: 544
+        width: 14
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cd2cff73e3e76d160800000000000000
+      internalID: 7049961072387670748
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_172
+      rect:
+        serializedVersion: 2
+        x: 428
+        y: 550
+        width: 9
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 240e2f36cca9616f0800000000000000
+      internalID: -714213288250777534
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_173
+      rect:
+        serializedVersion: 2
+        x: 679
+        y: 521
+        width: 32
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4fb669dc269f979d0800000000000000
+      internalID: -2775913492545901580
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_174
+      rect:
+        serializedVersion: 2
+        x: 754
+        y: 531
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2c51f61c2b6891be0800000000000000
+      internalID: -1506024498071136830
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_175
+      rect:
+        serializedVersion: 2
+        x: 760
+        y: 537
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: baef2c747917235f0800000000000000
+      internalID: -778434891023712597
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_176
+      rect:
+        serializedVersion: 2
+        x: 769
+        y: 532
+        width: 19
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 676d050ca69fa8910800000000000000
+      internalID: 1840557634622641782
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_177
+      rect:
+        serializedVersion: 2
+        x: 840
+        y: 527
+        width: 33
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cdf1d12592afc2870800000000000000
+      internalID: 8659571238904864732
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_178
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 493
+        width: 17
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 785be0c7a8399c3e0800000000000000
+      internalID: -2032931533784959609
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_179
+      rect:
+        serializedVersion: 2
+        x: 241
+        y: 503
+        width: 16
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9d96f3d518ca7d630800000000000000
+      internalID: 3951816869656095193
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_180
+      rect:
+        serializedVersion: 2
+        x: 254
+        y: 503
+        width: 11
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bfccc7007455eb390800000000000000
+      internalID: -7800703741119902469
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_181
+      rect:
+        serializedVersion: 2
+        x: 255
+        y: 476
+        width: 22
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9e913252eaebacc70800000000000000
+      internalID: 8992209261155260905
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_182
+      rect:
+        serializedVersion: 2
+        x: 616
+        y: 498
+        width: 10
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5fcb3407d27a1d020800000000000000
+      internalID: 2364855092945075445
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_183
+      rect:
+        serializedVersion: 2
+        x: 623
+        y: 449
+        width: 29
+        height: 72
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 39e16939ef70f0f20800000000000000
+      internalID: 3390937834412449427
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_184
+      rect:
+        serializedVersion: 2
+        x: 874
+        y: 471
+        width: 62
+        height: 56
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b54efe6de67cdce00800000000000000
+      internalID: 1066727965623051355
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_185
+      rect:
+        serializedVersion: 2
+        x: 37
+        y: 481
+        width: 11
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8faabbaa753214a70800000000000000
+      internalID: 8809361205546953464
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_186
+      rect:
+        serializedVersion: 2
+        x: 59
+        y: 443
+        width: 72
+        height: 57
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e592ac8ee4c5f0400800000000000000
+      internalID: 292553994785139038
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_187
+      rect:
+        serializedVersion: 2
+        x: 166
+        y: 481
+        width: 14
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3d07086f8edad52d0800000000000000
+      internalID: -3288280936830963501
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_188
+      rect:
+        serializedVersion: 2
+        x: 468
+        y: 489
+        width: 12
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: caddc161a144bb590800000000000000
+      internalID: -7657451862582567508
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_189
+      rect:
+        serializedVersion: 2
+        x: 195
+        y: 465
+        width: 9
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2fcfb94aa9b446550800000000000000
+      internalID: 6153126118453673202
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_190
+      rect:
+        serializedVersion: 2
+        x: 233
+        y: 464
+        width: 13
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d70546a755bc4e860800000000000000
+      internalID: 7558389642620588157
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_191
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 451
+        width: 24
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 39180b1448cd9f0f0800000000000000
+      internalID: -1082591774810013293
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_192
+      rect:
+        serializedVersion: 2
+        x: 468
+        y: 471
+        width: 6
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e3445359db7ec46a0800000000000000
+      internalID: -6463536563745373122
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_193
+      rect:
+        serializedVersion: 2
+        x: 568
+        y: 0
+        width: 373
+        height: 471
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 90eeeaf97f7659530800000000000000
+      internalID: 3861106568773692937
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_194
+      rect:
+        serializedVersion: 2
+        x: 679
+        y: 465
+        width: 24
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 78613171fbb2dfa50800000000000000
+      internalID: 6556444732247185031
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_195
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 273
+        height: 450
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 86ff6e63dfade86f0800000000000000
+      internalID: -680365712603676824
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_196
+      rect:
+        serializedVersion: 2
+        x: 290
+        y: 435
+        width: 25
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c95b8557b0fea4b90800000000000000
+      internalID: -7256725017061706340
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_197
+      rect:
+        serializedVersion: 2
+        x: 316
+        y: 441
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 93a1b6fda7b06c070800000000000000
+      internalID: 8126195199998892601
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_198
+      rect:
+        serializedVersion: 2
+        x: 322
+        y: 433
+        width: 14
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 40bad67c003c72400800000000000000
+      internalID: 299422308356696836
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_199
+      rect:
+        serializedVersion: 2
+        x: 389
+        y: 443
+        width: 12
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0950a127bf65f6760800000000000000
+      internalID: 7453271546272548240
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_200
+      rect:
+        serializedVersion: 2
+        x: 410
+        y: 445
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 69a3f23b0b7b9df60800000000000000
+      internalID: 8059674977704557206
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_201
+      rect:
+        serializedVersion: 2
+        x: 574
+        y: 423
+        width: 33
+        height: 41
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b2a6a9fa661b9a040800000000000000
+      internalID: 4659450344082401835
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_202
+      rect:
+        serializedVersion: 2
+        x: 606
+        y: 449
+        width: 8
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5bb5e045405d95d80800000000000000
+      internalID: -8261337826867651659
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_203
+      rect:
+        serializedVersion: 2
+        x: 266
+        y: 420
+        width: 17
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ad723793e8a50d650800000000000000
+      internalID: 6255599449313322970
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_204
+      rect:
+        serializedVersion: 2
+        x: 298
+        y: 403
+        width: 38
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d84ae184a9a5713a0800000000000000
+      internalID: -6694782702381521779
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_205
+      rect:
+        serializedVersion: 2
+        x: 359
+        y: 437
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: decae92eb23fe06e0800000000000000
+      internalID: -1869289425500984083
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_206
+      rect:
+        serializedVersion: 2
+        x: 274
+        y: 373
+        width: 21
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9d68eb7980006e090800000000000000
+      internalID: -8005711250698893607
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_207
+      rect:
+        serializedVersion: 2
+        x: 290
+        y: 335
+        width: 21
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9f52c7f5642e13340800000000000000
+      internalID: 4841899866277553657
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_208
+      rect:
+        serializedVersion: 2
+        x: 306
+        y: 294
+        width: 80
+        height: 63
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0ecb98f910c8f9360800000000000000
+      internalID: 7178610269651320032
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_209
+      rect:
+        serializedVersion: 2
+        x: 330
+        y: 405
+        width: 10
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 16fb07d9340e6ca60800000000000000
+      internalID: 7694083594417913697
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_210
+      rect:
+        serializedVersion: 2
+        x: 419
+        y: 351
+        width: 23
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ae56b2637816607d0800000000000000
+      internalID: -2952565272337488406
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_211
+      rect:
+        serializedVersion: 2
+        x: 458
+        y: 391
+        width: 16
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2e209d0dcc08682e0800000000000000
+      internalID: -2123868557093043486
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_212
+      rect:
+        serializedVersion: 2
+        x: 487
+        y: 278
+        width: 52
+        height: 89
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 06e54db50de2dcb00800000000000000
+      internalID: 850387377071611488
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_213
+      rect:
+        serializedVersion: 2
+        x: 501
+        y: 365
+        width: 17
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 09701ea20f67f5cb0800000000000000
+      internalID: -4873045497907968112
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_214
+      rect:
+        serializedVersion: 2
+        x: 509
+        y: 385
+        width: 13
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e18abe7abfc108d20800000000000000
+      internalID: 3278652395905329182
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_215
+      rect:
+        serializedVersion: 2
+        x: 515
+        y: 361
+        width: 36
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dac83abb309ea92d0800000000000000
+      internalID: -3271045977089012563
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_216
+      rect:
+        serializedVersion: 2
+        x: 550
+        y: 401
+        width: 27
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f0100201af1b69390800000000000000
+      internalID: -7811860816057073393
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_217
+      rect:
+        serializedVersion: 2
+        x: 592
+        y: 336
+        width: 28
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8401d80ccbc559550800000000000000
+      internalID: 6166937230507839560
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_218
+      rect:
+        serializedVersion: 2
+        x: 606
+        y: 355
+        width: 36
+        height: 81
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c1f53f162c82b4990800000000000000
+      internalID: -7400776747321172196
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_219
+      rect:
+        serializedVersion: 2
+        x: 276
+        y: 254
+        width: 21
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8351407be1da7d2c0800000000000000
+      internalID: -4406863362927618760
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_220
+      rect:
+        serializedVersion: 2
+        x: 284
+        y: 210
+        width: 94
+        height: 81
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ea52aee720c8af5c0800000000000000
+      internalID: -4180875361712986706
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_221
+      rect:
+        serializedVersion: 2
+        x: 288
+        y: 310
+        width: 15
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 10a4055053dfe4ba0800000000000000
+      internalID: -6102662040876201471
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_222
+      rect:
+        serializedVersion: 2
+        x: 387
+        y: 286
+        width: 22
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5269d5a3ad260fda0800000000000000
+      internalID: -5913117621315856859
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_223
+      rect:
+        serializedVersion: 2
+        x: 391
+        y: 269
+        width: 46
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b15cc42acf97de6d0800000000000000
+      internalID: -2959575254150888165
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_224
+      rect:
+        serializedVersion: 2
+        x: 397
+        y: 320
+        width: 44
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ffcb6457e355ff550800000000000000
+      internalID: 6196765339028995327
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_225
+      rect:
+        serializedVersion: 2
+        x: 436
+        y: 264
+        width: 11
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b9fe9f068d58d55b0800000000000000
+      internalID: -5377995215624081509
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_226
+      rect:
+        serializedVersion: 2
+        x: 527
+        y: 282
+        width: 50
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 61da44a62d97b5700800000000000000
+      internalID: 530151325779143958
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_227
+      rect:
+        serializedVersion: 2
+        x: 541
+        y: 280
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 992693eefba27c430800000000000000
+      internalID: 3803055414161531545
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_228
+      rect:
+        serializedVersion: 2
+        x: 611
+        y: 320
+        width: 13
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c6603dc0360b2d650800000000000000
+      internalID: 6256256771834447468
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_229
+      rect:
+        serializedVersion: 2
+        x: 264
+        y: 230
+        width: 31
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0eafb5b2785560920800000000000000
+      internalID: 2956144244451703520
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_230
+      rect:
+        serializedVersion: 2
+        x: 377
+        y: 224
+        width: 13
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4c5a5bf6f5c470b00800000000000000
+      internalID: 794687832033961412
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_231
+      rect:
+        serializedVersion: 2
+        x: 389
+        y: 214
+        width: 36
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 90bdad67341926960800000000000000
+      internalID: 7593791640642968329
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_232
+      rect:
+        serializedVersion: 2
+        x: 517
+        y: 216
+        width: 28
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6aff724c4998a2d20800000000000000
+      internalID: 3254564952767725478
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_233
+      rect:
+        serializedVersion: 2
+        x: 158
+        y: 104
+        width: 131
+        height: 115
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dae14daffa5e100c0800000000000000
+      internalID: -4611151999460434259
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_234
+      rect:
+        serializedVersion: 2
+        x: 355
+        y: 180
+        width: 33
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5ff5e1482c9eb5670800000000000000
+      internalID: 8528667341005676533
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_235
+      rect:
+        serializedVersion: 2
+        x: 387
+        y: 174
+        width: 26
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ad7b657e7302cdaf0800000000000000
+      internalID: -370385644874713126
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_236
+      rect:
+        serializedVersion: 2
+        x: 410
+        y: 176
+        width: 13
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ff4867076de04b4b0800000000000000
+      internalID: -5425695336901999361
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_237
+      rect:
+        serializedVersion: 2
+        x: 466
+        y: 198
+        width: 16
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 818b0e82c5ead9760800000000000000
+      internalID: 7466315468096190488
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_238
+      rect:
+        serializedVersion: 2
+        x: 474
+        y: 204
+        width: 24
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 74abec635eaa88b00800000000000000
+      internalID: 831102032693606983
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_239
+      rect:
+        serializedVersion: 2
+        x: 286
+        y: 152
+        width: 44
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f29bf34b0eb8770d0800000000000000
+      internalID: -3425115194378962641
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_240
+      rect:
+        serializedVersion: 2
+        x: 403
+        y: 150
+        width: 18
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f0c96e93ae6b36ae0800000000000000
+      internalID: -1557199929030042609
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_241
+      rect:
+        serializedVersion: 2
+        x: 406
+        y: 65
+        width: 35
+        height: 106
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 93823877283d5e6b0800000000000000
+      internalID: -5267571631835633607
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_242
+      rect:
+        serializedVersion: 2
+        x: 428
+        y: 144
+        width: 9
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5ec1234d5a87efb00800000000000000
+      internalID: 864260832126704869
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_243
+      rect:
+        serializedVersion: 2
+        x: 430
+        y: 166
+        width: 31
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0ff9b367d78f594d0800000000000000
+      internalID: -3128321148400721936
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_244
+      rect:
+        serializedVersion: 2
+        x: 432
+        y: 126
+        width: 21
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4139f19300985e710800000000000000
+      internalID: 1721933066590458644
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_245
+      rect:
+        serializedVersion: 2
+        x: 442
+        y: 30
+        width: 107
+        height: 167
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 07ef9502040763510800000000000000
+      internalID: 1528532544261848688
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_246
+      rect:
+        serializedVersion: 2
+        x: 468
+        y: 160
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 27301cc8bdc61e260800000000000000
+      internalID: 7125095775691932530
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_247
+      rect:
+        serializedVersion: 2
+        x: 339
+        y: 143
+        width: 36
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ecc81e091681e0820800000000000000
+      internalID: 2886271218512661710
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_248
+      rect:
+        serializedVersion: 2
+        x: 397
+        y: 148
+        width: 8
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b32d9cc699f0838d0800000000000000
+      internalID: -2866524011191741893
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_249
+      rect:
+        serializedVersion: 2
+        x: 478
+        y: 148
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2ebfc350a3204f240800000000000000
+      internalID: 4824483549039885282
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_250
+      rect:
+        serializedVersion: 2
+        x: 616
+        y: 144
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 03da16d7e13b1b9f0800000000000000
+      internalID: -454385143853765328
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_251
+      rect:
+        serializedVersion: 2
+        x: 462
+        y: 128
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2c07901034cab5a70800000000000000
+      internalID: 8816830099288060098
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_252
+      rect:
+        serializedVersion: 2
+        x: 509
+        y: 111
+        width: 27
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 18739bbfea55e5490800000000000000
+      internalID: -7755667298249525375
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_253
+      rect:
+        serializedVersion: 2
+        x: 550
+        y: 109
+        width: 19
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 03ee14993404a40c0800000000000000
+      internalID: -4590786211072578000
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_254
+      rect:
+        serializedVersion: 2
+        x: 288
+        y: 93
+        width: 24
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5850996c1797ff750800000000000000
+      internalID: 6340920329931130245
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_255
+      rect:
+        serializedVersion: 2
+        x: 462
+        y: 111
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d171670f2401d51b0800000000000000
+      internalID: -5666354876474058979
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_256
+      rect:
+        serializedVersion: 2
+        x: 255
+        y: 79
+        width: 26
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5cc79677fc8db3620800000000000000
+      internalID: 2755033982640422085
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_257
+      rect:
+        serializedVersion: 2
+        x: 387
+        y: 79
+        width: 20
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ea12bc872e8101820800000000000000
+      internalID: 2886834722112741806
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_258
+      rect:
+        serializedVersion: 2
+        x: 598
+        y: 61
+        width: 28
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b9c17c5692209fed0800000000000000
+      internalID: -2379868551264133989
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_259
+      rect:
+        serializedVersion: 2
+        x: 649
+        y: 55
+        width: 19
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 42e2237c704d238d0800000000000000
+      internalID: -2867996882809770460
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_260
+      rect:
+        serializedVersion: 2
+        x: 316
+        y: 13
+        width: 32
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3b63ed8c2b838cc00800000000000000
+      internalID: 921048464322606771
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_261
+      rect:
+        serializedVersion: 2
+        x: 401
+        y: 17
+        width: 14
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 38df059aaa3ec53d0800000000000000
+      internalID: -3216445711724774013
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_262
+      rect:
+        serializedVersion: 2
+        x: 468
+        y: 31
+        width: 22
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: acec76a55afb27950800000000000000
+      internalID: 6445424733627862730
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_263
+      rect:
+        serializedVersion: 2
+        x: 598
+        y: 15
+        width: 17
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f1fa47477e3c15b20800000000000000
+      internalID: 3121491415603130143
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldCity_Sparkle_264
+      rect:
+        serializedVersion: 2
+        x: 573
+        y: 9
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7fc6e71900f6c8e10800000000000000
+      internalID: 2201256366108994807
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      GoldCity_Sparkle_0: 333710603584492264
+      GoldCity_Sparkle_1: 5520994784183309816
+      GoldCity_Sparkle_10: 2976614104071062551
+      GoldCity_Sparkle_100: -3663669555481088509
+      GoldCity_Sparkle_101: 5013533769895069081
+      GoldCity_Sparkle_102: 829401744204214239
+      GoldCity_Sparkle_103: 119968694217200305
+      GoldCity_Sparkle_104: -5836131558101315386
+      GoldCity_Sparkle_105: -8204267565464470196
+      GoldCity_Sparkle_106: -1008255620373790242
+      GoldCity_Sparkle_107: 4483020485104528448
+      GoldCity_Sparkle_108: -4071057453683328577
+      GoldCity_Sparkle_109: 5953854655984925783
+      GoldCity_Sparkle_11: 3286306668211333527
+      GoldCity_Sparkle_110: -8820017448168707182
+      GoldCity_Sparkle_111: 1101379824281432643
+      GoldCity_Sparkle_112: -1559180924826518449
+      GoldCity_Sparkle_113: -4854853992326770632
+      GoldCity_Sparkle_114: -2403828435898059451
+      GoldCity_Sparkle_115: -1756560495176156939
+      GoldCity_Sparkle_116: 4492763641808667345
+      GoldCity_Sparkle_117: 9036312718016659309
+      GoldCity_Sparkle_118: -2777876263796424346
+      GoldCity_Sparkle_119: -6368050232861755865
+      GoldCity_Sparkle_12: 6993464757610959725
+      GoldCity_Sparkle_120: -2064397515717593006
+      GoldCity_Sparkle_121: -8035889939564808851
+      GoldCity_Sparkle_122: -8802817964095317596
+      GoldCity_Sparkle_123: -540634038377744106
+      GoldCity_Sparkle_124: 3529111264930558964
+      GoldCity_Sparkle_125: 3801687940046625562
+      GoldCity_Sparkle_126: 499062134542084700
+      GoldCity_Sparkle_127: -4102548510798100069
+      GoldCity_Sparkle_128: -2327580918202454113
+      GoldCity_Sparkle_129: 5654817425136489
+      GoldCity_Sparkle_13: -6930542724864866059
+      GoldCity_Sparkle_130: 6942829142882578612
+      GoldCity_Sparkle_131: -1170905567719737181
+      GoldCity_Sparkle_132: 3233490414921331999
+      GoldCity_Sparkle_133: -7667830380226327902
+      GoldCity_Sparkle_134: -4664263115622020657
+      GoldCity_Sparkle_135: -5365873686611146444
+      GoldCity_Sparkle_136: -2620134491450141990
+      GoldCity_Sparkle_137: 6365564697035097232
+      GoldCity_Sparkle_138: 5414261337088760528
+      GoldCity_Sparkle_139: 2915008197082177204
+      GoldCity_Sparkle_14: 1276924849143786658
+      GoldCity_Sparkle_140: -5109084215351823560
+      GoldCity_Sparkle_141: 7730241368363723566
+      GoldCity_Sparkle_142: 2322715622135598581
+      GoldCity_Sparkle_143: -4306967997089728525
+      GoldCity_Sparkle_144: 572653341929286184
+      GoldCity_Sparkle_145: -210282393268977379
+      GoldCity_Sparkle_146: -1119578241517093853
+      GoldCity_Sparkle_147: -808456380008371153
+      GoldCity_Sparkle_148: -4805671514372505443
+      GoldCity_Sparkle_149: -6742653244904246536
+      GoldCity_Sparkle_15: 8277941148375231227
+      GoldCity_Sparkle_150: 152097114937298716
+      GoldCity_Sparkle_151: 29698260280739768
+      GoldCity_Sparkle_152: -6362873786990202120
+      GoldCity_Sparkle_153: -2128629857167337970
+      GoldCity_Sparkle_154: -3420859659223342146
+      GoldCity_Sparkle_155: -3009164490732415031
+      GoldCity_Sparkle_156: 2376337055013425924
+      GoldCity_Sparkle_157: 3126806139425194841
+      GoldCity_Sparkle_158: 4009650938941948214
+      GoldCity_Sparkle_159: 582459671737749357
+      GoldCity_Sparkle_16: -7045232813614989906
+      GoldCity_Sparkle_160: 4982830466051819847
+      GoldCity_Sparkle_161: 324026614262697636
+      GoldCity_Sparkle_162: -3744464290343770455
+      GoldCity_Sparkle_163: 7425465191808157684
+      GoldCity_Sparkle_164: -2599372216653302722
+      GoldCity_Sparkle_165: -2646784716190212967
+      GoldCity_Sparkle_166: -5430948843486380310
+      GoldCity_Sparkle_167: 1405256420619716161
+      GoldCity_Sparkle_168: 4702452522015526267
+      GoldCity_Sparkle_169: -6387843320723358342
+      GoldCity_Sparkle_17: 8984809788759999340
+      GoldCity_Sparkle_170: -8771302745306054928
+      GoldCity_Sparkle_171: 7049961072387670748
+      GoldCity_Sparkle_172: -714213288250777534
+      GoldCity_Sparkle_173: -2775913492545901580
+      GoldCity_Sparkle_174: -1506024498071136830
+      GoldCity_Sparkle_175: -778434891023712597
+      GoldCity_Sparkle_176: 1840557634622641782
+      GoldCity_Sparkle_177: 8659571238904864732
+      GoldCity_Sparkle_178: -2032931533784959609
+      GoldCity_Sparkle_179: 3951816869656095193
+      GoldCity_Sparkle_18: -1913808921338041774
+      GoldCity_Sparkle_180: -7800703741119902469
+      GoldCity_Sparkle_181: 8992209261155260905
+      GoldCity_Sparkle_182: 2364855092945075445
+      GoldCity_Sparkle_183: 3390937834412449427
+      GoldCity_Sparkle_184: 1066727965623051355
+      GoldCity_Sparkle_185: 8809361205546953464
+      GoldCity_Sparkle_186: 292553994785139038
+      GoldCity_Sparkle_187: -3288280936830963501
+      GoldCity_Sparkle_188: -7657451862582567508
+      GoldCity_Sparkle_189: 6153126118453673202
+      GoldCity_Sparkle_19: 1747769337202850826
+      GoldCity_Sparkle_190: 7558389642620588157
+      GoldCity_Sparkle_191: -1082591774810013293
+      GoldCity_Sparkle_192: -6463536563745373122
+      GoldCity_Sparkle_193: 3861106568773692937
+      GoldCity_Sparkle_194: 6556444732247185031
+      GoldCity_Sparkle_195: -680365712603676824
+      GoldCity_Sparkle_196: -7256725017061706340
+      GoldCity_Sparkle_197: 8126195199998892601
+      GoldCity_Sparkle_198: 299422308356696836
+      GoldCity_Sparkle_199: 7453271546272548240
+      GoldCity_Sparkle_2: 3348238691854855755
+      GoldCity_Sparkle_20: -8200820061642467580
+      GoldCity_Sparkle_200: 8059674977704557206
+      GoldCity_Sparkle_201: 4659450344082401835
+      GoldCity_Sparkle_202: -8261337826867651659
+      GoldCity_Sparkle_203: 6255599449313322970
+      GoldCity_Sparkle_204: -6694782702381521779
+      GoldCity_Sparkle_205: -1869289425500984083
+      GoldCity_Sparkle_206: -8005711250698893607
+      GoldCity_Sparkle_207: 4841899866277553657
+      GoldCity_Sparkle_208: 7178610269651320032
+      GoldCity_Sparkle_209: 7694083594417913697
+      GoldCity_Sparkle_21: 5348277494295159701
+      GoldCity_Sparkle_210: -2952565272337488406
+      GoldCity_Sparkle_211: -2123868557093043486
+      GoldCity_Sparkle_212: 850387377071611488
+      GoldCity_Sparkle_213: -4873045497907968112
+      GoldCity_Sparkle_214: 3278652395905329182
+      GoldCity_Sparkle_215: -3271045977089012563
+      GoldCity_Sparkle_216: -7811860816057073393
+      GoldCity_Sparkle_217: 6166937230507839560
+      GoldCity_Sparkle_218: -7400776747321172196
+      GoldCity_Sparkle_219: -4406863362927618760
+      GoldCity_Sparkle_22: 578448294045037401
+      GoldCity_Sparkle_220: -4180875361712986706
+      GoldCity_Sparkle_221: -6102662040876201471
+      GoldCity_Sparkle_222: -5913117621315856859
+      GoldCity_Sparkle_223: -2959575254150888165
+      GoldCity_Sparkle_224: 6196765339028995327
+      GoldCity_Sparkle_225: -5377995215624081509
+      GoldCity_Sparkle_226: 530151325779143958
+      GoldCity_Sparkle_227: 3803055414161531545
+      GoldCity_Sparkle_228: 6256256771834447468
+      GoldCity_Sparkle_229: 2956144244451703520
+      GoldCity_Sparkle_23: 7160801431770497882
+      GoldCity_Sparkle_230: 794687832033961412
+      GoldCity_Sparkle_231: 7593791640642968329
+      GoldCity_Sparkle_232: 3254564952767725478
+      GoldCity_Sparkle_233: -4611151999460434259
+      GoldCity_Sparkle_234: 8528667341005676533
+      GoldCity_Sparkle_235: -370385644874713126
+      GoldCity_Sparkle_236: -5425695336901999361
+      GoldCity_Sparkle_237: 7466315468096190488
+      GoldCity_Sparkle_238: 831102032693606983
+      GoldCity_Sparkle_239: -3425115194378962641
+      GoldCity_Sparkle_24: -6618429480125564894
+      GoldCity_Sparkle_240: -1557199929030042609
+      GoldCity_Sparkle_241: -5267571631835633607
+      GoldCity_Sparkle_242: 864260832126704869
+      GoldCity_Sparkle_243: -3128321148400721936
+      GoldCity_Sparkle_244: 1721933066590458644
+      GoldCity_Sparkle_245: 1528532544261848688
+      GoldCity_Sparkle_246: 7125095775691932530
+      GoldCity_Sparkle_247: 2886271218512661710
+      GoldCity_Sparkle_248: -2866524011191741893
+      GoldCity_Sparkle_249: 4824483549039885282
+      GoldCity_Sparkle_25: -1727559974799951864
+      GoldCity_Sparkle_250: -454385143853765328
+      GoldCity_Sparkle_251: 8816830099288060098
+      GoldCity_Sparkle_252: -7755667298249525375
+      GoldCity_Sparkle_253: -4590786211072578000
+      GoldCity_Sparkle_254: 6340920329931130245
+      GoldCity_Sparkle_255: -5666354876474058979
+      GoldCity_Sparkle_256: 2755033982640422085
+      GoldCity_Sparkle_257: 2886834722112741806
+      GoldCity_Sparkle_258: -2379868551264133989
+      GoldCity_Sparkle_259: -2867996882809770460
+      GoldCity_Sparkle_26: 437233627468296669
+      GoldCity_Sparkle_260: 921048464322606771
+      GoldCity_Sparkle_261: -3216445711724774013
+      GoldCity_Sparkle_262: 6445424733627862730
+      GoldCity_Sparkle_263: 3121491415603130143
+      GoldCity_Sparkle_264: 2201256366108994807
+      GoldCity_Sparkle_27: -2971418174769642827
+      GoldCity_Sparkle_28: 8664611574813868786
+      GoldCity_Sparkle_29: -216178482061620081
+      GoldCity_Sparkle_3: 4880479294292693327
+      GoldCity_Sparkle_30: -1998919038066869145
+      GoldCity_Sparkle_31: 2993978961249874818
+      GoldCity_Sparkle_32: -5408137826921316020
+      GoldCity_Sparkle_33: -4186984048755130986
+      GoldCity_Sparkle_34: 4072055405369211893
+      GoldCity_Sparkle_35: 3636225822946015072
+      GoldCity_Sparkle_36: 8644725854344787563
+      GoldCity_Sparkle_37: -3095729643263731793
+      GoldCity_Sparkle_38: -2255859237685706005
+      GoldCity_Sparkle_39: -325767602254827709
+      GoldCity_Sparkle_4: -6773418708976506234
+      GoldCity_Sparkle_40: 7300568664917245351
+      GoldCity_Sparkle_41: 5432588143435181465
+      GoldCity_Sparkle_42: -3524353626755176256
+      GoldCity_Sparkle_43: -5262259785392722859
+      GoldCity_Sparkle_44: 6152304480301747641
+      GoldCity_Sparkle_45: 1694010662540657802
+      GoldCity_Sparkle_46: 4670411126872478402
+      GoldCity_Sparkle_47: 8405712243118227804
+      GoldCity_Sparkle_48: 7583717884721850995
+      GoldCity_Sparkle_49: 6786176260284214331
+      GoldCity_Sparkle_5: 1234112449274760865
+      GoldCity_Sparkle_50: -8676793672541715032
+      GoldCity_Sparkle_51: -6090573395192446470
+      GoldCity_Sparkle_52: -711040684480252907
+      GoldCity_Sparkle_53: 1992347104585395996
+      GoldCity_Sparkle_54: -3261784296917368924
+      GoldCity_Sparkle_55: -4661088681193498693
+      GoldCity_Sparkle_56: -3920934293025911697
+      GoldCity_Sparkle_57: 6756226638950560426
+      GoldCity_Sparkle_58: 8431396495461493244
+      GoldCity_Sparkle_59: 3870603697916989501
+      GoldCity_Sparkle_6: -9085594702935969041
+      GoldCity_Sparkle_60: -1579161378690014846
+      GoldCity_Sparkle_61: 8147629111361610290
+      GoldCity_Sparkle_62: -5491143840231877451
+      GoldCity_Sparkle_63: -6305752661072290023
+      GoldCity_Sparkle_64: 7169931772475329147
+      GoldCity_Sparkle_65: 5029745146321644531
+      GoldCity_Sparkle_66: 6361607826713188052
+      GoldCity_Sparkle_67: 2357739172103216489
+      GoldCity_Sparkle_68: 8874966755606711727
+      GoldCity_Sparkle_69: -2497417550948895237
+      GoldCity_Sparkle_7: 5068304793976640184
+      GoldCity_Sparkle_70: 5003363643887841677
+      GoldCity_Sparkle_71: -42835835647681917
+      GoldCity_Sparkle_72: -6275028730720827924
+      GoldCity_Sparkle_73: 7717887044402261063
+      GoldCity_Sparkle_74: -1993588969429024468
+      GoldCity_Sparkle_75: 4581900795753752782
+      GoldCity_Sparkle_76: -8147711621934972501
+      GoldCity_Sparkle_77: -3333502231520315603
+      GoldCity_Sparkle_78: 8060656372605182473
+      GoldCity_Sparkle_79: -1355580466947643314
+      GoldCity_Sparkle_8: -867867383677607218
+      GoldCity_Sparkle_80: -5878377708469704559
+      GoldCity_Sparkle_81: 805524839917381699
+      GoldCity_Sparkle_82: 1889122298018989788
+      GoldCity_Sparkle_83: 7169942326385567727
+      GoldCity_Sparkle_84: 9070734761296370894
+      GoldCity_Sparkle_85: 6665286950605465558
+      GoldCity_Sparkle_86: -281927126297348508
+      GoldCity_Sparkle_87: -2682703534242570664
+      GoldCity_Sparkle_88: -4895216133780430426
+      GoldCity_Sparkle_89: 2416000378055245868
+      GoldCity_Sparkle_9: 3501376579650073481
+      GoldCity_Sparkle_90: -8570466248828837302
+      GoldCity_Sparkle_91: 7524448257381729864
+      GoldCity_Sparkle_92: -5393245220026162796
+      GoldCity_Sparkle_93: 9076915471720784631
+      GoldCity_Sparkle_94: -1958907496417167244
+      GoldCity_Sparkle_95: 5593540490369657410
+      GoldCity_Sparkle_96: -5472601563285780228
+      GoldCity_Sparkle_97: -2365950408622824975
+      GoldCity_Sparkle_98: 70603336814342940
+      GoldCity_Sparkle_99: -7358797168573570510
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

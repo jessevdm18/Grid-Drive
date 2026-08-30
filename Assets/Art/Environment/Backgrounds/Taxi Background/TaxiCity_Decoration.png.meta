@@ -1,0 +1,1638 @@
+fileFormatVersion: 2
+guid: 4f1c9a4453edf4541a6a8e3312866dde
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 8059105270701931570
+    second: TaxiCity_Decoration_0
+  - first:
+      213: -1719543399615694512
+    second: TaxiCity_Decoration_1
+  - first:
+      213: -2386525131736085862
+    second: TaxiCity_Decoration_2
+  - first:
+      213: -6958895813542202137
+    second: TaxiCity_Decoration_3
+  - first:
+      213: 4175758646991250930
+    second: TaxiCity_Decoration_4
+  - first:
+      213: 4895658631366698557
+    second: TaxiCity_Decoration_5
+  - first:
+      213: 6287737364343614864
+    second: TaxiCity_Decoration_6
+  - first:
+      213: -3851929090960102376
+    second: TaxiCity_Decoration_7
+  - first:
+      213: -6085916878743755493
+    second: TaxiCity_Decoration_8
+  - first:
+      213: 4715439206150426392
+    second: TaxiCity_Decoration_9
+  - first:
+      213: -1693207578055697318
+    second: TaxiCity_Decoration_10
+  - first:
+      213: -220437772260481488
+    second: TaxiCity_Decoration_11
+  - first:
+      213: 7016731805336714173
+    second: TaxiCity_Decoration_12
+  - first:
+      213: 5699701272887321906
+    second: TaxiCity_Decoration_13
+  - first:
+      213: -2549198869898279082
+    second: TaxiCity_Decoration_14
+  - first:
+      213: -2001357520738713314
+    second: TaxiCity_Decoration_15
+  - first:
+      213: -1792014289935744086
+    second: TaxiCity_Decoration_16
+  - first:
+      213: 7597673772416871000
+    second: TaxiCity_Decoration_17
+  - first:
+      213: -3101175785862786654
+    second: TaxiCity_Decoration_18
+  - first:
+      213: 4336328132777048708
+    second: TaxiCity_Decoration_19
+  - first:
+      213: 3133627415383098596
+    second: TaxiCity_Decoration_20
+  - first:
+      213: 4977676811815042431
+    second: TaxiCity_Decoration_21
+  - first:
+      213: -8574905804699276455
+    second: TaxiCity_Decoration_22
+  - first:
+      213: -3993091594584337770
+    second: TaxiCity_Decoration_23
+  - first:
+      213: 1856370368848242441
+    second: TaxiCity_Decoration_24
+  - first:
+      213: 6883904564090506804
+    second: TaxiCity_Decoration_25
+  - first:
+      213: -8751453019828386204
+    second: TaxiCity_Decoration_26
+  - first:
+      213: -8292643434306385096
+    second: TaxiCity_Decoration_27
+  - first:
+      213: 2922113055103398392
+    second: TaxiCity_Decoration_28
+  - first:
+      213: -6458477235359204515
+    second: TaxiCity_Decoration_29
+  - first:
+      213: 1318408008883748120
+    second: TaxiCity_Decoration_30
+  - first:
+      213: -4972477493710052508
+    second: TaxiCity_Decoration_31
+  - first:
+      213: -4523479727142664685
+    second: TaxiCity_Decoration_32
+  - first:
+      213: -15579814912311198
+    second: TaxiCity_Decoration_33
+  - first:
+      213: 4762423908763990271
+    second: TaxiCity_Decoration_34
+  - first:
+      213: 4082983140207789759
+    second: TaxiCity_Decoration_35
+  - first:
+      213: 1804997793313176781
+    second: TaxiCity_Decoration_36
+  - first:
+      213: -7296953114277387370
+    second: TaxiCity_Decoration_37
+  - first:
+      213: 1644096106614890016
+    second: TaxiCity_Decoration_38
+  - first:
+      213: -4335419521525438152
+    second: TaxiCity_Decoration_39
+  - first:
+      213: -1235933707842557521
+    second: TaxiCity_Decoration_40
+  - first:
+      213: 7429012548446625791
+    second: TaxiCity_Decoration_41
+  - first:
+      213: -2276452955875942793
+    second: TaxiCity_Decoration_42
+  - first:
+      213: 5217816119692361000
+    second: TaxiCity_Decoration_43
+  - first:
+      213: -185609646278651473
+    second: TaxiCity_Decoration_44
+  - first:
+      213: -3357667175826728906
+    second: TaxiCity_Decoration_45
+  - first:
+      213: 167658481978922423
+    second: TaxiCity_Decoration_46
+  - first:
+      213: 4652652003243275525
+    second: TaxiCity_Decoration_47
+  - first:
+      213: -8354029482618743059
+    second: TaxiCity_Decoration_48
+  - first:
+      213: 6861407200870946282
+    second: TaxiCity_Decoration_49
+  - first:
+      213: -817823121367645971
+    second: TaxiCity_Decoration_50
+  - first:
+      213: 535654366591196593
+    second: TaxiCity_Decoration_51
+  - first:
+      213: 1823792834012440490
+    second: TaxiCity_Decoration_52
+  - first:
+      213: -4265087976929295070
+    second: TaxiCity_Decoration_53
+  - first:
+      213: 908303185612908612
+    second: TaxiCity_Decoration_54
+  - first:
+      213: 6405811996542962775
+    second: TaxiCity_Decoration_55
+  - first:
+      213: 3097028156259578772
+    second: TaxiCity_Decoration_56
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: TaxiCity_Decoration_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1602
+        width: 64
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 23cbaa37b81b7df60800000000000000
+      internalID: 8059105270701931570
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TaxiCity_Decoration_1
+      rect:
+        serializedVersion: 2
+        x: 105
+        y: 1621
+        width: 75
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 059f90a7364f228e0800000000000000
+      internalID: -1719543399615694512
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TaxiCity_Decoration_2
+      rect:
+        serializedVersion: 2
+        x: 225
+        y: 1574
+        width: 249
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a9a045b790c51eed0800000000000000
+      internalID: -2386525131736085862
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TaxiCity_Decoration_3
+      rect:
+        serializedVersion: 2
+        x: 796
+        y: 1574
+        width: 112
+        height: 81
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7e43ddc90290d6f90800000000000000
+      internalID: -6958895813542202137
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TaxiCity_Decoration_4
+      rect:
+        serializedVersion: 2
+        x: 18
+        y: 1494
+        width: 129
+        height: 116
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2f5eda58d5643f930800000000000000
+      internalID: 4175758646991250930
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TaxiCity_Decoration_5
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 1504
+        width: 38
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d36ef20469fd0f340800000000000000
+      internalID: 4895658631366698557
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TaxiCity_Decoration_6
+      rect:
+        serializedVersion: 2
+        x: 588
+        y: 1470
+        width: 245
+        height: 148
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 09de6aaa1d7824750800000000000000
+      internalID: 6287737364343614864
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TaxiCity_Decoration_7
+      rect:
+        serializedVersion: 2
+        x: 896
+        y: 1546
+        width: 45
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 81c645176e23b8ac0800000000000000
+      internalID: -3851929090960102376
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TaxiCity_Decoration_8
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1460
+        width: 66
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b15ace5e7da7a8ba0800000000000000
+      internalID: -6085916878743755493
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TaxiCity_Decoration_9
+      rect:
+        serializedVersion: 2
+        x: 98
+        y: 1510
+        width: 17
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 81fcb8a79fa907140800000000000000
+      internalID: 4715439206150426392
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TaxiCity_Decoration_10
+      rect:
+        serializedVersion: 2
+        x: 844
+        y: 1422
+        width: 81
+        height: 114
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a5c9df2cda48088e0800000000000000
+      internalID: -1693207578055697318
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TaxiCity_Decoration_11
+      rect:
+        serializedVersion: 2
+        x: 49
+        y: 1373
+        width: 56
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 036e5599309d0fcf0800000000000000
+      internalID: -220437772260481488
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TaxiCity_Decoration_12
+      rect:
+        serializedVersion: 2
+        x: 120
+        y: 1219
+        width: 242
+        height: 253
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dbbb7459660706160800000000000000
+      internalID: 7016731805336714173
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TaxiCity_Decoration_13
+      rect:
+        serializedVersion: 2
+        x: 726
+        y: 1325
+        width: 62
+        height: 160
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2356a400c18691f40800000000000000
+      internalID: 5699701272887321906
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TaxiCity_Decoration_14
+      rect:
+        serializedVersion: 2
+        x: 806
+        y: 1434
+        width: 43
+        height: 55
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 657c2e1522d6f9cd0800000000000000
+      internalID: -2549198869898279082
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TaxiCity_Decoration_15
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1291
+        width: 48
+        height: 77
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e1100d340ffb934e0800000000000000
+      internalID: -2001357520738713314
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TaxiCity_Decoration_16
+      rect:
+        serializedVersion: 2
+        x: 91
+        y: 1303
+        width: 42
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aa3c4ff6f7c7127e0800000000000000
+      internalID: -1792014289935744086
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TaxiCity_Decoration_17
+      rect:
+        serializedVersion: 2
+        x: 582
+        y: 1309
+        width: 121
+        height: 104
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 85aa534ba0c507960800000000000000
+      internalID: 7597673772416871000
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TaxiCity_Decoration_18
+      rect:
+        serializedVersion: 2
+        x: 777
+        y: 1365
+        width: 40
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2a11b91bd0966f4d0800000000000000
+      internalID: -3101175785862786654
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TaxiCity_Decoration_19
+      rect:
+        serializedVersion: 2
+        x: 827
+        y: 1357
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 48a75bf367bbd2c30800000000000000
+      internalID: 4336328132777048708
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TaxiCity_Decoration_20
+      rect:
+        serializedVersion: 2
+        x: 844
+        y: 1314
+        width: 97
+        height: 88
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4e4c5581881ec7b20800000000000000
+      internalID: 3133627415383098596
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TaxiCity_Decoration_21
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1179
+        width: 84
+        height: 78
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f7d3feeffa2441540800000000000000
+      internalID: 4977676811815042431
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TaxiCity_Decoration_22
+      rect:
+        serializedVersion: 2
+        x: 815
+        y: 1241
+        width: 42
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 95be6783a90dff880800000000000000
+      internalID: -8574905804699276455
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TaxiCity_Decoration_23
+      rect:
+        serializedVersion: 2
+        x: 881
+        y: 1201
+        width: 60
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 692d33dd950b598c0800000000000000
+      internalID: -3993091594584337770
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TaxiCity_Decoration_24
+      rect:
+        serializedVersion: 2
+        x: 109
+        y: 1004
+        width: 180
+        height: 77
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 907a2c6d30723c910800000000000000
+      internalID: 1856370368848242441
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TaxiCity_Decoration_25
+      rect:
+        serializedVersion: 2
+        x: 712
+        y: 1050
+        width: 179
+        height: 162
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 43e0e428aba888f50800000000000000
+      internalID: 6883904564090506804
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TaxiCity_Decoration_26
+      rect:
+        serializedVersion: 2
+        x: 835
+        y: 1052
+        width: 76
+        height: 57
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4660c9c78d79c8680800000000000000
+      internalID: -8751453019828386204
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TaxiCity_Decoration_27
+      rect:
+        serializedVersion: 2
+        x: 55
+        y: 1004
+        width: 60
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 83b41399bbc9aec80800000000000000
+      internalID: -8292643434306385096
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TaxiCity_Decoration_28
+      rect:
+        serializedVersion: 2
+        x: 103
+        y: 996
+        width: 14
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8f138f2775e6d8820800000000000000
+      internalID: 2922113055103398392
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TaxiCity_Decoration_29
+      rect:
+        serializedVersion: 2
+        x: 6
+        y: 935
+        width: 46
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d5bb7744c21ee56a0800000000000000
+      internalID: -6458477235359204515
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TaxiCity_Decoration_30
+      rect:
+        serializedVersion: 2
+        x: 870
+        y: 899
+        width: 71
+        height: 56
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 81dbb8e491deb4210800000000000000
+      internalID: 1318408008883748120
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TaxiCity_Decoration_31
+      rect:
+        serializedVersion: 2
+        x: 14
+        y: 770
+        width: 52
+        height: 51
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 463a9c590163efab0800000000000000
+      internalID: -4972477493710052508
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TaxiCity_Decoration_32
+      rect:
+        serializedVersion: 2
+        x: 34
+        y: 843
+        width: 47
+        height: 73
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3160bf2972f5931c0800000000000000
+      internalID: -4523479727142664685
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TaxiCity_Decoration_33
+      rect:
+        serializedVersion: 2
+        x: 168
+        y: 867
+        width: 20
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2604c7aad36a8cff0800000000000000
+      internalID: -15579814912311198
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TaxiCity_Decoration_34
+      rect:
+        serializedVersion: 2
+        x: 183
+        y: 803
+        width: 171
+        height: 86
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ff874b70057871240800000000000000
+      internalID: 4762423908763990271
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TaxiCity_Decoration_35
+      rect:
+        serializedVersion: 2
+        x: 395
+        y: 521
+        width: 533
+        height: 384
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fb68eff888ba9a830800000000000000
+      internalID: 4082983140207789759
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TaxiCity_Decoration_36
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 642
+        width: 244
+        height: 67
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dccbbc20ee3ac0910800000000000000
+      internalID: 1804997793313176781
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TaxiCity_Decoration_37
+      rect:
+        serializedVersion: 2
+        x: 860
+        y: 674
+        width: 37
+        height: 41
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 693e0d0bdc30cba90800000000000000
+      internalID: -7296953114277387370
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TaxiCity_Decoration_38
+      rect:
+        serializedVersion: 2
+        x: 890
+        y: 638
+        width: 51
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 02e126bb2b001d610800000000000000
+      internalID: 1644096106614890016
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TaxiCity_Decoration_39
+      rect:
+        serializedVersion: 2
+        x: 793
+        y: 601
+        width: 15
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 839ae2b4aee75d3c0800000000000000
+      internalID: -4335419521525438152
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TaxiCity_Decoration_40
+      rect:
+        serializedVersion: 2
+        x: 6
+        y: 538
+        width: 47
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fa9ec1a47d419dee0800000000000000
+      internalID: -1235933707842557521
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TaxiCity_Decoration_41
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 456
+        width: 69
+        height: 90
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fff941e5d87291760800000000000000
+      internalID: 7429012548446625791
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TaxiCity_Decoration_42
+      rect:
+        serializedVersion: 2
+        x: 846
+        y: 475
+        width: 95
+        height: 113
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 77e5029091a6860e0800000000000000
+      internalID: -2276452955875942793
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TaxiCity_Decoration_43
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 154
+        width: 228
+        height: 166
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 82df19d9d18696840800000000000000
+      internalID: 5217816119692361000
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TaxiCity_Decoration_44
+      rect:
+        serializedVersion: 2
+        x: 41
+        y: 349
+        width: 246
+        height: 72
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fa1dca692059c6df0800000000000000
+      internalID: -185609646278651473
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TaxiCity_Decoration_45
+      rect:
+        serializedVersion: 2
+        x: 677
+        y: 300
+        width: 264
+        height: 133
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 638dbd64e7b2761d0800000000000000
+      internalID: -3357667175826728906
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TaxiCity_Decoration_46
+      rect:
+        serializedVersion: 2
+        x: 840
+        y: 304
+        width: 57
+        height: 57
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7b55fe54084a35200800000000000000
+      internalID: 167658481978922423
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TaxiCity_Decoration_47
+      rect:
+        serializedVersion: 2
+        x: 808
+        y: 228
+        width: 53
+        height: 59
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 50533dc985a819040800000000000000
+      internalID: 4652652003243275525
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TaxiCity_Decoration_48
+      rect:
+        serializedVersion: 2
+        x: 868
+        y: 160
+        width: 61
+        height: 83
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: de69e557276801c80800000000000000
+      internalID: -8354029482618743059
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TaxiCity_Decoration_49
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 171
+        width: 56
+        height: 56
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ae55833fe7d983f50800000000000000
+      internalID: 6861407200870946282
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TaxiCity_Decoration_50
+      rect:
+        serializedVersion: 2
+        x: 237
+        y: 42
+        width: 123
+        height: 147
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: de0c7c1443286a4f0800000000000000
+      internalID: -817823121367645971
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TaxiCity_Decoration_51
+      rect:
+        serializedVersion: 2
+        x: 600
+        y: 23
+        width: 206
+        height: 174
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1bd1e03fec60f6700800000000000000
+      internalID: 535654366591196593
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TaxiCity_Decoration_52
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 92
+        width: 82
+        height: 68
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aa7e63f6be96f4910800000000000000
+      internalID: 1823792834012440490
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TaxiCity_Decoration_53
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 63
+        width: 50
+        height: 55
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2250757151d5fc4c0800000000000000
+      internalID: -4265087976929295070
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TaxiCity_Decoration_54
+      rect:
+        serializedVersion: 2
+        x: 821
+        y: 110
+        width: 44
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 44820d65fe0fa9c00800000000000000
+      internalID: 908303185612908612
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TaxiCity_Decoration_55
+      rect:
+        serializedVersion: 2
+        x: 73
+        y: 21
+        width: 58
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 75c01e7421406e850800000000000000
+      internalID: 6405811996542962775
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TaxiCity_Decoration_56
+      rect:
+        serializedVersion: 2
+        x: 824
+        y: 22
+        width: 102
+        height: 86
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4933c3903badafa20800000000000000
+      internalID: 3097028156259578772
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      TaxiCity_Decoration_0: 8059105270701931570
+      TaxiCity_Decoration_1: -1719543399615694512
+      TaxiCity_Decoration_10: -1693207578055697318
+      TaxiCity_Decoration_11: -220437772260481488
+      TaxiCity_Decoration_12: 7016731805336714173
+      TaxiCity_Decoration_13: 5699701272887321906
+      TaxiCity_Decoration_14: -2549198869898279082
+      TaxiCity_Decoration_15: -2001357520738713314
+      TaxiCity_Decoration_16: -1792014289935744086
+      TaxiCity_Decoration_17: 7597673772416871000
+      TaxiCity_Decoration_18: -3101175785862786654
+      TaxiCity_Decoration_19: 4336328132777048708
+      TaxiCity_Decoration_2: -2386525131736085862
+      TaxiCity_Decoration_20: 3133627415383098596
+      TaxiCity_Decoration_21: 4977676811815042431
+      TaxiCity_Decoration_22: -8574905804699276455
+      TaxiCity_Decoration_23: -3993091594584337770
+      TaxiCity_Decoration_24: 1856370368848242441
+      TaxiCity_Decoration_25: 6883904564090506804
+      TaxiCity_Decoration_26: -8751453019828386204
+      TaxiCity_Decoration_27: -8292643434306385096
+      TaxiCity_Decoration_28: 2922113055103398392
+      TaxiCity_Decoration_29: -6458477235359204515
+      TaxiCity_Decoration_3: -6958895813542202137
+      TaxiCity_Decoration_30: 1318408008883748120
+      TaxiCity_Decoration_31: -4972477493710052508
+      TaxiCity_Decoration_32: -4523479727142664685
+      TaxiCity_Decoration_33: -15579814912311198
+      TaxiCity_Decoration_34: 4762423908763990271
+      TaxiCity_Decoration_35: 4082983140207789759
+      TaxiCity_Decoration_36: 1804997793313176781
+      TaxiCity_Decoration_37: -7296953114277387370
+      TaxiCity_Decoration_38: 1644096106614890016
+      TaxiCity_Decoration_39: -4335419521525438152
+      TaxiCity_Decoration_4: 4175758646991250930
+      TaxiCity_Decoration_40: -1235933707842557521
+      TaxiCity_Decoration_41: 7429012548446625791
+      TaxiCity_Decoration_42: -2276452955875942793
+      TaxiCity_Decoration_43: 5217816119692361000
+      TaxiCity_Decoration_44: -185609646278651473
+      TaxiCity_Decoration_45: -3357667175826728906
+      TaxiCity_Decoration_46: 167658481978922423
+      TaxiCity_Decoration_47: 4652652003243275525
+      TaxiCity_Decoration_48: -8354029482618743059
+      TaxiCity_Decoration_49: 6861407200870946282
+      TaxiCity_Decoration_5: 4895658631366698557
+      TaxiCity_Decoration_50: -817823121367645971
+      TaxiCity_Decoration_51: 535654366591196593
+      TaxiCity_Decoration_52: 1823792834012440490
+      TaxiCity_Decoration_53: -4265087976929295070
+      TaxiCity_Decoration_54: 908303185612908612
+      TaxiCity_Decoration_55: 6405811996542962775
+      TaxiCity_Decoration_56: 3097028156259578772
+      TaxiCity_Decoration_6: 6287737364343614864
+      TaxiCity_Decoration_7: -3851929090960102376
+      TaxiCity_Decoration_8: -6085916878743755493
+      TaxiCity_Decoration_9: 4715439206150426392
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

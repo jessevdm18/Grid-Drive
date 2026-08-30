@@ -1,0 +1,2158 @@
+fileFormatVersion: 2
+guid: 09933529551572b49a5c008c7951b7a9
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 1767077302635680942
+    second: CosmicCity_Sparkle_0
+  - first:
+      213: -640572990448410305
+    second: CosmicCity_Sparkle_1
+  - first:
+      213: 4175972200501848845
+    second: CosmicCity_Sparkle_2
+  - first:
+      213: -6827785909703855160
+    second: CosmicCity_Sparkle_3
+  - first:
+      213: 4185281752745973089
+    second: CosmicCity_Sparkle_4
+  - first:
+      213: 9055032235908843646
+    second: CosmicCity_Sparkle_5
+  - first:
+      213: -4255358438707542911
+    second: CosmicCity_Sparkle_6
+  - first:
+      213: 4215265386533368601
+    second: CosmicCity_Sparkle_7
+  - first:
+      213: 2962618626456008415
+    second: CosmicCity_Sparkle_8
+  - first:
+      213: -6015593596468981819
+    second: CosmicCity_Sparkle_9
+  - first:
+      213: -3376193954189084930
+    second: CosmicCity_Sparkle_10
+  - first:
+      213: -2969102381988217530
+    second: CosmicCity_Sparkle_11
+  - first:
+      213: 9139851716943868065
+    second: CosmicCity_Sparkle_12
+  - first:
+      213: 5216468979373023986
+    second: CosmicCity_Sparkle_13
+  - first:
+      213: -939691670518972475
+    second: CosmicCity_Sparkle_14
+  - first:
+      213: 6645913210311805725
+    second: CosmicCity_Sparkle_15
+  - first:
+      213: -3527831516158220868
+    second: CosmicCity_Sparkle_16
+  - first:
+      213: 1197323550338707141
+    second: CosmicCity_Sparkle_17
+  - first:
+      213: 2607219868432678971
+    second: CosmicCity_Sparkle_18
+  - first:
+      213: 6708008849429514892
+    second: CosmicCity_Sparkle_19
+  - first:
+      213: 8751582685620166755
+    second: CosmicCity_Sparkle_20
+  - first:
+      213: 6589263840891980457
+    second: CosmicCity_Sparkle_21
+  - first:
+      213: 2223598795426240745
+    second: CosmicCity_Sparkle_22
+  - first:
+      213: -988215203477833167
+    second: CosmicCity_Sparkle_23
+  - first:
+      213: 8677015260600936043
+    second: CosmicCity_Sparkle_24
+  - first:
+      213: -599508051558987579
+    second: CosmicCity_Sparkle_25
+  - first:
+      213: 6078716760926005094
+    second: CosmicCity_Sparkle_26
+  - first:
+      213: 76315030766936521
+    second: CosmicCity_Sparkle_27
+  - first:
+      213: -584271055158844324
+    second: CosmicCity_Sparkle_28
+  - first:
+      213: 297542029450441599
+    second: CosmicCity_Sparkle_29
+  - first:
+      213: -4315984082400696887
+    second: CosmicCity_Sparkle_30
+  - first:
+      213: -321248697652818803
+    second: CosmicCity_Sparkle_31
+  - first:
+      213: -5995323441132675598
+    second: CosmicCity_Sparkle_32
+  - first:
+      213: 7265134877676534599
+    second: CosmicCity_Sparkle_33
+  - first:
+      213: 3619192405616296806
+    second: CosmicCity_Sparkle_34
+  - first:
+      213: -1094784347751906203
+    second: CosmicCity_Sparkle_35
+  - first:
+      213: -9126780968241400944
+    second: CosmicCity_Sparkle_36
+  - first:
+      213: -7240023563837617569
+    second: CosmicCity_Sparkle_37
+  - first:
+      213: 550943982058876740
+    second: CosmicCity_Sparkle_38
+  - first:
+      213: -5235676624511319241
+    second: CosmicCity_Sparkle_39
+  - first:
+      213: -7531204440754831749
+    second: CosmicCity_Sparkle_40
+  - first:
+      213: 5027797344349198385
+    second: CosmicCity_Sparkle_41
+  - first:
+      213: 3576790372254692977
+    second: CosmicCity_Sparkle_42
+  - first:
+      213: 329810959808655656
+    second: CosmicCity_Sparkle_43
+  - first:
+      213: 3275672812242089018
+    second: CosmicCity_Sparkle_44
+  - first:
+      213: -5487503813119418435
+    second: CosmicCity_Sparkle_45
+  - first:
+      213: 7803614508124071658
+    second: CosmicCity_Sparkle_46
+  - first:
+      213: -6608526379691439520
+    second: CosmicCity_Sparkle_47
+  - first:
+      213: 8992552646162684114
+    second: CosmicCity_Sparkle_48
+  - first:
+      213: -6062644147538509815
+    second: CosmicCity_Sparkle_49
+  - first:
+      213: 3363437156778726803
+    second: CosmicCity_Sparkle_50
+  - first:
+      213: -3761812737368960461
+    second: CosmicCity_Sparkle_51
+  - first:
+      213: 8530669690437096167
+    second: CosmicCity_Sparkle_52
+  - first:
+      213: 2192753870428829133
+    second: CosmicCity_Sparkle_53
+  - first:
+      213: 8940679714585240343
+    second: CosmicCity_Sparkle_54
+  - first:
+      213: 8025227319397417266
+    second: CosmicCity_Sparkle_55
+  - first:
+      213: 5002303793615247292
+    second: CosmicCity_Sparkle_56
+  - first:
+      213: -510736155098026829
+    second: CosmicCity_Sparkle_57
+  - first:
+      213: -2021738278364472218
+    second: CosmicCity_Sparkle_58
+  - first:
+      213: -4441982617759501987
+    second: CosmicCity_Sparkle_59
+  - first:
+      213: 3413960903388636799
+    second: CosmicCity_Sparkle_60
+  - first:
+      213: 5184356629991012856
+    second: CosmicCity_Sparkle_61
+  - first:
+      213: 423201788061692919
+    second: CosmicCity_Sparkle_62
+  - first:
+      213: 2207283030459645420
+    second: CosmicCity_Sparkle_63
+  - first:
+      213: 1106724076911477150
+    second: CosmicCity_Sparkle_64
+  - first:
+      213: 5084088781765657430
+    second: CosmicCity_Sparkle_65
+  - first:
+      213: 6464563403537978715
+    second: CosmicCity_Sparkle_66
+  - first:
+      213: -2252430262245229996
+    second: CosmicCity_Sparkle_67
+  - first:
+      213: -7304472978726339079
+    second: CosmicCity_Sparkle_68
+  - first:
+      213: 4140413641867582068
+    second: CosmicCity_Sparkle_69
+  - first:
+      213: -2486308517888049161
+    second: CosmicCity_Sparkle_70
+  - first:
+      213: 3209206974448369048
+    second: CosmicCity_Sparkle_71
+  - first:
+      213: 8938329916659138134
+    second: CosmicCity_Sparkle_72
+  - first:
+      213: 2547752381542737848
+    second: CosmicCity_Sparkle_73
+  - first:
+      213: -6977340977964881990
+    second: CosmicCity_Sparkle_74
+  - first:
+      213: 3693503460766157767
+    second: CosmicCity_Sparkle_75
+  - first:
+      213: -5033338254296133947
+    second: CosmicCity_Sparkle_76
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 14
+        width: 941
+        height: 1658
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ea45142c17be58810800000000000000
+      internalID: 1767077302635680942
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_1
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 628
+        width: 190
+        height: 346
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f31ec93524a3c17f0800000000000000
+      internalID: -640572990448410305
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_2
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 317
+        height: 627
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d0ba1d2579804f930800000000000000
+      internalID: 4175972200501848845
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_3
+      rect:
+        serializedVersion: 2
+        x: 97
+        y: 939
+        width: 50
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8c33fa9e3e4de31a0800000000000000
+      internalID: -6827785909703855160
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_4
+      rect:
+        serializedVersion: 2
+        x: 144
+        y: 980
+        width: 9
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 165195d549b151a30800000000000000
+      internalID: 4185281752745973089
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_5
+      rect:
+        serializedVersion: 2
+        x: 166
+        y: 853
+        width: 30
+        height: 49
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e78ce0bc7dfe9ad70800000000000000
+      internalID: 9055032235908843646
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_6
+      rect:
+        serializedVersion: 2
+        x: 174
+        y: 668
+        width: 42
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 18440ecbb0ee1f4c0800000000000000
+      internalID: -4255358438707542911
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_7
+      rect:
+        serializedVersion: 2
+        x: 191
+        y: 823
+        width: 77
+        height: 97
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 913325e1981af7a30800000000000000
+      internalID: 4215265386533368601
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_8
+      rect:
+        serializedVersion: 2
+        x: 203
+        y: 962
+        width: 58
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fd6bdd2b1f55d1920800000000000000
+      internalID: 2962618626456008415
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_9
+      rect:
+        serializedVersion: 2
+        x: 227
+        y: 642
+        width: 17
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5cf0a59fe71548ca0800000000000000
+      internalID: -6015593596468981819
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_10
+      rect:
+        serializedVersion: 2
+        x: 237
+        y: 641
+        width: 7
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ef6fcbb8c795521d0800000000000000
+      internalID: -3376193954189084930
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_11
+      rect:
+        serializedVersion: 2
+        x: 240
+        y: 658
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 64d73d35d11abc6d0800000000000000
+      internalID: -2969102381988217530
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_12
+      rect:
+        serializedVersion: 2
+        x: 257
+        y: 666
+        width: 10
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1a0fe2826b647de70800000000000000
+      internalID: 9139851716943868065
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_13
+      rect:
+        serializedVersion: 2
+        x: 266
+        y: 901
+        width: 29
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2f2af5116ee946840800000000000000
+      internalID: 5216468979373023986
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_14
+      rect:
+        serializedVersion: 2
+        x: 274
+        y: 212
+        width: 43
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5cfb254876b85f2f0800000000000000
+      internalID: -939691670518972475
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_15
+      rect:
+        serializedVersion: 2
+        x: 274
+        y: 29
+        width: 58
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d1b06bc6ad60b3c50800000000000000
+      internalID: 6645913210311805725
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_16
+      rect:
+        serializedVersion: 2
+        x: 300
+        y: 950
+        width: 7
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cb526f36def9a0fc0800000000000000
+      internalID: -3527831516158220868
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_17
+      rect:
+        serializedVersion: 2
+        x: 306
+        y: 302
+        width: 13
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5cee523ec6fbd9010800000000000000
+      internalID: 1197323550338707141
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_18
+      rect:
+        serializedVersion: 2
+        x: 306
+        y: 192
+        width: 13
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b30454d18a4be2420800000000000000
+      internalID: 2607219868432678971
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_19
+      rect:
+        serializedVersion: 2
+        x: 316
+        y: 948
+        width: 28
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c8a4c6c0282a71d50800000000000000
+      internalID: 6708008849429514892
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_20
+      rect:
+        serializedVersion: 2
+        x: 318
+        y: 773
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 36069dea51ed37970800000000000000
+      internalID: 8751582685620166755
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_21
+      rect:
+        serializedVersion: 2
+        x: 318
+        y: 315
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9aa41b74d84c17b50800000000000000
+      internalID: 6589263840891980457
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_22
+      rect:
+        serializedVersion: 2
+        x: 318
+        y: 191
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9e81e54c25fcbde10800000000000000
+      internalID: 2223598795426240745
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_23
+      rect:
+        serializedVersion: 2
+        x: 318
+        y: 113
+        width: 8
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 13a301b12872942f0800000000000000
+      internalID: -988215203477833167
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_24
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 594
+        width: 20
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b6623ce1863fa6870800000000000000
+      internalID: 8677015260600936043
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_25
+      rect:
+        serializedVersion: 2
+        x: 322
+        y: 980
+        width: 12
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5c807da7a9e1ea7f0800000000000000
+      internalID: -599508051558987579
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_26
+      rect:
+        serializedVersion: 2
+        x: 322
+        y: 618
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 667253900b0fb5450800000000000000
+      internalID: 6078716760926005094
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_27
+      rect:
+        serializedVersion: 2
+        x: 324
+        y: 843
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9c1e2ebbd102f0100800000000000000
+      internalID: 76315030766936521
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_28
+      rect:
+        serializedVersion: 2
+        x: 324
+        y: 207
+        width: 20
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c54e6b8229044e7f0800000000000000
+      internalID: -584271055158844324
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_29
+      rect:
+        serializedVersion: 2
+        x: 327
+        y: 560
+        width: 7
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f73742b36e4112400800000000000000
+      internalID: 297542029450441599
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_30
+      rect:
+        serializedVersion: 2
+        x: 328
+        y: 976
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9c52448185b8a14c0800000000000000
+      internalID: -4315984082400696887
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_31
+      rect:
+        serializedVersion: 2
+        x: 328
+        y: 117
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d8cc8d3f202ba8bf0800000000000000
+      internalID: -321248697652818803
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_32
+      rect:
+        serializedVersion: 2
+        x: 333
+        y: 562
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2fdd6b948155ccca0800000000000000
+      internalID: -5995323441132675598
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_33
+      rect:
+        serializedVersion: 2
+        x: 339
+        y: 150
+        width: 21
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 74bf53dcda1f2d460800000000000000
+      internalID: 7265134877676534599
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_34
+      rect:
+        serializedVersion: 2
+        x: 347
+        y: 706
+        width: 9
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6630d8e4154f93230800000000000000
+      internalID: 3619192405616296806
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_35
+      rect:
+        serializedVersion: 2
+        x: 347
+        y: 437
+        width: 9
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5640796af6b8ec0f0800000000000000
+      internalID: -1094784347751906203
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_36
+      rect:
+        serializedVersion: 2
+        x: 351
+        y: 184
+        width: 16
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 093fc2da019275180800000000000000
+      internalID: -9126780968241400944
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_37
+      rect:
+        serializedVersion: 2
+        x: 353
+        y: 15
+        width: 54
+        height: 41
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f5a40009de4468b90800000000000000
+      internalID: -7240023563837617569
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_38
+      rect:
+        serializedVersion: 2
+        x: 365
+        y: 680
+        width: 7
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 44f22c5f1a855a700800000000000000
+      internalID: 550943982058876740
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_39
+      rect:
+        serializedVersion: 2
+        x: 373
+        y: 93
+        width: 7
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 733cf2d89d32757b0800000000000000
+      internalID: -5235676624511319241
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_40
+      rect:
+        serializedVersion: 2
+        x: 389
+        y: 106
+        width: 7
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b7eb6f19679cb7790800000000000000
+      internalID: -7531204440754831749
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_41
+      rect:
+        serializedVersion: 2
+        x: 389
+        y: 99
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1381698db0356c540800000000000000
+      internalID: 5027797344349198385
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_42
+      rect:
+        serializedVersion: 2
+        x: 391
+        y: 554
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 176374694ef43a130800000000000000
+      internalID: 3576790372254692977
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_43
+      rect:
+        serializedVersion: 2
+        x: 395
+        y: 101
+        width: 12
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 821fc6e0259b39400800000000000000
+      internalID: 329810959808655656
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_44
+      rect:
+        serializedVersion: 2
+        x: 397
+        y: 146
+        width: 10
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a3438164117857d20800000000000000
+      internalID: 3275672812242089018
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_45
+      rect:
+        serializedVersion: 2
+        x: 420
+        y: 946
+        width: 19
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dbf5a632b5878d3b0800000000000000
+      internalID: -5487503813119418435
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_46
+      rect:
+        serializedVersion: 2
+        x: 446
+        y: 947
+        width: 48
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ae6e1d0cc020c4c60800000000000000
+      internalID: 7803614508124071658
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_47
+      rect:
+        serializedVersion: 2
+        x: 468
+        y: 909
+        width: 14
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 06a81b9654cc944a0800000000000000
+      internalID: -6608526379691439520
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_48
+      rect:
+        serializedVersion: 2
+        x: 470
+        y: 192
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2d89682bcf6fbcc70800000000000000
+      internalID: 8992552646162684114
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_49
+      rect:
+        serializedVersion: 2
+        x: 493
+        y: 128
+        width: 9
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 900cd52e4492ddba0800000000000000
+      internalID: -6062644147538509815
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_50
+      rect:
+        serializedVersion: 2
+        x: 497
+        y: 6
+        width: 13
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 395552a16445dae20800000000000000
+      internalID: 3363437156778726803
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_51
+      rect:
+        serializedVersion: 2
+        x: 501
+        y: 953
+        width: 17
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 332559d0f3b5bcbc0800000000000000
+      internalID: -3761812737368960461
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_52
+      rect:
+        serializedVersion: 2
+        x: 509
+        y: 124
+        width: 17
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7e2d1b2d2e6036670800000000000000
+      internalID: 8530669690437096167
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_53
+      rect:
+        serializedVersion: 2
+        x: 531
+        y: 365
+        width: 58
+        height: 87
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dc5f5c6070a3e6e10800000000000000
+      internalID: 2192753870428829133
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_54
+      rect:
+        serializedVersion: 2
+        x: 533
+        y: 738
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 713e466a4dca31c70800000000000000
+      internalID: 8940679714585240343
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_55
+      rect:
+        serializedVersion: 2
+        x: 568
+        y: 658
+        width: 9
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 231817e3ab55f5f60800000000000000
+      internalID: 8025227319397417266
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_56
+      rect:
+        serializedVersion: 2
+        x: 574
+        y: 503
+        width: 25
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cb796050cc0cb6540800000000000000
+      internalID: 5002303793615247292
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_57
+      rect:
+        serializedVersion: 2
+        x: 582
+        y: 919
+        width: 9
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3bcee654c2089e8f0800000000000000
+      internalID: -510736155098026829
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_58
+      rect:
+        serializedVersion: 2
+        x: 598
+        y: 562
+        width: 9
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 66c96495fb751f3e0800000000000000
+      internalID: -2021738278364472218
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_59
+      rect:
+        serializedVersion: 2
+        x: 606
+        y: 562
+        width: 12
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d513cf10858ea52c0800000000000000
+      internalID: -4441982617759501987
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_60
+      rect:
+        serializedVersion: 2
+        x: 608
+        y: 988
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f762d8b8a53d06f20800000000000000
+      internalID: 3413960903388636799
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_61
+      rect:
+        serializedVersion: 2
+        x: 608
+        y: 942
+        width: 22
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8f93e8713e882f740800000000000000
+      internalID: 5184356629991012856
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_62
+      rect:
+        serializedVersion: 2
+        x: 608
+        y: 674
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7f33ab5b8c38fd500800000000000000
+      internalID: 423201788061692919
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_63
+      rect:
+        serializedVersion: 2
+        x: 614
+        y: 491
+        width: 44
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ced7b45b838d1ae10800000000000000
+      internalID: 2207283030459645420
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_64
+      rect:
+        serializedVersion: 2
+        x: 625
+        y: 389
+        width: 35
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e914eac2fafdb5f00800000000000000
+      internalID: 1106724076911477150
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_65
+      rect:
+        serializedVersion: 2
+        x: 631
+        y: 0
+        width: 310
+        height: 356
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 653c0b37fcf4e8640800000000000000
+      internalID: 5084088781765657430
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_66
+      rect:
+        serializedVersion: 2
+        x: 657
+        y: 974
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b551fdf2a2eb6b950800000000000000
+      internalID: 6464563403537978715
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_67
+      rect:
+        serializedVersion: 2
+        x: 665
+        y: 529
+        width: 276
+        height: 343
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 45a78814c92cdb0e0800000000000000
+      internalID: -2252430262245229996
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_68
+      rect:
+        serializedVersion: 2
+        x: 669
+        y: 452
+        width: 9
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9fdb39fc68c41aa90800000000000000
+      internalID: -7304472978726339079
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_69
+      rect:
+        serializedVersion: 2
+        x: 679
+        y: 343
+        width: 18
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 47ad2ba3544b57930800000000000000
+      internalID: 4140413641867582068
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_70
+      rect:
+        serializedVersion: 2
+        x: 698
+        y: 897
+        width: 19
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7ff3145739bde7dd0800000000000000
+      internalID: -2486308517888049161
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_71
+      rect:
+        serializedVersion: 2
+        x: 710
+        y: 873
+        width: 11
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 89d73ba7db4698c20800000000000000
+      internalID: 3209206974448369048
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_72
+      rect:
+        serializedVersion: 2
+        x: 758
+        y: 377
+        width: 8
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 65ef6bfa3b35b0c70800000000000000
+      internalID: 8938329916659138134
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_73
+      rect:
+        serializedVersion: 2
+        x: 771
+        y: 319
+        width: 170
+        height: 184
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8b7a28dda4f6b5320800000000000000
+      internalID: 2547752381542737848
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_74
+      rect:
+        serializedVersion: 2
+        x: 773
+        y: 859
+        width: 168
+        height: 176
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ab760ab19518b2f90800000000000000
+      internalID: -6977340977964881990
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_75
+      rect:
+        serializedVersion: 2
+        x: 906
+        y: 513
+        width: 10
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7cb84ab14d5f14330800000000000000
+      internalID: 3693503460766157767
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CosmicCity_Sparkle_76
+      rect:
+        serializedVersion: 2
+        x: 495
+        y: 0
+        width: 40
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5ce4b46868df52ab0800000000000000
+      internalID: -5033338254296133947
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      CosmicCity_Sparkle_0: 1767077302635680942
+      CosmicCity_Sparkle_1: -640572990448410305
+      CosmicCity_Sparkle_10: -3376193954189084930
+      CosmicCity_Sparkle_11: -2969102381988217530
+      CosmicCity_Sparkle_12: 9139851716943868065
+      CosmicCity_Sparkle_13: 5216468979373023986
+      CosmicCity_Sparkle_14: -939691670518972475
+      CosmicCity_Sparkle_15: 6645913210311805725
+      CosmicCity_Sparkle_16: -3527831516158220868
+      CosmicCity_Sparkle_17: 1197323550338707141
+      CosmicCity_Sparkle_18: 2607219868432678971
+      CosmicCity_Sparkle_19: 6708008849429514892
+      CosmicCity_Sparkle_2: 4175972200501848845
+      CosmicCity_Sparkle_20: 8751582685620166755
+      CosmicCity_Sparkle_21: 6589263840891980457
+      CosmicCity_Sparkle_22: 2223598795426240745
+      CosmicCity_Sparkle_23: -988215203477833167
+      CosmicCity_Sparkle_24: 8677015260600936043
+      CosmicCity_Sparkle_25: -599508051558987579
+      CosmicCity_Sparkle_26: 6078716760926005094
+      CosmicCity_Sparkle_27: 76315030766936521
+      CosmicCity_Sparkle_28: -584271055158844324
+      CosmicCity_Sparkle_29: 297542029450441599
+      CosmicCity_Sparkle_3: -6827785909703855160
+      CosmicCity_Sparkle_30: -4315984082400696887
+      CosmicCity_Sparkle_31: -321248697652818803
+      CosmicCity_Sparkle_32: -5995323441132675598
+      CosmicCity_Sparkle_33: 7265134877676534599
+      CosmicCity_Sparkle_34: 3619192405616296806
+      CosmicCity_Sparkle_35: -1094784347751906203
+      CosmicCity_Sparkle_36: -9126780968241400944
+      CosmicCity_Sparkle_37: -7240023563837617569
+      CosmicCity_Sparkle_38: 550943982058876740
+      CosmicCity_Sparkle_39: -5235676624511319241
+      CosmicCity_Sparkle_4: 4185281752745973089
+      CosmicCity_Sparkle_40: -7531204440754831749
+      CosmicCity_Sparkle_41: 5027797344349198385
+      CosmicCity_Sparkle_42: 3576790372254692977
+      CosmicCity_Sparkle_43: 329810959808655656
+      CosmicCity_Sparkle_44: 3275672812242089018
+      CosmicCity_Sparkle_45: -5487503813119418435
+      CosmicCity_Sparkle_46: 7803614508124071658
+      CosmicCity_Sparkle_47: -6608526379691439520
+      CosmicCity_Sparkle_48: 8992552646162684114
+      CosmicCity_Sparkle_49: -6062644147538509815
+      CosmicCity_Sparkle_5: 9055032235908843646
+      CosmicCity_Sparkle_50: 3363437156778726803
+      CosmicCity_Sparkle_51: -3761812737368960461
+      CosmicCity_Sparkle_52: 8530669690437096167
+      CosmicCity_Sparkle_53: 2192753870428829133
+      CosmicCity_Sparkle_54: 8940679714585240343
+      CosmicCity_Sparkle_55: 8025227319397417266
+      CosmicCity_Sparkle_56: 5002303793615247292
+      CosmicCity_Sparkle_57: -510736155098026829
+      CosmicCity_Sparkle_58: -2021738278364472218
+      CosmicCity_Sparkle_59: -4441982617759501987
+      CosmicCity_Sparkle_6: -4255358438707542911
+      CosmicCity_Sparkle_60: 3413960903388636799
+      CosmicCity_Sparkle_61: 5184356629991012856
+      CosmicCity_Sparkle_62: 423201788061692919
+      CosmicCity_Sparkle_63: 2207283030459645420
+      CosmicCity_Sparkle_64: 1106724076911477150
+      CosmicCity_Sparkle_65: 5084088781765657430
+      CosmicCity_Sparkle_66: 6464563403537978715
+      CosmicCity_Sparkle_67: -2252430262245229996
+      CosmicCity_Sparkle_68: -7304472978726339079
+      CosmicCity_Sparkle_69: 4140413641867582068
+      CosmicCity_Sparkle_7: 4215265386533368601
+      CosmicCity_Sparkle_70: -2486308517888049161
+      CosmicCity_Sparkle_71: 3209206974448369048
+      CosmicCity_Sparkle_72: 8938329916659138134
+      CosmicCity_Sparkle_73: 2547752381542737848
+      CosmicCity_Sparkle_74: -6977340977964881990
+      CosmicCity_Sparkle_75: 3693503460766157767
+      CosmicCity_Sparkle_76: -5033338254296133947
+      CosmicCity_Sparkle_8: 2962618626456008415
+      CosmicCity_Sparkle_9: -6015593596468981819
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

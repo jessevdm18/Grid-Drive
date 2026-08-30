@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a836af6d5637554aa4394737576f32d, type: 3}
+  m_Name: Skin_Gold
+  m_EditorClassIdentifier: Assembly-CSharp::VehicleSkinData
+  skinId: gold
+  displayName: Gold
+  coinPrice: 4500
+  previewSprite: {fileID: 21300000, guid: 7a15658a6f808a64e87514ceb8c4b663, type: 3}
+  unlockedByDefault: 0
+  spriteLibrary: {fileID: 11400000, guid: 670a10f24e56b6040b5fd7c58b00c379, type: 2}
+  backgroundTheme: {fileID: 11400000, guid: 3879034eb733ee348bf69241bd8e0ae5, type: 2}

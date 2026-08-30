@@ -50,6 +50,9 @@ public class ShopUIController : MonoBehaviour
     [Header("Skins (optioneel)")]
     [SerializeField] private SkinManager skinManager;
 
+    [Header("Free coins (optioneel)")]
+    [SerializeField] private FreeCoinsRewardedUI freeCoinsRewarded;
+
     [Header("Audio (optioneel)")]
     [SerializeField] private AudioManager audioManager;
 
@@ -111,6 +114,7 @@ public class ShopUIController : MonoBehaviour
         audioManager?.PlayPanelOpen();
         ShowCoinsTab();
         RefreshCoinBalance();
+        freeCoinsRewarded?.Refresh();
         OnShopOpened?.Invoke();
     }
 
@@ -139,6 +143,8 @@ public class ShopUIController : MonoBehaviour
         }
 
         SetTabVisual(coinsActive: true);
+        freeCoinsRewarded?.Refresh();
+        RefreshCoinBalance();
     }
 
     public void ShowSkinsTab()

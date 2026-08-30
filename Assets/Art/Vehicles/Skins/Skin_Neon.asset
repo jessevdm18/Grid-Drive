@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VehicleSkinData
   skinId: neon
   displayName: Neon
-  coinPrice: 1500
+  coinPrice: 500
   previewSprite: {fileID: 21300000, guid: 761b4733b08c2ad48a3cf06eafd52be6, type: 3}
   unlockedByDefault: 0
   spriteLibrary: {fileID: 11400000, guid: 6d5c3e48456136846a57d29395aae0e1, type: 2}

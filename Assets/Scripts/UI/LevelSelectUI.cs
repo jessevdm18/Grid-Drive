@@ -79,6 +79,12 @@ public class LevelSelectUI : MonoBehaviour
     private Transform lockedTabPunchTarget;
     private Vector3 lockedTabPunchBaseScale = Vector3.one;
 
+    /// <summary>
+    /// Visible level count from the last RebuildLevelButtons pass.
+    /// Used for Content height — never childCount (Destroy() leaves stale children until frame end).
+    /// </summary>
+    private int lastBuiltVisibleLevelCount;
+
     private void Start()
     {
         audioManager = FindAnyObjectByType<AudioManager>();
@@ -351,6 +357,7 @@ public class LevelSelectUI : MonoBehaviour
             selectedDifficulty
         );
         int visibleCount = indices != null ? indices.Count : 0;
+        lastBuiltVisibleLevelCount = visibleCount;
 
         if (emptyStateText != null)
         {
@@ -423,13 +430,7 @@ public class LevelSelectUI : MonoBehaviour
 
         Canvas.ForceUpdateCanvases();
         UpdateScrollContentHeight(visibleCount);
-
-        if (scrollRect != null)
-        {
-            scrollRect.horizontal = false;
-            scrollRect.vertical = true;
-            scrollRect.verticalNormalizedPosition = 1f;
-        }
+        ClampScrollToValidBounds(resetToTop: true);
     }
 
     private void ClearExistingButtons()
@@ -441,7 +442,11 @@ public class LevelSelectUI : MonoBehaviour
 
         for (int i = levelGrid.childCount - 1; i >= 0; i--)
         {
-            Destroy(levelGrid.GetChild(i).gameObject);
+            Transform child = levelGrid.GetChild(i);
+            // Deactivate first so GridLayoutGroup / childCount-based layout
+            // ignores buttons pending Destroy until end of frame.
+            child.gameObject.SetActive(false);
+            Destroy(child.gameObject);
         }
     }
 
@@ -461,11 +466,9 @@ public class LevelSelectUI : MonoBehaviour
         }
 
         int columns = GetGridColumnCount();
-        int rows = Mathf.Max(1, Mathf.CeilToInt(levelCount / (float)columns));
-        if (levelCount == 0)
-        {
-            rows = 1;
-        }
+        int rows = levelCount <= 0
+            ? 1
+            : Mathf.CeilToInt(levelCount / (float)columns);
 
         float height =
             grid.padding.top +
@@ -515,7 +518,35 @@ public class LevelSelectUI : MonoBehaviour
             return;
         }
 
-        UpdateScrollContentHeight(levelGrid.childCount);
+        // Must use last built visible count — not childCount (stale Destroy() children).
+        UpdateScrollContentHeight(lastBuiltVisibleLevelCount);
+        ClampScrollToValidBounds(resetToTop: false);
+    }
+
+    /// <summary>
+    /// Keeps ScrollRect inside the current Content bounds after height changes.
+    /// Tab rebuilds reset to top; layout refreshes only clamp.
+    /// </summary>
+    private void ClampScrollToValidBounds(bool resetToTop)
+    {
+        if (scrollRect == null)
+        {
+            return;
+        }
+
+        scrollRect.StopMovement();
+        scrollRect.horizontal = false;
+        scrollRect.vertical = true;
+        Canvas.ForceUpdateCanvases();
+
+        if (resetToTop)
+        {
+            scrollRect.verticalNormalizedPosition = 1f;
+            return;
+        }
+
+        scrollRect.verticalNormalizedPosition =
+            Mathf.Clamp01(scrollRect.verticalNormalizedPosition);
     }
 
     private void OnLevelButtonClicked(LevelButtonUI buttonUI)

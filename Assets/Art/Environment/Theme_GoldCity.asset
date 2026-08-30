@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a3d69fd3ca8b7c4b89d3508349118de, type: 3}
+  m_Name: Theme_GoldCity
+  m_EditorClassIdentifier: Assembly-CSharp::GameplayBackgroundThemeData
+  themeId: goldcity
+  displayName: Gold City
+  baseBackground: {fileID: 21300000, guid: 8e0a2774920ef8a4588d3d47c989b626, type: 3}
+  backgroundDimAlpha: 0.571
+  animatedLayers:
+  - sprite: {fileID: 0}
+    animationMode: 0
+    alsoPulseAlpha: 0
+    alsoPulseScale: 0
+    movementDirection: {x: 0, y: 0}
+    movementSpeed: 0
+    movementDistance: 0
+    pulseSpeed: 0
+    minAlpha: 0
+    maxAlpha: 0
+    scalePulseAmount: 0
+    loop: 0
+  - sprite: {fileID: 21300000, guid: dce704977d2957e41b3a2c98a45598b6, type: 3}
+    animationMode: 1
+    alsoPulseAlpha: 0
+    alsoPulseScale: 0
+    movementDirection: {x: 1, y: 0}
+    movementSpeed: 3
+    movementDistance: 30
+    pulseSpeed: 0
+    minAlpha: 0
+    maxAlpha: 1
+    scalePulseAmount: 0
+    loop: 0
+  - sprite: {fileID: 21300000, guid: d9386ce37356e324990f9861d59c77dc, type: 3}
+    animationMode: 3
+    alsoPulseAlpha: 0
+    alsoPulseScale: 0
+    movementDirection: {x: 1, y: -0.3}
+    movementSpeed: 0
+    movementDistance: 0
+    pulseSpeed: 0.6
+    minAlpha: 0
+    maxAlpha: 1
+    scalePulseAmount: 0
+    loop: 0
