@@ -23,6 +23,9 @@ public class PauseManager : MonoBehaviour
     [SerializeField] private Sprite soundOnSprite;
     [SerializeField] private Sprite soundOffSprite;
 
+    /// <summary>True while the pause panel GameObject is active.</summary>
+    public bool IsPauseMenuOpen => pausePanel != null && pausePanel.activeSelf;
+
     private void Start()
     {
         if (audioManager == null)
@@ -57,6 +60,7 @@ public class PauseManager : MonoBehaviour
 
     /// <summary>
     /// Sluit het pause-menu en hervat de game.
+    /// Keeps timeScale at 0 if the Gameplay shop overlay is still open.
     /// </summary>
     public void ResumeGame()
     {
@@ -71,6 +75,13 @@ public class PauseManager : MonoBehaviour
         if (closed)
         {
             audioManager?.PlayPanelClose();
+        }
+
+        ShopUIController shop = FindAnyObjectByType<ShopUIController>();
+        if (shop != null && shop.IsShopOpen)
+        {
+            Time.timeScale = 0f;
+            return;
         }
 
         Time.timeScale = 1f;

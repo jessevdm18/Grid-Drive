@@ -62,6 +62,8 @@ public class LevelManager : MonoBehaviour
     // Editor V1 playtest: direct LevelData (niet via MainLevelDatabase index).
     private LevelData editorPlaytestLevel;
 
+    private SkinManager skinManager;
+
     /// <summary>
     /// Zero-based index van het actieve level (0 = LEVEL 1).
     /// -1 tijdens Editor V1 candidate playtest (geen DB index).
@@ -148,6 +150,23 @@ public class LevelManager : MonoBehaviour
         }
 
         return LevelDifficultyOrder.GetDifficultyDisplayNumber(levelDatabase, currentLevelIndex);
+    }
+
+    private void OnEnable()
+    {
+        ResolveSkinManager();
+        if (skinManager != null)
+        {
+            skinManager.OnSkinSelected += OnSelectedSkinChanged;
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (skinManager != null)
+        {
+            skinManager.OnSkinSelected -= OnSelectedSkinChanged;
+        }
     }
 
     private void Start()
@@ -847,15 +866,67 @@ public class LevelManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Bepaalt welke sprite dit voertuig krijgt (alleen visueel).
-    /// Prioriteit: target → expliciete vehicleSprite → library.
+    /// Live visual-only refresh after SkinManager.SelectSkin (shop SELECT in Gameplay).
+    /// Does not respawn vehicles, move pieces, or touch puzzle / mission / timer state.
     /// </summary>
+    public void RefreshActiveVehicleSkinVisuals()
+    {
+        LevelData levelData = CurrentLevelData;
+        if (levelData == null || levelData.vehicles == null)
+        {
+            return;
+        }
+
+        activeVehicleSpriteLibrary = ResolveActiveSpriteLibrary();
+        lastAutoAssignedSprite = null;
+
+        int count = Mathf.Min(activeVehicles.Count, levelData.vehicles.Count);
+        for (int i = 0; i < count; i++)
+        {
+            VehicleController vehicle = activeVehicles[i];
+            VehicleData data = levelData.vehicles[i];
+            if (vehicle == null || data == null)
+            {
+                continue;
+            }
+
+            ApplyVehicleSprite(vehicle, ResolveVehicleSprite(data, levelData));
+            vehicle.UpdateVisualSize();
+
+            VehicleShadow shadow = vehicle.GetComponentInChildren<VehicleShadow>(true);
+            if (shadow != null)
+            {
+                shadow.UpdateShadow();
+            }
+        }
+
+        RefreshTargetIndicatorSorting();
+    }
+
+    private void OnSelectedSkinChanged(VehicleSkinData _)
+    {
+        RefreshActiveVehicleSkinVisuals();
+    }
+
+    private void ResolveSkinManager()
+    {
+        if (skinManager == null)
+        {
+            skinManager = GetComponent<SkinManager>();
+        }
+
+        if (skinManager == null)
+        {
+            skinManager = FindAnyObjectByType<SkinManager>();
+        }
+    }
+
     /// <summary>
     /// Selected skin library indien aanwezig, anders Inspector-default.
     /// </summary>
     private VehicleSpriteLibrary ResolveActiveSpriteLibrary()
     {
-        SkinManager skinManager = FindAnyObjectByType<SkinManager>();
+        ResolveSkinManager();
         if (skinManager != null)
         {
             VehicleSpriteLibrary fromSkin = skinManager.GetActiveSpriteLibrary();
@@ -868,6 +939,10 @@ public class LevelManager : MonoBehaviour
         return vehicleSpriteLibrary;
     }
 
+    /// <summary>
+    /// Bepaalt welke sprite dit voertuig krijgt (alleen visueel).
+    /// Prioriteit: target → expliciete vehicleSprite → library.
+    /// </summary>
     private Sprite ResolveVehicleSprite(VehicleData data, LevelData levelData)
     {
         VehicleSpriteLibrary library = activeVehicleSpriteLibrary != null

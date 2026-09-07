@@ -15,6 +15,9 @@ public class SkinShopCardUI : MonoBehaviour
         Unavailable
     }
 
+    /// <summary>Canonical coin-gold used by shop CoinPack titles (r=1,g=0.85,b=0.25).</summary>
+    private static readonly Color CoinPriceGold = new Color(1f, 0.85f, 0.25f, 1f);
+
     [Header("Skin")]
     [SerializeField] private VehicleSkinData skinData;
 
@@ -208,9 +211,15 @@ public class SkinShopCardUI : MonoBehaviour
             priceText.gameObject.SetActive(showPrice);
             if (showPrice)
             {
-                priceText.text = skinData.CoinPrice <= 0
-                    ? "FREE"
-                    : skinData.CoinPrice.ToString("N0");
+                if (skinData.CoinPrice <= 0)
+                {
+                    priceText.text = "FREE";
+                }
+                else
+                {
+                    priceText.text = skinData.CoinPrice.ToString("N0");
+                    priceText.color = CoinPriceGold;
+                }
             }
         }
 

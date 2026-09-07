@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 /// <summary>
 /// Shop UI gedrag: open/close, tabs, coin display.
-/// Visuele hierarchy staat serialized in MainMenu.unity — hier geen UI-bouw.
+/// Visuele hierarchy staat serialized in de scene (MainMenu of Gameplay) — hier geen UI-bouw.
 /// </summary>
 public class ShopUIController : MonoBehaviour
 {
@@ -56,6 +56,16 @@ public class ShopUIController : MonoBehaviour
     [Header("Audio (optioneel)")]
     [SerializeField] private AudioManager audioManager;
 
+    [Header("Gameplay pause (optioneel)")]
+    [Tooltip("When true, uses Time.timeScale=0 while shop is open (same approach as PauseManager).")]
+    [SerializeField] private bool pauseGameplayWhileOpen;
+
+    [Tooltip("Optional. Used so CloseShop does not unpause an open Pause menu.")]
+    [SerializeField] private PauseManager pauseManager;
+
+    /// <summary>True while this shop instance owns a timeScale pause it applied.</summary>
+    private bool ownsTimeScalePause;
+
     private void Awake()
     {
         if (skinManager == null)
@@ -68,12 +78,19 @@ public class ShopUIController : MonoBehaviour
             audioManager = FindAnyObjectByType<AudioManager>();
         }
 
+        if (pauseManager == null)
+        {
+            pauseManager = FindAnyObjectByType<PauseManager>();
+        }
+
         WireButtons();
 
         if (shopPanel != null)
         {
             shopPanel.SetActive(false);
         }
+
+        ownsTimeScalePause = false;
     }
 
     private void Start()
@@ -96,6 +113,9 @@ public class ShopUIController : MonoBehaviour
         {
             coinManager.OnCoinsChanged -= UpdateCoinDisplay;
         }
+
+        // Scene unload / disable: release owned pause without fighting PauseManager.
+        ReleaseOwnedPauseIfSafe();
     }
 
     public void OpenShop()
@@ -111,6 +131,7 @@ public class ShopUIController : MonoBehaviour
         }
 
         shopPanel.SetActive(true);
+        ApplyGameplayPauseForShop();
         audioManager?.PlayPanelOpen();
         ShowCoinsTab();
         RefreshCoinBalance();
@@ -126,6 +147,7 @@ public class ShopUIController : MonoBehaviour
         }
 
         shopPanel.SetActive(false);
+        ReleaseOwnedPauseIfSafe();
         audioManager?.PlayPanelClose();
         OnShopClosed?.Invoke();
     }
@@ -169,9 +191,12 @@ public class ShopUIController : MonoBehaviour
     /// </summary>
     public RectTransform FindBuyableSkinSpotlightTarget()
     {
-        SkinShopCardUI[] cards = FindObjectsByType<SkinShopCardUI>(
-            FindObjectsInactive.Exclude
-        );
+        if (shopPanel == null)
+        {
+            return null;
+        }
+
+        SkinShopCardUI[] cards = shopPanel.GetComponentsInChildren<SkinShopCardUI>(true);
 
         RectTransform affordable = null;
         RectTransform anyUnowned = null;
@@ -250,9 +275,13 @@ public class ShopUIController : MonoBehaviour
 
     private void RefreshSkinCards()
     {
-        SkinShopCardUI[] cards = FindObjectsByType<SkinShopCardUI>(
-            FindObjectsInactive.Include
-        );
+        // Scope to this shop hierarchy so MainMenu/Gameplay never cross-refresh.
+        if (shopPanel == null)
+        {
+            return;
+        }
+
+        SkinShopCardUI[] cards = shopPanel.GetComponentsInChildren<SkinShopCardUI>(true);
 
         for (int i = 0; i < cards.Length; i++)
         {
@@ -317,5 +346,47 @@ public class ShopUIController : MonoBehaviour
         {
             coinBalanceText.text = amount.ToString("N0");
         }
+    }
+
+    private void ApplyGameplayPauseForShop()
+    {
+        if (!pauseGameplayWhileOpen)
+        {
+            ownsTimeScalePause = false;
+            return;
+        }
+
+        // If pause menu (or anything else) already froze time, do not claim ownership.
+        if (Time.timeScale <= 0f)
+        {
+            ownsTimeScalePause = false;
+            return;
+        }
+
+        Time.timeScale = 0f;
+        ownsTimeScalePause = true;
+    }
+
+    private void ReleaseOwnedPauseIfSafe()
+    {
+        if (!ownsTimeScalePause)
+        {
+            return;
+        }
+
+        ownsTimeScalePause = false;
+
+        if (pauseManager == null)
+        {
+            pauseManager = FindAnyObjectByType<PauseManager>();
+        }
+
+        // Keep paused if the pause menu is still open.
+        if (pauseManager != null && pauseManager.IsPauseMenuOpen)
+        {
+            return;
+        }
+
+        Time.timeScale = 1f;
     }
 }

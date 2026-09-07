@@ -45,7 +45,33 @@ public class GameplayBackgroundController : MonoBehaviour
         }
     }
 
+    private void OnEnable()
+    {
+        if (skinManager == null)
+        {
+            skinManager = FindAnyObjectByType<SkinManager>();
+        }
+
+        if (skinManager != null)
+        {
+            skinManager.OnSkinSelected += OnSelectedSkinChanged;
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (skinManager != null)
+        {
+            skinManager.OnSkinSelected -= OnSelectedSkinChanged;
+        }
+    }
+
     private void Start()
+    {
+        ApplyResolvedTheme();
+    }
+
+    private void OnSelectedSkinChanged(VehicleSkinData _)
     {
         ApplyResolvedTheme();
     }
