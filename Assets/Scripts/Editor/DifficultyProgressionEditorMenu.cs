@@ -122,10 +122,12 @@ public static class DifficultyProgressionEditorMenu
                 "Defaults: Medium needs " +
                 DifficultyProgressionConfig.DefaultMediumRequiredEasy +
                 " Easy; Hard needs " +
-                DifficultyProgressionConfig.DefaultHardRequiredEasy +
-                " Easy + " +
                 DifficultyProgressionConfig.DefaultHardRequiredMedium +
-                " Medium."
+                " Medium" +
+                (DifficultyProgressionConfig.DefaultHardRequiredEasy > 0
+                    ? " (+ " + DifficultyProgressionConfig.DefaultHardRequiredEasy + " Easy)"
+                    : " (no separate Easy gate)") +
+                "."
             );
 
             Debug.Log(sb.ToString());
@@ -258,32 +260,32 @@ public static class DifficultyProgressionEditorMenu
         );
         Assert(
             !DifficultyProgressionConfig.IsDifficultyUnlockedWithDefaults(
-                LevelDifficulty.Medium, 9, 0),
-            "9 Easy: Medium locked"
+                LevelDifficulty.Medium, 2, 0),
+            "2 Easy: Medium locked"
         );
         Assert(
             DifficultyProgressionConfig.IsDifficultyUnlockedWithDefaults(
-                LevelDifficulty.Medium, 10, 0),
-            "10 Easy: Medium unlocked"
+                LevelDifficulty.Medium, 3, 0),
+            "3 Easy: Medium unlocked"
         );
         Assert(
             !DifficultyProgressionConfig.IsDifficultyUnlockedWithDefaults(
-                LevelDifficulty.Hard, 10, 9),
-            "10 Easy + 9 Medium: Hard locked"
+                LevelDifficulty.Hard, 3, 2),
+            "3 Easy + 2 Medium: Hard locked"
         );
         Assert(
             DifficultyProgressionConfig.IsDifficultyUnlockedWithDefaults(
-                LevelDifficulty.Hard, 10, 10),
-            "10 Easy + 10 Medium: Hard unlocked"
+                LevelDifficulty.Hard, 0, 3),
+            "3 Medium (no Easy gate): Hard unlocked"
         );
 
         // Replay does not change unique counts (same count in / same count out).
         Assert(
             DifficultyProgressionConfig.IsDifficultyUnlockedWithDefaults(
-                LevelDifficulty.Medium, 10, 0)
+                LevelDifficulty.Medium, 3, 0)
             == DifficultyProgressionConfig.IsDifficultyUnlockedWithDefaults(
-                LevelDifficulty.Medium, 10, 0),
-            "Replay Easy: unlock state stable at count 10"
+                LevelDifficulty.Medium, 3, 0),
+            "Replay Easy: unlock state stable at count 3"
         );
 
         string summary =

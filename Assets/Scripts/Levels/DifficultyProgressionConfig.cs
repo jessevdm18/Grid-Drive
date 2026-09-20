@@ -10,9 +10,15 @@ using UnityEngine;
 )]
 public class DifficultyProgressionConfig : ScriptableObject
 {
-    public const int DefaultMediumRequiredEasy = 10;
-    public const int DefaultHardRequiredEasy = 10;
-    public const int DefaultHardRequiredMedium = 10;
+    public const int DefaultMediumRequiredEasy = 3;
+
+    /// <summary>
+    /// Kept for asset/field compatibility. Hard unlock no longer requires Easy completions
+    /// (Medium already gates Hard). Default 0 = no Easy gate.
+    /// </summary>
+    public const int DefaultHardRequiredEasy = 0;
+
+    public const int DefaultHardRequiredMedium = 3;
 
     [Header("Medium Unlock")]
     [Tooltip("Unieke Easy-completions nodig om Medium te unlocken.")]
@@ -20,11 +26,14 @@ public class DifficultyProgressionConfig : ScriptableObject
     public int mediumRequiredEasy = DefaultMediumRequiredEasy;
 
     [Header("Hard Unlock")]
-    [Tooltip("Unieke Easy-completions nodig (naast Medium) om Hard te unlocken.")]
+    [Tooltip(
+        "Legacy field. Hard unlock ignores Easy when this is 0 (recommended). " +
+        "Medium completions alone unlock Hard."
+    )]
     [Min(0)]
     public int hardRequiredEasy = DefaultHardRequiredEasy;
 
-    [Tooltip("Unieke Medium-completions nodig (naast Easy) om Hard te unlocken.")]
+    [Tooltip("Unieke Medium-completions nodig om Hard te unlocken.")]
     [Min(0)]
     public int hardRequiredMedium = DefaultHardRequiredMedium;
 
@@ -45,8 +54,18 @@ public class DifficultyProgressionConfig : ScriptableObject
                 return easyCompletedCount >= mediumRequiredEasy;
 
             case LevelDifficulty.Hard:
-                return easyCompletedCount >= hardRequiredEasy
-                    && mediumCompletedCount >= hardRequiredMedium;
+                // Medium gate alone is authoritative; Easy gate only if explicitly configured > 0.
+                if (mediumCompletedCount < hardRequiredMedium)
+                {
+                    return false;
+                }
+
+                if (hardRequiredEasy <= 0)
+                {
+                    return true;
+                }
+
+                return easyCompletedCount >= hardRequiredEasy;
 
             default:
                 return false;
@@ -70,8 +89,17 @@ public class DifficultyProgressionConfig : ScriptableObject
                 return easyCompletedCount >= DefaultMediumRequiredEasy;
 
             case LevelDifficulty.Hard:
-                return easyCompletedCount >= DefaultHardRequiredEasy
-                    && mediumCompletedCount >= DefaultHardRequiredMedium;
+                if (mediumCompletedCount < DefaultHardRequiredMedium)
+                {
+                    return false;
+                }
+
+                if (DefaultHardRequiredEasy <= 0)
+                {
+                    return true;
+                }
+
+                return easyCompletedCount >= DefaultHardRequiredEasy;
 
             default:
                 return false;

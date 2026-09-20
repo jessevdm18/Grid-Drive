@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -9,6 +10,14 @@ public class CoinManager : MonoBehaviour
 {
     private const string CoinsKey = "RushOut_Coins";
 
+    /// <summary>
+    /// Persisted Google Play purchase tokens that already received their coin grant.
+    /// Stored with the coin balance so grant + dedupe survive the same PlayerPrefs.Save().
+    /// </summary>
+    private const string IapFulfilledTxKey = "RushOut_IAP_FulfilledTx";
+
+    private const char IapTxSeparator = '\n';
+
     /// <summary>Fresh-install default (also PlayerPrefs miss default).</summary>
     public const int StartingCoins = 200;
 
@@ -17,6 +26,8 @@ public class CoinManager : MonoBehaviour
     public event Action<int> OnCoinsChanged;
 
     private int coins;
+    private readonly HashSet<string> fulfilledIapTransactions = new HashSet<string>();
+    private readonly List<string> fulfilledIapOrder = new List<string>();
 
     /// <summary>
     /// Huidige aantal coins.
@@ -27,6 +38,7 @@ public class CoinManager : MonoBehaviour
     {
         // Laad opgeslagen coins. Nieuwe spelers starten met 200.
         coins = PlayerPrefs.GetInt(CoinsKey, StartingCoins);
+        LoadFulfilledIapTransactions();
     }
 
     /// <summary>
@@ -50,6 +62,46 @@ public class CoinManager : MonoBehaviour
         coins += amount;
         SaveCoins();
         NotifyCoinsChanged();
+    }
+
+    /// <summary>
+    /// True if this IAP transaction id already received its durable coin grant.
+    /// </summary>
+    public bool HasFulfilledIapTransaction(string transactionId)
+    {
+        if (string.IsNullOrEmpty(transactionId))
+        {
+            return false;
+        }
+
+        return fulfilledIapTransactions.Contains(transactionId);
+    }
+
+    /// <summary>
+    /// Crash-safe IAP grant: coins and fulfilled-transaction id are written in one
+    /// PlayerPrefs.Save(). Returns false if this transaction was already fulfilled
+    /// (no second grant). Required so a crash cannot mark a purchase "done" without
+    /// granting, or grant twice after redelivery.
+    /// </summary>
+    public bool TryAddCoinsForIapTransaction(int amount, string transactionId)
+    {
+        if (amount <= 0 || string.IsNullOrEmpty(transactionId))
+        {
+            return false;
+        }
+
+        if (fulfilledIapTransactions.Contains(transactionId))
+        {
+            return false;
+        }
+
+        coins += amount;
+        RememberFulfilledIapTransaction(transactionId);
+        PlayerPrefs.SetInt(CoinsKey, coins);
+        PlayerPrefs.SetString(IapFulfilledTxKey, SerializeFulfilledIapTransactions());
+        PlayerPrefs.Save();
+        NotifyCoinsChanged();
+        return true;
     }
 
     /// <summary>
@@ -106,5 +158,49 @@ public class CoinManager : MonoBehaviour
     private void NotifyCoinsChanged()
     {
         OnCoinsChanged?.Invoke(coins);
+    }
+
+    private void LoadFulfilledIapTransactions()
+    {
+        fulfilledIapTransactions.Clear();
+        fulfilledIapOrder.Clear();
+
+        string raw = PlayerPrefs.GetString(IapFulfilledTxKey, string.Empty);
+        if (string.IsNullOrEmpty(raw))
+        {
+            return;
+        }
+
+        string[] parts = raw.Split(IapTxSeparator);
+        for (int i = 0; i < parts.Length; i++)
+        {
+            string id = parts[i];
+            if (string.IsNullOrEmpty(id) || !fulfilledIapTransactions.Add(id))
+            {
+                continue;
+            }
+
+            fulfilledIapOrder.Add(id);
+        }
+    }
+
+    private void RememberFulfilledIapTransaction(string transactionId)
+    {
+        if (!fulfilledIapTransactions.Add(transactionId))
+        {
+            return;
+        }
+
+        fulfilledIapOrder.Add(transactionId);
+    }
+
+    private string SerializeFulfilledIapTransactions()
+    {
+        if (fulfilledIapOrder.Count == 0)
+        {
+            return string.Empty;
+        }
+
+        return string.Join(IapTxSeparator.ToString(), fulfilledIapOrder);
     }
 }

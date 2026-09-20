@@ -36,23 +36,61 @@ public static class LevelMinMoves
     }
 
     /// <summary>
-    /// Star rating with unchanged thresholds: 3★ ≤ par, 2★ ≤ par+2, else 1★.
-    /// When par is invalid, returns 1★ and does not use -1 in comparisons.
+    /// Inclusive 3★ / 2★ ceilings relative to PAR, by authoritative LevelData.difficulty.
+    /// Easy:   3★ ≤ PAR,     2★ ≤ PAR+2
+    /// Medium: 3★ ≤ PAR+1,   2★ ≤ PAR+4
+    /// Hard:   3★ ≤ PAR+2,   2★ ≤ PAR+6
+    /// </summary>
+    public static void GetStarThresholds(
+        LevelDifficulty difficulty,
+        int parMoves,
+        out int threeStarMaxInclusive,
+        out int twoStarMaxInclusive)
+    {
+        switch (difficulty)
+        {
+            case LevelDifficulty.Medium:
+                threeStarMaxInclusive = parMoves + 1;
+                twoStarMaxInclusive = parMoves + 4;
+                break;
+            case LevelDifficulty.Hard:
+                threeStarMaxInclusive = parMoves + 2;
+                twoStarMaxInclusive = parMoves + 6;
+                break;
+            case LevelDifficulty.Easy:
+            default:
+                threeStarMaxInclusive = parMoves;
+                twoStarMaxInclusive = parMoves + 2;
+                break;
+        }
+    }
+
+    /// <summary>
+    /// Star rating using difficulty-specific inclusive PAR offsets.
+    /// When par is invalid (minimumMoves &lt;= 0), returns 0★ — not a valid completion.
     /// </summary>
     public static int CalculateStars(int playerMoves, LevelData level, out int parMoves)
     {
         if (!TryGetPar(level, out parMoves))
         {
             parMoves = 0;
-            return 1;
+            return 0;
         }
 
-        if (playerMoves <= parMoves)
+        LevelDifficulty difficulty = level != null ? level.difficulty : LevelDifficulty.Easy;
+        GetStarThresholds(
+            difficulty,
+            parMoves,
+            out int threeStarMax,
+            out int twoStarMax
+        );
+
+        if (playerMoves <= threeStarMax)
         {
             return 3;
         }
 
-        if (playerMoves <= parMoves + 2)
+        if (playerMoves <= twoStarMax)
         {
             return 2;
         }

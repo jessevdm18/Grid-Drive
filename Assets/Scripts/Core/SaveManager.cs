@@ -594,7 +594,7 @@ public class SaveManager : MonoBehaviour
 
     /// <summary>
     /// Of de speler deze difficulty mag kiezen (geen UI-logic).
-    /// Null config → built-in defaults (10 / 10+10).
+    /// Null config → built-in defaults (3 Easy for Medium / 3 Medium for Hard).
     /// </summary>
     public bool IsDifficultyUnlocked(
         LevelDifficulty difficulty,

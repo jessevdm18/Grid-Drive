@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae5b7df3a538f1b4cb0ee074c252ac61, type: 3}
   m_Name: DifficultyProgressionConfig
   m_EditorClassIdentifier: Assembly-CSharp::DifficultyProgressionConfig
-  mediumRequiredEasy: 10
-  hardRequiredEasy: 10
-  hardRequiredMedium: 10
+  mediumRequiredEasy: 3
+  hardRequiredEasy: 0
+  hardRequiredMedium: 3

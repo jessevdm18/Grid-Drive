@@ -23,7 +23,7 @@ public class LevelManager : MonoBehaviour
 
     [SerializeField] private SaveManager saveManager;
 
-    [Tooltip("Optioneel. Null = built-in unlock defaults (10 Easy / 10 Easy + 10 Medium).")]
+    [Tooltip("Optioneel. Null = built-in unlock defaults (3 Easy / 3 Medium).")]
     [SerializeField] private DifficultyProgressionConfig difficultyProgressionConfig;
 
     [SerializeField] private GameplayUI gameplayUI;

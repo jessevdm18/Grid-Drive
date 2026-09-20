@@ -461,7 +461,8 @@ public class GameManager : MonoBehaviour
                 saveManager.SaveStarsForLevel(completedIndex, LastEarnedStars);
 
                 // Difficulty unlock toast: only on unique first completion + false→true.
-                if (previousBestStars <= 0)
+                // Invalid PAR yields 0★ and must not count as a unique completion.
+                if (previousBestStars <= 0 && LastEarnedStars > 0)
                 {
                     bool mediumUnlockedAfter = saveManager.IsDifficultyUnlocked(
                         LevelDifficulty.Medium,

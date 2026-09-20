@@ -1,0 +1,3 @@
+# Keep Google Play Billing API classes used by Unity IAP via JNI / AndroidJavaClass.
+-keep class com.android.billingclient.api.** { *; }
+-keep interface com.android.billingclient.api.** { *; }

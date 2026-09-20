@@ -70,7 +70,7 @@ public class LevelSelectUI : MonoBehaviour
     [Tooltip("Centrale database met alle levels.")]
     [SerializeField] private LevelDatabase levelDatabase;
 
-    [Tooltip("Optioneel. Null = built-in unlock defaults (10 Easy / 10 Easy + 10 Medium).")]
+    [Tooltip("Optioneel. Null = built-in unlock defaults (3 Easy / 3 Medium).")]
     [SerializeField] private DifficultyProgressionConfig difficultyProgressionConfig;
 
     private LevelDifficulty selectedDifficulty = LevelDifficulty.Easy;
@@ -270,11 +270,20 @@ public class LevelSelectUI : MonoBehaviour
             return;
         }
 
-        int easyCompleted = GetCompletedCountSafe(LevelDifficulty.Easy);
         int mediumCompleted = GetCompletedCountSafe(LevelDifficulty.Medium);
-        int easyRequired = GetHardRequiredEasy();
         int mediumRequired = GetHardRequiredMedium();
+        int easyRequired = GetHardRequiredEasy();
 
+        hardProgressText.gameObject.SetActive(true);
+
+        // When Easy is not part of the Hard gate (recommended), show Medium only.
+        if (easyRequired <= 0)
+        {
+            hardProgressText.text = mediumCompleted + " / " + mediumRequired + " MEDIUM";
+            return;
+        }
+
+        int easyCompleted = GetCompletedCountSafe(LevelDifficulty.Easy);
         string easyPart = easyCompleted >= easyRequired
             ? "EASY ✓"
             : "EASY " + easyCompleted + "/" + easyRequired;
@@ -283,7 +292,6 @@ public class LevelSelectUI : MonoBehaviour
             ? "MEDIUM ✓"
             : "MEDIUM " + mediumCompleted + "/" + mediumRequired;
 
-        hardProgressText.gameObject.SetActive(true);
         hardProgressText.text = easyPart + " • " + mediumPart;
     }
 
