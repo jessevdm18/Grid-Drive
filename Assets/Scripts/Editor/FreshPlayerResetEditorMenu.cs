@@ -27,7 +27,7 @@ public static class FreshPlayerResetEditorMenu
         bool confirm = EditorUtility.DisplayDialog(
             "FULL FRESH PLAYER RESET",
             "FULL FRESH PLAYER RESET\n\n" +
-            "This will erase all local player progress, stars, coins, tutorial state,\n" +
+            "This will erase all local player progress, stars, coins, lives, tutorial state,\n" +
             "difficulty progression and skin ownership for testing.\n\n" +
             "Project assets and V1 curation data will NOT be changed.",
             "RESET PLAYER DATA",
@@ -54,6 +54,13 @@ public static class FreshPlayerResetEditorMenu
 
         // Critical: leftover Pending GUID would override SaveManager in LevelManager.Start.
         V1PlaytestOverride.Clear();
+
+        // Lives prefs already deleted by EditorResetAllPlayerProgressPrefs.
+        // Reinit in-memory instance if Play Mode somehow left one (normally blocked above).
+        if (LivesManager.Instance != null)
+        {
+            LivesManager.Instance.ReinitializeToFreshDefaults();
+        }
 
         PlayerPrefs.Save();
 
@@ -135,6 +142,16 @@ public static class FreshPlayerResetEditorMenu
         );
         sb.AppendLine("HasProgressEvidence=" + hasProgressEvidence);
         sb.AppendLine("ShouldRouteFirstLaunchToGameplay(expected)=" + shouldRoute);
+        sb.AppendLine(
+            "LivesKeyPresent=" + PlayerPrefs.HasKey(LivesManager.LivesPrefsKey)
+        );
+        sb.AppendLine(
+            "NextLifeTicksKeyPresent=" +
+            PlayerPrefs.HasKey(LivesManager.NextLifeUtcTicksPrefsKey)
+        );
+        sb.AppendLine(
+            "LivesExpectedOnNextLaunch=5/5 (missing key → StartingLives)"
+        );
         sb.AppendLine("Preserved: MusicEnabled / SfxEnabled / EditorPrefs / curation / DB");
         return sb.ToString();
     }

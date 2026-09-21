@@ -355,6 +355,8 @@ public class SaveManager : MonoBehaviour
     public static void EditorResetAllPlayerProgressPrefs()
     {
         ResetLevelProgressKeys(includeCoins: true, includeFirstLaunch: true);
+        // Economy: coins deleted above; lives deleted here (same fresh-install pattern).
+        LivesManager.DeleteAllPersistedPrefs();
         PlayerPrefs.DeleteKey(LevelDatabaseContentVersion.PrefsKey);
         PlayerPrefs.Save();
     }
@@ -409,7 +411,7 @@ public class SaveManager : MonoBehaviour
     /// <summary>
     /// Runtime/pre-release: wipe index-based level progression after a
     /// MainLevelDatabase content-version mismatch.
-    /// Keeps audio, coins balance, skins, feature-tutorial seen flags.
+    /// Keeps audio, coins balance, lives, skins, feature-tutorial seen flags.
     /// Clears first-launch so Splash routes to Easy Level 1 again.
     /// Player-build safe (not Editor-only).
     /// </summary>

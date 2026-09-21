@@ -547,6 +547,8 @@ public class GameManager : MonoBehaviour
 
         levelFailed = true;
 
+        ConsumeLifeForGenuineFailure(failReason);
+
         if (hintManager != null)
         {
             hintManager.ClearCurrentHint();
@@ -557,6 +559,41 @@ public class GameManager : MonoBehaviour
         ReportLevelFailTelemetry(failReason);
 
         Debug.Log("LEVEL FAILED (special mission).");
+    }
+
+    /// <summary>
+    /// Exactly one life per genuine first FailLevel of an attempt.
+    /// V1 candidate playtest does not touch persistent lives.
+    /// </summary>
+    private void ConsumeLifeForGenuineFailure(string failReason)
+    {
+        if (levelManager != null && levelManager.IsV1CandidatePlaytest)
+        {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            Debug.Log(
+                "[Lives] V1 playtest bypass: no life consumed | reason=" +
+                failReason
+            );
+#endif
+            return;
+        }
+
+        LivesManager livesManager = LivesManager.EnsureInstance();
+        if (livesManager == null)
+        {
+            return;
+        }
+
+        if (!livesManager.TryRemoveLife())
+        {
+            return;
+        }
+
+        Debug.Log(
+            "[Lives] Failure consumed life: " +
+            livesManager.CurrentLives + "/" + LivesManager.MaxLives +
+            " | reason=" + failReason
+        );
     }
 
     private void ReportLevelCompleteTelemetry(int parMoves)

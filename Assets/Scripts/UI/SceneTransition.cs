@@ -39,8 +39,44 @@ public class SceneTransition : MonoBehaviour
             return;
         }
 
+        if (!TryAuthorizeGameplaySceneEntry(sceneName))
+        {
+            return;
+        }
+
         SceneTransition transition = EnsureInstance();
         transition.BeginTransition(sceneName, fadeOutFirst: true);
+    }
+
+    /// <summary>
+    /// Zero-lives gate before entering Gameplay. V1 pending/active playtest bypasses.
+    /// Other scenes are never gated.
+    /// </summary>
+    private static bool TryAuthorizeGameplaySceneEntry(string sceneName)
+    {
+        if (!string.Equals(sceneName, "Gameplay", System.StringComparison.Ordinal))
+        {
+            return true;
+        }
+
+        // Explicit Editor V1 candidate session — do not block entry.
+        if (V1PlaytestOverride.HasPending || V1PlaytestOverride.HasActive)
+        {
+            LivesManager bypassLog = LivesManager.EnsureInstance();
+            bypassLog?.TryBeginLevelAttempt("scene_gameplay", bypassForV1Playtest: true);
+            return true;
+        }
+
+        LivesManager livesManager = LivesManager.EnsureInstance();
+        if (livesManager == null)
+        {
+            Debug.LogWarning(
+                "[Lives] SceneTransition: LivesManager missing — allowing Gameplay."
+            );
+            return true;
+        }
+
+        return livesManager.TryBeginLevelAttempt("scene_gameplay");
     }
 
     /// <summary>
@@ -52,6 +88,11 @@ public class SceneTransition : MonoBehaviour
         if (string.IsNullOrEmpty(sceneName))
         {
             Debug.LogWarning("SceneTransition: sceneName is leeg.");
+            return;
+        }
+
+        if (!TryAuthorizeGameplaySceneEntry(sceneName))
+        {
             return;
         }
 

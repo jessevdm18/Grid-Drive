@@ -96,6 +96,24 @@ public class LevelManager : MonoBehaviour
     public bool IsV1CandidatePlaytest => editorPlaytestLevel != null;
 
     /// <summary>
+    /// Central zero-lives gate. V1 candidate playtest bypasses. Does not consume a life.
+    /// </summary>
+    private bool TryAuthorizeLevelAttempt(string source)
+    {
+        bool v1Bypass = IsV1CandidatePlaytest;
+        LivesManager livesManager = LivesManager.EnsureInstance();
+        if (livesManager == null)
+        {
+            Debug.LogWarning(
+                "[Lives] TryAuthorizeLevelAttempt: LivesManager missing — allowing attempt."
+            );
+            return true;
+        }
+
+        return livesManager.TryBeginLevelAttempt(source, v1Bypass);
+    }
+
+    /// <summary>
     /// Actieve voertuigen in LevelData-spawnvolgorde (stabiele solver-indices).
     /// </summary>
     public IReadOnlyList<VehicleController> ActiveVehicles => activeVehicles;
@@ -347,6 +365,11 @@ public class LevelManager : MonoBehaviour
             return;
         }
 
+        if (!TryAuthorizeLevelAttempt("next"))
+        {
+            return;
+        }
+
         if (levelDatabase == null || levelDatabase.LevelCount == 0)
         {
             Debug.LogError("LevelManager: geen levels in LevelDatabase.");
@@ -449,7 +472,7 @@ public class LevelManager : MonoBehaviour
         );
 #endif
 
-        LoadLevel();
+        LoadLevel(authorizedAttempt: true);
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         Debug.Log("[LevelTransition] Complete");
@@ -461,12 +484,18 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     public void RestartLevel()
     {
+        if (!TryAuthorizeLevelAttempt("restart"))
+        {
+            // Keep current failed/active board — no destructive reload.
+            return;
+        }
+
         LogLevelRestartTelemetry();
 
         if (editorPlaytestLevel != null)
         {
             Debug.Log("Restarting V1 playtest level: " + editorPlaytestLevel.name);
-            LoadLevelData(editorPlaytestLevel);
+            LoadLevelData(editorPlaytestLevel, authorizedAttempt: true);
             return;
         }
 
@@ -476,7 +505,7 @@ public class LevelManager : MonoBehaviour
         Debug.Log("Restarting level index: " + indexToReload);
 
         currentLevelIndex = indexToReload;
-        LoadCurrentLevel();
+        LoadLevel(authorizedAttempt: true);
     }
 
     private void LogLevelRestartTelemetry()
@@ -495,9 +524,14 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     public void LoadLevel()
     {
+        LoadLevel(authorizedAttempt: false);
+    }
+
+    private void LoadLevel(bool authorizedAttempt)
+    {
         if (editorPlaytestLevel != null)
         {
-            LoadLevelData(editorPlaytestLevel);
+            LoadLevelData(editorPlaytestLevel, authorizedAttempt);
             return;
         }
 
@@ -529,7 +563,7 @@ public class LevelManager : MonoBehaviour
             return;
         }
 
-        LoadLevelData(levelData);
+        LoadLevelData(levelData, authorizedAttempt);
     }
 
     /// <summary>
@@ -537,9 +571,22 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     private void LoadLevelData(LevelData levelData)
     {
+        LoadLevelData(levelData, authorizedAttempt: false);
+    }
+
+    /// <param name="authorizedAttempt">
+    /// True when Restart/Next already passed <see cref="TryAuthorizeLevelAttempt"/>.
+    /// </param>
+    private void LoadLevelData(LevelData levelData, bool authorizedAttempt)
+    {
         if (levelData == null)
         {
             Debug.LogError("LevelManager: levelData is null.");
+            return;
+        }
+
+        if (!authorizedAttempt && !TryAuthorizeLevelAttempt("load"))
+        {
             return;
         }
 
