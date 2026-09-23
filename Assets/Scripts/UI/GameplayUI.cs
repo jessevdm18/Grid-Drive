@@ -15,6 +15,7 @@ public class GameplayUI : MonoBehaviour
         coinText != null ? coinText.rectTransform : null;
 
     [SerializeField] private LevelManager levelManager;
+    [SerializeField] private GameManager gameManager;
 
     [Tooltip("LevelCard/ValueText — alleen het levelnummer, bijv. \"8\".")]
     [SerializeField] private TextMeshProUGUI levelValueText;
@@ -30,9 +31,24 @@ public class GameplayUI : MonoBehaviour
 
     private void Start()
     {
+        if (gameManager == null)
+        {
+            gameManager = FindAnyObjectByType<GameManager>();
+        }
+
         UpdateCoinText(coinManager != null ? coinManager.GetCoins() : 0);
         UpdateLevelText();
-        UpdateMovesText(0);
+
+        // Use GameManager's authoritative formatting (includes "0 / limit" when configured).
+        // Do NOT call UpdateMovesText(0) here — that overwrites a prior Configure refresh.
+        if (gameManager != null)
+        {
+            gameManager.SyncMovesHud();
+        }
+        else
+        {
+            UpdateMovesText(0);
+        }
     }
 
     private void OnEnable()
@@ -141,14 +157,35 @@ public class GameplayUI : MonoBehaviour
     /// <summary>
     /// Zet alleen MovesCard/ValueText op het aantal moves.
     /// Raakt LabelText ("MOVES") niet aan.
+    /// Optional globalLimit → "12 / 24" for forgiving global levels only.
     /// </summary>
     public void UpdateMovesText(int moves)
+    {
+        UpdateMovesText(moves, showGlobalLimit: false, globalLimit: 0);
+    }
+
+    /// <summary>
+    /// Moves HUD with optional forgiving global denominator (not special MoveLimit).
+    /// </summary>
+    public void UpdateMovesText(int moves, int globalLimit)
+    {
+        UpdateMovesText(moves, showGlobalLimit: true, globalLimit: globalLimit);
+    }
+
+    private void UpdateMovesText(int moves, bool showGlobalLimit, int globalLimit)
     {
         if (movesValueText == null)
         {
             return;
         }
 
-        movesValueText.text = moves.ToString();
+        if (showGlobalLimit && globalLimit > 0)
+        {
+            movesValueText.text = moves.ToString() + " / " + globalLimit.ToString();
+        }
+        else
+        {
+            movesValueText.text = moves.ToString();
+        }
     }
 }

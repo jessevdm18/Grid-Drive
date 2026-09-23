@@ -308,6 +308,60 @@ public static class GameAnalytics
         }
     }
 
+    /// <summary>
+    /// Successful life-for-coins purchase (currency spend + life grant).
+    /// </summary>
+    public static void LogLifePurchase(
+        string currency,
+        int cost,
+        int livesBefore,
+        int livesAfter)
+    {
+        if (!FirebaseManager.IsReady)
+        {
+            return;
+        }
+
+        try
+        {
+            FirebaseAnalytics.LogEvent(
+                "life_purchase",
+                new Parameter("currency", Safe(currency)),
+                new Parameter("cost", cost),
+                new Parameter("lives_before", livesBefore),
+                new Parameter("lives_after", livesAfter)
+            );
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError("GameAnalytics.LogLifePurchase failed — " + ex.Message);
+        }
+    }
+
+    /// <summary>
+    /// Life granted after a rewarded-ad UserEarnedReward callback (not on ad close alone).
+    /// </summary>
+    public static void LogLifeRewardedAd(int livesBefore, int livesAfter)
+    {
+        if (!FirebaseManager.IsReady)
+        {
+            return;
+        }
+
+        try
+        {
+            FirebaseAnalytics.LogEvent(
+                "life_rewarded_ad",
+                new Parameter("lives_before", livesBefore),
+                new Parameter("lives_after", livesAfter)
+            );
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError("GameAnalytics.LogLifeRewardedAd failed — " + ex.Message);
+        }
+    }
+
     public static void LogObjectiveFailed(
         int levelNumber,
         string difficulty,

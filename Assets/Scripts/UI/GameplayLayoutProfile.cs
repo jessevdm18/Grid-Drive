@@ -127,6 +127,18 @@ public class GameplayLayoutProfile
     [Range(0.15f, 0.45f)]
     public float leftHudWidthFraction = 0.30f;
 
+    [Tooltip(
+        "Phone only (Tall/Compact): SafeArea-local canvas units between LivesHUD " +
+        "bottom and LevelCard top. Unused on Wide Tablet.")]
+    [Min(0f)]
+    public float livesHudGapAboveLevelCard = 12f;
+
+    [Tooltip(
+        "Wide Tablet only: SafeArea-local canvas units between MovesCard right " +
+        "and LivesHUD left. Unused on Tall/Compact phone.")]
+    [Min(0f)]
+    public float livesHudGapRightOfMovesCard = 12f;
+
     public List<RectTransformState> entries = new List<RectTransformState>(32);
 
     public bool TryGet(string key, out RectTransformState state)

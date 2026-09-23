@@ -127,6 +127,742 @@ public static class LivesEditorMenu
         );
     }
 
+    [MenuItem(MenuRoot + "Set Lives = 5", priority = 204)]
+    private static void SetLives5()
+    {
+        SetLivesForTesting(5, clearTimer: true);
+    }
+
+    [MenuItem(MenuRoot + "Set Lives = 4", priority = 205)]
+    private static void SetLives4()
+    {
+        SetLivesForTesting(4, clearTimer: false);
+    }
+
+    [MenuItem(MenuRoot + "Set Lives = 1", priority = 206)]
+    private static void SetLives1()
+    {
+        SetLivesForTesting(1, clearTimer: false);
+    }
+
+    [MenuItem(MenuRoot + "Set Lives = 0", priority = 207)]
+    private static void SetLives0()
+    {
+        SetLivesForTesting(0, clearTimer: false);
+    }
+
+    [MenuItem(MenuRoot + "Set Next Life Due In 10 Seconds", priority = 208)]
+    private static void SetNextLifeDueIn10Seconds()
+    {
+        if (!RequirePlayMode("Set Next Life Due In 10 Seconds"))
+        {
+            return;
+        }
+
+        LivesManager manager = LivesManager.EnsureInstance();
+        if (manager == null)
+        {
+            return;
+        }
+
+        int lives = manager.CurrentLives;
+        if (lives >= LivesManager.MaxLives)
+        {
+            lives = LivesManager.MaxLives - 1;
+        }
+
+        manager.EditorSetStateForTesting(lives, DateTime.UtcNow.AddSeconds(10));
+        LivesUiBootstrap.EnsureForActiveScene();
+        Debug.Log(
+            "[Lives] Next life due in ~10s | lives=" + manager.CurrentLives +
+            "/" + LivesManager.MaxLives
+        );
+    }
+
+    [MenuItem(MenuRoot + "Log Lives UI State", priority = 209)]
+    private static void LogLivesUiState()
+    {
+        if (!RequirePlayMode("Log Lives UI State"))
+        {
+            return;
+        }
+
+        LivesUiBootstrap.EnsureForActiveScene();
+        LivesManager manager = LivesManager.EnsureInstance();
+        LivesHUD hud = UnityEngine.Object.FindAnyObjectByType<LivesHUD>();
+        OutOfLivesUI popup = UnityEngine.Object.FindAnyObjectByType<OutOfLivesUI>();
+
+        StringBuilder sb = new StringBuilder();
+        sb.AppendLine("[Lives] === UI STATE ===");
+        sb.AppendLine(
+            "Manager=" +
+            (manager != null
+                ? manager.CurrentLives + "/" + LivesManager.MaxLives +
+                  " until=" + manager.TimeUntilNextLife
+                : "null")
+        );
+        sb.AppendLine(
+            "LivesHUD=" +
+            (hud != null ? hud.DebugDescribeState() : "missing")
+        );
+        sb.AppendLine(
+            "OutOfLivesUI=" +
+            (popup != null
+                ? "present open=" + popup.IsOpen
+                : "missing")
+        );
+        Debug.Log(sb.ToString());
+    }
+
+    private static void SetLivesForTesting(int lives, bool clearTimer)
+    {
+        if (!RequirePlayMode("Set Lives = " + lives))
+        {
+            return;
+        }
+
+        LivesManager manager = LivesManager.EnsureInstance();
+        if (manager == null)
+        {
+            return;
+        }
+
+        DateTime? due = null;
+        if (!clearTimer && lives < LivesManager.MaxLives)
+        {
+            due = DateTime.UtcNow.Add(LivesManager.RegenInterval);
+        }
+
+        manager.EditorSetStateForTesting(lives, due);
+        LivesUiBootstrap.EnsureForActiveScene();
+        Debug.Log(
+            "[Lives] Set lives=" + manager.CurrentLives + "/" + LivesManager.MaxLives +
+            " timer=" + manager.HasActiveNextLifeTimestamp
+        );
+    }
+
+    [MenuItem(MenuRoot + "Set Coins = 0", priority = 220)]
+    private static void SetCoins0()
+    {
+        SetCoinsForTesting(0);
+    }
+
+    [MenuItem(MenuRoot + "Set Coins = 99", priority = 221)]
+    private static void SetCoins99()
+    {
+        SetCoinsForTesting(99);
+    }
+
+    [MenuItem(MenuRoot + "Set Coins = 100", priority = 222)]
+    private static void SetCoins100()
+    {
+        SetCoinsForTesting(100);
+    }
+
+    [MenuItem(MenuRoot + "Set Coins = 150", priority = 223)]
+    private static void SetCoins150()
+    {
+        SetCoinsForTesting(150);
+    }
+
+    [MenuItem(MenuRoot + "Set Lives = 0 and Coins = 100", priority = 224)]
+    private static void SetLives0AndCoins100()
+    {
+        if (!RequirePlayMode("Set Lives = 0 and Coins = 100"))
+        {
+            return;
+        }
+
+        LivesManager lives = LivesManager.EnsureInstance();
+        CoinManager coins = ResolveCoinManagerForTesting();
+        if (lives == null || coins == null)
+        {
+            return;
+        }
+
+        lives.EditorSetStateForTesting(0, DateTime.UtcNow.Add(LivesManager.RegenInterval));
+        coins.EditorSetCoinsForTesting(100);
+        LivesUiBootstrap.EnsureForActiveScene();
+        Debug.Log(
+            "[Lives] Set lives=0 coins=100 | cost=" + LivesEconomyConfig.LifeCoinCost
+        );
+    }
+
+    [MenuItem(MenuRoot + "Test Purchase Life With Coins", priority = 225)]
+    private static void TestPurchaseLifeWithCoins()
+    {
+        if (!RequirePlayMode("Test Purchase Life With Coins"))
+        {
+            return;
+        }
+
+        LivesManager lives = LivesManager.EnsureInstance();
+        CoinManager coins = ResolveCoinManagerForTesting();
+        if (lives == null || coins == null)
+        {
+            return;
+        }
+
+        int livesBefore = lives.CurrentLives;
+        int coinsBefore = coins.Coins;
+        long ticksBefore = ReadTicksPref();
+
+        LifePurchaseResult result = LifePurchaseService.TryPurchaseLifeWithCoins(coins, lives);
+
+        Debug.Log(
+            "[Lives] Test Purchase → " + result +
+            " | lives " + livesBefore + "→" + lives.CurrentLives +
+            " coins " + coinsBefore + "→" + coins.Coins +
+            " cost=" + LivesEconomyConfig.LifeCoinCost +
+            " ticks " + ticksBefore + "→" + ReadTicksPref()
+        );
+    }
+
+    [MenuItem(MenuRoot + "Log Life Purchase State", priority = 226)]
+    private static void LogLifePurchaseState()
+    {
+        if (!RequirePlayMode("Log Life Purchase State"))
+        {
+            return;
+        }
+
+        LivesManager lives = LivesManager.EnsureInstance();
+        CoinManager coins = ResolveCoinManagerForTesting();
+        OutOfLivesUI popup = UnityEngine.Object.FindAnyObjectByType<OutOfLivesUI>();
+
+        StringBuilder sb = new StringBuilder();
+        sb.AppendLine("[Lives] === LIFE PURCHASE STATE ===");
+        sb.AppendLine("LifeCoinCost=" + LivesEconomyConfig.LifeCoinCost);
+        sb.AppendLine(
+            "Lives=" +
+            (lives != null
+                ? lives.CurrentLives + "/" + LivesManager.MaxLives +
+                  " until=" + lives.TimeUntilNextLife +
+                  " timer=" + lives.HasActiveNextLifeTimestamp
+                : "null")
+        );
+        sb.AppendLine("Coins=" + (coins != null ? coins.Coins.ToString() : "null"));
+        sb.AppendLine(
+            "CanAfford=" +
+            (coins != null && coins.CanAfford(LivesEconomyConfig.LifeCoinCost))
+        );
+        sb.AppendLine(
+            "OutOfLivesUI=" +
+            (popup != null ? "present open=" + popup.IsOpen : "missing")
+        );
+        Debug.Log(sb.ToString());
+    }
+
+    [MenuItem(MenuRoot + "Simulate Rewarded Life Success", priority = 228)]
+    private static void SimulateRewardedLifeSuccess()
+    {
+        if (!RequirePlayMode("Simulate Rewarded Life Success"))
+        {
+            return;
+        }
+
+        LivesManager lives = LivesManager.EnsureInstance();
+        CoinManager coins = ResolveCoinManagerForTesting();
+        if (lives == null)
+        {
+            return;
+        }
+
+        int livesBefore = lives.CurrentLives;
+        int coinsBefore = coins != null ? coins.Coins : -1;
+        long ticksBefore = ReadTicksPref();
+
+        OutOfLivesUI popup = UnityEngine.Object.FindAnyObjectByType<OutOfLivesUI>();
+        if (popup != null && popup.IsOpen)
+        {
+            popup.DebugSimulateRewardedLifeSuccess();
+        }
+        else
+        {
+            LifePurchaseResult result = LifePurchaseService.SimulateRewardedLifeSuccess(lives);
+            Debug.Log("[Lives] SimulateRewardedLifeSuccess (service) → " + result);
+        }
+
+        Debug.Log(
+            "[Lives] Simulate Rewarded Life Success | lives " + livesBefore + "→" +
+            lives.CurrentLives +
+            " coins " + coinsBefore + "→" + (coins != null ? coins.Coins : -1) +
+            " (must be unchanged) ticks " + ticksBefore + "→" + ReadTicksPref() +
+            " | no rewarded_ad_* analytics from simulation"
+        );
+    }
+
+    [MenuItem(MenuRoot + "Simulate Rewarded Life No Reward", priority = 229)]
+    private static void SimulateRewardedLifeNoReward()
+    {
+        if (!RequirePlayMode("Simulate Rewarded Life No Reward"))
+        {
+            return;
+        }
+
+        LivesManager lives = LivesManager.EnsureInstance();
+        if (lives == null)
+        {
+            return;
+        }
+
+        int livesBefore = lives.CurrentLives;
+        OutOfLivesUI popup = UnityEngine.Object.FindAnyObjectByType<OutOfLivesUI>();
+        if (popup != null)
+        {
+            if (!popup.IsOpen)
+            {
+                popup.Show();
+            }
+
+            popup.DebugSimulateRewardedLifeNoReward();
+        }
+        else
+        {
+            // No UI — begin attempt and end without grant (noop).
+            LifePurchaseService.BeginRewardedLifeAttempt();
+            Debug.Log("[Lives] Simulate no-reward: no OutOfLivesUI; no grant performed.");
+        }
+
+        Debug.Log(
+            "[Lives] Simulate Rewarded Life No Reward | lives " + livesBefore + "→" +
+            lives.CurrentLives + " (must be unchanged)"
+        );
+    }
+
+    [MenuItem(MenuRoot + "Log Rewarded Life State", priority = 230)]
+    private static void LogRewardedLifeState()
+    {
+        if (!RequirePlayMode("Log Rewarded Life State"))
+        {
+            return;
+        }
+
+        LivesManager lives = LivesManager.EnsureInstance();
+        CoinManager coins = ResolveCoinManagerForTesting();
+        AdsManager ads = LifePurchaseService.ResolveAdsManager();
+        OutOfLivesUI popup = UnityEngine.Object.FindAnyObjectByType<OutOfLivesUI>();
+
+        StringBuilder sb = new StringBuilder();
+        sb.AppendLine("[Lives] === REWARDED LIFE STATE ===");
+        sb.AppendLine("Placement=" + AdsManager.PlacementExtraLife);
+        sb.AppendLine(
+            "Lives=" +
+            (lives != null
+                ? lives.CurrentLives + "/" + LivesManager.MaxLives +
+                  " until=" + lives.TimeUntilNextLife
+                : "null")
+        );
+        sb.AppendLine("Coins=" + (coins != null ? coins.Coins.ToString() : "null"));
+        sb.AppendLine(
+            "AdsReady=" +
+            (ads != null && ads.IsRewardedAdReady(AdsManager.PlacementExtraLife))
+        );
+        sb.AppendLine(
+            "CanRequestAds=" + PrivacyConsentManager.CanRequestAds
+        );
+        sb.AppendLine(
+            "OutOfLivesUI=" +
+            (popup != null ? "present open=" + popup.IsOpen : "missing")
+        );
+        sb.AppendLine(
+            "HintReady=" +
+            (ads != null && ads.IsRewardedAdReady(AdsManager.PlacementHint))
+        );
+        Debug.Log(sb.ToString());
+    }
+
+    [MenuItem(MenuRoot + "Validate Phase 6 Rewarded Life (simulation)", priority = 231)]
+    private static void ValidatePhase6RewardedLifeSimulation()
+    {
+        int pass = 0;
+        int fail = 0;
+        const int total = 6;
+        StringBuilder sb = new StringBuilder();
+        sb.AppendLine("[LivesValidation] === PHASE 6 REWARDED LIFE ===");
+
+        void Check(string id, bool ok, string expected, string actual)
+        {
+            if (ok)
+            {
+                pass++;
+                string line = "[LivesValidation] " + id + " PASS " + actual;
+                sb.AppendLine(line);
+                Debug.Log(line);
+            }
+            else
+            {
+                fail++;
+                string line =
+                    "[LivesValidation] " + id + " FAIL: expected " + expected +
+                    ", actual " + actual;
+                sb.AppendLine(line);
+                Debug.LogError(line);
+            }
+        }
+
+        PrefsSnapshot snapshot = PrefsSnapshot.Capture();
+        LivesManager lives = null;
+        CoinManager coinsHost = null;
+        try
+        {
+            LivesManager.DeleteAllPersistedPrefs();
+            PlayerPrefs.SetInt(SaveManager.CoinsPrefsKey, 250);
+            PlayerPrefs.Save();
+
+            lives = LivesManager.CreateEphemeralEditorValidationHost();
+            if (lives == null)
+            {
+                Debug.LogError("[LivesValidation] SETUP FAIL: ephemeral LivesManager null");
+                return;
+            }
+
+            GameObject coinGo = new GameObject("CoinManager_EditorValidation_P6");
+            coinGo.hideFlags = HideFlags.HideAndDontSave;
+            coinsHost = coinGo.AddComponent<CoinManager>();
+            coinsHost.EditorSetCoinsForTesting(250);
+
+            // A: 0 lives → grant → 1 life, coins unchanged
+            lives.EditorSetStateForTesting(0, DateTime.UtcNow.AddHours(1));
+            long ticksA = lives.NextLifeUtc.HasValue ? lives.NextLifeUtc.Value.Ticks : 0L;
+            coinsHost.EditorSetCoinsForTesting(250);
+            LifePurchaseResult rA = LifePurchaseService.SimulateRewardedLifeSuccess(lives);
+            Check(
+                "A",
+                rA == LifePurchaseResult.Success &&
+                lives.CurrentLives == 1 &&
+                coinsHost.Coins == 250,
+                "Success lives=1 coins=250",
+                rA + " lives=" + lives.CurrentLives + " coins=" + coinsHost.Coins
+            );
+            Check(
+                "A-timer",
+                lives.HasActiveNextLifeTimestamp &&
+                lives.NextLifeUtc.HasValue &&
+                Math.Abs(lives.NextLifeUtc.Value.Ticks - ticksA) < TimeSpan.FromSeconds(1).Ticks,
+                "timer preserved",
+                FormatDue(lives)
+            );
+
+            // I: duplicate grant same attempt → still 1 life
+            lives.EditorSetStateForTesting(0, DateTime.UtcNow.AddHours(1));
+            int token = LifePurchaseService.BeginRewardedLifeAttempt();
+            LifePurchaseResult r1 = LifePurchaseService.GrantLifeFromRewardedAd(
+                token, lives, logAnalytics: false);
+            LifePurchaseResult r2 = LifePurchaseService.GrantLifeFromRewardedAd(
+                token, lives, logAnalytics: false);
+            Check(
+                "I",
+                r1 == LifePurchaseResult.Success &&
+                r2 == LifePurchaseResult.Success &&
+                lives.CurrentLives == 1,
+                "duplicate → still 1 life",
+                "r1=" + r1 + " r2=" + r2 + " lives=" + lives.CurrentLives
+            );
+
+            // L: 4 → 5 clears timer
+            lives.EditorSetStateForTesting(4, DateTime.UtcNow.AddHours(1));
+            LifePurchaseResult rL = LifePurchaseService.SimulateRewardedLifeSuccess(lives);
+            Check(
+                "L",
+                rL == LifePurchaseResult.Success &&
+                lives.CurrentLives == 5 &&
+                !lives.HasActiveNextLifeTimestamp,
+                "lives=5 timer cleared",
+                rL + " lives=" + lives.CurrentLives +
+                " timer=" + lives.HasActiveNextLifeTimestamp
+            );
+
+            // M: full refuses
+            lives.EditorSetStateForTesting(5, null);
+            coinsHost.EditorSetCoinsForTesting(250);
+            LifePurchaseResult rM = LifePurchaseService.SimulateRewardedLifeSuccess(lives);
+            Check(
+                "M",
+                rM == LifePurchaseResult.LivesFull &&
+                lives.CurrentLives == 5 &&
+                coinsHost.Coins == 250,
+                "LivesFull coins unchanged",
+                rM + " lives=" + lives.CurrentLives + " coins=" + coinsHost.Coins
+            );
+
+            // Stale token refuses
+            lives.EditorSetStateForTesting(0, DateTime.UtcNow.AddHours(1));
+            int stale = LifePurchaseService.BeginRewardedLifeAttempt();
+            LifePurchaseService.BeginRewardedLifeAttempt(); // newer attempt
+            LifePurchaseResult rStale = LifePurchaseService.GrantLifeFromRewardedAd(
+                stale, lives, logAnalytics: false);
+            Check(
+                "stale",
+                rStale == LifePurchaseResult.Unavailable &&
+                lives.CurrentLives == 0,
+                "stale token Unavailable",
+                rStale + " lives=" + lives.CurrentLives
+            );
+        }
+        finally
+        {
+            LivesManager.DestroyEphemeralEditorValidationHost(lives);
+            if (coinsHost != null)
+            {
+                UnityEngine.Object.DestroyImmediate(coinsHost.gameObject);
+            }
+
+            snapshot.Restore();
+        }
+
+        sb.AppendLine(
+            "[LivesValidation] RESULT " + pass + "/" + total + " PASS, " + fail + " FAIL"
+        );
+        if (fail == 0)
+        {
+            Debug.Log(sb.ToString());
+        }
+        else
+        {
+            Debug.LogWarning(sb.ToString());
+        }
+
+        EditorUtility.DisplayDialog(
+            "Lives Phase 6 Validation",
+            pass + "/" + total + " PASS" +
+            (fail > 0 ? "\n" + fail + " FAIL — see Console." : string.Empty),
+            "OK"
+        );
+    }
+
+    [MenuItem(MenuRoot + "Validate Phase 5 Purchase (simulation)", priority = 227)]
+    private static void ValidatePhase5PurchaseSimulation()
+    {
+        int pass = 0;
+        int fail = 0;
+        const int total = 9;
+        StringBuilder sb = new StringBuilder();
+        sb.AppendLine("[LivesValidation] === PHASE 5 LIFE PURCHASE ===");
+
+        void Check(string id, bool ok, string expected, string actual)
+        {
+            if (ok)
+            {
+                pass++;
+                string line = "[LivesValidation] " + id + " PASS " + actual;
+                sb.AppendLine(line);
+                Debug.Log(line);
+            }
+            else
+            {
+                fail++;
+                string line =
+                    "[LivesValidation] " + id + " FAIL: expected " + expected +
+                    ", actual " + actual;
+                sb.AppendLine(line);
+                Debug.LogError(line);
+            }
+        }
+
+        PrefsSnapshot snapshot = PrefsSnapshot.Capture();
+        LivesManager lives = null;
+        CoinManager coinsHost = null;
+        try
+        {
+            LivesManager.DeleteAllPersistedPrefs();
+            PlayerPrefs.SetInt(SaveManager.CoinsPrefsKey, 0);
+            PlayerPrefs.Save();
+
+            lives = LivesManager.CreateEphemeralEditorValidationHost();
+            if (lives == null)
+            {
+                Debug.LogError("[LivesValidation] SETUP FAIL: ephemeral LivesManager null");
+                return;
+            }
+
+            GameObject coinGo = new GameObject("CoinManager_EditorValidation");
+            coinGo.hideFlags = HideFlags.HideAndDontSave;
+            coinsHost = coinGo.AddComponent<CoinManager>();
+            coinsHost.EditorSetCoinsForTesting(0);
+
+            // A: 0 lives, 100 coins → Success → 1 life, 0 coins
+            lives.EditorSetStateForTesting(0, DateTime.UtcNow.AddHours(1));
+            long ticksA = lives.NextLifeUtc.HasValue ? lives.NextLifeUtc.Value.Ticks : 0L;
+            coinsHost.EditorSetCoinsForTesting(100);
+            LifePurchaseResult rA = LifePurchaseService.TryPurchaseLifeWithCoins(coinsHost, lives);
+            Check(
+                "A",
+                rA == LifePurchaseResult.Success &&
+                lives.CurrentLives == 1 &&
+                coinsHost.Coins == 0,
+                "Success lives=1 coins=0",
+                rA + " lives=" + lives.CurrentLives + " coins=" + coinsHost.Coins
+            );
+            Check(
+                "A-timer",
+                lives.HasActiveNextLifeTimestamp &&
+                lives.NextLifeUtc.HasValue &&
+                Math.Abs(lives.NextLifeUtc.Value.Ticks - ticksA) < TimeSpan.FromSeconds(1).Ticks,
+                "timer preserved",
+                FormatDue(lives)
+            );
+
+            // B: 0 lives, 99 coins → NotEnoughCoins
+            lives.EditorSetStateForTesting(0, DateTime.UtcNow.AddHours(1));
+            coinsHost.EditorSetCoinsForTesting(99);
+            LifePurchaseResult rB = LifePurchaseService.TryPurchaseLifeWithCoins(coinsHost, lives);
+            Check(
+                "B",
+                rB == LifePurchaseResult.NotEnoughCoins &&
+                lives.CurrentLives == 0 &&
+                coinsHost.Coins == 99,
+                "NotEnoughCoins lives=0 coins=99",
+                rB + " lives=" + lives.CurrentLives + " coins=" + coinsHost.Coins
+            );
+
+            // C: 0 lives, 150 → Success → 1, 50
+            lives.EditorSetStateForTesting(0, DateTime.UtcNow.AddHours(1));
+            coinsHost.EditorSetCoinsForTesting(150);
+            LifePurchaseResult rC = LifePurchaseService.TryPurchaseLifeWithCoins(coinsHost, lives);
+            Check(
+                "C",
+                rC == LifePurchaseResult.Success &&
+                lives.CurrentLives == 1 &&
+                coinsHost.Coins == 50,
+                "Success lives=1 coins=50",
+                rC + " lives=" + lives.CurrentLives + " coins=" + coinsHost.Coins
+            );
+
+            // D: 4 lives, 100 → Success → 5, 0 + timer cleared
+            lives.EditorSetStateForTesting(4, DateTime.UtcNow.AddHours(1));
+            coinsHost.EditorSetCoinsForTesting(100);
+            LifePurchaseResult rD = LifePurchaseService.TryPurchaseLifeWithCoins(coinsHost, lives);
+            Check(
+                "D",
+                rD == LifePurchaseResult.Success &&
+                lives.CurrentLives == 5 &&
+                coinsHost.Coins == 0 &&
+                !lives.HasActiveNextLifeTimestamp,
+                "Success lives=5 coins=0 timer cleared",
+                rD + " lives=" + lives.CurrentLives + " coins=" + coinsHost.Coins +
+                " timer=" + lives.HasActiveNextLifeTimestamp
+            );
+
+            // E: 5 lives, 100 → LivesFull, no spend
+            lives.EditorSetStateForTesting(5, null);
+            coinsHost.EditorSetCoinsForTesting(100);
+            LifePurchaseResult rE = LifePurchaseService.TryPurchaseLifeWithCoins(coinsHost, lives);
+            Check(
+                "E",
+                rE == LifePurchaseResult.LivesFull &&
+                lives.CurrentLives == 5 &&
+                coinsHost.Coins == 100,
+                "LivesFull lives=5 coins=100",
+                rE + " lives=" + lives.CurrentLives + " coins=" + coinsHost.Coins
+            );
+
+            // F: 0 lives, 0 coins → NotEnoughCoins
+            lives.EditorSetStateForTesting(0, DateTime.UtcNow.AddHours(1));
+            coinsHost.EditorSetCoinsForTesting(0);
+            LifePurchaseResult rF = LifePurchaseService.TryPurchaseLifeWithCoins(coinsHost, lives);
+            Check(
+                "F",
+                rF == LifePurchaseResult.NotEnoughCoins &&
+                lives.CurrentLives == 0 &&
+                coinsHost.Coins == 0,
+                "NotEnoughCoins",
+                rF + " lives=" + lives.CurrentLives + " coins=" + coinsHost.Coins
+            );
+
+            // M: double purchase with only 100 coins from 0 → exactly one success
+            lives.EditorSetStateForTesting(0, DateTime.UtcNow.AddHours(1));
+            coinsHost.EditorSetCoinsForTesting(100);
+            LifePurchaseResult rM1 = LifePurchaseService.TryPurchaseLifeWithCoins(coinsHost, lives);
+            LifePurchaseResult rM2 = LifePurchaseService.TryPurchaseLifeWithCoins(coinsHost, lives);
+            Check(
+                "M",
+                rM1 == LifePurchaseResult.Success &&
+                rM2 == LifePurchaseResult.NotEnoughCoins &&
+                lives.CurrentLives == 1 &&
+                coinsHost.Coins == 0,
+                "one success then NotEnoughCoins",
+                "r1=" + rM1 + " r2=" + rM2 +
+                " lives=" + lives.CurrentLives + " coins=" + coinsHost.Coins
+            );
+
+            // N: 200 coins from 0 → two successes → 2 lives, 0 coins
+            lives.EditorSetStateForTesting(0, DateTime.UtcNow.AddHours(1));
+            coinsHost.EditorSetCoinsForTesting(200);
+            LifePurchaseResult rN1 = LifePurchaseService.TryPurchaseLifeWithCoins(coinsHost, lives);
+            LifePurchaseResult rN2 = LifePurchaseService.TryPurchaseLifeWithCoins(coinsHost, lives);
+            Check(
+                "N",
+                rN1 == LifePurchaseResult.Success &&
+                rN2 == LifePurchaseResult.Success &&
+                lives.CurrentLives == 2 &&
+                coinsHost.Coins == 0,
+                "two Success lives=2 coins=0",
+                "r1=" + rN1 + " r2=" + rN2 +
+                " lives=" + lives.CurrentLives + " coins=" + coinsHost.Coins
+            );
+        }
+        finally
+        {
+            LivesManager.DestroyEphemeralEditorValidationHost(lives);
+            if (coinsHost != null)
+            {
+                UnityEngine.Object.DestroyImmediate(coinsHost.gameObject);
+            }
+
+            snapshot.Restore();
+        }
+
+        sb.AppendLine(
+            "[LivesValidation] RESULT " + pass + "/" + total + " PASS, " + fail + " FAIL"
+        );
+        if (fail == 0)
+        {
+            Debug.Log(sb.ToString());
+        }
+        else
+        {
+            Debug.LogWarning(sb.ToString());
+        }
+
+        EditorUtility.DisplayDialog(
+            "Lives Phase 5 Validation",
+            pass + "/" + total + " PASS" +
+            (fail > 0 ? "\n" + fail + " FAIL — see Console." : string.Empty),
+            "OK"
+        );
+    }
+
+    private static void SetCoinsForTesting(int amount)
+    {
+        if (!RequirePlayMode("Set Coins = " + amount))
+        {
+            return;
+        }
+
+        CoinManager coins = ResolveCoinManagerForTesting();
+        if (coins == null)
+        {
+            return;
+        }
+
+        coins.EditorSetCoinsForTesting(amount);
+        Debug.Log("[Lives] Set coins=" + coins.Coins);
+    }
+
+    private static CoinManager ResolveCoinManagerForTesting()
+    {
+        CoinManager coins = LifePurchaseService.ResolveCoinManager();
+        if (coins == null)
+        {
+            Debug.LogWarning(
+                "[Lives] No CoinManager in loaded scenes — open MainMenu/Gameplay first."
+            );
+        }
+
+        return coins;
+    }
+
     [MenuItem(MenuRoot + "Validate Phase 2 Gate+Consume (simulation)", priority = 211)]
     private static void ValidatePhase2GateAndConsume()
     {

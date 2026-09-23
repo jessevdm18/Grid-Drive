@@ -149,6 +149,18 @@ public class CoinManager : MonoBehaviour
         NotifyCoinsChanged();
     }
 
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+    /// <summary>
+    /// Editor/DEV: set exact coin balance without touching other PlayerPrefs.
+    /// </summary>
+    public void EditorSetCoinsForTesting(int amount)
+    {
+        coins = Mathf.Max(0, amount);
+        SaveCoins();
+        NotifyCoinsChanged();
+    }
+#endif
+
     private void SaveCoins()
     {
         PlayerPrefs.SetInt(CoinsKey, coins);

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -29,6 +30,11 @@ public class GameManager : MonoBehaviour
     // Aantal geldige voertuig-moves in het huidige level.
     private int currentMoves = 0;
 
+    // Forgiving global move limit (not special ObjectiveType.MoveLimit).
+    private bool globalMoveLimitActive;
+    private int effectiveGlobalMoveLimit;
+    private bool pendingGlobalMoveLimitFailCheck;
+
     public int CurrentMoves => currentMoves;
     public bool IsLevelCompleted => levelCompleted;
     public bool IsLevelFailed => levelFailed;
@@ -36,6 +42,20 @@ public class GameManager : MonoBehaviour
     public bool IsSpecialMissionIntroPlaying => specialMissionIntroBlocked;
     public bool IsObjectiveTutorialPlaying => objectiveTutorialBlocked;
     public bool IsFeatureTutorialPlaying => featureTutorialBlocked;
+
+    /// <summary>
+    /// True when MOVES HUD should show "n / limit" (forgiving global only).
+    /// Special MoveLimit levels keep the dedicated remaining HUD instead.
+    /// </summary>
+    public bool ShouldShowGlobalMoveLimitDenominator =>
+        globalMoveLimitActive && effectiveGlobalMoveLimit > 0;
+
+    /// <summary>Forgiving global limit when active; otherwise 0.</summary>
+    public int EffectiveGlobalMoveLimit =>
+        ShouldShowGlobalMoveLimitDenominator ? effectiveGlobalMoveLimit : 0;
+
+    /// <summary>Fired once when a genuine global move-limit FailLevel succeeds.</summary>
+    public event Action OnGlobalMoveLimitFailed;
 
     /// <summary>
     /// False bij completed/failed/special-intro/objective/feature tutorial — blokkeert vehicle-input.
@@ -212,17 +232,16 @@ public class GameManager : MonoBehaviour
             hintManager.NotifyPlayerMove();
         }
 
-        if (gameplayUI != null)
-        {
-            gameplayUI.UpdateMovesText(currentMoves);
-        }
+        RefreshMovesHud();
 
         if (levelObjectiveController == null)
         {
             levelObjectiveController = FindAnyObjectByType<LevelObjectiveController>();
         }
 
+        // Objective may FailLevel in this call (e.g. NoTouch) — queue global after that.
         levelObjectiveController?.NotifyValidMove(vehicle);
+        QueueGlobalMoveLimitFailIfNeeded();
     }
 
     /// <summary>
@@ -232,10 +251,10 @@ public class GameManager : MonoBehaviour
     {
         currentMoves = Mathf.Max(0, currentMoves - 1);
 
-        if (gameplayUI != null)
-        {
-            gameplayUI.UpdateMovesText(currentMoves);
-        }
+        // Cancel pending evaluation; LateUpdate would also re-read CurrentMoves.
+        pendingGlobalMoveLimitFailCheck = false;
+
+        RefreshMovesHud();
 
         if (hintManager != null)
         {
@@ -249,11 +268,9 @@ public class GameManager : MonoBehaviour
     public void ResetMoves()
     {
         currentMoves = 0;
+        pendingGlobalMoveLimitFailCheck = false;
 
-        if (gameplayUI != null)
-        {
-            gameplayUI.UpdateMovesText(currentMoves);
-        }
+        RefreshMovesHud();
 
         if (hintManager != null)
         {
@@ -261,6 +278,156 @@ public class GameManager : MonoBehaviour
         }
 
         ClearUndoHistory();
+    }
+
+    /// <summary>
+    /// Configures forgiving global move-limit state for the loaded level.
+    /// Special MoveLimit disables the global check entirely.
+    /// Call after LevelObjectiveController.BeginForLevel.
+    /// </summary>
+    public void ConfigureGlobalMoveLimitForLevel(LevelData levelData)
+    {
+        pendingGlobalMoveLimitFailCheck = false;
+        globalMoveLimitActive = false;
+        effectiveGlobalMoveLimit = 0;
+
+        if (levelData == null)
+        {
+            RefreshMovesHud();
+            return;
+        }
+
+        int limit = GlobalMoveLimitUtility.GetEffectiveMoveLimit(
+            levelData,
+            out GlobalMoveLimitUtility.LimitMode mode
+        );
+
+        switch (mode)
+        {
+            case GlobalMoveLimitUtility.LimitMode.SpecialMoveLimit:
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                Debug.Log(
+                    "[MoveLimit] Effective limit=" + limit +
+                    " | objective=MoveLimit | mode=Special"
+                );
+#endif
+                break;
+
+            case GlobalMoveLimitUtility.LimitMode.Global:
+                globalMoveLimitActive = true;
+                effectiveGlobalMoveLimit = limit;
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                Debug.Log(
+                    "[MoveLimit] Effective limit=" + limit +
+                    " | minMoves=" + levelData.minimumMoves +
+                    " | difficulty=" + levelData.difficulty +
+                    " | objective=" + levelData.objectiveType +
+                    " | mode=Global"
+                );
+#endif
+                break;
+
+            default:
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                Debug.LogWarning(
+                    "[MoveLimit] Global failure disabled — invalid minimumMoves " +
+                    "(level=" + levelData.name +
+                    " minMoves=" + levelData.minimumMoves +
+                    " objective=" + levelData.objectiveType + ")."
+                );
+#endif
+                break;
+        }
+
+        RefreshMovesHud();
+    }
+
+    private void LateUpdate()
+    {
+        if (!pendingGlobalMoveLimitFailCheck)
+        {
+            return;
+        }
+
+        pendingGlobalMoveLimitFailCheck = false;
+        ResolvePendingGlobalMoveLimitFail();
+    }
+
+    private void QueueGlobalMoveLimitFailIfNeeded()
+    {
+        if (!globalMoveLimitActive || effectiveGlobalMoveLimit <= 0)
+        {
+            return;
+        }
+
+        if (levelCompleted || levelFailed || targetExitInProgress)
+        {
+            return;
+        }
+
+        // Final allowed move reaches the limit (e.g. 9/9). Pending LateUpdate
+        // lets a winning exit on that same move settle before FailLevel.
+        if (currentMoves >= effectiveGlobalMoveLimit)
+        {
+            pendingGlobalMoveLimitFailCheck = true;
+        }
+    }
+
+    private void ResolvePendingGlobalMoveLimitFail()
+    {
+        if (!globalMoveLimitActive || effectiveGlobalMoveLimit <= 0)
+        {
+            return;
+        }
+
+        if (levelCompleted || levelFailed || targetExitInProgress)
+        {
+            return;
+        }
+
+        // Re-read authoritative count (Undo may have cancelled pending already).
+        if (currentMoves < effectiveGlobalMoveLimit)
+        {
+            return;
+        }
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        Debug.Log(
+            "[MoveLimit] Global limit exceeded: moves=" + currentMoves +
+            " limit=" + effectiveGlobalMoveLimit
+        );
+#endif
+
+        FailLevel("global_move_limit");
+        if (levelFailed)
+        {
+            OnGlobalMoveLimitFailed?.Invoke();
+        }
+    }
+
+    private void RefreshMovesHud()
+    {
+        if (gameplayUI == null)
+        {
+            return;
+        }
+
+        if (ShouldShowGlobalMoveLimitDenominator)
+        {
+            gameplayUI.UpdateMovesText(currentMoves, effectiveGlobalMoveLimit);
+        }
+        else
+        {
+            gameplayUI.UpdateMovesText(currentMoves);
+        }
+    }
+
+    /// <summary>
+    /// Public entry for UI init / sync — same formatting path as RegisterMove / Configure.
+    /// </summary>
+    public void SyncMovesHud()
+    {
+        RefreshMovesHud();
     }
 
     /// <summary>
@@ -731,5 +898,6 @@ public class GameManager : MonoBehaviour
         specialMissionIntroBlocked = false;
         objectiveTutorialBlocked = false;
         featureTutorialBlocked = false;
+        pendingGlobalMoveLimitFailCheck = false;
     }
 }

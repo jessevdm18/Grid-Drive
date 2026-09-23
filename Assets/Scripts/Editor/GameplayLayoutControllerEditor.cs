@@ -28,7 +28,10 @@ public class GameplayLayoutControllerEditor : Editor
             "Apply Preview snapshots the live scene first.\n" +
             "Clear Preview / Game View mode mismatch restores that snapshot.\n" +
             "Tall baseline + Compact/Wide captures are never overwritten by preview.\n" +
-            "Capture only serializes the selected mode profile.",
+            "Capture serializes the selected mode profile.\n" +
+            "LivesHUD: Tall/Compact = above LevelCard (livesHudGapAboveLevelCard); " +
+            "Wide Tablet = right of MovesCard (livesHudGapRightOfMovesCard). " +
+            "Gaps clamp to SafeArea.",
             MessageType.Info);
 
         using (new EditorGUI.DisabledScope(Application.isPlaying))
@@ -74,7 +77,6 @@ public class GameplayLayoutControllerEditor : Editor
                 EditorUtility.SetDirty(controller);
             }
 
-            bool tallCaptureBlocked = previewKind == GameplayLayoutKind.TallPhonePortrait;
             bool compactCaptureBlocked =
                 previewKind == GameplayLayoutKind.CompactPhonePortrait &&
                 !controller.AllowCompactCapturedProfile;
@@ -83,11 +85,12 @@ public class GameplayLayoutControllerEditor : Editor
                 !controller.AllowWideCapturedProfile;
 
             using (new EditorGUI.DisabledScope(
-                       tallCaptureBlocked || compactCaptureBlocked || wideCaptureBlocked))
+                       compactCaptureBlocked || wideCaptureBlocked))
             {
-                string captureLabel = tallCaptureBlocked
-                    ? "Capture Current Layout (Tall disabled)"
-                    : "Capture Current Layout";
+                string captureLabel =
+                    previewKind == GameplayLayoutKind.TallPhonePortrait
+                        ? "Capture Current Layout (Tall = LivesHUD + gap)"
+                        : "Capture Current Layout";
 
                 if (GUILayout.Button(captureLabel, GUILayout.Height(32)))
                 {

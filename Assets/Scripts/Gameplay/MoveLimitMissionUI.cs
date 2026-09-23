@@ -4,6 +4,8 @@ using UnityEngine.UI;
 
 /// <summary>
 /// UI-bridge voor MoveLimit: remaining-HUD + MissionFailedLimitPanel.
+/// Also presents forgiving global move-limit failures on the SAME panel
+/// (one UI owner — no duplicate OutOfMovesPanel).
 /// Maakt geen GameObjects — alles Inspector-gekoppeld. Alleen presentation.
 /// </summary>
 public class MoveLimitMissionUI : MonoBehaviour
@@ -11,6 +13,7 @@ public class MoveLimitMissionUI : MonoBehaviour
     [Header("Refs")]
     [SerializeField] private LevelObjectiveController objectiveController;
     [SerializeField] private LevelManager levelManager;
+    [SerializeField] private GameManager gameManager;
     [SerializeField] private AudioManager audioManager;
 
     [Header("Move Limit HUD")]
@@ -24,14 +27,14 @@ public class MoveLimitMissionUI : MonoBehaviour
 
     [SerializeField] private string moveLimitMissionLabel = "MOVE LIMIT";
 
-    [Header("Failure panel")]
+    [Header("Failure panel (MissionFailedLimitPanel)")]
     [SerializeField] private GameObject missionFailedPanel;
     [SerializeField] private Button restartButton;
     [SerializeField] private Button levelSelectButton;
     [SerializeField] private Button backButton;
 
-    [Header("Failure copy (optioneel)")]
-    [Tooltip("Uit = TMP-tekst die jij handmatig zette blijft staan.")]
+    [Header("Special MoveLimit failure copy (optioneel)")]
+    [Tooltip("Uit = TMP-tekst die jij handmatig zette blijft staan bij special MoveLimit.")]
     [SerializeField] private bool applyFailureCopy = false;
 
     [SerializeField] private TextMeshProUGUI missionFailedTitle;
@@ -40,6 +43,10 @@ public class MoveLimitMissionUI : MonoBehaviour
     [SerializeField] private string failureTitle = "OUT OF MOVES!";
     [SerializeField] private string failureDescription =
         "TRY AGAIN AND FIND A SHORTER ROUTE";
+
+    [Header("Global move-limit failure copy")]
+    [SerializeField] private string globalFailureTitle = "OUT OF MOVES";
+    [SerializeField] private string globalFailureDescription = "You ran out of moves.";
 
     [Header("Move Limit Urgency")]
     [SerializeField, Range(1, 20)] private int warningMoves = 3;
@@ -63,34 +70,30 @@ public class MoveLimitMissionUI : MonoBehaviour
     private bool warningSfxPlayed;
     private bool failurePresentationPlayed;
 
+    /// <summary>
+    /// True while MissionFailedLimitPanel is shown for a forgiving global limit fail.
+    /// Prevents RefreshFromController from closing it on Classic levels.
+    /// </summary>
+    private bool showingGlobalMoveLimitFailure;
+
     private void Awake()
     {
-        if (objectiveController == null)
-        {
-            objectiveController = FindAnyObjectByType<LevelObjectiveController>();
-        }
-
-        if (levelManager == null)
-        {
-            levelManager = FindAnyObjectByType<LevelManager>();
-        }
-
-        if (audioManager == null)
-        {
-            audioManager = FindAnyObjectByType<AudioManager>();
-        }
+        ResolveRefs();
 
         if (missionFailedPanel != null)
         {
             missionFailedPanel.SetActive(false);
         }
 
+        showingGlobalMoveLimitFailure = false;
         CachePulseColorIfNeeded();
         SetMoveLimitHudVisible(false);
     }
 
     private void OnEnable()
     {
+        ResolveRefs();
+
         if (restartButton != null)
         {
             restartButton.onClick.RemoveListener(OnRestartClicked);
@@ -114,6 +117,12 @@ public class MoveLimitMissionUI : MonoBehaviour
             objectiveController.OnMovesRemainingChanged += OnMovesRemainingChanged;
             objectiveController.OnMoveLimitMissionFailed += OnMoveLimitMissionFailed;
             RefreshFromController();
+        }
+
+        if (gameManager != null)
+        {
+            gameManager.OnGlobalMoveLimitFailed -= OnGlobalMoveLimitFailed;
+            gameManager.OnGlobalMoveLimitFailed += OnGlobalMoveLimitFailed;
         }
     }
 
@@ -140,7 +149,35 @@ public class MoveLimitMissionUI : MonoBehaviour
             objectiveController.OnMoveLimitMissionFailed -= OnMoveLimitMissionFailed;
         }
 
+        if (gameManager != null)
+        {
+            gameManager.OnGlobalMoveLimitFailed -= OnGlobalMoveLimitFailed;
+        }
+
         StopPulseAndResetScale();
+    }
+
+    private void ResolveRefs()
+    {
+        if (objectiveController == null)
+        {
+            objectiveController = FindAnyObjectByType<LevelObjectiveController>();
+        }
+
+        if (levelManager == null)
+        {
+            levelManager = FindAnyObjectByType<LevelManager>();
+        }
+
+        if (gameManager == null)
+        {
+            gameManager = FindAnyObjectByType<GameManager>();
+        }
+
+        if (audioManager == null)
+        {
+            audioManager = FindAnyObjectByType<AudioManager>();
+        }
     }
 
     private void Update()
@@ -160,7 +197,6 @@ public class MoveLimitMissionUI : MonoBehaviour
             return;
         }
 
-        // Pause: freeze mid-pulse (zelfde patroon als TimedMissionUI).
         if (Time.timeScale <= 0f)
         {
             return;
@@ -176,7 +212,29 @@ public class MoveLimitMissionUI : MonoBehaviour
         RefreshFromController(remaining);
     }
 
+    /// <summary>Special ObjectiveType.MoveLimit failure — existing mission flow.</summary>
     private void OnMoveLimitMissionFailed()
+    {
+        showingGlobalMoveLimitFailure = false;
+        // Apply special copy when text refs exist so a prior global fail cannot leave
+        // global wording on the shared MissionFailedLimitPanel.
+        bool shouldApply =
+            applyFailureCopy ||
+            missionFailedTitle != null ||
+            missionFailedDescription != null;
+        PresentFailurePanel(applyCopy: shouldApply, useGlobalCopy: false);
+    }
+
+    /// <summary>
+    /// Forgiving global move-limit failure. Reuses MissionFailedLimitPanel + buttons.
+    /// </summary>
+    private void OnGlobalMoveLimitFailed()
+    {
+        showingGlobalMoveLimitFailure = true;
+        PresentFailurePanel(applyCopy: true, useGlobalCopy: true);
+    }
+
+    private void PresentFailurePanel(bool applyCopy, bool useGlobalCopy)
     {
         StopPulseAndResetScale();
 
@@ -197,14 +255,20 @@ public class MoveLimitMissionUI : MonoBehaviour
             HapticManager.PlayMediumImpact();
         }
 
-        if (applyFailureCopy)
+        if (applyCopy)
         {
-            ApplyFailureCopy();
+            ApplyFailureCopy(useGlobalCopy);
         }
 
         if (missionFailedPanel != null)
         {
             missionFailedPanel.SetActive(true);
+        }
+        else
+        {
+            Debug.LogError(
+                "MoveLimitMissionUI: MissionFailedLimitPanel is not assigned."
+            );
         }
     }
 
@@ -214,11 +278,14 @@ public class MoveLimitMissionUI : MonoBehaviour
         ApplyRemainingColor(normalColor);
         ResetAudioPresentationState();
 
+        bool keepGlobalContext = showingGlobalMoveLimitFailure;
+
         if (missionFailedPanel != null)
         {
             missionFailedPanel.SetActive(false);
         }
 
+        showingGlobalMoveLimitFailure = false;
         Time.timeScale = 1f;
 
         if (levelManager == null)
@@ -228,17 +295,32 @@ public class MoveLimitMissionUI : MonoBehaviour
 
         if (levelManager != null)
         {
+            // Zero-lives gate lives inside RestartLevel → OutOfLivesUI via LivesManager.
             levelManager.RestartLevel();
         }
         else
         {
             Debug.LogError("MoveLimitMissionUI: geen LevelManager voor RestartLevel.");
+            return;
+        }
+
+        // Retry blocked at 0 lives — keep MissionFailedLimitPanel under OutOfLives
+        // so the player can Retry again after earning a life (no auto-retry).
+        if (gameManager != null && gameManager.IsLevelFailed)
+        {
+            failurePresentationPlayed = true;
+            showingGlobalMoveLimitFailure = keepGlobalContext;
+            if (missionFailedPanel != null)
+            {
+                missionFailedPanel.SetActive(true);
+            }
         }
     }
 
     private void OnLevelSelectClicked()
     {
         StopPulseAndResetScale();
+        showingGlobalMoveLimitFailure = false;
 
         if (missionFailedPanel != null)
         {
@@ -255,6 +337,7 @@ public class MoveLimitMissionUI : MonoBehaviour
     private void OnBackClicked()
     {
         StopPulseAndResetScale();
+        showingGlobalMoveLimitFailure = false;
 
         if (missionFailedPanel != null)
         {
@@ -280,32 +363,36 @@ public class MoveLimitMissionUI : MonoBehaviour
 
         if (!moveLimit)
         {
-            if (missionFailedPanel != null)
+            if (!showingGlobalMoveLimitFailure && missionFailedPanel != null)
             {
                 missionFailedPanel.SetActive(false);
             }
 
             StopPulseAndResetScale();
             ApplyRemainingColor(normalColor);
-            ResetAudioPresentationState();
+            if (!showingGlobalMoveLimitFailure)
+            {
+                ResetAudioPresentationState();
+            }
+
             SetMoveLimitHudVisible(false);
             return;
         }
 
-        // Nieuw/restart MoveLimit: failure panel dicht tenzij Failed.
         if (objectiveController.State != LevelObjectiveController.RuntimeState.Failed &&
             missionFailedPanel != null &&
-            missionFailedPanel.activeSelf)
+            missionFailedPanel.activeSelf &&
+            !showingGlobalMoveLimitFailure)
         {
             missionFailedPanel.SetActive(false);
         }
 
-        // Volledige limiet weer zichtbaar → warning opnieuw toestaan.
         if (remaining > warningMoves &&
             objectiveController.State == LevelObjectiveController.RuntimeState.Running)
         {
             warningSfxPlayed = false;
             failurePresentationPlayed = false;
+            showingGlobalMoveLimitFailure = false;
         }
 
         SetMoveLimitHudVisible(true);
@@ -416,10 +503,6 @@ public class MoveLimitMissionUI : MonoBehaviour
         colorCached = true;
     }
 
-    /// <summary>
-    /// Phone: GameplayLayoutController.phoneSecondaryTextScale owns resting scale.
-    /// Pulse multiplies that base. Fallback: one-time authored scale off-phone.
-    /// </summary>
     private Vector3 ResolvePulseBaseScale()
     {
         if (movesRemainingText == null)
@@ -472,16 +555,19 @@ public class MoveLimitMissionUI : MonoBehaviour
         movesRemainingText.rectTransform.localScale = ResolvePulseBaseScale();
     }
 
-    private void ApplyFailureCopy()
+    private void ApplyFailureCopy(bool useGlobalCopy)
     {
+        string title = useGlobalCopy ? globalFailureTitle : failureTitle;
+        string description = useGlobalCopy ? globalFailureDescription : failureDescription;
+
         if (missionFailedTitle != null)
         {
-            missionFailedTitle.text = failureTitle;
+            missionFailedTitle.text = title;
         }
 
         if (missionFailedDescription != null)
         {
-            missionFailedDescription.text = failureDescription;
+            missionFailedDescription.text = description;
         }
     }
 

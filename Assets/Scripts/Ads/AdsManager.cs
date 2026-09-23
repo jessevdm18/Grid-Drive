@@ -38,6 +38,9 @@ public class AdsManager : MonoBehaviour
     /// <summary>Shop FREE COINS placement id (also analytics).</summary>
     public const string PlacementShopFreeCoins = "shop_free_coins";
 
+    /// <summary>Out-of-lives +1 life placement id (also analytics). Shares hint ad unit/slot.</summary>
+    public const string PlacementExtraLife = "extra_life";
+
     private RewardedAd rewardedHintAd;
     private RewardedAd rewardedFreeCoinsAd;
     private InterstitialAd interstitialAd;
@@ -49,6 +52,9 @@ public class AdsManager : MonoBehaviour
     /// <summary>Optional one-shot after rewarded fullscreen closes/fails (shop UI unlock).</summary>
     private Action pendingRewardedFlowEnded;
     private bool rewardedFlowEndedInvoked;
+
+    /// <summary>True while a rewarded Show is in flight (blocks overlapping shows).</summary>
+    private bool rewardedShowInProgress;
 
     private bool adsInitialized;
     private bool subscribedToConsent;
@@ -65,8 +71,8 @@ public class AdsManager : MonoBehaviour
 
     /// <summary>
     /// Central rewarded ad unit selection for a placement.
-    /// Editor / Development → Google test (same test unit for both placements).
-    /// Android Release → hint vs shop_free_coins production units.
+    /// Editor / Development → Google test (same test unit for all rewarded placements).
+    /// Android Release → shop_free_coins unit vs hint/extra_life unit.
     /// </summary>
     public static string GetRewardedAdUnitId(string placement = PlacementHint)
     {
@@ -82,6 +88,7 @@ public class AdsManager : MonoBehaviour
             return ProductionRewardedFreeCoinsAndroid;
         }
 
+        // hint + extra_life share the existing production rewarded hint unit.
         return ProductionRewardedHintAndroid;
 #elif UNITY_IOS
         // iOS production IDs not configured yet — keep Google test / no live fill.
@@ -96,6 +103,14 @@ public class AdsManager : MonoBehaviour
         return string.Equals(
             placement,
             PlacementShopFreeCoins,
+            StringComparison.Ordinal);
+    }
+
+    private static bool IsExtraLifePlacement(string placement)
+    {
+        return string.Equals(
+            placement,
+            PlacementExtraLife,
             StringComparison.Ordinal);
     }
 
@@ -244,8 +259,9 @@ public class AdsManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Loads one rewarded placement. Destroys any previous ad for that placement first.
+    /// Loads one rewarded placement. Destroys any previous ad for that slot first.
     /// No-op when ads are not allowed yet.
+    /// extra_life shares the hint load slot / unit.
     /// </summary>
     public void LoadRewardedAdForPlacement(string placement)
     {
@@ -254,10 +270,11 @@ public class AdsManager : MonoBehaviour
             return;
         }
 
-        string resolvedPlacement = ResolveRewardedPlacement(placement);
-        DestroyRewardedAdForPlacement(resolvedPlacement);
+        string analyticsPlacement = NormalizeAnalyticsPlacement(placement);
+        string slotPlacement = ResolveRewardedSlot(analyticsPlacement);
+        DestroyRewardedAdForPlacement(slotPlacement);
 
-        string adUnitId = GetRewardedAdUnitId(resolvedPlacement);
+        string adUnitId = GetRewardedAdUnitId(analyticsPlacement);
         AdRequest request = new AdRequest();
 
         RewardedAd.Load(adUnitId, request, (RewardedAd ad, LoadAdError error) =>
@@ -267,7 +284,8 @@ public class AdsManager : MonoBehaviour
                 if (error != null)
                 {
                     Debug.Log(
-                        "Rewarded ad failed to load placement=" + resolvedPlacement);
+                        "Rewarded ad failed to load placement=" + analyticsPlacement +
+                        " slot=" + slotPlacement);
                     Debug.Log(error.ToString());
                     return;
                 }
@@ -275,15 +293,17 @@ public class AdsManager : MonoBehaviour
                 if (ad == null)
                 {
                     Debug.Log(
-                        "Rewarded ad failed to load placement=" + resolvedPlacement);
+                        "Rewarded ad failed to load placement=" + analyticsPlacement +
+                        " slot=" + slotPlacement);
                     return;
                 }
 
-                SetRewardedAdForPlacement(resolvedPlacement, ad);
-                RegisterFullScreenCallbacks(ad, resolvedPlacement);
+                SetRewardedAdForPlacement(slotPlacement, ad);
+                RegisterFullScreenCallbacks(ad, slotPlacement);
 
                 Debug.Log(
-                    "Rewarded ad loaded placement=" + resolvedPlacement +
+                    "Rewarded ad loaded placement=" + analyticsPlacement +
+                    " slot=" + slotPlacement +
                     " unit=" + adUnitId);
             });
         });
@@ -302,26 +322,40 @@ public class AdsManager : MonoBehaviour
     /// </summary>
     public bool IsRewardedAdReady(string placement)
     {
-        RewardedAd ad = GetRewardedAdForPlacement(ResolveRewardedPlacement(placement));
+        string slotPlacement = ResolveRewardedSlot(NormalizeAnalyticsPlacement(placement));
+        RewardedAd ad = GetRewardedAdForPlacement(slotPlacement);
         return adsInitialized &&
                PrivacyConsentManager.CanRequestAds &&
+               !rewardedShowInProgress &&
                ad != null &&
                ad.CanShowAd();
     }
 
     /// <summary>
     /// Shows the rewarded ad for the given placement.
-    /// onRewardEarned is only called when the reward is earned.
+    /// onRewardEarned is only called when the UserEarnedReward callback fires (not on open/close/click).
     /// onFlowEnded (optional) is called once when the fullscreen closes or fails to show —
-    /// used by shop free-coins to re-enable the CTA. FREE HINT may omit it.
+    /// used by shop free-coins / OutOfLives to re-enable the CTA. FREE HINT may omit it.
+    /// Concurrent ShowRewardedAd calls are rejected (onFlowEnded invoked, no second show).
     /// </summary>
     public void ShowRewardedAd(
         Action onRewardEarned,
         string placement = "unknown",
         Action onFlowEnded = null)
     {
-        string resolvedPlacement = ResolveRewardedPlacement(placement);
-        RewardedAd ad = GetRewardedAdForPlacement(resolvedPlacement);
+        string analyticsPlacement = NormalizeAnalyticsPlacement(placement);
+        string slotPlacement = ResolveRewardedSlot(analyticsPlacement);
+
+        if (rewardedShowInProgress)
+        {
+            Debug.Log(
+                "Rewarded ad already in progress — rejecting placement=" +
+                analyticsPlacement);
+            onFlowEnded?.Invoke();
+            return;
+        }
+
+        RewardedAd ad = GetRewardedAdForPlacement(slotPlacement);
 
         if (!adsInitialized ||
             !PrivacyConsentManager.CanRequestAds ||
@@ -329,15 +363,17 @@ public class AdsManager : MonoBehaviour
             !ad.CanShowAd())
         {
             Debug.Log(
-                "Rewarded ad not ready placement=" + resolvedPlacement);
+                "Rewarded ad not ready placement=" + analyticsPlacement);
             onFlowEnded?.Invoke();
             return;
         }
 
         pendingRewardedFlowEnded = onFlowEnded;
         rewardedFlowEndedInvoked = false;
+        rewardedShowInProgress = true;
 
-        GameAnalytics.LogRewardedAdStarted(resolvedPlacement);
+        // Analytics uses the caller placement (extra_life stays extra_life, not hint).
+        GameAnalytics.LogRewardedAdStarted(analyticsPlacement);
 
         bool rewardCallbackInvoked = false;
         ad.Show(reward =>
@@ -350,8 +386,8 @@ public class AdsManager : MonoBehaviour
                 }
 
                 rewardCallbackInvoked = true;
-                Debug.Log("Reward earned placement=" + resolvedPlacement);
-                GameAnalytics.LogRewardedAdCompleted(resolvedPlacement);
+                Debug.Log("Reward earned placement=" + analyticsPlacement);
+                GameAnalytics.LogRewardedAdCompleted(analyticsPlacement);
                 onRewardEarned?.Invoke();
             });
         });
@@ -365,25 +401,26 @@ public class AdsManager : MonoBehaviour
         }
 
         rewardedFlowEndedInvoked = true;
+        rewardedShowInProgress = false;
         Action ended = pendingRewardedFlowEnded;
         pendingRewardedFlowEnded = null;
         ended?.Invoke();
     }
 
     /// <summary>
-    /// After close or error: destroy that placement's ad, end flow, reload that placement only.
+    /// After close or error: destroy that slot's ad, end flow, reload that slot only.
     /// </summary>
-    private void RegisterFullScreenCallbacks(RewardedAd ad, string placement)
+    private void RegisterFullScreenCallbacks(RewardedAd ad, string slotPlacement)
     {
-        string boundPlacement = placement;
+        string boundSlot = slotPlacement;
 
         ad.OnAdFullScreenContentClosed += () =>
         {
             RunOnMainThread(() =>
             {
-                DestroyRewardedAdForPlacement(boundPlacement);
+                DestroyRewardedAdForPlacement(boundSlot);
                 NotifyRewardedFlowEnded();
-                LoadRewardedAdForPlacement(boundPlacement);
+                LoadRewardedAdForPlacement(boundSlot);
             });
         };
 
@@ -392,37 +429,58 @@ public class AdsManager : MonoBehaviour
             RunOnMainThread(() =>
             {
                 Debug.Log(
-                    "Rewarded ad failed to show placement=" + boundPlacement +
+                    "Rewarded ad failed to show placement slot=" + boundSlot +
                     ": " + error);
 
-                DestroyRewardedAdForPlacement(boundPlacement);
+                DestroyRewardedAdForPlacement(boundSlot);
                 NotifyRewardedFlowEnded();
-                LoadRewardedAdForPlacement(boundPlacement);
+                LoadRewardedAdForPlacement(boundSlot);
             });
         };
     }
 
-    private static string ResolveRewardedPlacement(string placement)
+    /// <summary>
+    /// Analytics / API placement id. Preserves extra_life vs hint vs shop_free_coins.
+    /// </summary>
+    private static string NormalizeAnalyticsPlacement(string placement)
     {
         if (IsShopFreeCoinsPlacement(placement))
         {
             return PlacementShopFreeCoins;
         }
 
-        // Default / unknown / "hint" → hint unit (preserves FREE HINT callers).
+        if (IsExtraLifePlacement(placement))
+        {
+            return PlacementExtraLife;
+        }
+
+        // Default / unknown / "hint" → hint (preserves FREE HINT callers).
         return PlacementHint;
     }
 
-    private RewardedAd GetRewardedAdForPlacement(string placement)
+    /// <summary>
+    /// Physical load/show slot. extra_life shares the hint RewardedAd instance + unit.
+    /// </summary>
+    private static string ResolveRewardedSlot(string analyticsPlacement)
     {
-        return IsShopFreeCoinsPlacement(placement)
+        if (IsShopFreeCoinsPlacement(analyticsPlacement))
+        {
+            return PlacementShopFreeCoins;
+        }
+
+        return PlacementHint;
+    }
+
+    private RewardedAd GetRewardedAdForPlacement(string slotPlacement)
+    {
+        return IsShopFreeCoinsPlacement(slotPlacement)
             ? rewardedFreeCoinsAd
             : rewardedHintAd;
     }
 
-    private void SetRewardedAdForPlacement(string placement, RewardedAd ad)
+    private void SetRewardedAdForPlacement(string slotPlacement, RewardedAd ad)
     {
-        if (IsShopFreeCoinsPlacement(placement))
+        if (IsShopFreeCoinsPlacement(slotPlacement))
         {
             rewardedFreeCoinsAd = ad;
         }
@@ -432,9 +490,9 @@ public class AdsManager : MonoBehaviour
         }
     }
 
-    private void DestroyRewardedAdForPlacement(string placement)
+    private void DestroyRewardedAdForPlacement(string slotPlacement)
     {
-        if (IsShopFreeCoinsPlacement(placement))
+        if (IsShopFreeCoinsPlacement(slotPlacement))
         {
             if (rewardedFreeCoinsAd != null)
             {

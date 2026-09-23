@@ -695,6 +695,11 @@ public class LevelManager : MonoBehaviour
         // Na spawn: Classic = no-op, TimedAmbulance = wacht op fade → start timer.
         levelObjectiveController?.BeginForLevel(levelData);
 
+        if (gameManager != null)
+        {
+            gameManager.ConfigureGlobalMoveLimitForLevel(levelData);
+        }
+
         ReportLevelLoadTelemetry(levelData);
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD

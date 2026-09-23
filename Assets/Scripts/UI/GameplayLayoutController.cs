@@ -38,7 +38,8 @@ public class GameplayLayoutController : MonoBehaviour
     {
         topReservedFraction = 0.16f,
         bottomReservedFraction = 0.16f,
-        leftHudWidthFraction = 0.30f
+        leftHudWidthFraction = 0.30f,
+        livesHudGapAboveLevelCard = 12f
     };
 
     [Tooltip("Compact phone camera reserves only. Transform captures are ignored at runtime (procedural).")]
@@ -46,14 +47,16 @@ public class GameplayLayoutController : MonoBehaviour
     {
         topReservedFraction = 0.18f,
         bottomReservedFraction = 0.16f,
-        leftHudWidthFraction = 0.30f
+        leftHudWidthFraction = 0.30f,
+        livesHudGapAboveLevelCard = 12f
     };
 
     [SerializeField] private GameplayLayoutProfile wideTabletProfile = new GameplayLayoutProfile
     {
         topReservedFraction = 0.04f,
         bottomReservedFraction = 0.04f,
-        leftHudWidthFraction = 0.30f
+        leftHudWidthFraction = 0.30f,
+        livesHudGapRightOfMovesCard = 12f
     };
 
     [Tooltip(
@@ -135,6 +138,10 @@ public class GameplayLayoutController : MonoBehaviour
     [Tooltip("Insufficient-coins / hint status message. Layout-owned above HintButton.")]
     [SerializeField] private RectTransform hintStatusText;
     [SerializeField, Range(8f, 64f)] private float hintStatusGap = 28f;
+
+    [Header("Lives HUD")]
+    [Tooltip("SafeArea child. Positioned above LevelCard; size/scale come from profile capture.")]
+    [SerializeField] private RectTransform livesHud;
 
     [Header("Modal Panels (Pause / Win)")]
     [SerializeField] private RectTransform pausePanel;
@@ -515,6 +522,19 @@ public class GameplayLayoutController : MonoBehaviour
             difficultyLabelRoot = FindChildRect(safeArea, "DifficultyLabel");
         }
 
+        if (livesHud == null)
+        {
+            livesHud = FindChildRect(safeArea, "LivesHUD");
+            if (livesHud == null)
+            {
+                LivesHUD hud = FindAnyObjectByType<LivesHUD>();
+                if (hud != null)
+                {
+                    livesHud = hud.transform as RectTransform;
+                }
+            }
+        }
+
         if (objectiveHudRoots == null || objectiveHudRoots.Length == 0)
         {
             AutoFindObjectiveRoots();
@@ -599,6 +619,7 @@ public class GameplayLayoutController : MonoBehaviour
         CaptureInto(levelCard);
         CaptureInto(movesCard);
         CaptureInto(coinCard);
+        CaptureInto(livesHud);
 
         if (objectiveHudRoots != null)
         {
@@ -714,6 +735,7 @@ public class GameplayLayoutController : MonoBehaviour
         CaptureOne(profile, "LevelCard", levelCard);
         CaptureOne(profile, "MovesCard", movesCard);
         CaptureOne(profile, "CoinCard", coinCard);
+        CaptureOne(profile, "LivesHUD", livesHud);
 
         if (objectiveHudRoots == null)
         {
@@ -768,10 +790,29 @@ public class GameplayLayoutController : MonoBehaviour
             return;
         }
 
+        // Preserve LivesHUD geometry + gaps — Tall discards full capture flags but
+        // LivesHUD remains independently authorable per profile.
+        RectTransformState livesHudState = default;
+        bool hadLivesHud = profile.TryGet("LivesHUD", out livesHudState);
+        float livesHudGapAbove = profile.livesHudGapAboveLevelCard;
+        float livesHudGapRight = profile.livesHudGapRightOfMovesCard;
+
         profile.hasCapture = false;
         if (profile.entries != null)
         {
             profile.entries.Clear();
+        }
+
+        profile.livesHudGapAboveLevelCard = livesHudGapAbove;
+        profile.livesHudGapRightOfMovesCard = livesHudGapRight;
+        if (hadLivesHud)
+        {
+            if (profile.entries == null)
+            {
+                profile.entries = new List<RectTransformState>(4);
+            }
+
+            profile.Set(livesHudState);
         }
     }
 
@@ -1215,6 +1256,8 @@ public class GameplayLayoutController : MonoBehaviour
             ApplyPhoneMissionLayoutRelativeToBoard();
         }
 
+        ApplyLivesHudForKind(wantKind);
+
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         LogUILayoutAudit("ApplyLayout." + wantKind);
 #endif
@@ -1288,6 +1331,7 @@ public class GameplayLayoutController : MonoBehaviour
         RestoreFromCache(levelCard);
         RestoreFromCache(movesCard);
         RestoreFromCache(coinCard);
+        RestoreFromCache(livesHud);
         RestoreFromCache(topHud);
         RestoreFromCache(pauseButton);
         RestoreFromCache(undoButton);
@@ -2553,14 +2597,20 @@ public class GameplayLayoutController : MonoBehaviour
         SyncTabletHudPanelActiveToKind(kind, "EditorApplyPreview.end");
         ApplyModalPanelsForKind(kind);
 
+        if (kind == GameplayLayoutKind.TallPhonePortrait ||
+            kind == GameplayLayoutKind.CompactPhonePortrait)
+        {
+            ApplyPhoneMissionLayoutRelativeToBoard();
+        }
+
+        ApplyLivesHudForKind(kind);
+
         Debug.Log("[GameplayLayoutPreview] Applying " + kind);
 #endif
     }
 
     /// <summary>
-    /// Editor: capture Compact or Wide into their mode profile.
-    /// Tall capture is refused — immutable baseline owns Tall.
-    /// Never writes into the immutable phone baseline or the editor preview snapshot.
+    /// Editor caption update — Tall now captures LivesHUD geometry + gap only.
     /// </summary>
     public void EditorCaptureCurrentLayout(GameplayLayoutKind kind)
     {
@@ -2569,10 +2619,16 @@ public class GameplayLayoutController : MonoBehaviour
 
         if (kind == GameplayLayoutKind.TallPhonePortrait)
         {
-            Debug.LogWarning(
-                "[GameplayLayoutAuthoring] Tall capture DISABLED — " +
-                "Tall uses the immutable baseline. Use Rebake Immutable Phone Baseline " +
-                "only when intentionally updating Tall.");
+            // Tall full-layout capture stays disabled, but LivesHUD size/gap are
+            // independently authored into tallPhoneProfile for runtime placement.
+            CaptureLivesHudAuthoring(
+                tallPhoneProfile,
+                GameplayLayoutKind.TallPhonePortrait);
+            AuthoringPreviewKind = kind;
+            Debug.Log(
+                "[GameplayLayoutAuthoring] Captured Tall LivesHUD geometry + gap=" +
+                tallPhoneProfile.livesHudGapAboveLevelCard.ToString("0.##") +
+                " (full Tall capture still disabled)");
             return;
         }
 
@@ -2618,11 +2674,18 @@ public class GameplayLayoutController : MonoBehaviour
         profile.entries = new List<RectTransformState>(48);
         bool includeTablet = kind == GameplayLayoutKind.WideTabletLandscape;
         CaptureKnownTransforms(profile, includeTablet);
+        CaptureLivesHudGapFromCurrent(profile, kind);
         profile.hasCapture = true;
         AuthoringPreviewKind = kind;
 
+        string gapLog = kind == GameplayLayoutKind.WideTabletLandscape
+            ? "livesHudGapRightOfMoves=" +
+              profile.livesHudGapRightOfMovesCard.ToString("0.##")
+            : "livesHudGapAboveLevel=" +
+              profile.livesHudGapAboveLevelCard.ToString("0.##");
         Debug.Log("[GameplayLayoutAuthoring] Captured " + kind +
-                  " (" + profile.entries.Count + " entries) — immutable baseline untouched");
+                  " (" + profile.entries.Count + " entries, " + gapLog +
+                  ") — immutable baseline untouched");
     }
 
     /// <summary>
@@ -2683,9 +2746,8 @@ public class GameplayLayoutController : MonoBehaviour
     {
         if (kind == GameplayLayoutKind.TallPhonePortrait)
         {
-            Debug.LogWarning(
-                "[GameplayLayoutAuthoring] Tall has no captured profile — " +
-                "use Clear Preview / immutable baseline.");
+            // Tall has no full capture — restore LivesHUD authoring from tallPhoneProfile.
+            EditorApplyPreview(kind);
             return;
         }
 
@@ -2820,6 +2882,7 @@ public class GameplayLayoutController : MonoBehaviour
         Add(levelCard);
         Add(movesCard);
         Add(coinCard);
+        Add(livesHud);
         Add(pausePanel);
         Add(winPanel);
 
@@ -3485,6 +3548,7 @@ public class GameplayLayoutController : MonoBehaviour
         CaptureOne(profile, "LevelCard", levelCard);
         CaptureOne(profile, "MovesCard", movesCard);
         CaptureOne(profile, "CoinCard", coinCard);
+        CaptureOne(profile, "LivesHUD", livesHud);
 
         if (includeTablet)
         {
@@ -3689,6 +3753,8 @@ public class GameplayLayoutController : MonoBehaviour
                 return movesCard;
             case "CoinCard":
                 return coinCard;
+            case "LivesHUD":
+                return livesHud;
             case "TabletHUDPanel":
                 EnsureTabletScaffold();
                 return tabletHudPanel;
@@ -4121,6 +4187,388 @@ public class GameplayLayoutController : MonoBehaviour
         boardGap = workingBoardGap;
         internalGap = workingInternalGap;
         fitMul = workingFitMul;
+    }
+
+    /// <summary>
+    /// Captures LivesHUD size/anchors/scale into the profile and measures the
+    /// placement gap for the given kind (above LevelCard on phone, right of
+    /// MovesCard on Wide Tablet).
+    /// </summary>
+    private void CaptureLivesHudAuthoring(
+        GameplayLayoutProfile profile,
+        GameplayLayoutKind kind)
+    {
+        if (profile == null)
+        {
+            return;
+        }
+
+        ResolveRefs();
+        if (livesHud == null)
+        {
+            Debug.LogWarning("[GameplayLayoutAuthoring] LivesHUD not found under SafeArea.");
+            return;
+        }
+
+        if (livesHud.parent != safeArea && safeArea != null)
+        {
+            livesHud.SetParent(safeArea, false);
+        }
+
+        CaptureOne(profile, "LivesHUD", livesHud);
+        CaptureLivesHudGapFromCurrent(profile, kind);
+    }
+
+    private void CaptureLivesHudGapFromCurrent(
+        GameplayLayoutProfile profile,
+        GameplayLayoutKind kind)
+    {
+        if (profile == null || livesHud == null || safeArea == null)
+        {
+            return;
+        }
+
+        Canvas.ForceUpdateCanvases();
+
+        if (kind == GameplayLayoutKind.WideTabletLandscape)
+        {
+            if (movesCard == null)
+            {
+                return;
+            }
+
+            if (!TryGetRectBoundsInSafeArea(
+                    movesCard,
+                    out _,
+                    out float movesRight,
+                    out _,
+                    out _) ||
+                !TryGetRectBoundsInSafeArea(
+                    livesHud,
+                    out float hudLeft,
+                    out _,
+                    out _,
+                    out _))
+            {
+                return;
+            }
+
+            profile.livesHudGapRightOfMovesCard = Mathf.Max(0f, hudLeft - movesRight);
+            return;
+        }
+
+        if (levelCard == null)
+        {
+            return;
+        }
+
+        if (!TryGetRectBoundsInSafeArea(
+                levelCard,
+                out _,
+                out _,
+                out _,
+                out float levelTop) ||
+            !TryGetRectBoundsInSafeArea(
+                livesHud,
+                out _,
+                out _,
+                out float hudBottom,
+                out _))
+        {
+            return;
+        }
+
+        profile.livesHudGapAboveLevelCard = Mathf.Max(0f, hudBottom - levelTop);
+    }
+
+    /// <summary>
+    /// Dispatches LivesHUD placement by profile kind. Phone: above LevelCard.
+    /// Wide Tablet: to the right of MovesCard.
+    /// </summary>
+    private void ApplyLivesHudForKind(GameplayLayoutKind kind)
+    {
+        if (kind == GameplayLayoutKind.WideTabletLandscape)
+        {
+            ApplyLivesHudRelativeToMovesCard(kind);
+            return;
+        }
+
+        ApplyLivesHudRelativeToLevelCard(kind);
+    }
+
+    /// <summary>
+    /// Applies captured LivesHUD geometry (size/anchors/pivot/scale), then derives
+    /// position. Never moves reference HUD cards.
+    /// </summary>
+    private bool TryApplyLivesHudGeometry(GameplayLayoutKind kind)
+    {
+        ResolveRefs();
+        if (livesHud == null || safeArea == null)
+        {
+            return false;
+        }
+
+        if (livesHud.parent != safeArea)
+        {
+            livesHud.SetParent(safeArea, false);
+        }
+
+        GameplayLayoutProfile profile = GetProfile(kind);
+        if (profile != null &&
+            profile.TryGet("LivesHUD", out RectTransformState livesState))
+        {
+            livesHud.anchorMin = livesState.anchorMin;
+            livesHud.anchorMax = livesState.anchorMax;
+            livesHud.pivot = livesState.pivot;
+            livesHud.sizeDelta = livesState.sizeDelta;
+            livesHud.localScale = livesState.localScale;
+            livesHud.localEulerAngles = livesState.localEulerAngles;
+        }
+
+        Canvas.ForceUpdateCanvases();
+        return true;
+    }
+
+    /// <summary>
+    /// Tall/Compact: horizontally centered above LevelCard using
+    /// livesHudGapAboveLevelCard. Never moves LevelCard. Clamps to SafeArea.
+    /// </summary>
+    private void ApplyLivesHudRelativeToLevelCard(GameplayLayoutKind kind)
+    {
+        if (!TryApplyLivesHudGeometry(kind))
+        {
+            return;
+        }
+
+        if (levelCard == null)
+        {
+            return;
+        }
+
+        GameplayLayoutProfile profile = GetProfile(kind);
+
+        if (!TryGetRectBoundsInSafeArea(
+                levelCard,
+                out float levelMinX,
+                out float levelMaxX,
+                out _,
+                out float levelTop))
+        {
+            return;
+        }
+
+        if (!TryGetRectBoundsInSafeArea(
+                livesHud,
+                out float hudMinX,
+                out float hudMaxX,
+                out float hudMinY,
+                out float hudMaxY))
+        {
+            return;
+        }
+
+        float hudW = hudMaxX - hudMinX;
+        float hudH = hudMaxY - hudMinY;
+        if (hudW <= 0.01f || hudH <= 0.01f)
+        {
+            return;
+        }
+
+        float authoredGap = profile != null
+            ? Mathf.Max(0f, profile.livesHudGapAboveLevelCard)
+            : 12f;
+
+        float levelCenterX = (levelMinX + levelMaxX) * 0.5f;
+        float desiredHudBottom = levelTop + authoredGap;
+        float desiredHudTop = desiredHudBottom + hudH;
+
+        Rect sa = safeArea.rect;
+        // Clamp: keep entire LivesHUD inside SafeArea by reducing gap first.
+        if (desiredHudTop > sa.yMax)
+        {
+            float overflow = desiredHudTop - sa.yMax;
+            desiredHudBottom -= overflow;
+            desiredHudTop = desiredHudBottom + hudH;
+        }
+
+        if (desiredHudBottom < sa.yMin)
+        {
+            desiredHudBottom = sa.yMin;
+            desiredHudTop = desiredHudBottom + hudH;
+            if (desiredHudTop > sa.yMax)
+            {
+                desiredHudTop = sa.yMax;
+                desiredHudBottom = desiredHudTop - hudH;
+            }
+        }
+
+        float desiredCenterX = levelCenterX;
+        float desiredCenterY = (desiredHudBottom + desiredHudTop) * 0.5f;
+
+        // Keep width fully inside SafeArea without moving LevelCard.
+        float halfW = hudW * 0.5f;
+        if (hudW >= sa.width)
+        {
+            desiredCenterX = sa.center.x;
+        }
+        else
+        {
+            desiredCenterX = Mathf.Clamp(
+                desiredCenterX,
+                sa.xMin + halfW,
+                sa.xMax - halfW);
+        }
+
+        float curCenterX = (hudMinX + hudMaxX) * 0.5f;
+        float curCenterY = (hudMinY + hudMaxY) * 0.5f;
+        livesHud.anchoredPosition += new Vector2(
+            desiredCenterX - curCenterX,
+            desiredCenterY - curCenterY);
+    }
+
+    /// <summary>
+    /// Wide Tablet: left of LivesHUD = MovesCard right + livesHudGapRightOfMovesCard;
+    /// centerY matches MovesCard. Never moves MovesCard. Clamps to SafeArea.
+    /// Does not use livesHudGapAboveLevelCard.
+    /// </summary>
+    private void ApplyLivesHudRelativeToMovesCard(GameplayLayoutKind kind)
+    {
+        if (!TryApplyLivesHudGeometry(kind))
+        {
+            return;
+        }
+
+        if (movesCard == null)
+        {
+            return;
+        }
+
+        GameplayLayoutProfile profile = GetProfile(kind);
+
+        if (!TryGetRectBoundsInSafeArea(
+                movesCard,
+                out _,
+                out float movesRight,
+                out float movesMinY,
+                out float movesMaxY))
+        {
+            return;
+        }
+
+        if (!TryGetRectBoundsInSafeArea(
+                livesHud,
+                out float hudMinX,
+                out float hudMaxX,
+                out float hudMinY,
+                out float hudMaxY))
+        {
+            return;
+        }
+
+        float hudW = hudMaxX - hudMinX;
+        float hudH = hudMaxY - hudMinY;
+        if (hudW <= 0.01f || hudH <= 0.01f)
+        {
+            return;
+        }
+
+        float authoredGap = profile != null
+            ? Mathf.Max(0f, profile.livesHudGapRightOfMovesCard)
+            : 12f;
+
+        float movesCenterY = (movesMinY + movesMaxY) * 0.5f;
+        float desiredHudLeft = movesRight + authoredGap;
+        float desiredHudRight = desiredHudLeft + hudW;
+        float desiredCenterY = movesCenterY;
+
+        Rect sa = safeArea.rect;
+
+        // Clamp horizontal: reduce gap first so LivesHUD stays inside SafeArea.
+        if (desiredHudRight > sa.xMax)
+        {
+            float overflow = desiredHudRight - sa.xMax;
+            desiredHudLeft -= overflow;
+            desiredHudRight = desiredHudLeft + hudW;
+        }
+
+        if (desiredHudLeft < sa.xMin)
+        {
+            desiredHudLeft = sa.xMin;
+            desiredHudRight = desiredHudLeft + hudW;
+            if (desiredHudRight > sa.xMax)
+            {
+                desiredHudRight = sa.xMax;
+                desiredHudLeft = desiredHudRight - hudW;
+            }
+        }
+
+        float desiredCenterX = (desiredHudLeft + desiredHudRight) * 0.5f;
+
+        // Clamp vertical: keep full height inside SafeArea without moving MovesCard.
+        float halfH = hudH * 0.5f;
+        if (hudH >= sa.height)
+        {
+            desiredCenterY = sa.center.y;
+        }
+        else
+        {
+            desiredCenterY = Mathf.Clamp(
+                desiredCenterY,
+                sa.yMin + halfH,
+                sa.yMax - halfH);
+        }
+
+        float curCenterX = (hudMinX + hudMaxX) * 0.5f;
+        float curCenterY = (hudMinY + hudMaxY) * 0.5f;
+        livesHud.anchoredPosition += new Vector2(
+            desiredCenterX - curCenterX,
+            desiredCenterY - curCenterY);
+    }
+
+    private bool TryGetRectBoundsInSafeArea(
+        RectTransform rt,
+        out float minX,
+        out float maxX,
+        out float minY,
+        out float maxY)
+    {
+        minX = maxX = minY = maxY = 0f;
+        if (rt == null || safeArea == null || !rt.gameObject.activeInHierarchy)
+        {
+            return false;
+        }
+
+        Vector3[] corners = new Vector3[4];
+        rt.GetWorldCorners(corners);
+        minX = float.PositiveInfinity;
+        maxX = float.NegativeInfinity;
+        minY = float.PositiveInfinity;
+        maxY = float.NegativeInfinity;
+        for (int i = 0; i < 4; i++)
+        {
+            Vector3 local = safeArea.InverseTransformPoint(corners[i]);
+            if (local.x < minX)
+            {
+                minX = local.x;
+            }
+
+            if (local.x > maxX)
+            {
+                maxX = local.x;
+            }
+
+            if (local.y < minY)
+            {
+                minY = local.y;
+            }
+
+            if (local.y > maxY)
+            {
+                maxY = local.y;
+            }
+        }
+
+        return !float.IsInfinity(minX) && !float.IsNegativeInfinity(maxX);
     }
 
     /// <summary>

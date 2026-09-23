@@ -4,8 +4,9 @@ using UnityEngine;
 /// <summary>
 /// Authoritative lives + offline regeneration (PlayerPrefs economy state).
 /// DDOL singleton — available across Splash / MainMenu / LevelSelect / Gameplay.
-/// Phase 1–2: persistence, offline regen, FailLevel consumption + attempt gate
-/// (no move limits / shop / ads / out-of-lives UI yet).
+/// Phase 1–4: persistence, offline regen, FailLevel consumption, attempt gate,
+/// global move limits, and presentation hooks (OnLivesChanged / OnLevelAttemptBlocked).
+/// LivesManager stays domain-only — no TMP/Canvas/UI knowledge.
 /// </summary>
 public class LivesManager : MonoBehaviour
 {
@@ -22,6 +23,12 @@ public class LivesManager : MonoBehaviour
     private const long NoNextLifeTicks = 0L;
 
     public static LivesManager Instance { get; private set; }
+
+    /// <summary>
+    /// True after OnApplicationQuit / Play Mode exit — EnsureInstance must not spawn.
+    /// Reset on SubsystemRegistration (covers domain reload on/off).
+    /// </summary>
+    private static bool isApplicationQuitting;
 
     /// <summary>UI / systems: current lives after clamp (0..MaxLives).</summary>
     public event Action<int> OnLivesChanged;
@@ -89,17 +96,71 @@ public class LivesManager : MonoBehaviour
     private static void ResetStatics()
     {
         Instance = null;
+        isApplicationQuitting = false;
+#if UNITY_EDITOR
+        creatingEphemeralEditorValidationHost = false;
+#endif
     }
+
+#if UNITY_EDITOR
+    [UnityEditor.InitializeOnLoadMethod]
+    private static void RegisterEditorPlayModeShutdownGuard()
+    {
+        UnityEditor.EditorApplication.playModeStateChanged -= OnEditorPlayModeStateChanged;
+        UnityEditor.EditorApplication.playModeStateChanged += OnEditorPlayModeStateChanged;
+    }
+
+    private static void OnEditorPlayModeStateChanged(UnityEditor.PlayModeStateChange state)
+    {
+        // Mark shutting down before OnDisable/OnDestroy cascades recreate the DDOL.
+        if (state == UnityEditor.PlayModeStateChange.ExitingPlayMode)
+        {
+            isApplicationQuitting = true;
+        }
+        else if (state == UnityEditor.PlayModeStateChange.EnteredPlayMode)
+        {
+            // Belt-and-suspenders if SubsystemRegistration order differs under Enter Play Mode Options.
+            isApplicationQuitting = false;
+        }
+    }
+#endif
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void BootstrapAfterSceneLoad()
     {
+        if (isApplicationQuitting || !Application.isPlaying)
+        {
+            return;
+        }
+
         EnsureInstance();
     }
 
-    /// <summary>Returns the DDOL instance, creating one if needed.</summary>
+    /// <summary>
+    /// Returns the DDOL instance, creating one if needed.
+    /// Never creates during application/Play Mode teardown.
+    /// </summary>
     public static LivesManager EnsureInstance()
     {
+        if (isApplicationQuitting)
+        {
+            return Instance;
+        }
+
+        // Play Mode exit sets isPlaying false before/during OnDisable cascades.
+        // Edit Mode creation must use CreateEphemeralEditorValidationHost, not this.
+        if (!Application.isPlaying)
+        {
+#if UNITY_EDITOR
+            if (!creatingEphemeralEditorValidationHost)
+            {
+                return Instance;
+            }
+#else
+            return Instance;
+#endif
+        }
+
         if (Instance != null)
         {
             return Instance;
@@ -222,6 +283,11 @@ public class LivesManager : MonoBehaviour
         {
             Instance = null;
         }
+    }
+
+    private void OnApplicationQuit()
+    {
+        isApplicationQuitting = true;
     }
 
     private void OnApplicationPause(bool pauseStatus)
