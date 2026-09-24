@@ -110,10 +110,7 @@ public class OutOfLivesUI : MonoBehaviour
 
     private void ResolveCoinManager()
     {
-        if (coinManager == null)
-        {
-            coinManager = LifePurchaseService.ResolveCoinManager();
-        }
+        coinManager = LifePurchaseService.ResolveCoinManager();
     }
 
     private void ResolveAdsManager()
@@ -128,7 +125,7 @@ public class OutOfLivesUI : MonoBehaviour
     {
         if (audioManager == null)
         {
-            audioManager = FindAnyObjectByType<AudioManager>();
+            audioManager = AudioManager.Resolve();
         }
     }
 

@@ -1,4 +1,6 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 /// <summary>
 /// Knoppen voor het MainMenu-scherm.
@@ -25,6 +27,13 @@ public class MainMenuUI : MonoBehaviour
         // Authoritative menu music — works whether MusicManager came from this
         // scene or was bootstrapped earlier (e.g. fresh Splash→Gameplay→Menu).
         MusicManager.PlayMenuMusic();
+
+        // Ensure Daily Challenge domain is alive for countdown / day rollover.
+        DailyChallengeManager.EnsureInstance();
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        AttachLevelsButtonNavProbe();
+#endif
     }
 
     /// <summary>
@@ -40,6 +49,12 @@ public class MainMenuUI : MonoBehaviour
     /// </summary>
     public void OnLevelsButton()
     {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        Debug.Log(
+            "[MainMenuNav] LevelsButton.onClick" +
+            " frame=" + Time.frameCount +
+            " transitioning=" + SceneTransition.IsTransitioning);
+#endif
         SceneTransition.LoadScene("LevelSelect");
     }
 
@@ -89,6 +104,30 @@ public class MainMenuUI : MonoBehaviour
         settingsTapWindowStartUnscaled = 0f;
         CrashlyticsDeviceTest.SendTestNonFatal();
     }
+
+    private void AttachLevelsButtonNavProbe()
+    {
+        // Prefer the Inspector-wired Levels button via persistent onClick target search.
+        Button[] buttons = FindObjectsByType<Button>(
+            FindObjectsInactive.Exclude,
+            FindObjectsSortMode.None);
+        for (int i = 0; i < buttons.Length; i++)
+        {
+            Button button = buttons[i];
+            if (button == null)
+            {
+                continue;
+            }
+
+            if (button.name != "LevelsButton" && button.name != "Levels")
+            {
+                continue;
+            }
+
+            MenuNavInputDiagnostics.EnsureAttached(button, "MainMenu.Levels");
+            return;
+        }
+    }
 #endif
 
     /// <summary>
@@ -111,3 +150,123 @@ public class MainMenuUI : MonoBehaviour
         }
     }
 }
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+/// <summary>
+/// Dev-only: proves where a MainMenu navigation click is lost
+/// (pointer vs onClick vs SceneTransition reject).
+/// </summary>
+[DisallowMultipleComponent]
+public sealed class MenuNavInputDiagnostics : MonoBehaviour,
+    IPointerDownHandler,
+    IPointerUpHandler,
+    IPointerClickHandler
+{
+    private string label = "Button";
+    private Button button;
+
+    public static void EnsureAttached(Button button, string debugLabel)
+    {
+        if (button == null)
+        {
+            return;
+        }
+
+        MenuNavInputDiagnostics probe = button.GetComponent<MenuNavInputDiagnostics>();
+        if (probe == null)
+        {
+            probe = button.gameObject.AddComponent<MenuNavInputDiagnostics>();
+        }
+
+        probe.label = string.IsNullOrEmpty(debugLabel) ? button.name : debugLabel;
+        probe.button = button;
+        probe.HookClickListener();
+    }
+
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        Log("PointerDown", eventData);
+    }
+
+    public void OnPointerUp(PointerEventData eventData)
+    {
+        Log("PointerUp", eventData);
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        Log("PointerClick", eventData);
+    }
+
+    private void Awake()
+    {
+        if (button == null)
+        {
+            button = GetComponent<Button>();
+        }
+
+        HookClickListener();
+    }
+
+    private void OnDestroy()
+    {
+        if (button != null)
+        {
+            button.onClick.RemoveListener(OnButtonClicked);
+        }
+    }
+
+    private void HookClickListener()
+    {
+        if (button == null)
+        {
+            return;
+        }
+
+        button.onClick.RemoveListener(OnButtonClicked);
+        button.onClick.AddListener(OnButtonClicked);
+    }
+
+    private void OnButtonClicked()
+    {
+        Log("Button.onClick", null);
+    }
+
+    private void Log(string phase, PointerEventData eventData)
+    {
+        CanvasGroup transitionGroup = null;
+        Image fadeImage = null;
+        SceneTransition[] transitions = Object.FindObjectsByType<SceneTransition>(
+            FindObjectsInactive.Include,
+            FindObjectsSortMode.None);
+        if (transitions != null && transitions.Length > 0 && transitions[0] != null)
+        {
+            transitionGroup = transitions[0].GetComponent<CanvasGroup>();
+            Transform overlay = transitions[0].transform.Find("FadeOverlay");
+            if (overlay != null)
+            {
+                fadeImage = overlay.GetComponent<Image>();
+            }
+        }
+
+        EventSystem[] eventSystems = Object.FindObjectsByType<EventSystem>(
+            FindObjectsInactive.Exclude,
+            FindObjectsSortMode.None);
+
+        Debug.Log(
+            "[MenuNavInput] " + phase +
+            " label=" + label +
+            " frame=" + Time.frameCount +
+            " transitioning=" + SceneTransition.IsTransitioning +
+            " fadeBlocks=" + (transitionGroup != null && transitionGroup.blocksRaycasts) +
+            " fadeAlpha=" + (transitionGroup != null ? transitionGroup.alpha.ToString("0.00") : "n/a") +
+            " fadeRaycastTarget=" + (fadeImage != null && fadeImage.raycastTarget) +
+            " eventSystems=" + eventSystems.Length +
+            " sceneTransitions=" + (transitions != null ? transitions.Length : 0) +
+            (eventData != null
+                ? " eligible=" + eventData.eligibleForClick
+                : string.Empty)
+        );
+    }
+}
+#endif

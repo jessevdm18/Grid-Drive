@@ -721,7 +721,7 @@ public class VehicleController : MonoBehaviour
         }
 
         mainCamera = Camera.main;
-        audioManager = FindAnyObjectByType<AudioManager>();
+        audioManager = AudioManager.Resolve();
 
         // Zorg dat we meteen exact op de juiste gridpositie staan.
         transform.position = GetWorldPosition(gridPosition);

@@ -19,7 +19,7 @@ public class UIButtonSound : MonoBehaviour, IPointerDownHandler
     private void Awake()
     {
         button = GetComponent<Button>();
-        audioManager = FindAnyObjectByType<AudioManager>();
+        audioManager = AudioManager.Resolve();
     }
 
     public void OnPointerDown(PointerEventData eventData)
@@ -42,6 +42,11 @@ public class UIButtonSound : MonoBehaviour, IPointerDownHandler
         if (!gameObject.activeInHierarchy)
         {
             return;
+        }
+
+        if (audioManager == null)
+        {
+            audioManager = AudioManager.Resolve();
         }
 
         audioManager?.PlayButton();

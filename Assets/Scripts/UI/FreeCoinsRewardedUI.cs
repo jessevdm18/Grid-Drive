@@ -217,7 +217,7 @@ public class FreeCoinsRewardedUI : MonoBehaviour
 
         if (audioManager == null)
         {
-            audioManager = FindAnyObjectByType<AudioManager>();
+            audioManager = AudioManager.Resolve();
         }
     }
 }

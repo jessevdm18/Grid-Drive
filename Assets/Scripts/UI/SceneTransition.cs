@@ -19,17 +19,26 @@ public class SceneTransition : MonoBehaviour
     private static bool isCreating;
 
     private CanvasGroup canvasGroup;
+    private Image fadeImage;
     private bool isTransitioning;
+    /// <summary>
+    /// True after the destination scene has loaded and fade-in has started.
+    /// A new LoadScene may interrupt so the first post-arrival click is not lost.
+    /// </summary>
+    private bool allowInterruptForNewRequest;
+    private Coroutine runningTransition;
 
     /// <summary>
-    /// True tijdens fade-out / load / fade-in.
+    /// True tijdens fade-out / load (and briefly fade-in until interrupt is armed).
     /// </summary>
     public static bool IsTransitioning =>
         instance != null && instance.isTransitioning;
 
     /// <summary>
     /// Start een fade-out → scene load → fade-in.
-    /// Extra calls tijdens een actieve transition worden genegeerd.
+    /// Extra calls tijdens fade-out/load worden genegeerd.
+    /// Calls tijdens fade-in underbreken de fade-in en starten een nieuwe transitie
+    /// (zodat de eerste geldige klik na aankomst niet verloren gaat).
     /// </summary>
     public static void LoadScene(string sceneName)
     {
@@ -41,6 +50,7 @@ public class SceneTransition : MonoBehaviour
 
         if (!TryAuthorizeGameplaySceneEntry(sceneName))
         {
+            LogNav("LoadScene rejected — gameplay entry not authorized. scene=" + sceneName);
             return;
         }
 
@@ -63,7 +73,14 @@ public class SceneTransition : MonoBehaviour
         if (V1PlaytestOverride.HasPending || V1PlaytestOverride.HasActive)
         {
             LivesManager bypassLog = LivesManager.EnsureInstance();
-            bypassLog?.TryBeginLevelAttempt("scene_gameplay", bypassForV1Playtest: true);
+            bypassLog?.TryBeginLevelAttempt("scene_gameplay", bypassLivesGate: true);
+            return true;
+        }
+
+        if (DailyChallengeContext.HasPending || DailyChallengeContext.IsActiveSession)
+        {
+            LivesManager bypassLog = LivesManager.EnsureInstance();
+            bypassLog?.TryBeginLevelAttempt("scene_gameplay_daily", bypassLivesGate: true);
             return true;
         }
 
@@ -146,6 +163,26 @@ public class SceneTransition : MonoBehaviour
         {
             instance = null;
         }
+
+        // Never leave a transparent full-screen raycast blocker after teardown.
+        ClearRaycastBlock();
+        isTransitioning = false;
+        allowInterruptForNewRequest = false;
+        runningTransition = null;
+    }
+
+    private void OnDisable()
+    {
+        // Always clear blockers if this object is disabled. A transparent overlay
+        // that still blocksRaycasts eats MainMenu taps after LevelSelect→MainMenu.
+        ClearRaycastBlock();
+        if (isTransitioning)
+        {
+            LogNav("OnDisable while transitioning — forcing idle reset");
+            isTransitioning = false;
+            allowInterruptForNewRequest = false;
+            runningTransition = null;
+        }
     }
 
     private void BuildOverlay()
@@ -190,7 +227,11 @@ public class SceneTransition : MonoBehaviour
         }
         else
         {
-            overlayObject = new GameObject("FadeOverlay", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+            overlayObject = new GameObject(
+                "FadeOverlay",
+                typeof(RectTransform),
+                typeof(CanvasRenderer),
+                typeof(Image));
             overlayObject.transform.SetParent(transform, false);
         }
 
@@ -201,16 +242,31 @@ public class SceneTransition : MonoBehaviour
         rect.offsetMax = Vector2.zero;
         rect.localScale = Vector3.one;
 
-        Image image = overlayObject.GetComponent<Image>();
-        image.color = overlayColor;
-        image.raycastTarget = true;
+        fadeImage = overlayObject.GetComponent<Image>();
+        fadeImage.color = overlayColor;
+        // Idle: must not eat failure-UI / MainMenu taps under a transparent overlay.
+        fadeImage.raycastTarget = false;
     }
 
     private void BeginTransition(string sceneName, bool fadeOutFirst)
     {
         if (isTransitioning)
         {
-            return;
+            if (!allowInterruptForNewRequest)
+            {
+                LogNav(
+                    "LoadScene rejected — already transitioning (fade-out/load). scene=" +
+                    sceneName + " frame=" + Time.frameCount);
+                return;
+            }
+
+            LogNav(
+                "LoadScene interrupt — replacing fade-in with new transition. scene=" +
+                sceneName + " frame=" + Time.frameCount);
+            StopActiveTransitionCoroutine();
+            // Leave overlay as-is; new routine will fade out from current alpha.
+            isTransitioning = false;
+            allowInterruptForNewRequest = false;
         }
 
         if (canvasGroup == null)
@@ -218,19 +274,30 @@ public class SceneTransition : MonoBehaviour
             BuildOverlay();
         }
 
-        StartCoroutine(TransitionRoutine(sceneName, fadeOutFirst));
+        LogNav("LoadScene accepted scene=" + sceneName + " fadeOutFirst=" + fadeOutFirst);
+        runningTransition = StartCoroutine(TransitionRoutine(sceneName, fadeOutFirst));
+    }
+
+    private void StopActiveTransitionCoroutine()
+    {
+        if (runningTransition != null)
+        {
+            StopCoroutine(runningTransition);
+            runningTransition = null;
+        }
     }
 
     private IEnumerator TransitionRoutine(string sceneName, bool fadeOutFirst)
     {
         isTransitioning = true;
-
-        canvasGroup.blocksRaycasts = true;
-        canvasGroup.interactable = false;
+        allowInterruptForNewRequest = false;
+        SetRaycastBlock(true);
+        LogNav("Fade start (out) scene=" + sceneName);
 
         if (fadeOutFirst)
         {
-            yield return Fade(0f, 1f, fadeOutDuration);
+            float fromAlpha = canvasGroup != null ? canvasGroup.alpha : 0f;
+            yield return Fade(fromAlpha, 1f, fadeOutDuration);
         }
         else
         {
@@ -239,15 +306,15 @@ public class SceneTransition : MonoBehaviour
 
         // Overlay blijft dicht tijdens de load (freeze zit achter zwart).
         canvasGroup.alpha = 1f;
-        canvasGroup.blocksRaycasts = true;
+        SetRaycastBlock(true);
 
+        LogNav("Scene load begin scene=" + sceneName);
         AsyncOperation load = SceneManager.LoadSceneAsync(sceneName);
         if (load == null)
         {
             Debug.LogError("SceneTransition: kon scene niet laden: " + sceneName);
-            canvasGroup.alpha = 0f;
-            canvasGroup.blocksRaycasts = false;
-            isTransitioning = false;
+            ForceIdle();
+            runningTransition = null;
             yield break;
         }
 
@@ -259,13 +326,56 @@ public class SceneTransition : MonoBehaviour
 
         // Eén frame wachten zodat de nieuwe scene klaar is onder de overlay.
         yield return null;
+        LogNav("Scene load done scene=" + sceneName);
+
+        // Destination scene is live. Stop eating clicks so the first MainMenu /
+        // LevelSelect tap is not lost on the transparent FadeOverlay, and allow
+        // that tap to interrupt this fade-in with a new outbound transition.
+        ClearRaycastBlock();
+        allowInterruptForNewRequest = true;
+        LogNav("Fade-in start — raycasts cleared, interrupt armed");
 
         yield return Fade(1f, 0f, fadeInDuration);
 
         canvasGroup.alpha = 0f;
-        canvasGroup.blocksRaycasts = false;
-        canvasGroup.interactable = false;
+        ForceIdle();
+        runningTransition = null;
+        LogNav("Fade complete — transition idle");
+    }
+
+    private void ForceIdle()
+    {
+        ClearRaycastBlock();
         isTransitioning = false;
+        allowInterruptForNewRequest = false;
+    }
+
+    private void SetRaycastBlock(bool block)
+    {
+        if (canvasGroup != null)
+        {
+            canvasGroup.blocksRaycasts = block;
+            canvasGroup.interactable = false;
+        }
+
+        if (fadeImage == null)
+        {
+            Transform overlay = transform.Find("FadeOverlay");
+            if (overlay != null)
+            {
+                fadeImage = overlay.GetComponent<Image>();
+            }
+        }
+
+        if (fadeImage != null)
+        {
+            fadeImage.raycastTarget = block;
+        }
+    }
+
+    private void ClearRaycastBlock()
+    {
+        SetRaycastBlock(false);
     }
 
     private IEnumerator Fade(float from, float to, float duration)
@@ -284,5 +394,12 @@ public class SceneTransition : MonoBehaviour
         }
 
         canvasGroup.alpha = to;
+    }
+
+    [System.Diagnostics.Conditional("UNITY_EDITOR")]
+    [System.Diagnostics.Conditional("DEVELOPMENT_BUILD")]
+    private static void LogNav(string message)
+    {
+        Debug.Log("[SceneTransition] " + message + " frame=" + Time.frameCount);
     }
 }

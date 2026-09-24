@@ -75,6 +75,13 @@ public static class OutOfLivesVisualMigrationMenu
     [MenuItem("RushOut/UI/Migrate OutOfLives Visuals From MissionFailed", priority = 110)]
     private static void MigrateOpenOrGameplay()
     {
+        EditorUtility.DisplayDialog(
+            "Gameplay-only migration",
+            "This migrates OutOfLives visuals FROM MissionFailed INTO Gameplay only.\n\n" +
+            "To copy the final Gameplay Lives UI into MainMenu + LevelSelect, use:\n" +
+            "Rush Out → UI → Sync Lives UI From Gameplay To MainMenu + LevelSelect",
+            "Continue");
+
         string report;
         bool ok = MigrateGameplayAndSave(out report);
         EditorUtility.DisplayDialog(

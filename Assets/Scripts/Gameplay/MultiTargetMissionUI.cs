@@ -45,7 +45,7 @@ public class MultiTargetMissionUI : MonoBehaviour
 
         if (audioManager == null)
         {
-            audioManager = FindAnyObjectByType<AudioManager>();
+            audioManager = AudioManager.Resolve();
         }
 
         CacheTargetsVisualsIfNeeded();
@@ -108,7 +108,7 @@ public class MultiTargetMissionUI : MonoBehaviour
     {
         if (audioManager == null)
         {
-            audioManager = FindAnyObjectByType<AudioManager>();
+            audioManager = AudioManager.Resolve();
         }
 
         if (audioManager != null)

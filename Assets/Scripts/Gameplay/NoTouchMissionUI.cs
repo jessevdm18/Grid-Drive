@@ -120,7 +120,7 @@ public class NoTouchMissionUI : MonoBehaviour
 
         if (audioManager == null)
         {
-            audioManager = FindAnyObjectByType<AudioManager>();
+            audioManager = AudioManager.Resolve();
         }
 
         if (missionFailedPanel != null)
@@ -140,21 +140,32 @@ public class NoTouchMissionUI : MonoBehaviour
     {
         if (restartButton != null)
         {
-            restartButton.onClick.RemoveListener(OnRestartClicked);
-            restartButton.onClick.AddListener(OnRestartClicked);
+            FailureUiButtonBinding.BindExclusive(
+                restartButton,
+                OnRestartClicked,
+                "MissionFailedNoTouch.Restart");
         }
 
         if (levelSelectButton != null)
         {
-            levelSelectButton.onClick.RemoveListener(OnLevelSelectClicked);
-            levelSelectButton.onClick.AddListener(OnLevelSelectClicked);
+            FailureUiButtonBinding.BindExclusive(
+                levelSelectButton,
+                OnLevelSelectClicked,
+                "MissionFailedNoTouch.Levels");
         }
 
         if (menuButton != null)
         {
-            menuButton.onClick.RemoveListener(OnMenuClicked);
-            menuButton.onClick.AddListener(OnMenuClicked);
+            FailureUiButtonBinding.BindExclusive(
+                menuButton,
+                OnMenuClicked,
+                "MissionFailedNoTouch.Menu");
         }
+
+        DailyChallengeUiGuard.ApplyFailureOrPausePolicy(
+            restartButton,
+            menuButton != null ? menuButton : levelSelectButton,
+            "mission_failed_notouch");
 
         if (objectiveController != null)
         {
@@ -221,7 +232,7 @@ public class NoTouchMissionUI : MonoBehaviour
 
             if (audioManager == null)
             {
-                audioManager = FindAnyObjectByType<AudioManager>();
+                audioManager = AudioManager.Resolve();
             }
 
             if (audioManager != null)
@@ -262,14 +273,15 @@ public class NoTouchMissionUI : MonoBehaviour
             levelManager = FindAnyObjectByType<LevelManager>();
         }
 
-        if (levelManager != null)
-        {
-            levelManager.RestartLevel();
-        }
-        else
+        if (levelManager == null)
         {
             Debug.LogError("NoTouchMissionUI: geen LevelManager voor RestartLevel.");
+            return;
         }
+
+        RestartPurchaseService.TryRestartWithEconomy(
+            levelManager: levelManager,
+            source: "mission_failed_notouch");
     }
 
     private void OnLevelSelectClicked()

@@ -46,7 +46,7 @@ public class SkinManager : MonoBehaviour
 
         if (audioManager == null)
         {
-            audioManager = FindAnyObjectByType<AudioManager>();
+            audioManager = AudioManager.Resolve();
         }
 
         Load();

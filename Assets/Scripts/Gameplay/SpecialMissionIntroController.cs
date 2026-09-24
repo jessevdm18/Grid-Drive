@@ -89,7 +89,7 @@ public class SpecialMissionIntroController : MonoBehaviour
 
         if (audioManager == null)
         {
-            audioManager = FindAnyObjectByType<AudioManager>();
+            audioManager = AudioManager.Resolve();
         }
 
         if (safeArea == null)
@@ -419,7 +419,7 @@ public class SpecialMissionIntroController : MonoBehaviour
 
         if (audioManager == null)
         {
-            audioManager = FindAnyObjectByType<AudioManager>();
+            audioManager = AudioManager.Resolve();
         }
 
         audioManager?.PlayAmbulanceMissionStart();

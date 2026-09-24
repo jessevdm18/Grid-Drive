@@ -72,6 +72,11 @@ public class GameplayUI : MonoBehaviour
     /// </summary>
     public void OnBackToMenuButton()
     {
+        if (DailyChallengeUiGuard.IsDailyActive)
+        {
+            DailyChallengeManager.EnsureInstance()?.NotifyAbandoned("gameplay_back");
+        }
+
         SceneTransition.LoadScene("MainMenu");
     }
 
@@ -157,31 +162,31 @@ public class GameplayUI : MonoBehaviour
     /// <summary>
     /// Zet alleen MovesCard/ValueText op het aantal moves.
     /// Raakt LabelText ("MOVES") niet aan.
-    /// Optional globalLimit → "12 / 24" for forgiving global levels only.
+    /// Optional limit → "12 / 24" for global forgiving OR special MoveLimit maximum.
     /// </summary>
     public void UpdateMovesText(int moves)
     {
-        UpdateMovesText(moves, showGlobalLimit: false, globalLimit: 0);
+        UpdateMovesText(moves, showLimit: false, limit: 0);
     }
 
     /// <summary>
-    /// Moves HUD with optional forgiving global denominator (not special MoveLimit).
+    /// Moves HUD with optional denominator (global forgiving or special authored limit).
     /// </summary>
-    public void UpdateMovesText(int moves, int globalLimit)
+    public void UpdateMovesText(int moves, int limit)
     {
-        UpdateMovesText(moves, showGlobalLimit: true, globalLimit: globalLimit);
+        UpdateMovesText(moves, showLimit: true, limit: limit);
     }
 
-    private void UpdateMovesText(int moves, bool showGlobalLimit, int globalLimit)
+    private void UpdateMovesText(int moves, bool showLimit, int limit)
     {
         if (movesValueText == null)
         {
             return;
         }
 
-        if (showGlobalLimit && globalLimit > 0)
+        if (showLimit && limit > 0)
         {
-            movesValueText.text = moves.ToString() + " / " + globalLimit.ToString();
+            movesValueText.text = moves.ToString() + " / " + limit.ToString();
         }
         else
         {

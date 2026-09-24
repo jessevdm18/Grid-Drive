@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa3e2ae417624fcaa0504bc84c7b6bf9, type: 3}
+  m_Name: DailyChallengeConfig
+  m_EditorClassIdentifier: Assembly-CSharp::DailyChallengeConfig
+  dailyLevelPool:
+  - {fileID: 11400000, guid: 043b3ea351f90f84889b27c6ef2a16af, type: 2}
+  - {fileID: 11400000, guid: ccca647af25a812479ed56944b23aeae, type: 2}
+  - {fileID: 11400000, guid: a04aefc2f61c5d845a66ada70e087553, type: 2}
+  - {fileID: 11400000, guid: 3b6ffd0c134037d4e9eff400bb252bcb, type: 2}
+  - {fileID: 11400000, guid: ea9dd668ee87cc04c8ff71cae0946161, type: 2}
+  - {fileID: 11400000, guid: 97bb3e4c91d8568459091b021b6f1106, type: 2}
+  - {fileID: 11400000, guid: f6fd2f817018d5240acd998098f73b92, type: 2}
+  - {fileID: 11400000, guid: 895cb1025b2b29f4e9addef95765ba2b, type: 2}
+  - {fileID: 11400000, guid: 32b69d2435c68b44b9519bfefb337b05, type: 2}
+  - {fileID: 11400000, guid: e51680f7ef1a75546a291ea62c0c85eb, type: 2}
+  baseMoveScore: 100000
+  movePenaltyPerExtraMove: 2500
+  minimumMoveScore: 10000
+  timeBonusMax: 20000
+  timeReferenceSeconds: 60

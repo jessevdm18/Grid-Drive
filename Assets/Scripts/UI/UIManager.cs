@@ -82,7 +82,7 @@ public class UIManager : MonoBehaviour
 
     private void Awake()
     {
-        audioManager = FindAnyObjectByType<AudioManager>();
+        audioManager = AudioManager.Resolve();
 
         if (rewardTextRect != null)
         {
@@ -128,6 +128,8 @@ public class UIManager : MonoBehaviour
         {
             winPanel.SetActive(true);
         }
+
+        DailyChallengeUiGuard.ApplyWinPanelPolicy(restartButton, nextLevelButton);
 
         if (winConfetti != null)
         {
@@ -947,6 +949,7 @@ public class UIManager : MonoBehaviour
 
     /// <summary>
     /// Wordt aangeroepen door de "Restart"-knop.
+    /// Win-panel restart is free (completed attempt).
     /// </summary>
     public void OnRestartButton()
     {
@@ -958,9 +961,8 @@ public class UIManager : MonoBehaviour
         EnsureDifficultyUnlockFullyHidden();
         HideWinPanel();
 
-        if (levelManager != null)
-        {
-            levelManager.RestartLevel();
-        }
+        RestartPurchaseService.TryRestartWithEconomy(
+            levelManager: levelManager,
+            source: "win_panel");
     }
 }

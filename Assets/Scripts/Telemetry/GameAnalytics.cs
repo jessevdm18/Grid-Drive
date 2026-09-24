@@ -150,7 +150,9 @@ public static class GameAnalytics
     public static void LogLevelRestart(
         int levelNumber,
         string difficulty,
-        int movesUsed)
+        int movesUsed,
+        int restartCost = 0,
+        string restartType = "unspecified")
     {
         if (!FirebaseManager.IsReady)
         {
@@ -163,7 +165,9 @@ public static class GameAnalytics
                 "level_restart",
                 new Parameter("level_number", levelNumber),
                 new Parameter("difficulty", Safe(difficulty)),
-                new Parameter("moves_used", movesUsed)
+                new Parameter("moves_used", movesUsed),
+                new Parameter("restart_cost", restartCost),
+                new Parameter("restart_type", Safe(restartType))
             );
         }
         catch (Exception ex)
@@ -416,6 +420,106 @@ public static class GameAnalytics
         }
     }
 #endif
+
+    public static void LogDailyChallengeView(string dayId)
+    {
+        LogDailySimple("daily_challenge_view", dayId, null, null);
+    }
+
+    public static void LogDailyChallengeStart(string dayId, string levelAsset, int poolIndex)
+    {
+        if (!FirebaseManager.IsReady)
+        {
+            return;
+        }
+
+        try
+        {
+            FirebaseAnalytics.LogEvent(
+                "daily_challenge_start",
+                new Parameter("day_id", Safe(dayId)),
+                new Parameter("level_asset", Safe(levelAsset)),
+                new Parameter("pool_index", poolIndex));
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError("GameAnalytics.LogDailyChallengeStart failed — " + ex.Message);
+        }
+    }
+
+    public static void LogDailyChallengeComplete(
+        string dayId,
+        string levelAsset,
+        int moves = 0,
+        long completionTimeMs = 0,
+        int score = 0)
+    {
+        if (!FirebaseManager.IsReady)
+        {
+            return;
+        }
+
+        try
+        {
+            FirebaseAnalytics.LogEvent(
+                "daily_challenge_complete",
+                new Parameter("day_id", Safe(dayId)),
+                new Parameter("level_id", Safe(levelAsset)),
+                new Parameter("moves", moves),
+                new Parameter("completion_time_ms", completionTimeMs),
+                new Parameter("score", score));
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError("GameAnalytics.LogDailyChallengeComplete failed — " + ex.Message);
+        }
+    }
+
+    public static void LogDailyChallengeFail(string dayId, string levelAsset, string failReason)
+    {
+        // Phase 2: performance fails are suppressed; kept for any residual telemetry.
+        LogDailySimple("daily_challenge_fail", dayId, levelAsset, failReason);
+    }
+
+    public static void LogDailyChallengeAbandon(string dayId, string levelAsset, string reason)
+    {
+        LogDailySimple("daily_challenge_abandon", dayId, levelAsset, reason);
+    }
+
+    private static void LogDailySimple(
+        string eventName,
+        string dayId,
+        string levelAsset,
+        string extraReason)
+    {
+        if (!FirebaseManager.IsReady)
+        {
+            return;
+        }
+
+        try
+        {
+            var parameters = new List<Parameter>
+            {
+                new Parameter("day_id", Safe(dayId))
+            };
+            if (!string.IsNullOrEmpty(levelAsset))
+            {
+                parameters.Add(new Parameter("level_asset", Safe(levelAsset)));
+            }
+
+            if (!string.IsNullOrEmpty(extraReason))
+            {
+                parameters.Add(new Parameter("fail_reason", Safe(extraReason)));
+            }
+
+            FirebaseAnalytics.LogEvent(eventName, parameters.ToArray());
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError("GameAnalytics." + eventName + " failed — " + ex.Message);
+        }
+    }
 
     private static string Safe(string value)
     {

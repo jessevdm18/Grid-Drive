@@ -70,7 +70,7 @@ public class TimedMissionUI : MonoBehaviour
 
         if (audioManager == null)
         {
-            audioManager = FindAnyObjectByType<AudioManager>();
+            audioManager = AudioManager.Resolve();
         }
 
         if (missionFailedPanel != null)
@@ -86,15 +86,24 @@ public class TimedMissionUI : MonoBehaviour
     {
         if (retryButton != null)
         {
-            retryButton.onClick.RemoveListener(OnRetryClicked);
-            retryButton.onClick.AddListener(OnRetryClicked);
+            FailureUiButtonBinding.BindExclusive(
+                retryButton,
+                OnRetryClicked,
+                "MissionFailedTimed.Restart");
         }
 
         if (levelSelectButton != null)
         {
-            levelSelectButton.onClick.RemoveListener(OnLevelSelectClicked);
-            levelSelectButton.onClick.AddListener(OnLevelSelectClicked);
+            FailureUiButtonBinding.BindExclusive(
+                levelSelectButton,
+                OnLevelSelectClicked,
+                "MissionFailedTimed.Levels");
         }
+
+        DailyChallengeUiGuard.ApplyFailureOrPausePolicy(
+            retryButton,
+            levelSelectButton,
+            "mission_failed_timed");
 
         if (objectiveController != null)
         {
@@ -186,7 +195,7 @@ public class TimedMissionUI : MonoBehaviour
 
             if (audioManager == null)
             {
-                audioManager = FindAnyObjectByType<AudioManager>();
+                audioManager = AudioManager.Resolve();
             }
 
             if (audioManager != null)
@@ -222,14 +231,15 @@ public class TimedMissionUI : MonoBehaviour
             levelManager = FindAnyObjectByType<LevelManager>();
         }
 
-        if (levelManager != null)
-        {
-            levelManager.RestartLevel();
-        }
-        else
+        if (levelManager == null)
         {
             Debug.LogError("TimedMissionUI: geen LevelManager voor RestartLevel.");
+            return;
         }
+
+        RestartPurchaseService.TryRestartWithEconomy(
+            levelManager: levelManager,
+            source: "mission_failed_timed");
     }
 
     private void OnLevelSelectClicked()
@@ -266,6 +276,22 @@ public class TimedMissionUI : MonoBehaviour
         if (!timed)
         {
             if (missionFailedPanel != null)
+            {
+                missionFailedPanel.SetActive(false);
+            }
+
+            StopPulseAndResetScale();
+            ApplyTimerColor(normalColor);
+            StopCountdownAudio();
+            failurePresentationPlayed = false;
+            SetTimedHudVisible(false);
+            return;
+        }
+
+        // Daily Challenge: no terminal countdown HUD / fail SFX (run stopwatch is separate).
+        if (DailyChallengeGameplayPolicy.SuppressPerformanceFailures)
+        {
+            if (missionFailedPanel != null && missionFailedPanel.activeSelf)
             {
                 missionFailedPanel.SetActive(false);
             }
@@ -388,7 +414,7 @@ public class TimedMissionUI : MonoBehaviour
 
         if (audioManager == null)
         {
-            audioManager = FindAnyObjectByType<AudioManager>();
+            audioManager = AudioManager.Resolve();
         }
 
         if (audioManager == null)
@@ -410,11 +436,23 @@ public class TimedMissionUI : MonoBehaviour
         beepPlayed2 = false;
         beepPlayed1 = false;
         countdownAudioActive = false;
+        StopCountdownPlayback();
     }
 
     private void StopCountdownAudio()
     {
         countdownAudioActive = false;
+        StopCountdownPlayback();
+    }
+
+    private void StopCountdownPlayback()
+    {
+        if (audioManager == null)
+        {
+            audioManager = AudioManager.Resolve();
+        }
+
+        audioManager?.StopCountdownBeeps();
     }
 
     private void ApplyUrgencyVisuals(float remainingSeconds)

@@ -977,7 +977,7 @@ public static class LivesEditorMenu
             );
 
             // P2-R: V1 bypass allowed at 0 without consume
-            bool beginV1 = manager.TryBeginLevelAttempt("v1", bypassForV1Playtest: true);
+            bool beginV1 = manager.TryBeginLevelAttempt("v1", bypassLivesGate: true);
             Check(
                 "P2-R",
                 beginV1 && manager.CurrentLives == 0,

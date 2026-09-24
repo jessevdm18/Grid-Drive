@@ -126,6 +126,8 @@ public class GameplayLayoutController : MonoBehaviour
     [SerializeField, Range(0.45f, 1f)] private float wideWinPanelScale = 0.80f;
     [SerializeField] private Vector2 widePausePanelOffset = Vector2.zero;
     [SerializeField] private Vector2 wideWinPanelOffset = Vector2.zero;
+    [Tooltip("SafeArea inset when uniformly fitting Pause/Win panels to stay visible.")]
+    [SerializeField, Min(0f)] private float modalPanelSafeAreaPadding = 24f;
 
     [Header("Core HUD")]
     [SerializeField] private CameraFitter cameraFitter;
@@ -1686,6 +1688,7 @@ public class GameplayLayoutController : MonoBehaviour
     /// <summary>
     /// Wide-only Pause/Win sizing. Phone modes restore authored scene presentation.
     /// Scales panel roots (no wrappers — show/hide does not animate root scale).
+    /// Shared by runtime and Edit Mode layout preview.
     /// </summary>
     private void ApplyModalPanelsForKind(GameplayLayoutKind kind)
     {
@@ -1696,11 +1699,52 @@ public class GameplayLayoutController : MonoBehaviour
         {
             ApplyWideModalPanel(pausePanel, pausePanelPhoneSnap, widePausePanelScale, widePausePanelOffset);
             ApplyWideModalPanel(winPanel, winPanelPhoneSnap, wideWinPanelScale, wideWinPanelOffset);
+        }
+        else
+        {
+            RestoreModalPanelFromPhoneSnap(pausePanel, pausePanelPhoneSnap);
+            RestoreModalPanelFromPhoneSnap(winPanel, winPanelPhoneSnap);
+        }
+
+        // Uniform fit so the full Settings panel stays inside SafeArea (phones + tablet).
+        // Only during Play or active layout authoring preview — never permanently while idle in Edit Mode.
+        if (Application.isPlaying || IsAuthoringPreviewActive)
+        {
+            FitModalPanelInSafeArea(pausePanel);
+            FitModalPanelInSafeArea(winPanel);
+        }
+    }
+
+    /// <summary>
+    /// Uniform scale-down only when the panel exceeds SafeArea (minus padding).
+    /// Never stretches individual children; never scales up past the layout-applied size.
+    /// </summary>
+    private void FitModalPanelInSafeArea(RectTransform panel)
+    {
+        if (panel == null || safeArea == null)
+        {
             return;
         }
 
-        RestoreModalPanelFromPhoneSnap(pausePanel, pausePanelPhoneSnap);
-        RestoreModalPanelFromPhoneSnap(winPanel, winPanelPhoneSnap);
+        float pad = Mathf.Max(0f, modalPanelSafeAreaPadding);
+        float availW = Mathf.Max(1f, safeArea.rect.width - pad * 2f);
+        float availH = Mathf.Max(1f, safeArea.rect.height - pad * 2f);
+
+        Vector2 size = panel.rect.size;
+        float w = Mathf.Abs(size.x * panel.localScale.x);
+        float h = Mathf.Abs(size.y * panel.localScale.y);
+        if (w < 1f || h < 1f)
+        {
+            return;
+        }
+
+        float fitScale = Mathf.Min(1f, availW / w, availH / h);
+        if (fitScale >= 0.999f)
+        {
+            return;
+        }
+
+        panel.localScale = panel.localScale * fitScale;
     }
 
     private void CacheModalPanelsPhonePresentation()
@@ -2545,6 +2589,9 @@ public class GameplayLayoutController : MonoBehaviour
         }
         else
         {
+            // Do not snapshot PausePanel while authoring-preview has it active —
+            // that would bake ActiveSelf=true into Clear Preview restore.
+            EditorHidePausePreviewIfActive();
             CaptureEditorPreviewSnapshot();
             Debug.Log("[GameplayLayoutPreview] Snapshot captured");
         }
@@ -2605,7 +2652,103 @@ public class GameplayLayoutController : MonoBehaviour
 
         ApplyLivesHudForKind(kind);
 
+        // Keep Pause preview presentation in sync when switching Tall/Compact/Wide.
+        EditorRefreshPausePreviewIfActive();
+
         Debug.Log("[GameplayLayoutPreview] Applying " + kind);
+#endif
+    }
+
+    /// <summary>
+    /// Edit Mode: re-apply PausePanel modal geometry for the current authoring/runtime kind.
+    /// Used by PauseManager preview so Edit Mode matches Play Mode for the same profile.
+    /// </summary>
+    public void EditorRefreshPausePanelPresentation()
+    {
+#if !UNITY_EDITOR
+        return;
+#else
+        if (Application.isPlaying)
+        {
+            return;
+        }
+
+        ResolveRefs();
+        GameplayLayoutKind kind = IsAuthoringPreviewActive
+            ? AuthoringPreviewKind
+            : GameplayLayoutKind.TallPhonePortrait;
+        ApplyModalPanelsForKind(kind);
+#endif
+    }
+
+    /// <summary>
+    /// Edit Mode: capture PausePanel root geometry as the phone baseline (and Wide scale/offset
+    /// when authoring Wide). Child button positions remain scene-authored.
+    /// </summary>
+    public void EditorCapturePauseMenuLayout()
+    {
+#if !UNITY_EDITOR
+        return;
+#else
+        if (Application.isPlaying)
+        {
+            Debug.LogWarning("[PausePreview] Capture Pause Menu Layout is Edit Mode only.");
+            return;
+        }
+
+        ResolveRefs();
+        if (pausePanel == null)
+        {
+            Debug.LogWarning("[PausePreview] No PausePanel to capture.");
+            return;
+        }
+
+        CacheModalPanelsPhonePresentation();
+
+        GameplayLayoutKind kind = IsAuthoringPreviewActive
+            ? AuthoringPreviewKind
+            : GameplayLayoutKind.TallPhonePortrait;
+
+        if (kind == GameplayLayoutKind.WideTabletLandscape)
+        {
+            // Derive Wide multiplier/offset from the live panel vs phone baseline.
+            Vector3 phoneScale = pausePanelPhoneSnap.LocalScale.sqrMagnitude > 0.0001f
+                ? pausePanelPhoneSnap.LocalScale
+                : Vector3.one;
+            float phoneMag = Mathf.Max(0.0001f, phoneScale.x);
+            float liveMag = Mathf.Max(0.0001f, pausePanel.localScale.x);
+            widePausePanelScale = Mathf.Clamp(liveMag / phoneMag, 0.45f, 1f);
+            widePausePanelOffset = pausePanel.anchoredPosition;
+            Debug.Log(
+                "[PausePreview] Captured Wide Pause scale=" + widePausePanelScale +
+                " offset=" + widePausePanelOffset);
+        }
+        else
+        {
+            // Re-baseline phone snap from the authored panel (pre-fit geometry preferred).
+            pausePanelPhoneSnap = Capture(pausePanel);
+            modalPanelsPhoneCached = true;
+            Debug.Log("[PausePreview] Captured PausePanel phone baseline from scene.");
+        }
+
+        ApplyModalPanelsForKind(kind);
+#endif
+    }
+
+    private static void EditorRefreshPausePreviewIfActive()
+    {
+#if UNITY_EDITOR
+        if (Application.isPlaying)
+        {
+            return;
+        }
+
+        PauseManager pause = Object.FindAnyObjectByType<PauseManager>();
+        if (pause != null && pause.IsEditorPausePreviewActive)
+        {
+            // Re-show after layout snapshot restore (which resets ActiveSelf).
+            pause.EditorPreviewPauseMenu();
+        }
 #endif
     }
 
@@ -2735,7 +2878,26 @@ public class GameplayLayoutController : MonoBehaviour
         NotifyCameraFitter(GameplayLayoutKind.TallPhonePortrait, tallPhoneProfile);
         ApplyModalPanelsForKind(GameplayLayoutKind.TallPhonePortrait);
 
+        // Hide pause authoring preview so Clear Preview never leaves the panel active.
+        EditorHidePausePreviewIfActive();
+
         Debug.Log("[GameplayLayoutPreview] Preview cleared");
+#endif
+    }
+
+    private static void EditorHidePausePreviewIfActive()
+    {
+#if UNITY_EDITOR
+        if (Application.isPlaying)
+        {
+            return;
+        }
+
+        PauseManager pause = Object.FindAnyObjectByType<PauseManager>();
+        if (pause != null && pause.IsEditorPausePreviewActive)
+        {
+            pause.EditorHidePauseMenuPreview();
+        }
 #endif
     }
 

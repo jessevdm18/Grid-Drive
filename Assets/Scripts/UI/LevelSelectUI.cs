@@ -87,7 +87,7 @@ public class LevelSelectUI : MonoBehaviour
 
     private void Start()
     {
-        audioManager = FindAnyObjectByType<AudioManager>();
+        audioManager = AudioManager.Resolve();
 
         if (saveManager != null && levelDatabase != null)
         {
@@ -205,11 +205,11 @@ public class LevelSelectUI : MonoBehaviour
         RebuildLevelButtonsForSelectedDifficulty();
 
         // Layout owns presentation — re-apply after tiles so Wide is not lost.
-        LevelSelectLayoutController layout = GetComponent<LevelSelectLayoutController>();
-        if (layout == null)
-        {
-            layout = FindAnyObjectByType<LevelSelectLayoutController>();
-        }
+        // Stay scene-local: never grab a controller from another loaded scene / DDOL.
+        LevelSelectLayoutController layout =
+            GetComponent<LevelSelectLayoutController>() ??
+            GetComponentInParent<LevelSelectLayoutController>() ??
+            GetComponentInChildren<LevelSelectLayoutController>(true);
 
         if (layout != null)
         {

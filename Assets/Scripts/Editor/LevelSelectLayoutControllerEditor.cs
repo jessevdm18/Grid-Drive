@@ -39,7 +39,11 @@ public class LevelSelectLayoutControllerEditor : Editor
         else
         {
             EditorGUILayout.HelpBox(
-                "Apply Preview → tune → Capture Wide → Clear → Save → Play.",
+                "Apply Preview → tune → Capture.\n" +
+                "Phone + Wide share the header row solver (Back | SELECT LEVEL | Lives).\n" +
+                "Viewport fills SafeArea under difficulty (phoneGridBottomPadding).\n" +
+                "Capture Phone Header Paddings stores SafeArea-relative GAPS only.\n" +
+                "Wide Capture still stores grid columns/cell/spacing.",
                 MessageType.None);
         }
 
@@ -82,6 +86,23 @@ public class LevelSelectLayoutControllerEditor : Editor
 
                 controller.EditorApplyPreview(previewKind);
                 EditorUtility.SetDirty(controller);
+            }
+
+            bool phonePreview =
+                controller.IsAuthoringPreviewActive &&
+                (controller.AuthoringPreviewKind == GameplayLayoutKind.TallPhonePortrait ||
+                 controller.AuthoringPreviewKind == GameplayLayoutKind.CompactPhonePortrait);
+
+            using (new EditorGUI.DisabledScope(!phonePreview))
+            {
+                if (GUILayout.Button("Capture Phone Header Paddings", GUILayout.Height(28)))
+                {
+                    Undo.RecordObject(controller, "Capture LevelSelect Phone Header");
+                    controller.EditorCapturePhoneHeaderPaddings();
+                    serializedObject.Update();
+                    EditorUtility.SetDirty(controller);
+                    EditorSceneManager.MarkSceneDirty(controller.gameObject.scene);
+                }
             }
 
             using (new EditorGUI.DisabledScope(

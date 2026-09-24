@@ -448,6 +448,38 @@ public class LevelObjectiveController : MonoBehaviour
         ClearSpecialIntroGate();
         ClearObjectiveTutorialGate();
         state = RuntimeState.Completed;
+        AudioManager.Resolve()?.StopCountdownBeeps();
+    }
+
+    /// <summary>
+    /// Attempt already failed via GameManager.FailLevel (any reason).
+    /// Stops timed ticking / pending objective fails so a later timeout cannot fire.
+    /// Does not raise timed/mission failure presentation — the first FailLevel owns that.
+    /// </summary>
+    public void NotifyLevelFailed()
+    {
+        if (state == RuntimeState.Failed || state == RuntimeState.Completed)
+        {
+            // Still kill countdown audio if a beep was mid-play.
+            AudioManager.Resolve()?.StopCountdownBeeps();
+            return;
+        }
+
+        StopStartRoutine();
+        pendingMoveLimitFailCheck = false;
+        pendingFragileCargoFailCheck = false;
+        ClearSpecialIntroGate();
+        ClearObjectiveTutorialGate();
+
+        // Mark terminal before UI timer callbacks so countdown beeps cannot start.
+        state = RuntimeState.Failed;
+        AudioManager.Resolve()?.StopCountdownBeeps();
+
+        if (isTimedLevel)
+        {
+            // Freeze displayed remaining time; do not force to zero (that would look like timed-out).
+            OnTimerChanged?.Invoke(remainingTime);
+        }
     }
 
     /// <summary>
@@ -847,6 +879,14 @@ public class LevelObjectiveController : MonoBehaviour
             if (gameManager.IsLevelCompleted)
             {
                 state = RuntimeState.Completed;
+                AudioManager.Resolve()?.StopCountdownBeeps();
+                return;
+            }
+
+            // Another FailLevel already won — freeze timer, never timeout.
+            if (gameManager.IsLevelFailed)
+            {
+                NotifyLevelFailed();
                 return;
             }
 
@@ -857,6 +897,14 @@ public class LevelObjectiveController : MonoBehaviour
             }
         }
 
+        // Daily: mission timer may already be frozen at 0 — do not re-tick / re-log.
+        if (DailyChallengeGameplayPolicy.SuppressPerformanceFailures &&
+            remainingTime <= 0f)
+        {
+            remainingTime = 0f;
+            return;
+        }
+
         // Time.deltaTime == 0 bij pause (timeScale = 0).
         remainingTime -= Time.deltaTime;
 
@@ -864,6 +912,17 @@ public class LevelObjectiveController : MonoBehaviour
         {
             remainingTime = 0f;
             OnTimerChanged?.Invoke(remainingTime);
+
+            if (DailyChallengeGameplayPolicy.SuppressPerformanceFailures)
+            {
+                // Daily: no timeout failure — freeze at 0 without ending the attempt.
+                AudioManager.Resolve()?.StopCountdownBeeps();
+                DailyChallengeGameplayPolicy.LogSuppressed(
+                    "Timed",
+                    "timer reached 0 — continue playing");
+                return;
+            }
+
             FailTimedMission();
             return;
         }
@@ -873,71 +932,151 @@ public class LevelObjectiveController : MonoBehaviour
 
     private void FailTimedMission()
     {
+        if (DailyChallengeGameplayPolicy.SuppressPerformanceFailures)
+        {
+            DailyChallengeGameplayPolicy.LogSuppressed("Timed", "FailTimedMission");
+            return;
+        }
+
         if (state != RuntimeState.Running)
         {
             return;
         }
 
-        state = RuntimeState.Failed;
-
-        if (gameManager != null)
+        // Global / other failure already terminal — do not present timed fail.
+        if (gameManager != null &&
+            (gameManager.IsLevelFailed ||
+             gameManager.IsLevelCompleted ||
+             gameManager.IsTargetExitInProgress))
         {
-            gameManager.FailLevel("timed_out");
+            NotifyLevelFailed();
+            return;
         }
 
-        OnTimedMissionFailed?.Invoke();
+        state = RuntimeState.Failed;
+        AudioManager.Resolve()?.StopCountdownBeeps();
+
+        bool accepted = true;
+        if (gameManager != null)
+        {
+            accepted = gameManager.FailLevel("timed_out");
+        }
+
+        // Only the first terminal failure owns presentation/SFX.
+        if (accepted)
+        {
+            OnTimedMissionFailed?.Invoke();
+        }
     }
 
     private void FailMoveLimitMission()
     {
+        if (DailyChallengeGameplayPolicy.SuppressPerformanceFailures)
+        {
+            DailyChallengeGameplayPolicy.LogSuppressed("MoveLimit", "FailMoveLimitMission");
+            return;
+        }
+
         if (state != RuntimeState.Running)
         {
             return;
         }
 
-        state = RuntimeState.Failed;
-
-        if (gameManager != null)
+        if (gameManager != null &&
+            (gameManager.IsLevelFailed ||
+             gameManager.IsLevelCompleted ||
+             gameManager.IsTargetExitInProgress))
         {
-            gameManager.FailLevel("move_limit");
+            NotifyLevelFailed();
+            return;
         }
 
-        OnMoveLimitMissionFailed?.Invoke();
+        state = RuntimeState.Failed;
+
+        bool accepted = true;
+        if (gameManager != null)
+        {
+            accepted = gameManager.FailLevel("move_limit");
+        }
+
+        if (accepted)
+        {
+            OnMoveLimitMissionFailed?.Invoke();
+        }
     }
 
     private void FailNoTouchMission()
     {
+        if (DailyChallengeGameplayPolicy.SuppressPerformanceFailures)
+        {
+            DailyChallengeGameplayPolicy.LogSuppressed("NoTouch", "FailNoTouchMission");
+            return;
+        }
+
         if (state != RuntimeState.Running)
         {
+            return;
+        }
+
+        if (gameManager != null &&
+            (gameManager.IsLevelFailed ||
+             gameManager.IsLevelCompleted ||
+             gameManager.IsTargetExitInProgress))
+        {
+            noTouchViolated = true;
+            NotifyLevelFailed();
             return;
         }
 
         noTouchViolated = true;
         state = RuntimeState.Failed;
 
+        bool accepted = true;
         if (gameManager != null)
         {
-            gameManager.FailLevel("no_touch");
+            accepted = gameManager.FailLevel("no_touch");
         }
 
-        OnNoTouchMissionFailed?.Invoke();
+        if (accepted)
+        {
+            OnNoTouchMissionFailed?.Invoke();
+        }
     }
 
     private void FailFragileCargoMission()
     {
+        if (DailyChallengeGameplayPolicy.SuppressPerformanceFailures)
+        {
+            DailyChallengeGameplayPolicy.LogSuppressed("FragileCargo", "FailFragileCargoMission");
+            return;
+        }
+
         if (state != RuntimeState.Running)
         {
             return;
         }
 
-        state = RuntimeState.Failed;
-
-        if (gameManager != null)
+        if (gameManager != null &&
+            (gameManager.IsLevelFailed ||
+             gameManager.IsLevelCompleted ||
+             gameManager.IsTargetExitInProgress))
         {
-            gameManager.FailLevel("fragile_cargo");
+            NotifyLevelFailed();
+            return;
         }
 
-        OnFragileCargoMissionFailed?.Invoke();
+        state = RuntimeState.Failed;
+
+        bool accepted = true;
+        if (gameManager != null)
+        {
+            accepted = gameManager.FailLevel("fragile_cargo");
+        }
+
+        if (accepted)
+        {
+            OnFragileCargoMissionFailed?.Invoke();
+        }
     }
 
     /// <summary>

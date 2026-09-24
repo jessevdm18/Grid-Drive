@@ -75,7 +75,7 @@ public class ShopUIController : MonoBehaviour
 
         if (audioManager == null)
         {
-            audioManager = FindAnyObjectByType<AudioManager>();
+            audioManager = AudioManager.Resolve();
         }
 
         if (pauseManager == null)

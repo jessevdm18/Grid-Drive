@@ -96,21 +96,32 @@ public class MoveLimitMissionUI : MonoBehaviour
 
         if (restartButton != null)
         {
-            restartButton.onClick.RemoveListener(OnRestartClicked);
-            restartButton.onClick.AddListener(OnRestartClicked);
+            FailureUiButtonBinding.BindExclusive(
+                restartButton,
+                OnRestartClicked,
+                "MissionFailedLimit.Restart");
         }
 
         if (levelSelectButton != null)
         {
-            levelSelectButton.onClick.RemoveListener(OnLevelSelectClicked);
-            levelSelectButton.onClick.AddListener(OnLevelSelectClicked);
+            FailureUiButtonBinding.BindExclusive(
+                levelSelectButton,
+                OnLevelSelectClicked,
+                "MissionFailedLimit.Levels");
         }
 
         if (backButton != null)
         {
-            backButton.onClick.RemoveListener(OnBackClicked);
-            backButton.onClick.AddListener(OnBackClicked);
+            FailureUiButtonBinding.BindExclusive(
+                backButton,
+                OnBackClicked,
+                "MissionFailedLimit.Menu");
         }
+
+        DailyChallengeUiGuard.ApplyFailureOrPausePolicy(
+            restartButton,
+            levelSelectButton != null ? levelSelectButton : backButton,
+            "mission_failed_limit");
 
         if (objectiveController != null)
         {
@@ -176,7 +187,7 @@ public class MoveLimitMissionUI : MonoBehaviour
 
         if (audioManager == null)
         {
-            audioManager = FindAnyObjectByType<AudioManager>();
+            audioManager = AudioManager.Resolve();
         }
     }
 
@@ -244,7 +255,7 @@ public class MoveLimitMissionUI : MonoBehaviour
 
             if (audioManager == null)
             {
-                audioManager = FindAnyObjectByType<AudioManager>();
+                audioManager = AudioManager.Resolve();
             }
 
             if (audioManager != null)
@@ -293,16 +304,17 @@ public class MoveLimitMissionUI : MonoBehaviour
             levelManager = FindAnyObjectByType<LevelManager>();
         }
 
-        if (levelManager != null)
-        {
-            // Zero-lives gate lives inside RestartLevel → OutOfLivesUI via LivesManager.
-            levelManager.RestartLevel();
-        }
-        else
+        if (levelManager == null)
         {
             Debug.LogError("MoveLimitMissionUI: geen LevelManager voor RestartLevel.");
             return;
         }
+
+        // Failed retry is free; lives gate may open OutOfLives without coin spend.
+        RestartPurchaseService.TryRestartWithEconomy(
+            levelManager: levelManager,
+            gameManager: gameManager,
+            source: "mission_failed_limit");
 
         // Retry blocked at 0 lives — keep MissionFailedLimitPanel under OutOfLives
         // so the player can Retry again after earning a life (no auto-retry).
@@ -379,6 +391,21 @@ public class MoveLimitMissionUI : MonoBehaviour
             return;
         }
 
+        // Daily Challenge: suppress special MoveLimit HUD (no "remaining until fail").
+        if (DailyChallengeGameplayPolicy.SuppressPerformanceFailures)
+        {
+            if (missionFailedPanel != null && missionFailedPanel.activeSelf)
+            {
+                missionFailedPanel.SetActive(false);
+            }
+
+            StopPulseAndResetScale();
+            ApplyRemainingColor(normalColor);
+            ResetAudioPresentationState();
+            SetMoveLimitHudVisible(false);
+            return;
+        }
+
         if (objectiveController.State != LevelObjectiveController.RuntimeState.Failed &&
             missionFailedPanel != null &&
             missionFailedPanel.activeSelf &&
@@ -429,7 +456,7 @@ public class MoveLimitMissionUI : MonoBehaviour
 
         if (audioManager == null)
         {
-            audioManager = FindAnyObjectByType<AudioManager>();
+            audioManager = AudioManager.Resolve();
         }
 
         if (audioManager != null)

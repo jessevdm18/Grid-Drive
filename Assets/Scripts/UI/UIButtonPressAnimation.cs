@@ -5,7 +5,8 @@ using UnityEngine.UI;
 
 /// <summary>
 /// Subtiele press/pop-schaalanimatie voor UI Buttons.
-/// Schaalt bij voorkeur child "Visual"; anders (bewust) de Button-root.
+/// Schaalt bij voorkeur child "Visual"; anders een child — nooit de Button-root
+/// (root-schaal krimpt de hitbox en annuleert PointerClick intermittent).
 /// </summary>
 [RequireComponent(typeof(Button))]
 public class UIButtonPressAnimation : MonoBehaviour,
@@ -13,7 +14,7 @@ public class UIButtonPressAnimation : MonoBehaviour,
     IPointerUpHandler,
     IPointerExitHandler
 {
-    [Tooltip("Child die visueel schaalt (bijv. Visual). Leeg = Find(\"Visual\") of root.")]
+    [Tooltip("Child die visueel schaalt (bijv. Visual). Leeg = Find(\"Visual\") of eerste child.")]
     [SerializeField] private Transform visualTransform;
 
     [SerializeField] private float pressedScale = 0.94f;
@@ -24,12 +25,17 @@ public class UIButtonPressAnimation : MonoBehaviour,
     private Button button;
     private Vector3 originalScale;
     private Coroutine scaleCoroutine;
+    private bool canAnimate;
 
     private void Awake()
     {
         button = GetComponent<Button>();
         ResolveVisualTransform();
-        originalScale = visualTransform.localScale;
+        canAnimate = visualTransform != null && visualTransform != transform;
+        if (canAnimate)
+        {
+            originalScale = visualTransform.localScale;
+        }
     }
 
 #if UNITY_EDITOR
@@ -48,16 +54,20 @@ public class UIButtonPressAnimation : MonoBehaviour,
 #endif
 
     /// <summary>
-    /// 1) serialized ref
+    /// 1) serialized ref (if not the Button root)
     /// 2) child genaamd "Visual"
-    /// 3) root (hitbox schaalt mee — ondersteunde fallback, geen warning spam)
+    /// 3) first child (label/icon)
+    /// Never falls back to the Button root — scaling the hitbox cancels clicks.
     /// </summary>
     private void ResolveVisualTransform()
     {
-        if (visualTransform != null)
+        if (visualTransform != null && visualTransform != transform)
         {
             return;
         }
+
+        // Serialized root is unsafe for press scale — ignore and resolve a child.
+        visualTransform = null;
 
         Transform visualChild = transform.Find("Visual");
         if (visualChild != null)
@@ -66,12 +76,20 @@ public class UIButtonPressAnimation : MonoBehaviour,
             return;
         }
 
-        visualTransform = transform;
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            Transform child = transform.GetChild(i);
+            if (child != null)
+            {
+                visualTransform = child;
+                return;
+            }
+        }
     }
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        if (button == null || !button.interactable)
+        if (!canAnimate || button == null || !button.interactable)
         {
             return;
         }
@@ -84,7 +102,7 @@ public class UIButtonPressAnimation : MonoBehaviour,
 
     public void OnPointerUp(PointerEventData eventData)
     {
-        if (button == null || !button.interactable)
+        if (!canAnimate || button == null || !button.interactable)
         {
             return;
         }
@@ -95,6 +113,11 @@ public class UIButtonPressAnimation : MonoBehaviour,
 
     public void OnPointerExit(PointerEventData eventData)
     {
+        if (!canAnimate)
+        {
+            return;
+        }
+
         // Vinger/muis verlaat knop tijdens press → soepel terug naar normaal.
         StopScaleAnimation();
         scaleCoroutine = StartCoroutine(
@@ -105,7 +128,7 @@ public class UIButtonPressAnimation : MonoBehaviour,
     private void OnDisable()
     {
         StopScaleAnimation();
-        if (visualTransform != null)
+        if (canAnimate && visualTransform != null)
         {
             visualTransform.localScale = originalScale;
         }

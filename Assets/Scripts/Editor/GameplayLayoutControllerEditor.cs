@@ -125,6 +125,74 @@ public class GameplayLayoutControllerEditor : Editor
                 EditorUtility.SetDirty(controller);
             }
 
+            EditorGUILayout.Space(10);
+            EditorGUILayout.LabelField("Pause Menu Authoring", EditorStyles.boldLabel);
+            EditorGUILayout.HelpBox(
+                "Shows PausePanel with runtime Restart cost (25) and the current " +
+                "Tall / Compact / Wide modal layout. Non-destructive — does not " +
+                "pause gameplay, spend coins, or write prefs.\n" +
+                "Apply Preview Layout first for the target device mode, then Preview Pause.",
+                MessageType.Info);
+
+            PauseManager pauseManager = Object.FindAnyObjectByType<PauseManager>();
+            if (pauseManager != null && pauseManager.IsEditorPausePreviewActive)
+            {
+                EditorGUILayout.HelpBox("Pause menu preview ACTIVE", MessageType.Warning);
+            }
+
+            if (GUILayout.Button("Preview Pause Menu", GUILayout.Height(32)))
+            {
+                if (pauseManager == null)
+                {
+                    Debug.LogWarning(
+                        "[PausePreview] No PauseManager in the open scene.");
+                }
+                else
+                {
+                    if (pauseManager.PausePanel != null)
+                    {
+                        Undo.RecordObject(pauseManager.PausePanel, "Preview Pause Menu");
+                    }
+
+                    Undo.RecordObject(pauseManager, "Preview Pause Menu");
+
+                    // Modal geometry comes from Apply Preview Layout (shared runtime path).
+                    // If a layout preview is already active, refresh modal for that kind.
+                    if (controller.IsAuthoringPreviewActive)
+                    {
+                        controller.EditorRefreshPausePanelPresentation();
+                    }
+
+                    pauseManager.EditorPreviewPauseMenu();
+                    EditorUtility.SetDirty(pauseManager);
+                    EditorUtility.SetDirty(controller);
+                }
+            }
+
+            if (GUILayout.Button("Hide Pause Menu Preview", GUILayout.Height(28)))
+            {
+                if (pauseManager != null)
+                {
+                    if (pauseManager.PausePanel != null)
+                    {
+                        Undo.RecordObject(
+                            pauseManager.PausePanel,
+                            "Hide Pause Menu Preview");
+                    }
+
+                    Undo.RecordObject(pauseManager, "Hide Pause Menu Preview");
+                    pauseManager.EditorHidePauseMenuPreview();
+                    EditorUtility.SetDirty(pauseManager);
+                }
+            }
+
+            if (GUILayout.Button("Capture Pause Menu Layout", GUILayout.Height(28)))
+            {
+                Undo.RecordObject(controller, "Capture Pause Menu Layout");
+                controller.EditorCapturePauseMenuLayout();
+                MarkProfileDirty(controller);
+            }
+
             if (GUILayout.Button("Repair Phone Hierarchy (TopHUD cards)", GUILayout.Height(28)))
             {
                 Undo.RegisterFullObjectHierarchyUndo(

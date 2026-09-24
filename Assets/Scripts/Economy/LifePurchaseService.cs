@@ -83,6 +83,7 @@ public static class LifePurchaseService
         );
 #endif
 
+        AudioManager.TryPlayRewardReceived();
         return LifePurchaseResult.Success;
     }
 
@@ -161,6 +162,7 @@ public static class LifePurchaseService
         );
 #endif
 
+        AudioManager.TryPlayRewardReceived();
         return LifePurchaseResult.Success;
     }
 
@@ -176,10 +178,13 @@ public static class LifePurchaseService
     }
 #endif
 
-    /// <summary>Resolves the active scene CoinManager (authoritative balance owner).</summary>
+    /// <summary>
+    /// Resolves the active CoinManager, creating a scene-local host if needed
+    /// so LevelSelect (and other scenes without an authored manager) can purchase.
+    /// </summary>
     public static CoinManager ResolveCoinManager()
     {
-        return UnityEngine.Object.FindAnyObjectByType<CoinManager>();
+        return CoinManager.EnsureInstance();
     }
 
     /// <summary>Resolves the active scene AdsManager if present.</summary>

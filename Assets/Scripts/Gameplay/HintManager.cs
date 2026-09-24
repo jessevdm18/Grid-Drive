@@ -135,7 +135,7 @@ public class HintManager : MonoBehaviour
 
         if (audioManager == null)
         {
-            audioManager = FindAnyObjectByType<AudioManager>();
+            audioManager = AudioManager.Resolve();
         }
 
         if (hintStatusText != null)
@@ -804,8 +804,8 @@ public class HintManager : MonoBehaviour
             return;
         }
 
-        // Succesvolle hint-presentatie (paid of rewarded).
-        audioManager?.PlayHint();
+        // Succesvolle hint-presentatie (paid of rewarded) — persistent AudioManager.
+        AudioManager.TryPlayRewardReceived();
         LogHintUsedTelemetry();
 
         highlightedVehicle = vehicle;

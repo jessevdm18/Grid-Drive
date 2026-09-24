@@ -335,15 +335,16 @@ public class LivesManager : MonoBehaviour
 
     /// <summary>
     /// Central zero-lives gate. Does NOT consume a life on success.
-    /// Returns false when CurrentLives == 0 (unless <paramref name="bypassForV1Playtest"/>).
+    /// Returns false when CurrentLives == 0 (unless <paramref name="bypassLivesGate"/>).
+    /// Used by V1 playtest and Daily Challenge — does not fake or mutate lives.
     /// </summary>
-    public bool TryBeginLevelAttempt(string source, bool bypassForV1Playtest = false)
+    public bool TryBeginLevelAttempt(string source, bool bypassLivesGate = false)
     {
-        if (bypassForV1Playtest)
+        if (bypassLivesGate)
         {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             Debug.Log(
-                "[Lives] V1 playtest bypass: attempt allowed | source=" +
+                "[Lives] Lives-gate bypass: attempt allowed | source=" +
                 (string.IsNullOrEmpty(source) ? "unknown" : source)
             );
 #endif
@@ -548,6 +549,13 @@ public class LivesManager : MonoBehaviour
         if (lives != livesBefore || nextLifeUtcTicks != ticksBefore)
         {
             PersistAndNotify();
+        }
+
+        // One SFX for the whole regen pass when at least one life was granted.
+        // Skip cold Awake bootstrap — AudioManager may not be ready yet.
+        if (granted > 0 && reason != "Awake")
+        {
+            AudioManager.TryPlayRewardReceived();
         }
     }
 

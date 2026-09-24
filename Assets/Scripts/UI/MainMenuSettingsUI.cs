@@ -32,7 +32,7 @@ public class MainMenuSettingsUI : MonoBehaviour
     {
         if (audioManager == null)
         {
-            audioManager = FindAnyObjectByType<AudioManager>();
+            audioManager = AudioManager.Resolve();
         }
 
         // SettingsPanel start standaard dicht.

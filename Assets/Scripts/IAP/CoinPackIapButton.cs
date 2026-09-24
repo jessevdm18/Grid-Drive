@@ -17,6 +17,7 @@ public class CoinPackIapButton : MonoBehaviour
     private void Awake()
     {
         ResolveRefs();
+        EnsurePriceLabelPresentation();
 
         if (ctaButton != null)
         {
@@ -105,6 +106,34 @@ public class CoinPackIapButton : MonoBehaviour
             {
                 priceLabel = label.GetComponent<TextMeshProUGUI>();
             }
+        }
+    }
+
+    /// <summary>
+    /// Authoritative IAP price presentation (matches MainMenu Shop).
+    /// Auto Size + inset SizeDelta so MainMenu/Gameplay cannot drift apart.
+    /// </summary>
+    private void EnsurePriceLabelPresentation()
+    {
+        if (priceLabel == null)
+        {
+            return;
+        }
+
+        priceLabel.enableAutoSizing = true;
+        priceLabel.fontSizeMin = 18f;
+        priceLabel.fontSizeMax = 72f;
+
+        RectTransform rt = priceLabel.rectTransform;
+        if (rt == null)
+        {
+            return;
+        }
+
+        // Stretch-full labels: MainMenu uses (-50,-50) inset inside the purple CTA.
+        if (rt.anchorMin == Vector2.zero && rt.anchorMax == Vector2.one)
+        {
+            rt.sizeDelta = new Vector2(-50f, -50f);
         }
     }
 }

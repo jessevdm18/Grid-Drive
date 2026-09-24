@@ -62,6 +62,9 @@ public class LevelManager : MonoBehaviour
     // Editor V1 playtest: direct LevelData (niet via MainLevelDatabase index).
     private LevelData editorPlaytestLevel;
 
+    // Daily Challenge session: direct LevelData; never writes campaign progression.
+    private LevelData dailyChallengeLevel;
+
     private SkinManager skinManager;
 
     /// <summary>
@@ -96,11 +99,25 @@ public class LevelManager : MonoBehaviour
     public bool IsV1CandidatePlaytest => editorPlaytestLevel != null;
 
     /// <summary>
-    /// Central zero-lives gate. V1 candidate playtest bypasses. Does not consume a life.
+    /// True when Gameplay was launched as today's Daily Challenge (non-campaign).
+    /// </summary>
+    public bool IsDailyChallengeSession => dailyChallengeLevel != null;
+
+    /// <summary>
+    /// Non-campaign session (V1 playtest or Daily Challenge).
+    /// </summary>
+    public bool IsNonCampaignSession =>
+        editorPlaytestLevel != null || dailyChallengeLevel != null;
+
+    /// <summary>
+    /// Central zero-lives gate. V1 / Daily Challenge bypass. Does not consume a life.
     /// </summary>
     private bool TryAuthorizeLevelAttempt(string source)
     {
-        bool v1Bypass = IsV1CandidatePlaytest;
+        bool bypass = IsV1CandidatePlaytest ||
+            IsDailyChallengeSession ||
+            DailyChallengeContext.HasPending ||
+            DailyChallengeContext.IsActiveSession;
         LivesManager livesManager = LivesManager.EnsureInstance();
         if (livesManager == null)
         {
@@ -110,7 +127,7 @@ public class LevelManager : MonoBehaviour
             return true;
         }
 
-        return livesManager.TryBeginLevelAttempt(source, v1Bypass);
+        return livesManager.TryBeginLevelAttempt(source, bypass);
     }
 
     /// <summary>
@@ -142,6 +159,11 @@ public class LevelManager : MonoBehaviour
                 return editorPlaytestLevel;
             }
 
+            if (dailyChallengeLevel != null)
+            {
+                return dailyChallengeLevel;
+            }
+
             if (levelDatabase == null)
             {
                 return null;
@@ -160,6 +182,11 @@ public class LevelManager : MonoBehaviour
         if (editorPlaytestLevel != null)
         {
             return editorPlaytestLevel.levelNumber;
+        }
+
+        if (dailyChallengeLevel != null)
+        {
+            return dailyChallengeLevel.levelNumber;
         }
 
         if (levelDatabase == null || currentLevelIndex < 0)
@@ -243,6 +270,33 @@ public class LevelManager : MonoBehaviour
         }
 #endif
 
+        // Daily Challenge (runtime + Editor): consume armed LevelData before campaign load.
+        DailyChallengeManager.EnsureInstance();
+        DailyChallengeConfig dailyConfig =
+            DailyChallengeManager.Instance != null
+                ? DailyChallengeManager.Instance.Config
+                : DailyChallengeConfig.LoadDefault();
+        if (DailyChallengeContext.TryConsumePendingLevel(dailyConfig, out LevelData dailyLevel))
+        {
+            dailyChallengeLevel = dailyLevel;
+            editorPlaytestLevel = null;
+            currentLevelIndex = -1;
+            DailyChallengeRunTracker.EnsureInScene();
+            LoadLevelData(dailyLevel);
+            MarkFirstLaunchDone();
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            Debug.Log(
+                "[DailyChallenge]\n" +
+                "Stage=GameplayLoaded\n" +
+                "Asset=" + dailyLevel.name + "\n" +
+                "Difficulty=" + dailyLevel.difficulty + "\n" +
+                "DisplayNumber=" + dailyLevel.levelNumber
+            );
+#endif
+            return;
+        }
+
         // Authoritative: SaveManager only. Serialized Inspector index is never used as source.
         // Safety net if Splash was skipped (Editor Play from Gameplay).
         LevelDatabaseContentVersion.ApplyIfNeeded();
@@ -290,6 +344,7 @@ public class LevelManager : MonoBehaviour
             // Stale save / mismatch: difficulty+order gate — never play a locked tier level.
             if (saveManager != null &&
                 editorPlaytestLevel == null &&
+                dailyChallengeLevel == null &&
                 !saveManager.IsLevelUnlocked(
                     currentLevelIndex,
                     levelDatabase,
@@ -356,6 +411,14 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     public void LoadNextLevel()
     {
+        if (IsDailyChallengeSession)
+        {
+            Debug.Log("[DailyChallenge] Next Level disabled — returning to MainMenu.");
+            DailyChallengeManager.EnsureInstance()?.NotifyAbandoned("next_level");
+            SceneTransition.LoadScene("MainMenu");
+            return;
+        }
+
         if (IsV1CandidatePlaytest)
         {
             Debug.Log(
@@ -481,22 +544,34 @@ public class LevelManager : MonoBehaviour
 
     /// <summary>
     /// Herlaadt hetzelfde level. Verhoogt de index NIET en leest/schrijft SaveManager NIET.
+    /// Returns false when the lives gate blocks the reload (board unchanged).
     /// </summary>
-    public void RestartLevel()
+    public bool RestartLevel(
+        int restartCost = 0,
+        string restartType = "unspecified")
     {
+        if (IsDailyChallengeSession || DailyChallengeContext.IsActiveSession)
+        {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            Debug.LogWarning(
+                "[DailyChallenge] RestartLevel rejected — one attempt only.");
+#endif
+            return false;
+        }
+
         if (!TryAuthorizeLevelAttempt("restart"))
         {
             // Keep current failed/active board — no destructive reload.
-            return;
+            return false;
         }
 
-        LogLevelRestartTelemetry();
+        LogLevelRestartTelemetry(restartCost, restartType);
 
         if (editorPlaytestLevel != null)
         {
             Debug.Log("Restarting V1 playtest level: " + editorPlaytestLevel.name);
             LoadLevelData(editorPlaytestLevel, authorizedAttempt: true);
-            return;
+            return true;
         }
 
         // Bewaar de index lokaal — Restart mag currentLevelIndex nooit wijzigen.
@@ -506,16 +581,22 @@ public class LevelManager : MonoBehaviour
 
         currentLevelIndex = indexToReload;
         LoadLevel(authorizedAttempt: true);
+        return true;
     }
 
-    private void LogLevelRestartTelemetry()
+    private void LogLevelRestartTelemetry(int restartCost, string restartType)
     {
         LevelData data = CurrentLevelData;
         string difficulty = data != null
             ? data.difficulty.ToString()
             : CurrentDifficulty.ToString();
         int movesUsed = gameManager != null ? gameManager.CurrentMoves : 0;
-        GameAnalytics.LogLevelRestart(GetDisplayLevelNumber(), difficulty, movesUsed);
+        GameAnalytics.LogLevelRestart(
+            GetDisplayLevelNumber(),
+            difficulty,
+            movesUsed,
+            restartCost,
+            restartType);
     }
 
     /// <summary>
@@ -532,6 +613,12 @@ public class LevelManager : MonoBehaviour
         if (editorPlaytestLevel != null)
         {
             LoadLevelData(editorPlaytestLevel, authorizedAttempt);
+            return;
+        }
+
+        if (dailyChallengeLevel != null)
+        {
+            LoadLevelData(dailyChallengeLevel, authorizedAttempt);
             return;
         }
 

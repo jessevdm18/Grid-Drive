@@ -42,6 +42,30 @@ public class CoinManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Finds an active CoinManager, or creates a scene-local host that loads
+    /// PlayerPrefs. Does not use DontDestroyOnLoad — scene CoinManagers stay
+    /// authoritative when present (MainMenu/Gameplay). Fixes LevelSelect and
+    /// any scene that opens OutOfLives without an authored CoinManager.
+    /// Persistence keys/behavior are unchanged.
+    /// </summary>
+    public static CoinManager EnsureInstance()
+    {
+        CoinManager existing = FindAnyObjectByType<CoinManager>();
+        if (existing != null)
+        {
+            return existing;
+        }
+
+        if (!Application.isPlaying)
+        {
+            return null;
+        }
+
+        GameObject go = new GameObject("CoinManager");
+        return go.AddComponent<CoinManager>();
+    }
+
+    /// <summary>
     /// Geeft het huidige aantal coins terug.
     /// </summary>
     public int GetCoins()

@@ -10,6 +10,10 @@ using UnityEngine.UI;
 /// Places Inspector-editable Lives HUD / OutOfLives UI into player scenes.
 /// Auto-authors on scene open (toggleable). Does not alter economy logic.
 /// Global move-limit failures reuse MissionFailedLimitPanel (MoveLimitMissionUI).
+///
+/// Preferred visual sync for MainMenu/LevelSelect:
+/// Rush Out → UI → Sync Lives UI From Gameplay To MainMenu + LevelSelect
+/// Ensure* methods never overwrite existing authored trees.
 /// </summary>
 [InitializeOnLoad]
 public static class LivesUiSceneAuthoringMenu
@@ -182,8 +186,10 @@ public static class LivesUiSceneAuthoringMenu
 
     private static bool EnsureLivesHud(Transform parent)
     {
-        if (Object.FindAnyObjectByType<LivesHUD>() != null)
+        Scene scene = parent != null ? parent.gameObject.scene : default;
+        if (FindInScene<LivesHUD>(scene) != null)
         {
+            // Never overwrite an existing authored LivesHUD (Gameplay sync is source of truth).
             return false;
         }
 
@@ -238,8 +244,10 @@ public static class LivesUiSceneAuthoringMenu
 
     private static bool EnsureOutOfLives(Transform canvas)
     {
-        if (Object.FindAnyObjectByType<OutOfLivesUI>() != null)
+        Scene scene = canvas != null ? canvas.gameObject.scene : default;
+        if (FindInScene<OutOfLivesUI>(scene) != null)
         {
+            // Never overwrite an existing authored OutOfLivesUI (use Sync From Gameplay).
             return false;
         }
 
@@ -458,6 +466,27 @@ public static class LivesUiSceneAuthoringMenu
         StretchFull(tmp.rectTransform);
         tmp.raycastTarget = false;
         return button;
+    }
+
+    private static T FindInScene<T>(Scene scene) where T : Component
+    {
+        if (!scene.IsValid() || !scene.isLoaded)
+        {
+            return null;
+        }
+
+        T[] all = Object.FindObjectsByType<T>(
+            FindObjectsInactive.Include,
+            FindObjectsSortMode.None);
+        for (int i = 0; i < all.Length; i++)
+        {
+            if (all[i] != null && all[i].gameObject.scene == scene)
+            {
+                return all[i];
+            }
+        }
+
+        return null;
     }
 }
 #endif

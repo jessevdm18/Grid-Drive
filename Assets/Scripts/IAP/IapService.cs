@@ -473,6 +473,7 @@ public class IapService : MonoBehaviour
         if (newlyGranted)
         {
             OnPurchaseFulfilled?.Invoke(productId, coinAmount);
+            AudioManager.TryPlayRewardReceived();
         }
 
         // Confirm/consume only after durable fulfillment (or prior fulfillment).

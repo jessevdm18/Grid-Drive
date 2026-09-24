@@ -68,7 +68,7 @@ public class GameplayUndoManager : MonoBehaviour
 
         if (audioManager == null)
         {
-            audioManager = FindAnyObjectByType<AudioManager>();
+            audioManager = AudioManager.Resolve();
         }
     }
 

@@ -1,10 +1,23 @@
 using UnityEngine;
 
+/// <summary>
+/// Authoritative SFX (and optional local music fallback).
+/// Persistent DontDestroyOnLoad singleton — one instance across MainMenu / LevelSelect / Gameplay.
+/// Scene-placed AudioManagers merge missing clips into the survivor, then destroy themselves.
+/// </summary>
 [RequireComponent(typeof(AudioSource))]
 public class AudioManager : MonoBehaviour
 {
     private const string MusicEnabledKey = "MusicEnabled";
     private const string SfxEnabledKey = "SfxEnabled";
+
+    public static AudioManager Instance { get; private set; }
+
+    /// <summary>
+    /// True after OnApplicationQuit / Play Mode exit — must not spawn managers.
+    /// Reset on SubsystemRegistration (domain reload on/off).
+    /// </summary>
+    private static bool isApplicationQuitting;
 
     [Header("SFX Clips")]
     [SerializeField] private AudioClip buttonClip;
@@ -79,11 +92,68 @@ public class AudioManager : MonoBehaviour
     /// </summary>
     private AudioSource pitchedSfxSource;
 
+    /// <summary>
+    /// Timed countdown beeps only. Isolated so PlayMove pitch never retunes an
+    /// overlapping countdown PlayOneShot (Unity applies source.pitch to all voices).
+    /// </summary>
+    private AudioSource countdownSfxSource;
+
     public bool MusicEnabled { get; private set; } = true;
     public bool SfxEnabled { get; private set; } = true;
 
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetStatics()
+    {
+        Instance = null;
+        isApplicationQuitting = false;
+    }
+
+#if UNITY_EDITOR
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
+    private static void EditorResetQuittingFlag()
+    {
+        // Enter Play Mode Options can skip SubsystemRegistration ordering.
+        isApplicationQuitting = false;
+    }
+#endif
+
+    /// <summary>
+    /// Existing DDOL / scene AudioManager only — never creates a temporary manager.
+    /// </summary>
+    public static AudioManager Resolve()
+    {
+        if (isApplicationQuitting)
+        {
+            return null;
+        }
+
+        if (Instance != null)
+        {
+            return Instance;
+        }
+
+        return Object.FindFirstObjectByType<AudioManager>();
+    }
+
     private void Awake()
     {
+        if (isApplicationQuitting)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        if (Instance != null && Instance != this)
+        {
+            // Fill gaps on the survivor (e.g. Gameplay hintClip → MainMenu DDOL), then drop.
+            Instance.AbsorbMissingClipsFrom(this);
+            Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+
         audioSource = GetComponent<AudioSource>();
         if (audioSource != null)
         {
@@ -109,6 +179,54 @@ public class AudioManager : MonoBehaviour
         LoadAudioSettings();
         ApplyMusicSetting();
         // Persistent muziek leeft in MusicManager — hier geen Play().
+    }
+
+    private void OnDestroy()
+    {
+        if (Instance == this)
+        {
+            Instance = null;
+        }
+    }
+
+    private void OnApplicationQuit()
+    {
+        isApplicationQuitting = true;
+    }
+
+    /// <summary>
+    /// Copies non-null clip references from a scene AudioManager into this survivor
+    /// without overwriting clips that are already assigned.
+    /// </summary>
+    private void AbsorbMissingClipsFrom(AudioManager donor)
+    {
+        if (donor == null || donor == this)
+        {
+            return;
+        }
+
+        if (buttonClip == null) buttonClip = donor.buttonClip;
+        if (moveClip == null) moveClip = donor.moveClip;
+        if (blockedClip == null) blockedClip = donor.blockedClip;
+        if (coinClip == null) coinClip = donor.coinClip;
+        if (winClip == null) winClip = donor.winClip;
+        if (upgradeClip == null) upgradeClip = donor.upgradeClip;
+        if (vehicleExitClip == null) vehicleExitClip = donor.vehicleExitClip;
+        if (coinSpendClip == null) coinSpendClip = donor.coinSpendClip;
+        if (hintClip == null) hintClip = donor.hintClip;
+        if (skinSelectClip == null) skinSelectClip = donor.skinSelectClip;
+        if (panelOpenClip == null) panelOpenClip = donor.panelOpenClip;
+        if (panelCloseClip == null) panelCloseClip = donor.panelCloseClip;
+        if (insufficientCoinsClip == null) insufficientCoinsClip = donor.insufficientCoinsClip;
+        if (ambulanceMissionStartClip == null) ambulanceMissionStartClip = donor.ambulanceMissionStartClip;
+        if (countdownBeepClip == null) countdownBeepClip = donor.countdownBeepClip;
+        if (timedMissionFailedClip == null) timedMissionFailedClip = donor.timedMissionFailedClip;
+        if (moveLimitWarningClip == null) moveLimitWarningClip = donor.moveLimitWarningClip;
+        if (moveLimitFailedClip == null) moveLimitFailedClip = donor.moveLimitFailedClip;
+        if (multiTargetRescueClip == null) multiTargetRescueClip = donor.multiTargetRescueClip;
+        if (noTouchFailedClip == null) noTouchFailedClip = donor.noTouchFailedClip;
+        if (fragileCargoFailedClip == null) fragileCargoFailedClip = donor.fragileCargoFailedClip;
+        if (limitedVehicleLockedClip == null) limitedVehicleLockedClip = donor.limitedVehicleLockedClip;
     }
 
     /// <summary>
@@ -213,11 +331,33 @@ public class AudioManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Positive reward feedback (hint reveal, life gained, shop coin IAP).
+    /// Same clip as successful hint presentation — pitch 1.0.
+    /// </summary>
+    public void PlayRewardReceived()
+    {
+        PlaySfx(hintClip, hintVolume);
+    }
+
+    /// <summary>
     /// Succesvolle hint-presentatie aan de speler. Pitch vast 1.0.
     /// </summary>
     public void PlayHint()
     {
-        PlaySfx(hintClip, hintVolume);
+        PlayRewardReceived();
+    }
+
+    /// <summary>
+    /// Plays <see cref="PlayRewardReceived"/> on the persistent AudioManager if present.
+    /// Does not create managers (safe from DDOL economy code / Play Mode teardown).
+    /// </summary>
+    public static void TryPlayRewardReceived()
+    {
+        AudioManager existing = Resolve();
+        if (existing != null)
+        {
+            existing.PlayRewardReceived();
+        }
     }
 
     /// <summary>
@@ -260,13 +400,26 @@ public class AudioManager : MonoBehaviour
         PlaySfx(ambulanceMissionStartClip, ambulanceMissionStartVolume);
     }
 
-    /// <summary>
-    /// TimedAmbulance countdown 3/2/1. Optionele vaste pitch (pitched SFX source).
-    /// </summary>
     public void PlayCountdownBeep(float pitch = 1f)
     {
         float p = Mathf.Clamp(pitch, 0.5f, 2f);
-        PlaySfx(countdownBeepClip, countdownBeepVolume, p, p);
+        PlayCountdownSfx(countdownBeepClip, countdownBeepVolume, p);
+    }
+
+    /// <summary>
+    /// Stops any in-flight timed countdown beeps (win / fail / leave / retry).
+    /// </summary>
+    public void StopCountdownBeeps()
+    {
+        if (countdownSfxSource != null && countdownSfxSource.isPlaying)
+        {
+            countdownSfxSource.Stop();
+        }
+
+        if (countdownSfxSource != null)
+        {
+            countdownSfxSource.pitch = 1f;
+        }
     }
 
     /// <summary>
@@ -360,6 +513,28 @@ public class AudioManager : MonoBehaviour
         // mid-play terugtrekken. Alleen move/blocked gebruiken deze source.
     }
 
+    /// <summary>
+    /// Countdown beep on an isolated AudioSource so move/blocked pitch changes
+    /// cannot retune an already-playing beep.
+    /// </summary>
+    private void PlayCountdownSfx(AudioClip clip, float volumeScale, float pitch)
+    {
+        if (!SfxEnabled || clip == null)
+        {
+            return;
+        }
+
+        EnsureCountdownSfxSource();
+        if (countdownSfxSource == null)
+        {
+            return;
+        }
+
+        float volume = Mathf.Clamp01(sfxVolume * Mathf.Clamp01(volumeScale));
+        countdownSfxSource.pitch = pitch;
+        countdownSfxSource.PlayOneShot(clip, volume);
+    }
+
     private static float ResolvePitch(float pitchMin, float pitchMax)
     {
         float min = pitchMin;
@@ -392,6 +567,25 @@ public class AudioManager : MonoBehaviour
         pitchedSfxSource.volume = 1f;
         pitchedSfxSource.pitch = 1f;
         pitchedSfxSource.outputAudioMixerGroup =
+            audioSource != null ? audioSource.outputAudioMixerGroup : null;
+    }
+
+    private void EnsureCountdownSfxSource()
+    {
+        if (countdownSfxSource != null)
+        {
+            return;
+        }
+
+        countdownSfxSource = gameObject.AddComponent<AudioSource>();
+        countdownSfxSource.playOnAwake = false;
+        countdownSfxSource.loop = false;
+        countdownSfxSource.mute = false;
+        countdownSfxSource.spatialBlend = 0f;
+        countdownSfxSource.priority = audioSource != null ? audioSource.priority : 128;
+        countdownSfxSource.volume = 1f;
+        countdownSfxSource.pitch = 1f;
+        countdownSfxSource.outputAudioMixerGroup =
             audioSource != null ? audioSource.outputAudioMixerGroup : null;
     }
 }

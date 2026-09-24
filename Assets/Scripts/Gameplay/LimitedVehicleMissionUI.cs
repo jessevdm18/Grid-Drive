@@ -114,7 +114,7 @@ public class LimitedVehicleMissionUI : MonoBehaviour
 
         if (audioManager == null)
         {
-            audioManager = FindAnyObjectByType<AudioManager>();
+            audioManager = AudioManager.Resolve();
         }
 
         ResolveMarkerRefs();
@@ -230,7 +230,7 @@ public class LimitedVehicleMissionUI : MonoBehaviour
 
             if (audioManager == null)
             {
-                audioManager = FindAnyObjectByType<AudioManager>();
+                audioManager = AudioManager.Resolve();
             }
 
             if (audioManager != null)

@@ -35,24 +35,35 @@ public class GameManager : MonoBehaviour
     private int effectiveGlobalMoveLimit;
     private bool pendingGlobalMoveLimitFailCheck;
 
+    // MOVES card denominator only (global forgiving OR special authored MoveLimit).
+    // Failure checks still use globalMoveLimitActive / LevelObjectiveController.
+    private int movesCardLimitDenominator;
+
     public int CurrentMoves => currentMoves;
     public bool IsLevelCompleted => levelCompleted;
     public bool IsLevelFailed => levelFailed;
+
+    /// <summary>
+    /// True when the top MOVES card should show "current / limit"
+    /// (forgiving global or special authored MoveLimit).
+    /// </summary>
+    public bool ShouldShowMovesLimitDenominator => movesCardLimitDenominator > 0;
+
+    /// <summary>Denominator for the MOVES card, or 0 when plain current-moves.</summary>
+    public int MovesCardLimitDenominator =>
+        ShouldShowMovesLimitDenominator ? movesCardLimitDenominator : 0;
+
+    /// <summary>
+    /// Forgiving global limit only (0 on special MoveLimit / no limit).
+    /// </summary>
+    public int EffectiveGlobalMoveLimit =>
+        globalMoveLimitActive && effectiveGlobalMoveLimit > 0
+            ? effectiveGlobalMoveLimit
+            : 0;
     public bool IsTargetExitInProgress => targetExitInProgress;
     public bool IsSpecialMissionIntroPlaying => specialMissionIntroBlocked;
     public bool IsObjectiveTutorialPlaying => objectiveTutorialBlocked;
     public bool IsFeatureTutorialPlaying => featureTutorialBlocked;
-
-    /// <summary>
-    /// True when MOVES HUD should show "n / limit" (forgiving global only).
-    /// Special MoveLimit levels keep the dedicated remaining HUD instead.
-    /// </summary>
-    public bool ShouldShowGlobalMoveLimitDenominator =>
-        globalMoveLimitActive && effectiveGlobalMoveLimit > 0;
-
-    /// <summary>Forgiving global limit when active; otherwise 0.</summary>
-    public int EffectiveGlobalMoveLimit =>
-        ShouldShowGlobalMoveLimitDenominator ? effectiveGlobalMoveLimit : 0;
 
     /// <summary>Fired once when a genuine global move-limit FailLevel succeeds.</summary>
     public event Action OnGlobalMoveLimitFailed;
@@ -155,7 +166,7 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        audioManager = FindAnyObjectByType<AudioManager>();
+        audioManager = AudioManager.Resolve();
 
         if (gameplayUI == null)
         {
@@ -290,9 +301,20 @@ public class GameManager : MonoBehaviour
         pendingGlobalMoveLimitFailCheck = false;
         globalMoveLimitActive = false;
         effectiveGlobalMoveLimit = 0;
+        movesCardLimitDenominator = 0;
 
         if (levelData == null)
         {
+            RefreshMovesHud();
+            return;
+        }
+
+        // Daily Challenge: no terminal move limit; MOVES shows current only.
+        if (DailyChallengeGameplayPolicy.SuppressPerformanceFailures)
+        {
+            DailyChallengeGameplayPolicy.LogSuppressed(
+                "GlobalMoveLimit",
+                "limit inactive; moves HUD = current only");
             RefreshMovesHud();
             return;
         }
@@ -305,10 +327,16 @@ public class GameManager : MonoBehaviour
         switch (mode)
         {
             case GlobalMoveLimitUtility.LimitMode.SpecialMoveLimit:
+                // Display uses authored special limit; failure stays on LevelObjectiveController.
+                movesCardLimitDenominator = limit > 0 ? limit : 0;
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
                 Debug.Log(
                     "[MoveLimit] Effective limit=" + limit +
-                    " | objective=MoveLimit | mode=Special"
+                    " | objective=MoveLimit | mode=Special" +
+                    " | movesCard=" +
+                    (movesCardLimitDenominator > 0
+                        ? ("current / " + movesCardLimitDenominator)
+                        : "current only")
                 );
 #endif
                 break;
@@ -316,6 +344,7 @@ public class GameManager : MonoBehaviour
             case GlobalMoveLimitUtility.LimitMode.Global:
                 globalMoveLimitActive = true;
                 effectiveGlobalMoveLimit = limit;
+                movesCardLimitDenominator = limit > 0 ? limit : 0;
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
                 Debug.Log(
                     "[MoveLimit] Effective limit=" + limit +
@@ -398,8 +427,7 @@ public class GameManager : MonoBehaviour
         );
 #endif
 
-        FailLevel("global_move_limit");
-        if (levelFailed)
+        if (FailLevel("global_move_limit"))
         {
             OnGlobalMoveLimitFailed?.Invoke();
         }
@@ -412,9 +440,13 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        if (ShouldShowGlobalMoveLimitDenominator)
+        // Single formatting path:
+        // Special MoveLimit → current / authored special limit
+        // Global forgiving → current / global limit
+        // None → current only
+        if (movesCardLimitDenominator > 0)
         {
-            gameplayUI.UpdateMovesText(currentMoves, effectiveGlobalMoveLimit);
+            gameplayUI.UpdateMovesText(currentMoves, movesCardLimitDenominator);
         }
         else
         {
@@ -496,6 +528,17 @@ public class GameManager : MonoBehaviour
         levelFailed = false;
         targetExitInProgress = true;
 
+        // Daily: freeze stopwatch at authoritative solve moment (before win UI / FX).
+        DailyChallengeResult dailyResult = default;
+        bool dailySolved =
+            (levelManager != null && levelManager.IsDailyChallengeSession) ||
+            DailyChallengeGameplayPolicy.IsActive;
+        if (dailySolved)
+        {
+            DailyChallengeRunTracker tracker = DailyChallengeRunTracker.EnsureInScene();
+            dailyResult = tracker.StopAndBuildResult();
+        }
+
         if (levelObjectiveController == null)
         {
             levelObjectiveController = FindAnyObjectByType<LevelObjectiveController>();
@@ -525,6 +568,34 @@ public class GameManager : MonoBehaviour
         LastEarnedCoins = 0;
         coinsFeatureTutorialTriggerPending = false;
         PendingDifficultyUnlockNotice = null;
+
+        // Daily Challenge: persist scored result; skip campaign writes / normal win panel.
+        if (dailySolved)
+        {
+            DailyChallengeManager.EnsureInstance()?.NotifyGameplayCompleted(dailyResult);
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            Debug.Log(
+                "[DailyChallenge] CompleteLevel — skipping stars/coins/unlock writes."
+            );
+#endif
+
+            DailyChallengeResultUI resultUi =
+                FindAnyObjectByType<DailyChallengeResultUI>(FindObjectsInactive.Include);
+            if (resultUi != null)
+            {
+                resultUi.Show(dailyResult);
+            }
+            else
+            {
+                Debug.LogWarning(
+                    "[DailyChallenge] No DailyChallengeResultUI in scene — " +
+                    "run Rush Out → UI → Create Daily Challenge Gameplay Result UI.");
+            }
+
+            audioManager?.PlayWin();
+            return;
+        }
 
         FeatureTutorialController.BeginCoinsFtSession();
 
@@ -703,13 +774,22 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Special mission failed: geen win, unlock, stars of reward.
+    /// Special mission / global move-limit failed: geen win, unlock, stars of reward.
+    /// Returns true when this call accepted the terminal failure (first only).
     /// </summary>
-    public void FailLevel(string failReason = "mission_failed")
+    public bool FailLevel(string failReason = "mission_failed")
     {
         if (levelCompleted || levelFailed || targetExitInProgress)
         {
-            return;
+            return false;
+        }
+
+        // Daily Challenge: performance fails never terminate the attempt.
+        if (DailyChallengeGameplayPolicy.SuppressPerformanceFailures &&
+            DailyChallengeGameplayPolicy.IsPerformanceFailReason(failReason))
+        {
+            DailyChallengeGameplayPolicy.LogSuppressed("FailLevel", failReason);
+            return false;
         }
 
         levelFailed = true;
@@ -723,9 +803,18 @@ public class GameManager : MonoBehaviour
 
         ClearUndoHistory();
 
+        // Stop timed/objective ticking immediately — do not wait for a later timeout.
+        if (levelObjectiveController == null)
+        {
+            levelObjectiveController = FindAnyObjectByType<LevelObjectiveController>();
+        }
+
+        levelObjectiveController?.NotifyLevelFailed();
+
         ReportLevelFailTelemetry(failReason);
 
         Debug.Log("LEVEL FAILED (special mission).");
+        return true;
     }
 
     /// <summary>
@@ -739,6 +828,19 @@ public class GameManager : MonoBehaviour
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             Debug.Log(
                 "[Lives] V1 playtest bypass: no life consumed | reason=" +
+                failReason
+            );
+#endif
+            return;
+        }
+
+        if (levelManager != null && levelManager.IsDailyChallengeSession)
+        {
+            // Life bypass kept as defense-in-depth; Phase 2 should not reach FailLevel
+            // for performance reasons.
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            Debug.Log(
+                "[DailyChallenge] FailLevel reached unexpectedly — no life consumed. | reason=" +
                 failReason
             );
 #endif
