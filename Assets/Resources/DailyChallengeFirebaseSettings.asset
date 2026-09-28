@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c5d48ee8f14486aac071a233c11a3be, type: 3}
+  m_Name: DailyChallengeFirebaseSettings
+  m_EditorClassIdentifier: Assembly-CSharp::DailyChallengeFirebaseSettings
+  projectId: grid-drive
+  apiKey: AIzaSyA-F3rgyMzVD-8E139iTsor7mR5-bYTsX8
+  functionsRegion: europe-west1
+  useFunctionsEmulator: 0
+  functionsEmulatorHost: 127.0.0.1
+  functionsEmulatorPort: 5001

@@ -1,0 +1,33 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null && request.auth.uid != null;
+    }
+
+    // Phase 4.1B: ALL authoritative Daily writes go through Cloud Functions (Admin SDK).
+    // Clients have READ access only for challenge / attempts / leaderboard presentation.
+
+    match /dailyMeta/{docId} {
+      allow read: if isSignedIn();
+      allow write: if false;
+    }
+
+    match /dailyChallenges/{dayId} {
+      allow read: if isSignedIn();
+      allow create, update, delete: if false;
+
+      match /attempts/{userId} {
+        // Signed-in clients may read Completed attempts for GLOBAL leaderboard.
+        // Own attempt readable for UI sync. No client writes.
+        allow read: if isSignedIn();
+        allow create, update, delete: if false;
+      }
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -3,7 +3,7 @@ using UnityEngine;
 
 /// <summary>
 /// Optional authored Daily Challenge Gameplay HUD badge (DAILY CHALLENGE / ONE ATTEMPT).
-/// Activates only during Daily sessions.
+/// Host GameObject should start active so Start runs; non-Daily sessions hide it.
 /// </summary>
 public class DailyChallengeGameplayHud : MonoBehaviour
 {
@@ -14,14 +14,17 @@ public class DailyChallengeGameplayHud : MonoBehaviour
     private void Start()
     {
         bool daily = DailyChallengeGameplayPolicy.IsActive;
-        if (root != null)
-        {
-            root.SetActive(daily);
-        }
+        GameObject visual = root != null ? root : gameObject;
 
         if (!daily)
         {
+            visual.SetActive(false);
             return;
+        }
+
+        if (!visual.activeSelf)
+        {
+            visual.SetActive(true);
         }
 
         if (titleText != null)

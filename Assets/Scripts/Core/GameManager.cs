@@ -580,6 +580,8 @@ public class GameManager : MonoBehaviour
             );
 #endif
 
+            // Persist + mark Completed before presentation.
+            // Context stays armed until ResultUI CONTINUE (not cleared here).
             DailyChallengeResultUI resultUi =
                 FindAnyObjectByType<DailyChallengeResultUI>(FindObjectsInactive.Include);
             if (resultUi != null)
@@ -588,9 +590,14 @@ public class GameManager : MonoBehaviour
             }
             else
             {
-                Debug.LogWarning(
+                Debug.LogError(
                     "[DailyChallenge] No DailyChallengeResultUI in scene — " +
-                    "run Rush Out → UI → Create Daily Challenge Gameplay Result UI.");
+                    "run Rush Out → UI → Create Daily Challenge Gameplay Result UI. " +
+                    "Result was persisted; returning to MainMenu.");
+                DailyChallengeContext.ClearSession();
+                Time.timeScale = 1f;
+                SceneTransition.LoadScene("MainMenu");
+                return;
             }
 
             audioManager?.PlayWin();

@@ -486,6 +486,90 @@ public static class GameAnalytics
         LogDailySimple("daily_challenge_abandon", dayId, levelAsset, reason);
     }
 
+    public static void LogDailyLeaderboardView(
+        string dayId,
+        bool playerHasResult,
+        int playerRank,
+        int entryCount)
+    {
+        if (!FirebaseManager.IsReady)
+        {
+            return;
+        }
+
+        try
+        {
+            FirebaseAnalytics.LogEvent(
+                "daily_leaderboard_view",
+                new Parameter("day_id", Safe(dayId)),
+                new Parameter("player_has_result", playerHasResult ? 1L : 0L),
+                new Parameter("player_rank", (long)playerRank),
+                new Parameter("entry_count", (long)entryCount));
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError("GameAnalytics.LogDailyLeaderboardView failed — " + ex.Message);
+        }
+    }
+
+    public static void LogDailyLeaderboardOnlineView(
+        string dayId,
+        bool playerHasResult,
+        int playerRank,
+        int entryCount)
+    {
+        LogDailySimple("daily_leaderboard_online_view", dayId, null, null);
+        // Also emit structured fields when Firebase ready.
+        if (!FirebaseManager.IsReady)
+        {
+            return;
+        }
+
+        try
+        {
+            FirebaseAnalytics.LogEvent(
+                "daily_leaderboard_online_view",
+                new Parameter("day_id", Safe(dayId)),
+                new Parameter("player_has_result", playerHasResult ? 1L : 0L),
+                new Parameter("player_rank", (long)playerRank),
+                new Parameter("entry_count", (long)entryCount));
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError("GameAnalytics.LogDailyLeaderboardOnlineView failed — " + ex.Message);
+        }
+    }
+
+    public static void LogDailyBackendStartSuccess(string dayId)
+    {
+        LogDailySimple("daily_backend_start_success", dayId, null, null);
+    }
+
+    public static void LogDailyBackendStartRejected(string dayId, string reason)
+    {
+        LogDailySimple("daily_backend_start_rejected", dayId, null, reason);
+    }
+
+    public static void LogDailyBackendStartError(string dayId, string reason)
+    {
+        LogDailySimple("daily_backend_start_error", dayId, null, reason);
+    }
+
+    public static void LogDailyResultSubmitSuccess(string dayId)
+    {
+        LogDailySimple("daily_result_submit_success", dayId, null, null);
+    }
+
+    public static void LogDailyResultSubmitRetry(string dayId)
+    {
+        LogDailySimple("daily_result_submit_retry", dayId, null, null);
+    }
+
+    public static void LogDailyResultSubmitError(string dayId, string reason)
+    {
+        LogDailySimple("daily_result_submit_error", dayId, null, reason);
+    }
+
     private static void LogDailySimple(
         string eventName,
         string dayId,

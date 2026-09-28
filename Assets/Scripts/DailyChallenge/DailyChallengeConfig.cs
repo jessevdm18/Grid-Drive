@@ -2,7 +2,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Authored Daily Challenge settings: level pool, score V1 tuning, Resources path.
+/// Authored Daily Challenge settings: candidate level pool, score V1 tuning.
+/// Selection always filters through <see cref="DailyChallengeLevelEligibility"/>.
 /// </summary>
 [CreateAssetMenu(
     fileName = "DailyChallengeConfig",
@@ -11,7 +12,7 @@ public class DailyChallengeConfig : ScriptableObject
 {
     public const string ResourcesPath = "DailyChallengeConfig";
 
-    [Tooltip("Authored solvable LevelData pool. Same UTC day always picks the same entry.")]
+    [Tooltip("Candidate LevelData pool. Special/objective levels are filtered out at selection.")]
     [SerializeField] private List<LevelData> dailyLevelPool = new List<LevelData>();
 
     [Header("Score V1 — Move efficiency (primary)")]
@@ -23,6 +24,21 @@ public class DailyChallengeConfig : ScriptableObject
     [SerializeField] private int timeBonusMax = 20000;
     [SerializeField] private float timeReferenceSeconds = 60f;
 
+    [Header("Leaderboard — Simulated (Phase 3)")]
+    [Tooltip("Number of deterministic placeholder players per Daily day.")]
+    [SerializeField] private int simulatedLeaderboardPlayerCount = 30;
+
+    [Tooltip("DEV/Editor: show SIM markers on simulated rows. Production presentation hides them.")]
+    [SerializeField] private bool showSimulatedLeaderboardMarkers = false;
+
+    [Tooltip("Fill leaderboard with simulated rows until this many total entries.")]
+    [SerializeField] private int minimumLeaderboardPopulation = 30;
+
+    [Header("Backend (Phase 4.1)")]
+    [Tooltip("SimulatedLocal = PlayerPrefs authority. Online = Firebase REST authority.")]
+    [SerializeField] private DailyChallengeBackendMode backendMode =
+        DailyChallengeBackendMode.SimulatedLocal;
+
     public IReadOnlyList<LevelData> DailyLevelPool => dailyLevelPool;
 
     public int PoolCount => dailyLevelPool != null ? dailyLevelPool.Count : 0;
@@ -32,6 +48,10 @@ public class DailyChallengeConfig : ScriptableObject
     public int MinimumMoveScore => minimumMoveScore;
     public int TimeBonusMax => timeBonusMax;
     public float TimeReferenceSeconds => timeReferenceSeconds;
+    public int SimulatedLeaderboardPlayerCount => simulatedLeaderboardPlayerCount;
+    public bool ShowSimulatedLeaderboardMarkers => showSimulatedLeaderboardMarkers;
+    public int MinimumLeaderboardPopulation => minimumLeaderboardPopulation;
+    public DailyChallengeBackendMode BackendMode => backendMode;
 
     public LevelData GetLevelAt(int index)
     {
@@ -48,21 +68,61 @@ public class DailyChallengeConfig : ScriptableObject
         return dailyLevelPool[index];
     }
 
-    public int GetStableIndexForDay(string utcDayId)
+    public int CountEligibleLevels()
     {
-        if (PoolCount <= 0)
+        if (dailyLevelPool == null)
         {
-            return -1;
+            return 0;
+        }
+
+        int count = 0;
+        for (int i = 0; i < dailyLevelPool.Count; i++)
+        {
+            if (DailyChallengeLevelEligibility.IsEligible(dailyLevelPool[i]))
+            {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+    public bool HasEligibleLevels => CountEligibleLevels() > 0;
+
+    /// <summary>
+    /// Deterministic Daily selection from eligible Classic levels only.
+    /// Returns false when no eligible levels exist.
+    /// candidatePoolIndex is the index in the authored candidate list.
+    /// </summary>
+    public bool TrySelectEligibleLevelForDay(
+        string utcDayId,
+        out LevelData level,
+        out int candidatePoolIndex)
+    {
+        level = null;
+        candidatePoolIndex = -1;
+
+        List<LevelData> eligible = new List<LevelData>();
+        List<int> indices = new List<int>();
+        DailyChallengeLevelEligibility.CollectEligible(dailyLevelPool, eligible, indices);
+
+        if (eligible.Count == 0)
+        {
+            return false;
         }
 
         uint hash = DailyChallengeHash.StableHash32(utcDayId ?? string.Empty);
-        return (int)(hash % (uint)PoolCount);
+        int eligibleIndex = (int)(hash % (uint)eligible.Count);
+        level = eligible[eligibleIndex];
+        candidatePoolIndex = indices[eligibleIndex];
+        return level != null;
     }
 
+    /// <summary>Legacy helper — prefers eligible selection; may return null.</summary>
     public LevelData SelectLevelForDay(string utcDayId)
     {
-        int index = GetStableIndexForDay(utcDayId);
-        return index >= 0 ? GetLevelAt(index) : null;
+        TrySelectEligibleLevelForDay(utcDayId, out LevelData level, out _);
+        return level;
     }
 
     public static DailyChallengeConfig LoadDefault()

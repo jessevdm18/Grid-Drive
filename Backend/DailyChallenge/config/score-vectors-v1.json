@@ -1,0 +1,23 @@
+{
+  "scoreVersion": 1,
+  "description": "Parity vectors for Unity DailyChallengeScoreCalculator and Cloud Function scoring.js. Exact integer match required.",
+  "scoring": {
+    "baseMoveScore": 100000,
+    "movePenaltyPerExtraMove": 2500,
+    "minimumMoveScore": 10000,
+    "timeBonusMax": 20000,
+    "timeReferenceSeconds": 60
+  },
+  "vectors": [
+    { "name": "par_fast", "minimumMoves": 9, "moves": 9, "timeMs": 30000, "expectedScore": 113333 },
+    { "name": "par_60s", "minimumMoves": 9, "moves": 9, "timeMs": 60000, "expectedScore": 110000 },
+    { "name": "plus1_60s", "minimumMoves": 9, "moves": 10, "timeMs": 60000, "expectedScore": 107500 },
+    { "name": "plus5_60s", "minimumMoves": 9, "moves": 14, "timeMs": 60000, "expectedScore": 97500 },
+    { "name": "very_slow", "minimumMoves": 9, "moves": 9, "timeMs": 600000, "expectedScore": 101818 },
+    { "name": "large_moves", "minimumMoves": 9, "moves": 100, "timeMs": 60000, "expectedScore": 20000 },
+    { "name": "min_move_floor", "minimumMoves": 3, "moves": 50, "timeMs": 60000, "expectedScore": 20000 },
+    { "name": "round_half_even_check", "minimumMoves": 9, "moves": 9, "timeMs": 45000, "expectedScore": 111429 },
+    { "name": "par_1s", "minimumMoves": 3, "moves": 3, "timeMs": 1000, "expectedScore": 119672 },
+    { "name": "boundary_500ms", "minimumMoves": 6, "moves": 6, "timeMs": 500, "expectedScore": 119835 }
+  ]
+}

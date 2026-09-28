@@ -156,28 +156,35 @@ public static class DailyChallengeAuthoringMenu
     {
         EnsureConfigAsset();
         Scene scene = EditorSceneManager.OpenScene(GameplayPath, OpenSceneMode.Single);
-        Canvas canvas = Object.FindAnyObjectByType<Canvas>();
-        if (canvas == null)
+        Transform parent = FindGameplayUiParent();
+        if (parent == null)
         {
-            EditorUtility.DisplayDialog("Daily Challenge", "No Canvas in Gameplay.", "OK");
+            EditorUtility.DisplayDialog(
+                "Daily Challenge",
+                "No GameCanvas / SafeArea found in Gameplay.",
+                "OK");
             return;
-        }
-
-        Transform parent = canvas.transform;
-        RectTransform safe = FindNamed(parent, "SafeArea");
-        if (safe != null)
-        {
-            parent = safe;
         }
 
         DailyChallengeResultUI existing =
             Object.FindAnyObjectByType<DailyChallengeResultUI>(FindObjectsInactive.Include);
         if (existing != null)
         {
+            // Repair accidental parenting under BackgroundCanvas (scale 0).
+            if (existing.transform.parent != parent)
+            {
+                existing.transform.SetParent(parent, false);
+                EditorSceneManager.MarkSceneDirty(scene);
+                EditorSceneManager.SaveScene(scene);
+                Debug.LogWarning(
+                    "[DailyChallenge] Reparented existing ResultUI under " + parent.name);
+            }
+
             Selection.activeObject = existing.gameObject;
             EditorUtility.DisplayDialog(
                 "Daily Challenge",
-                "DailyChallengeResultUI already exists. Style it in Inspector.",
+                "DailyChallengeResultUI already exists under " + parent.name +
+                ". Style it in Inspector.",
                 "OK");
             return;
         }
@@ -247,24 +254,364 @@ public static class DailyChallengeAuthoringMenu
     public static void CreateGameplayHudBadge()
     {
         Scene scene = EditorSceneManager.OpenScene(GameplayPath, OpenSceneMode.Single);
-        Canvas canvas = Object.FindAnyObjectByType<Canvas>();
-        if (canvas == null)
+        Transform parent = FindGameplayUiParent();
+        if (parent == null)
         {
-            EditorUtility.DisplayDialog("Daily Challenge", "No Canvas in Gameplay.", "OK");
+            EditorUtility.DisplayDialog(
+                "Daily Challenge",
+                "No GameCanvas / SafeArea found in Gameplay.",
+                "OK");
             return;
-        }
-
-        Transform parent = canvas.transform;
-        RectTransform safe = FindNamed(parent, "SafeArea");
-        if (safe != null)
-        {
-            parent = safe;
         }
 
         GameObject hud = EnsureGameplayHud(parent);
         EditorSceneManager.MarkSceneDirty(scene);
         EditorSceneManager.SaveScene(scene);
         Selection.activeGameObject = hud;
+    }
+
+    /// <summary>
+    /// Prefer GameCanvas/SafeArea — never BackgroundCanvas (often scale 0).
+    /// </summary>
+    private static Transform FindGameplayUiParent()
+    {
+        GameObject gameCanvasGo = GameObject.Find("GameCanvas");
+        if (gameCanvasGo != null)
+        {
+            RectTransform safe = FindNamed(gameCanvasGo.transform, "SafeArea");
+            return safe != null ? safe : gameCanvasGo.transform;
+        }
+
+        Canvas[] canvases = Object.FindObjectsByType<Canvas>(FindObjectsInactive.Include);
+        for (int i = 0; i < canvases.Length; i++)
+        {
+            Canvas c = canvases[i];
+            if (c == null || c.name == "BackgroundCanvas")
+            {
+                continue;
+            }
+
+            RectTransform safe = FindNamed(c.transform, "SafeArea");
+            if (safe != null)
+            {
+                return safe;
+            }
+        }
+
+        return null;
+    }
+
+    [MenuItem("Rush Out/UI/Create Daily Challenge Leaderboard UI (MainMenu)")]
+    public static void CreateLeaderboardMainMenu()
+    {
+        Scene scene = EditorSceneManager.OpenScene(MainMenuPath, OpenSceneMode.Single);
+        Transform parent = FindMainMenuUiParent();
+        CreateLeaderboardUnder(parent, scene);
+        EnsureMainMenuLeaderboardButton();
+        EditorSceneManager.MarkSceneDirty(scene);
+        EditorSceneManager.SaveScene(scene);
+    }
+
+    [MenuItem("Rush Out/UI/Create Daily Challenge Leaderboard UI (Gameplay)")]
+    public static void CreateLeaderboardGameplay()
+    {
+        Scene scene = EditorSceneManager.OpenScene(GameplayPath, OpenSceneMode.Single);
+        Transform parent = FindGameplayUiParent();
+        CreateLeaderboardUnder(parent, scene);
+        UpgradeGameplayResultUiPhase3();
+        EditorSceneManager.MarkSceneDirty(scene);
+        EditorSceneManager.SaveScene(scene);
+    }
+
+    [MenuItem("Rush Out/UI/Upgrade Daily Result UI for Leaderboard (Gameplay)")]
+    public static void UpgradeGameplayResultUiPhase3Menu()
+    {
+        Scene scene = EditorSceneManager.OpenScene(GameplayPath, OpenSceneMode.Single);
+        UpgradeGameplayResultUiPhase3();
+        EditorSceneManager.MarkSceneDirty(scene);
+        EditorSceneManager.SaveScene(scene);
+    }
+
+    private static Transform FindMainMenuUiParent()
+    {
+        Canvas canvas = Object.FindAnyObjectByType<Canvas>();
+        if (canvas == null)
+        {
+            return null;
+        }
+
+        RectTransform safe = FindNamed(canvas.transform, "SafeArea");
+        return safe != null ? safe : canvas.transform;
+    }
+
+    private static void CreateLeaderboardUnder(Transform parent, Scene scene)
+    {
+        if (parent == null)
+        {
+            EditorUtility.DisplayDialog("Daily Challenge", "No UI parent found.", "OK");
+            return;
+        }
+
+        DailyLeaderboardUI existing =
+            Object.FindAnyObjectByType<DailyLeaderboardUI>(FindObjectsInactive.Include);
+        if (existing != null)
+        {
+            if (existing.transform.parent != parent)
+            {
+                existing.transform.SetParent(parent, false);
+            }
+
+            Selection.activeGameObject = existing.gameObject;
+            EditorUtility.DisplayDialog(
+                "Daily Challenge",
+                "DailyLeaderboardUI already exists. Style it in Inspector.",
+                "OK");
+            return;
+        }
+
+        GameObject root = CreateUi("DailyLeaderboardPanel", parent);
+        Stretch(root.GetComponent<RectTransform>());
+        root.AddComponent<Image>().color = new Color(0f, 0f, 0f, 0.72f);
+        root.SetActive(false);
+
+        GameObject panel = CreateUi("Panel", root.transform);
+        RectTransform panelRt = panel.GetComponent<RectTransform>();
+        panelRt.anchorMin = new Vector2(0.5f, 0.5f);
+        panelRt.anchorMax = new Vector2(0.5f, 0.5f);
+        panelRt.pivot = new Vector2(0.5f, 0.5f);
+        panelRt.sizeDelta = new Vector2(640f, 920f);
+        panel.AddComponent<Image>().color = new Color(0.09f, 0.14f, 0.24f, 1f);
+
+        TextMeshProUGUI title = CreateTmp("Title", panel.transform, "DAILY LEADERBOARD", 34f);
+        SetRect(title.rectTransform, new Vector2(0f, 400f), new Vector2(600f, 44f));
+
+        Button globalTab = CreateButton("GlobalTab", panel.transform, "GLOBAL", new Vector2(-120f, 340f));
+        SetRect(globalTab.GetComponent<RectTransform>(), new Vector2(-120f, 340f), new Vector2(200f, 44f));
+        Button friendsTab = CreateButton("FriendsTab", panel.transform, "FRIENDS", new Vector2(120f, 340f));
+        SetRect(friendsTab.GetComponent<RectTransform>(), new Vector2(120f, 340f), new Vector2(200f, 44f));
+        friendsTab.interactable = false;
+
+        GameObject comingSoon = CreateUi("FriendsComingSoon", panel.transform);
+        Stretch(comingSoon.GetComponent<RectTransform>());
+        comingSoon.AddComponent<Image>().color = new Color(0f, 0f, 0f, 0.55f);
+        TextMeshProUGUI soonTmp = CreateTmp("Label", comingSoon.transform, "COMING SOON", 36f);
+        Stretch(soonTmp.rectTransform);
+        comingSoon.SetActive(false);
+
+        TextMeshProUGUI hRank = CreateTmp("RankHeader", panel.transform, "RANK", 16f);
+        SetRect(hRank.rectTransform, new Vector2(-220f, 290f), new Vector2(100f, 28f));
+        TextMeshProUGUI hPlayer = CreateTmp("PlayerHeader", panel.transform, "PLAYER", 16f);
+        SetRect(hPlayer.rectTransform, new Vector2(-40f, 290f), new Vector2(200f, 28f));
+        TextMeshProUGUI hScore = CreateTmp("ScoreHeader", panel.transform, "SCORE", 16f);
+        SetRect(hScore.rectTransform, new Vector2(200f, 290f), new Vector2(160f, 28f));
+
+        GameObject scrollGo = CreateUi("ScrollView", panel.transform);
+        RectTransform scrollRt = scrollGo.GetComponent<RectTransform>();
+        scrollRt.anchorMin = new Vector2(0.5f, 0.5f);
+        scrollRt.anchorMax = new Vector2(0.5f, 0.5f);
+        scrollRt.pivot = new Vector2(0.5f, 0.5f);
+        scrollRt.anchoredPosition = new Vector2(0f, 20f);
+        scrollRt.sizeDelta = new Vector2(600f, 520f);
+        Image scrollImg = scrollGo.AddComponent<Image>();
+        scrollImg.color = new Color(0.06f, 0.10f, 0.16f, 0.9f);
+        ScrollRect scroll = scrollGo.AddComponent<ScrollRect>();
+        scroll.horizontal = false;
+        scroll.vertical = true;
+        scroll.movementType = ScrollRect.MovementType.Clamped;
+
+        GameObject viewport = CreateUi("Viewport", scrollGo.transform);
+        Stretch(viewport.GetComponent<RectTransform>());
+        viewport.AddComponent<Image>().color = new Color(1f, 1f, 1f, 0.01f);
+        viewport.AddComponent<Mask>().showMaskGraphic = false;
+        scroll.viewport = viewport.GetComponent<RectTransform>();
+
+        GameObject content = CreateUi("Content", viewport.transform);
+        RectTransform contentRt = content.GetComponent<RectTransform>();
+        contentRt.anchorMin = new Vector2(0f, 1f);
+        contentRt.anchorMax = new Vector2(1f, 1f);
+        contentRt.pivot = new Vector2(0.5f, 1f);
+        contentRt.anchoredPosition = Vector2.zero;
+        contentRt.sizeDelta = new Vector2(0f, 0f);
+        VerticalLayoutGroup vlg = content.AddComponent<VerticalLayoutGroup>();
+        vlg.childControlHeight = true;
+        vlg.childControlWidth = true;
+        vlg.childForceExpandHeight = false;
+        vlg.childForceExpandWidth = true;
+        vlg.spacing = 6f;
+        vlg.padding = new RectOffset(8, 8, 8, 8);
+        ContentSizeFitter csf = content.AddComponent<ContentSizeFitter>();
+        csf.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+        scroll.content = contentRt;
+
+        DailyLeaderboardRowUI rowPrefab = CreateRowTemplate(content.transform, "RowPrefab");
+        rowPrefab.gameObject.SetActive(false);
+
+        DailyLeaderboardRowUI pinned = CreateRowTemplate(panel.transform, "PlayerPinnedRow");
+        SetRect(pinned.GetComponent<RectTransform>(), new Vector2(0f, -280f), new Vector2(600f, 72f));
+        pinned.gameObject.SetActive(false);
+
+        TextMeshProUGUI status = CreateTmp(
+            "StatusText", panel.transform, "COMPLETE TODAY'S CHALLENGE TO GET YOUR RANK", 18f);
+        SetRect(status.rectTransform, new Vector2(0f, -340f), new Vector2(580f, 36f));
+
+        Button close = CreateButton("CloseButton", panel.transform, "CLOSE", new Vector2(0f, -400f));
+
+        DailyLeaderboardUI ui = root.AddComponent<DailyLeaderboardUI>();
+        SerializedObject so = new SerializedObject(ui);
+        so.FindProperty("root").objectReferenceValue = root;
+        so.FindProperty("titleText").objectReferenceValue = title;
+        so.FindProperty("statusText").objectReferenceValue = status;
+        so.FindProperty("closeButton").objectReferenceValue = close;
+        so.FindProperty("globalTabButton").objectReferenceValue = globalTab;
+        so.FindProperty("friendsTabButton").objectReferenceValue = friendsTab;
+        so.FindProperty("friendsTabLabel").objectReferenceValue =
+            friendsTab.GetComponentInChildren<TextMeshProUGUI>(true);
+        so.FindProperty("friendsComingSoonRoot").objectReferenceValue = comingSoon;
+        so.FindProperty("contentRoot").objectReferenceValue = content.transform;
+        so.FindProperty("rowPrefab").objectReferenceValue = rowPrefab;
+        so.FindProperty("pinnedPlayerRow").objectReferenceValue = pinned;
+        so.FindProperty("scrollRect").objectReferenceValue = scroll;
+        so.ApplyModifiedPropertiesWithoutUndo();
+
+        Selection.activeGameObject = root;
+        Debug.Log("[DailyChallenge] Leaderboard UI authored under " + parent.name);
+    }
+
+    private static DailyLeaderboardRowUI CreateRowTemplate(Transform parent, string name)
+    {
+        GameObject row = CreateUi(name, parent);
+        RectTransform rt = row.GetComponent<RectTransform>();
+        rt.sizeDelta = new Vector2(584f, 72f);
+        LayoutElement le = row.AddComponent<LayoutElement>();
+        le.minHeight = 72f;
+        le.preferredHeight = 72f;
+        Image bg = row.AddComponent<Image>();
+        bg.color = new Color(0.12f, 0.18f, 0.28f, 1f);
+
+        GameObject highlight = CreateUi("Highlight", row.transform);
+        Stretch(highlight.GetComponent<RectTransform>());
+        highlight.AddComponent<Image>().color = new Color(0.25f, 0.55f, 0.85f, 0.35f);
+        highlight.SetActive(false);
+
+        TextMeshProUGUI rank = CreateTmp("Rank", row.transform, "#1", 22f);
+        SetRect(rank.rectTransform, new Vector2(-240f, 10f), new Vector2(80f, 28f));
+        TextMeshProUGUI player = CreateTmp("Name", row.transform, "Maya K.", 22f);
+        SetRect(player.rectTransform, new Vector2(-40f, 10f), new Vector2(220f, 28f));
+        TextMeshProUGUI score = CreateTmp("Score", row.transform, "100,000", 22f);
+        SetRect(score.rectTransform, new Vector2(200f, 10f), new Vector2(160f, 28f));
+        TextMeshProUGUI secondary = CreateTmp("Secondary", row.transform, "9 MOVES • 00:42.00", 14f);
+        SetRect(secondary.rectTransform, new Vector2(0f, -18f), new Vector2(540f, 22f));
+
+        GameObject sim = CreateUi("SimMarker", row.transform);
+        TextMeshProUGUI simTmp = CreateTmp("Label", sim.transform, "SIM", 12f);
+        SetRect(sim.GetComponent<RectTransform>(), new Vector2(260f, -18f), new Vector2(48f, 18f));
+        Stretch(simTmp.rectTransform);
+        sim.SetActive(false);
+
+        DailyLeaderboardRowUI rowUi = row.AddComponent<DailyLeaderboardRowUI>();
+        SerializedObject so = new SerializedObject(rowUi);
+        so.FindProperty("rankText").objectReferenceValue = rank;
+        so.FindProperty("nameText").objectReferenceValue = player;
+        so.FindProperty("scoreText").objectReferenceValue = score;
+        so.FindProperty("secondaryText").objectReferenceValue = secondary;
+        so.FindProperty("highlightRoot").objectReferenceValue = highlight;
+        so.FindProperty("simulatedMarkerRoot").objectReferenceValue = sim;
+        so.ApplyModifiedPropertiesWithoutUndo();
+        return rowUi;
+    }
+
+    private static void EnsureMainMenuLeaderboardButton()
+    {
+        DailyChallengeMainMenuUI menu =
+            Object.FindAnyObjectByType<DailyChallengeMainMenuUI>(FindObjectsInactive.Include);
+        if (menu == null)
+        {
+            return;
+        }
+
+        SerializedObject so = new SerializedObject(menu);
+        if (so.FindProperty("leaderboardButton").objectReferenceValue != null)
+        {
+            return;
+        }
+
+        Transform entry = menu.transform;
+        Button lb = CreateButton("LeaderboardButton", entry, "LEADERBOARD", new Vector2(0f, -130f));
+        SetRect(lb.GetComponent<RectTransform>(), new Vector2(0f, -130f), new Vector2(280f, 44f));
+
+        TextMeshProUGUI scoreLabel = CreateTmp("ScoreLabel", entry, "SCORE", 16f);
+        SetRect(scoreLabel.rectTransform, new Vector2(-80f, -5f), new Vector2(120f, 22f));
+        TextMeshProUGUI scoreValue = CreateTmp("ScoreValue", entry, "", 22f);
+        SetRect(scoreValue.rectTransform, new Vector2(-80f, -32f), new Vector2(140f, 28f));
+        TextMeshProUGUI rankLabel = CreateTmp("RankLabel", entry, "RANK", 16f);
+        SetRect(rankLabel.rectTransform, new Vector2(100f, -5f), new Vector2(120f, 22f));
+        TextMeshProUGUI rankValue = CreateTmp("RankValue", entry, "", 22f);
+        SetRect(rankValue.rectTransform, new Vector2(100f, -32f), new Vector2(120f, 28f));
+        scoreLabel.gameObject.SetActive(false);
+        scoreValue.gameObject.SetActive(false);
+        rankLabel.gameObject.SetActive(false);
+        rankValue.gameObject.SetActive(false);
+
+        so.FindProperty("leaderboardButton").objectReferenceValue = lb;
+        so.FindProperty("scoreLabelText").objectReferenceValue = scoreLabel;
+        so.FindProperty("scoreValueText").objectReferenceValue = scoreValue;
+        so.FindProperty("rankLabelText").objectReferenceValue = rankLabel;
+        so.FindProperty("rankValueText").objectReferenceValue = rankValue;
+        so.ApplyModifiedPropertiesWithoutUndo();
+    }
+
+    private static void UpgradeGameplayResultUiPhase3()
+    {
+        DailyChallengeResultUI resultUi =
+            Object.FindAnyObjectByType<DailyChallengeResultUI>(FindObjectsInactive.Include);
+        if (resultUi == null)
+        {
+            Debug.LogWarning("[DailyChallenge] No ResultUI to upgrade.");
+            return;
+        }
+
+        SerializedObject so = new SerializedObject(resultUi);
+        Transform panel = resultUi.transform.Find("Panel");
+        if (panel == null && resultUi.transform.childCount > 0)
+        {
+            panel = resultUi.transform.GetChild(0);
+        }
+
+        if (panel == null)
+        {
+            return;
+        }
+
+        if (so.FindProperty("rankLabelText").objectReferenceValue == null)
+        {
+            TextMeshProUGUI rankLabel = CreateTmp("RankLabel", panel, "RANK", 18f);
+            SetRect(rankLabel.rectTransform, new Vector2(0f, -50f), new Vector2(200f, 24f));
+            TextMeshProUGUI rankValue = CreateTmp("RankValue", panel, "#1", 32f);
+            SetRect(rankValue.rectTransform, new Vector2(0f, -90f), new Vector2(200f, 40f));
+            so.FindProperty("rankLabelText").objectReferenceValue = rankLabel;
+            so.FindProperty("rankValueText").objectReferenceValue = rankValue;
+        }
+
+        if (so.FindProperty("leaderboardButton").objectReferenceValue == null)
+        {
+            Button lb = CreateButton(
+                "LeaderboardButton", panel, "LEADERBOARD", new Vector2(0f, -200f));
+            so.FindProperty("leaderboardButton").objectReferenceValue = lb;
+
+            // Nudge CONTINUE down if present.
+            Button cont = so.FindProperty("continueButton").objectReferenceValue as Button;
+            if (cont != null)
+            {
+                RectTransform crt = cont.GetComponent<RectTransform>();
+                if (crt != null)
+                {
+                    crt.anchoredPosition = new Vector2(0f, -260f);
+                }
+            }
+        }
+
+        so.ApplyModifiedPropertiesWithoutUndo();
+        Debug.Log("[DailyChallenge] ResultUI upgraded with RANK + LEADERBOARD.");
     }
 
     [MenuItem("Rush Out/UI/Create Daily Challenge Config Asset")]
@@ -299,6 +646,15 @@ public static class DailyChallengeAuthoringMenu
             Object.FindAnyObjectByType<DailyChallengeGameplayHud>(FindObjectsInactive.Include);
         if (existing != null)
         {
+            if (existing.transform.parent != parent)
+            {
+                existing.transform.SetParent(parent, false);
+                Debug.LogWarning(
+                    "[DailyChallenge] Reparented existing GameplayHud under " + parent.name);
+            }
+
+            // Host must start active so Start() can decide Daily visibility.
+            existing.gameObject.SetActive(true);
             return existing.gameObject;
         }
 
@@ -310,7 +666,7 @@ public static class DailyChallengeAuthoringMenu
         rt.anchoredPosition = new Vector2(0f, -24f);
         rt.sizeDelta = new Vector2(360f, 72f);
         root.AddComponent<Image>().color = new Color(0.10f, 0.16f, 0.28f, 0.85f);
-        root.SetActive(false);
+        // Host stays active; Start() hides for non-Daily sessions.
 
         TextMeshProUGUI title = CreateTmp("TitleText", root.transform, "DAILY CHALLENGE", 24f);
         SetRect(title.rectTransform, new Vector2(0f, 12f), new Vector2(340f, 32f));

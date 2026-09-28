@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 /// <summary>
 /// Authored Daily Challenge completion result panel (Gameplay).
-/// Scene owns styling; runtime fills score / moves / time values.
+/// Scene owns styling; runtime fills score / moves / time / rank values.
 /// </summary>
 public class DailyChallengeResultUI : MonoBehaviour
 {
@@ -16,12 +16,19 @@ public class DailyChallengeResultUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI movesValueText;
     [SerializeField] private TextMeshProUGUI timeLabelText;
     [SerializeField] private TextMeshProUGUI timeValueText;
+    [SerializeField] private TextMeshProUGUI rankLabelText;
+    [SerializeField] private TextMeshProUGUI rankValueText;
     [SerializeField] private TextMeshProUGUI footerText;
+    [SerializeField] private Button leaderboardButton;
     [SerializeField] private Button continueButton;
+
+    private bool continueBound;
+    private bool leaderboardBound;
+    private bool showing;
 
     private void Awake()
     {
-        if (root != null)
+        if (root != null && root != gameObject)
         {
             root.SetActive(false);
         }
@@ -29,26 +36,25 @@ public class DailyChallengeResultUI : MonoBehaviour
 
     private void OnEnable()
     {
-        if (continueButton != null)
-        {
-            continueButton.onClick.AddListener(OnContinue);
-        }
+        BindButtons();
     }
 
     private void OnDisable()
     {
-        if (continueButton != null)
-        {
-            continueButton.onClick.RemoveListener(OnContinue);
-        }
+        UnbindButtons();
     }
 
     public void Show(DailyChallengeResult result)
     {
-        if (root != null)
+        showing = true;
+
+        GameObject target = root != null ? root : gameObject;
+        if (!target.activeSelf)
         {
-            root.SetActive(true);
+            target.SetActive(true);
         }
+
+        transform.SetAsLastSibling();
 
         if (titleText != null)
         {
@@ -85,24 +91,107 @@ public class DailyChallengeResultUI : MonoBehaviour
             timeValueText.text = DailyChallengeTimeFormat.Format(result.CompletionTimeMilliseconds);
         }
 
+        DailyLeaderboardService.InvalidateCache();
+        int rank = 0;
+        bool hasRank = DailyLeaderboardService.TryGetCurrentPlayerRank(out rank);
+
+        if (rankLabelText != null)
+        {
+            rankLabelText.text = "RANK";
+            rankLabelText.gameObject.SetActive(hasRank);
+        }
+
+        if (rankValueText != null)
+        {
+            rankValueText.text = hasRank ? ("#" + rank) : string.Empty;
+            rankValueText.gameObject.SetActive(hasRank);
+        }
+
         if (footerText != null)
         {
             footerText.text = "ONE ATTEMPT COMPLETE";
         }
 
+        if (leaderboardButton != null)
+        {
+            leaderboardButton.gameObject.SetActive(true);
+        }
+
+        BindButtons();
         Time.timeScale = 0f;
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        Debug.Log(
+            "[DailyChallenge] ResultUI shown score=" + result.Score +
+            " moves=" + result.Moves +
+            " ms=" + result.CompletionTimeMilliseconds +
+            " rank=" + (hasRank ? rank.ToString() : "n/a"));
+#endif
     }
 
     public void Hide()
     {
-        if (root != null)
+        showing = false;
+        GameObject target = root != null ? root : gameObject;
+        if (target.activeSelf)
         {
-            root.SetActive(false);
+            target.SetActive(false);
+        }
+    }
+
+    private void BindButtons()
+    {
+        if (continueButton != null && !continueBound)
+        {
+            continueButton.onClick.AddListener(OnContinue);
+            continueBound = true;
+        }
+
+        if (leaderboardButton != null && !leaderboardBound)
+        {
+            leaderboardButton.onClick.AddListener(OnLeaderboard);
+            leaderboardBound = true;
+        }
+    }
+
+    private void UnbindButtons()
+    {
+        if (continueButton != null && continueBound)
+        {
+            continueButton.onClick.RemoveListener(OnContinue);
+            continueBound = false;
+        }
+
+        if (leaderboardButton != null && leaderboardBound)
+        {
+            leaderboardButton.onClick.RemoveListener(OnLeaderboard);
+            leaderboardBound = false;
+        }
+    }
+
+    private void OnLeaderboard()
+    {
+        DailyLeaderboardUI board = DailyLeaderboardUI.FindInScene();
+        if (board != null)
+        {
+            board.Show();
+        }
+        else
+        {
+            Debug.LogWarning(
+                "[DailyChallenge] No DailyLeaderboardUI in Gameplay — " +
+                "run Rush Out → UI → Create Daily Challenge Leaderboard UI.");
         }
     }
 
     private void OnContinue()
     {
+        if (!showing)
+        {
+            return;
+        }
+
+        showing = false;
         Time.timeScale = 1f;
         DailyChallengeContext.ClearSession();
         SceneTransition.LoadScene("MainMenu");

@@ -1,0 +1,28 @@
+{
+  "scoreVersion": 1,
+  "scoring": {
+    "baseMoveScore": 100000,
+    "movePenaltyPerExtraMove": 2500,
+    "minimumMoveScore": 10000,
+    "timeBonusMax": 20000,
+    "timeReferenceSeconds": 60
+  },
+  "validation": {
+    "minMoves": 1,
+    "maxMoves": 5000,
+    "minCompletionTimeMs": 500,
+    "maxCompletionTimeMs": 21600000
+  },
+  "levels": [
+    { "levelId": "Level_001", "levelVersion": "Level_001", "minimumMoves": 3 },
+    { "levelId": "Level_002", "levelVersion": "Level_002", "minimumMoves": 3 },
+    { "levelId": "Level_003", "levelVersion": "Level_003", "minimumMoves": 3 },
+    { "levelId": "Level_004", "levelVersion": "Level_004", "minimumMoves": 3 },
+    { "levelId": "Level_006", "levelVersion": "Level_006", "minimumMoves": 6 },
+    { "levelId": "Level_007", "levelVersion": "Level_007", "minimumMoves": 6 },
+    { "levelId": "Level_008", "levelVersion": "Level_008", "minimumMoves": 6 },
+    { "levelId": "Level_009", "levelVersion": "Level_009", "minimumMoves": 7 },
+    { "levelId": "Level_010", "levelVersion": "Level_010", "minimumMoves": 7 }
+  ],
+  "notes": "Exported from eligible Classic Daily pool. Deploy functions/config/daily-levels.json."
+}

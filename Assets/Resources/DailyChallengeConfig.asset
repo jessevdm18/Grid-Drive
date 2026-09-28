@@ -28,3 +28,7 @@ MonoBehaviour:
   minimumMoveScore: 10000
   timeBonusMax: 20000
   timeReferenceSeconds: 60
+  simulatedLeaderboardPlayerCount: 30
+  showSimulatedLeaderboardMarkers: 0
+  minimumLeaderboardPopulation: 30
+  backendMode: 0
