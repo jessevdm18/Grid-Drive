@@ -25,7 +25,7 @@ Unity must NOT write challenge/attempt documents (rules enforce write:false).
 ```
 
 Ownership key: **Firebase UID** (`request.auth.uid`). Provider-independent.
-Anonymous Auth is V1 only; future Google Play / Apple linking that preserves the same UID keeps Daily data attached.
+Anonymous Auth is V1 startup identity. Optional Google Play linking (Phase 4.2B) preserves the same UID — see [ACCOUNT_LINKING.md](./ACCOUNT_LINKING.md).
 
 ## Billing / plan check
 

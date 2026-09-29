@@ -28,6 +28,10 @@ public class MainMenuSettingsUI : MonoBehaviour
     [Tooltip("Public HTTPS URL for the Grid Drive Privacy Policy. Leave empty until configured.")]
     [SerializeField] private string privacyPolicyUrl = "";
 
+    [Header("Account (optional Phase 4.2A)")]
+    [Tooltip("Optional ACCOUNT section under Settings. Linking is never forced at startup.")]
+    [SerializeField] private AccountLinkUI accountLinkUI;
+
     private void Awake()
     {
         if (audioManager == null)
@@ -75,6 +79,13 @@ public class MainMenuSettingsUI : MonoBehaviour
         audioManager?.PlayPanelOpen();
         UpdateIcons();
         SyncAnalyticsToggleFromPreference();
+
+        if (accountLinkUI == null)
+        {
+            accountLinkUI = GetComponentInChildren<AccountLinkUI>(true);
+        }
+
+        accountLinkUI?.RefreshFromSettingsOpen();
     }
 
     /// <summary>

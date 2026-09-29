@@ -69,6 +69,221 @@ public static class FirebaseRestClient
     }
 
     /// <summary>
+    /// GET account providers via Identity Toolkit accounts:lookup.
+    /// Never log the response (may contain emails / PII).
+    /// </summary>
+    public static async Task<FirebaseAccountInfo> LookupAccountInfoAsync(
+        string apiKey,
+        string idToken)
+    {
+        string url =
+            "https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=" +
+            UnityWebRequest.EscapeURL(apiKey);
+        string body = "{\"idToken\":\"" + Escape(idToken ?? string.Empty) + "\"}";
+        var http = await PostJsonDetailedAsync(url, body, bearerToken: null);
+        if (!http.Ok || string.IsNullOrEmpty(http.Body))
+        {
+            return FirebaseAccountInfo.Failed(AccountLinkResult.NetworkError);
+        }
+
+        return ParseAccountInfo(http.Body);
+    }
+
+    /// <summary>
+    /// Link an IdP credential to the CURRENT Firebase user (preserves UID when successful).
+    /// Uses accounts:signInWithIdp with the existing idToken.
+    /// </summary>
+    public static async Task<FirebaseLinkIdpResult> TryLinkIdpAsync(
+        string apiKey,
+        string currentIdToken,
+        ExternalAccountCredential credential)
+    {
+        if (credential == null || string.IsNullOrEmpty(credential.IdpPostBody))
+        {
+            return FirebaseLinkIdpResult.Fail(AccountLinkResult.AuthenticationError, "missing_credential");
+        }
+
+        string url =
+            "https://identitytoolkit.googleapis.com/v1/accounts:signInWithIdp?key=" +
+            UnityWebRequest.EscapeURL(apiKey);
+
+        // requestUri is required by Identity Toolkit; localhost is the conventional value for mobile.
+        string body =
+            "{" +
+            "\"idToken\":\"" + Escape(currentIdToken ?? string.Empty) + "\"," +
+            "\"postBody\":\"" + Escape(credential.IdpPostBody) + "\"," +
+            "\"requestUri\":\"http://localhost\"," +
+            "\"returnIdpCredential\":true," +
+            "\"returnSecureToken\":true" +
+            "}";
+
+        var http = await PostJsonDetailedAsync(url, body, bearerToken: null);
+        if (string.IsNullOrEmpty(http.Body))
+        {
+            return FirebaseLinkIdpResult.Fail(AccountLinkResult.NetworkError, "empty");
+        }
+
+        string errorMessage = ExtractJsonString(http.Body, "message");
+        if (!http.Ok || !string.IsNullOrEmpty(errorMessage) &&
+            http.Body.IndexOf("\"error\"", StringComparison.Ordinal) >= 0)
+        {
+            return MapLinkError(errorMessage, http.Body);
+        }
+
+        string localId = ExtractJsonString(http.Body, "localId");
+        string idToken = ExtractJsonString(http.Body, "idToken");
+        string refresh = ExtractJsonString(http.Body, "refreshToken");
+        int expires = ExtractJsonInt(http.Body, "expiresIn", 3600);
+        if (string.IsNullOrEmpty(localId) || string.IsNullOrEmpty(idToken))
+        {
+            return FirebaseLinkIdpResult.Fail(AccountLinkResult.AuthenticationError, "missing_tokens");
+        }
+
+        return new FirebaseLinkIdpResult
+        {
+            Result = AccountLinkResult.Success,
+            LocalId = localId,
+            IdToken = idToken,
+            RefreshToken = refresh,
+            ExpiresInSeconds = expires
+        };
+    }
+
+    public struct FirebaseLinkIdpResult
+    {
+        public AccountLinkResult Result;
+        public string LocalId;
+        public string IdToken;
+        public string RefreshToken;
+        public int ExpiresInSeconds;
+        public string ErrorCode;
+
+        public static FirebaseLinkIdpResult Fail(AccountLinkResult result, string errorCode)
+        {
+            return new FirebaseLinkIdpResult
+            {
+                Result = result,
+                ErrorCode = errorCode ?? string.Empty
+            };
+        }
+    }
+
+    public struct FirebaseAccountInfo
+    {
+        public bool Ok;
+        public AccountLinkResult Failure;
+        public string LocalId;
+        public bool IsAnonymous;
+        public AccountProvider[] Providers;
+
+        public static FirebaseAccountInfo Failed(AccountLinkResult failure)
+        {
+            return new FirebaseAccountInfo
+            {
+                Ok = false,
+                Failure = failure,
+                Providers = Array.Empty<AccountProvider>()
+            };
+        }
+    }
+
+    private static FirebaseLinkIdpResult MapLinkError(string message, string body)
+    {
+        string m = (message ?? string.Empty) + " " + (body ?? string.Empty);
+        if (m.IndexOf("CREDENTIAL_ALREADY_IN_USE", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            m.IndexOf("FEDERATED_USER_ID_ALREADY_LINKED", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            m.IndexOf("EMAIL_EXISTS", StringComparison.OrdinalIgnoreCase) >= 0)
+        {
+            return FirebaseLinkIdpResult.Fail(
+                AccountLinkResult.AlreadyLinkedToAnotherAccount,
+                "already_linked_other");
+        }
+
+        if (m.IndexOf("TOKEN_EXPIRED", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            m.IndexOf("INVALID_ID_TOKEN", StringComparison.OrdinalIgnoreCase) >= 0)
+        {
+            return FirebaseLinkIdpResult.Fail(AccountLinkResult.AuthenticationError, "token");
+        }
+
+        if (m.IndexOf("NETWORK", StringComparison.OrdinalIgnoreCase) >= 0)
+        {
+            return FirebaseLinkIdpResult.Fail(AccountLinkResult.NetworkError, "network");
+        }
+
+        return FirebaseLinkIdpResult.Fail(AccountLinkResult.UnknownError, "link_failed");
+    }
+
+    private static FirebaseAccountInfo ParseAccountInfo(string json)
+    {
+        // users[0].localId / providerUserInfo / lastLoginAt
+        string localId = ExtractJsonString(json, "localId");
+        var providers = new List<AccountProvider>();
+        bool hasFederated = false;
+
+        // Play Games Firebase providerId.
+        if (json.IndexOf("playgames.google.com", StringComparison.OrdinalIgnoreCase) >= 0)
+        {
+            providers.Add(AccountProvider.GooglePlay);
+            hasFederated = true;
+        }
+
+        if (json.IndexOf("apple.com", StringComparison.OrdinalIgnoreCase) >= 0)
+        {
+            providers.Add(AccountProvider.Apple);
+            hasFederated = true;
+        }
+
+        // Anonymous users typically have no federated providers.
+        if (!hasFederated)
+        {
+            providers.Add(AccountProvider.Anonymous);
+        }
+        else
+        {
+            // Keep Anonymous in the set if Firebase still reports anonymous provider.
+            if (json.IndexOf("firebase", StringComparison.OrdinalIgnoreCase) >= 0 &&
+                json.IndexOf("\"providerId\":\"anonymous\"", StringComparison.OrdinalIgnoreCase) >= 0)
+            {
+                providers.Insert(0, AccountProvider.Anonymous);
+            }
+        }
+
+        return new FirebaseAccountInfo
+        {
+            Ok = true,
+            LocalId = localId,
+            IsAnonymous = !hasFederated,
+            Providers = providers.ToArray()
+        };
+    }
+
+    private static async Task<(bool Ok, string Body, long Status)> PostJsonDetailedAsync(
+        string url,
+        string body,
+        string bearerToken)
+    {
+        using (UnityWebRequest req = new UnityWebRequest(url, UnityWebRequest.kHttpVerbPOST))
+        {
+            byte[] raw = Encoding.UTF8.GetBytes(body ?? "{}");
+            req.uploadHandler = new UploadHandlerRaw(raw);
+            req.downloadHandler = new DownloadHandlerBuffer();
+            req.SetRequestHeader("Content-Type", "application/json");
+            if (!string.IsNullOrEmpty(bearerToken))
+            {
+                req.SetRequestHeader("Authorization", "Bearer " + bearerToken);
+            }
+
+            req.timeout = 25;
+            await SendAsync(req);
+            string text = req.downloadHandler?.text ?? string.Empty;
+            bool ok = req.result == UnityWebRequest.Result.Success &&
+                      req.responseCode >= 200 &&
+                      req.responseCode < 300;
+            return (ok, text, req.responseCode);
+        }
+    }
+
+    /// <summary>
     /// Legacy probe. Phase 4.1B authoritative Online day/time comes from Cloud Functions only.
     /// Do not use for attempt start/submit authority (may fall back to device UTC).
     /// </summary>

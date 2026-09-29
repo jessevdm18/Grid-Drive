@@ -570,6 +570,47 @@ public static class GameAnalytics
         LogDailySimple("daily_result_submit_error", dayId, null, reason);
     }
 
+    public static void LogAccountLinkStarted(string provider)
+    {
+        LogAccountLink("account_link_started", provider, null);
+    }
+
+    public static void LogAccountLinkSuccess(string provider)
+    {
+        LogAccountLink("account_link_success", provider, null);
+    }
+
+    public static void LogAccountLinkFailed(string provider, string reason)
+    {
+        LogAccountLink("account_link_failed", provider, reason);
+    }
+
+    private static void LogAccountLink(string eventName, string provider, string reason)
+    {
+        if (!FirebaseManager.IsReady)
+        {
+            return;
+        }
+
+        try
+        {
+            var parameters = new List<Parameter>
+            {
+                new Parameter("provider", Safe(provider))
+            };
+            if (!string.IsNullOrEmpty(reason))
+            {
+                parameters.Add(new Parameter("reason", Safe(reason)));
+            }
+
+            FirebaseAnalytics.LogEvent(eventName, parameters.ToArray());
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError("GameAnalytics." + eventName + " failed — " + ex.Message);
+        }
+    }
+
     private static void LogDailySimple(
         string eventName,
         string dayId,

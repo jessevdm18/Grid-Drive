@@ -572,17 +572,38 @@ public static class DailyChallengeTestingMenu
     public static async void LogIdentity()
     {
         bool ok = await DailyChallengeIdentityService.EnsureSignedInAsync();
+        await DailyChallengeIdentityService.RefreshAccountStateAsync();
         string uid = DailyChallengeIdentityService.UserId;
         string shortId = string.IsNullOrEmpty(uid)
             ? "(none)"
             : DailyChallengeDisplayName.FromUserId(uid);
+        var providers = DailyChallengeIdentityService.LinkedProviders;
+        string providerList = providers != null && providers.Count > 0
+            ? string.Join(",", providers)
+            : "(none)";
         Debug.Log(
             "[DailyChallenge Identity]\n" +
             "SignedIn=" + ok + "\n" +
             "IsReady=" + DailyChallengeIdentityService.IsReady + "\n" +
+            "IsAnonymous=" + DailyChallengeIdentityService.IsAnonymous + "\n" +
+            "LinkState=" + DailyChallengeIdentityService.LinkState + "\n" +
+            "Providers=" + providerList + "\n" +
+            "PlayProviderAvailable=" +
+            DailyChallengeIdentityService.IsGooglePlayProviderAvailable + "\n" +
             "DisplayName=" + shortId + "\n" +
             "UserIdLength=" + (uid != null ? uid.Length : 0) +
             " (full UID not logged)");
+    }
+
+    [MenuItem(BackendRoot + "Try Link Google Play (safe)")]
+    public static async void TryLinkGooglePlaySafe()
+    {
+        AccountLinkOutcome outcome = await DailyChallengeIdentityService.LinkGooglePlayAsync();
+        Debug.Log(
+            "[Account] LinkGooglePlay result=" + outcome.Result +
+            " message=" + outcome.Message +
+            " linkState=" + DailyChallengeIdentityService.LinkState +
+            " (UID not logged)");
     }
 
     [MenuItem(BackendRoot + "Log Current Server Challenge")]
