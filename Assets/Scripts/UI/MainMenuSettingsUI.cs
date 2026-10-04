@@ -32,6 +32,10 @@ public class MainMenuSettingsUI : MonoBehaviour
     [Tooltip("Optional ACCOUNT section under Settings. Linking is never forced at startup.")]
     [SerializeField] private AccountLinkUI accountLinkUI;
 
+    [Header("Daily Notifications (optional Phase 4.4)")]
+    [Tooltip("Optional Daily notifications toggle. Never prompts at startup.")]
+    [SerializeField] private DailyNotificationSettingsUI dailyNotificationSettingsUI;
+
     private void Awake()
     {
         if (audioManager == null)
@@ -86,6 +90,14 @@ public class MainMenuSettingsUI : MonoBehaviour
         }
 
         accountLinkUI?.RefreshFromSettingsOpen();
+
+        if (dailyNotificationSettingsUI == null)
+        {
+            dailyNotificationSettingsUI =
+                GetComponentInChildren<DailyNotificationSettingsUI>(true);
+        }
+
+        dailyNotificationSettingsUI?.RefreshFromSettingsOpen();
     }
 
     /// <summary>

@@ -810,6 +810,304 @@ public static class DailyChallengeTestingMenu
             " eligible levels to Backend/DailyChallenge/config and functions/config.");
     }
 
+    // --- Notifications (Phase 4.4) — never sends to production topic from Editor ---
+
+    private const string NotifyRoot = Root + "Notifications/";
+
+    [MenuItem(NotifyRoot + "Log Notification State")]
+    public static void LogNotificationState()
+    {
+        DailyNotificationService.Bootstrap();
+        Debug.Log(
+            "[DailyNotify]\n" +
+            "PreferredEnabled=" + DailyNotificationService.PreferredEnabled + "\n" +
+            "IsMessagingSdkAvailable=" + DailyNotificationService.IsMessagingSdkAvailable + "\n" +
+            "SdkStatus=" + DailyNotificationService.MessagingSdkStatus + "\n" +
+            "EditorUnsupported=" + DailyNotificationService.IsEditorUnsupported + "\n" +
+            "PermissionRequired=" + AndroidNotificationPermission.IsRuntimePermissionRequired + "\n" +
+            "HasPermission=" + AndroidNotificationPermission.HasPermission + "\n" +
+            "EffectivelyEnabled=" + DailyNotificationService.IsEffectivelyEnabled + "\n" +
+            "ProductionTopic=" + DailyNotificationTopics.ProductionNewDay + "\n" +
+            "DevTopic=" + DailyNotificationTopics.Dev + "\n" +
+            "NOTE: No startup permission prompt. Google Play link not required.");
+    }
+
+    [MenuItem(NotifyRoot + "Send DEV Topic Push (callable, not production)")]
+    public static async void SendDevTopicPushCallable()
+    {
+        if (!await DailyChallengeIdentityService.EnsureSignedInAsync())
+        {
+            Debug.LogWarning("[DailyNotify] Not signed in — cannot call test push.");
+            return;
+        }
+
+        DailyChallengeFirebaseSettings settings = DailyChallengeFirebaseSettings.LoadDefault();
+        FirebaseRestClient.CallableResponse response =
+            await FirebaseRestClient.CallCallableAsync(
+                settings.GetCallableBaseUrl(),
+                "sendDailyChallengeDevNotification",
+                "{}",
+                DailyChallengeIdentityService.IdToken);
+
+        Debug.Log(
+            "[DailyNotify] DEV callable ok=" + response.Ok +
+            " http=" + response.HttpStatus +
+            " status=" + response.ErrorStatus +
+            "\nResult=" + response.ResultJson +
+            "\n(Production topic daily_challenge_new was NOT targeted.)");
+    }
+
+    // --- Rewards (Phase 4.3) — safe inspect / preview only; never deletes production data ---
+
+    private const string RewardsRoot = Root + "Rewards/";
+
+    [MenuItem(RewardsRoot + "Create Dev Reward For Current User")]
+    public static async void CreateDevRewardForCurrentUser()
+    {
+        if (!await DailyChallengeIdentityService.EnsureSignedInAsync())
+        {
+            Debug.LogWarning("[DailyReward] Not signed in — cannot create DEV reward.");
+            return;
+        }
+
+        DailyChallengeFirebaseSettings settings = DailyChallengeFirebaseSettings.LoadDefault();
+        FirebaseRestClient.CallableResponse response =
+            await FirebaseRestClient.CallCallableAsync(
+                settings.GetCallableBaseUrl(),
+                "createDevDailyReward",
+                "{}",
+                DailyChallengeIdentityService.IdToken);
+
+        if (!response.Ok)
+        {
+            Debug.LogWarning(
+                "[DailyReward] createDevDailyReward failed http=" + response.HttpStatus +
+                " status=" + response.ErrorStatus +
+                "\nEnsure ALLOW_DEV_DAILY_REWARDS=true on Functions (or use emulator)." +
+                "\nBodyLen=" + (response.RawBody != null ? response.RawBody.Length : 0));
+            return;
+        }
+
+        Debug.Log(
+            "[DailyReward] createDevDailyReward OK\n" +
+            "Result=" + response.ResultJson + "\n" +
+            "dayId=" + DailyRewardService.DevRewardDayId + "\n" +
+            "Next: SyncPending via production getPendingDailyRewards (no CoinManager shortcut).");
+
+        bool hasPending = await DailyRewardService.SyncPendingAsync();
+        DailyRewardUI ui = DailyRewardUI.FindInScene();
+        if (hasPending && ui != null)
+        {
+            ui.PresentPendingIfAny();
+            Debug.Log(
+                "[DailyReward] Pending DEV reward synced — DailyRewardUI shown. " +
+                "CLAIM uses production claimDailyReward.");
+        }
+        else if (hasPending)
+        {
+            Debug.LogWarning(
+                "[DailyReward] Pending reward exists but DailyRewardUI missing — " +
+                "run Rush Out → UI → Create Daily Reward UI (MainMenu).");
+        }
+        else
+        {
+            Debug.LogWarning(
+                "[DailyReward] create succeeded but getPendingDailyRewards returned none " +
+                "(already claimed?). No delete/reset tool — use a fresh UID or clear the " +
+                "dev-reward-smoke-test reward doc in Console if retesting.");
+        }
+    }
+
+    [MenuItem(RewardsRoot + "Refresh Pending Rewards")]
+    public static async void RefreshPendingRewards()
+    {
+        bool hasPending = await DailyRewardService.SyncPendingAsync();
+        var sb = new System.Text.StringBuilder();
+        sb.AppendLine("[DailyReward] Refresh Pending hasPending=" + hasPending);
+        var list = DailyRewardService.CachedPending;
+        if (list == null || list.Count == 0)
+        {
+            sb.AppendLine("(none)");
+        }
+        else
+        {
+            for (int i = 0; i < list.Count; i++)
+            {
+                DailyRewardRecord r = list[i];
+                sb.AppendLine(
+                    "dayId=" + r.DayId +
+                    " rank=" + r.Rank +
+                    " amount=" + r.RewardAmount +
+                    " source=" + r.Source +
+                    " isDev=" + r.IsDevelopmentTest +
+                    " claimed=" + r.Claimed);
+            }
+        }
+
+        DailyRewardUI ui = DailyRewardUI.FindInScene();
+        if (hasPending && ui != null)
+        {
+            ui.PresentPendingIfAny();
+            sb.AppendLine("DailyRewardUI presented.");
+        }
+
+        Debug.Log(sb.ToString());
+    }
+
+    [MenuItem(RewardsRoot + "Inspect Yesterday Settlement State")]
+    public static async void InspectYesterdaySettlementState()
+    {
+        if (!await DailyChallengeIdentityService.EnsureSignedInAsync())
+        {
+            Debug.LogWarning("[DailyReward] Not signed in.");
+            return;
+        }
+
+        string dayId = YesterdayUtcDayId();
+        DailyChallengeFirebaseSettings settings = DailyChallengeFirebaseSettings.LoadDefault();
+        string json = await FirebaseRestClient.GetDocumentAsync(
+            settings.ProjectId,
+            "dailyChallenges/" + dayId,
+            DailyChallengeIdentityService.IdToken);
+
+        if (string.IsNullOrEmpty(json))
+        {
+            Debug.Log("[DailyReward] Settlement day=" + dayId + " — day document missing/unreadable.");
+            return;
+        }
+
+        long version = FirebaseRestClient.ExtractFirestoreLongField(json, "rewardSettlementVersion");
+        string firstPlace = FirebaseRestClient.ExtractFirestoreStringField(json, "firstPlaceUid");
+        string firstShort = string.IsNullOrEmpty(firstPlace)
+            ? "(none)"
+            : DailyChallengeDisplayName.FromUserId(firstPlace);
+        Debug.Log(
+            "[DailyReward] Settlement inspect\n" +
+            "DayId=" + dayId + "\n" +
+            "rewardSettlementVersion=" + version + "\n" +
+            "Settled=" + (version > 0) + "\n" +
+            "HasWinner=" + !string.IsNullOrEmpty(firstPlace) + "\n" +
+            "WinnerDisplay=" + firstShort + "\n" +
+            "(full UID not logged; simulated entries never settle)");
+    }
+
+    [MenuItem(RewardsRoot + "Log Yesterday Eligible Ranking")]
+    public static async void LogYesterdayEligibleRanking()
+    {
+        if (!await DailyChallengeIdentityService.EnsureSignedInAsync())
+        {
+            Debug.LogWarning("[DailyReward] Not signed in.");
+            return;
+        }
+
+        string dayId = YesterdayUtcDayId();
+        var entries = await DailyChallengeAuthority.Current.GetCompletedLeaderboardAsync(
+            dayId,
+            100);
+
+        var eligible = new System.Collections.Generic.List<DailyLeaderboardEntry>();
+        if (entries != null)
+        {
+            for (int i = 0; i < entries.Count; i++)
+            {
+                DailyLeaderboardEntry e = entries[i];
+                // Client leaderboard fetch is Completed-only; exclude simulated presentation rows.
+                if (e.IsSimulated)
+                {
+                    continue;
+                }
+
+                eligible.Add(e);
+            }
+        }
+
+        SimulatedDailyLeaderboardProvider.SortEntries(eligible);
+        SimulatedDailyLeaderboardProvider.AssignStrictSequentialRanks(eligible);
+
+        var sb = new System.Text.StringBuilder();
+        sb.AppendLine("[DailyReward] Eligible ranking day=" + dayId + " count=" + eligible.Count);
+        sb.AppendLine("(Firestore Completed rows only — simulated fillers excluded)");
+        int limit = System.Math.Min(eligible.Count, 15);
+        for (int i = 0; i < limit; i++)
+        {
+            DailyLeaderboardEntry e = eligible[i];
+            string idShort = DailyChallengeDisplayName.FromUserId(e.PlayerId);
+            sb.AppendLine(
+                "#" + e.Rank +
+                " score=" + e.Score +
+                " moves=" + e.Moves +
+                " ms=" + e.CompletionTimeMilliseconds +
+                " player=" + idShort +
+                (e.IsCurrentPlayer ? " YOU" : string.Empty));
+        }
+
+        if (eligible.Count == 0)
+        {
+            sb.AppendLine("No eligible Completed players — settlement should create no reward.");
+        }
+        else
+        {
+            sb.AppendLine(
+                "Projected winner #" + eligible[0].Rank +
+                " " + DailyChallengeDisplayName.FromUserId(eligible[0].PlayerId));
+        }
+
+        Debug.Log(sb.ToString());
+    }
+
+    [MenuItem(RewardsRoot + "Log Pending Rewards (server)")]
+    public static async void LogPendingRewardsServer()
+    {
+        bool has = await DailyRewardService.SyncPendingAsync();
+        var sb = new System.Text.StringBuilder();
+        sb.AppendLine("[DailyReward] Pending sync hasPending=" + has);
+        var list = DailyRewardService.CachedPending;
+        if (list == null || list.Count == 0)
+        {
+            sb.AppendLine("(none)");
+        }
+        else
+        {
+            for (int i = 0; i < list.Count; i++)
+            {
+                DailyRewardRecord r = list[i];
+                sb.AppendLine(
+                    "dayId=" + r.DayId +
+                    " rank=" + r.Rank +
+                    " type=" + r.RewardType +
+                    " amount=" + r.RewardAmount +
+                    " claimed=" + r.Claimed +
+                    " source=" + r.Source);
+            }
+        }
+
+        Debug.Log(sb.ToString());
+    }
+
+    [MenuItem(RewardsRoot + "Preview Reward UI (local, no server grant)")]
+    public static void PreviewRewardUiLocal()
+    {
+        DailyRewardUI ui = DailyRewardUI.FindInScene();
+        if (ui == null)
+        {
+            Debug.LogWarning(
+                "[DailyReward] No DailyRewardUI in scene — run " +
+                "Rush Out → UI → Create Daily Reward UI (MainMenu).");
+            return;
+        }
+
+        ui.ShowPreview("preview");
+        Debug.Log(
+            "[DailyReward] Preview UI shown. CLAIM on preview does NOT grant coins " +
+            "and does NOT call the server.");
+    }
+
+    private static string YesterdayUtcDayId()
+    {
+        System.DateTime utc = System.DateTime.UtcNow.Date.AddDays(-1);
+        return utc.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+    }
+
     [MenuItem(BackendRoot + "Compare Local vs Server Score Test Vectors")]
     public static void CompareLocalVsServerScoreTestVectors()
     {

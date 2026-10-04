@@ -8,9 +8,12 @@ using UnityEngine;
 public static class GlobalMoveLimitUtility
 {
     public const float EasyMultiplier = 1.75f;
-    public const float MediumMultiplier = 1.60f;
-    public const float HardMultiplier = 1.50f;
-    public const int AdditiveBuffer = 3;
+    public const float MediumMultiplier = 1.70f;
+    public const float HardMultiplier = 1.75f;
+
+    public const int EasyAdditiveBuffer = 3;
+    public const int MediumAdditiveBuffer = 4;
+    public const int HardAdditiveBuffer = 5;
 
     public enum LimitMode
     {
@@ -58,6 +61,9 @@ public static class GlobalMoveLimitUtility
 
     /// <summary>
     /// Forgiving global formula. Returns 0 when minimumMoves is invalid (&lt;= 0).
+    /// Easy: ceil(min * 1.75) + 3
+    /// Medium: ceil(min * 1.70) + 4
+    /// Hard: ceil(min * 1.75) + 5
     /// </summary>
     public static int ComputeForgivingGlobalLimit(
         int minimumMoves,
@@ -69,21 +75,25 @@ public static class GlobalMoveLimitUtility
         }
 
         float multiplier;
+        int buffer;
         switch (difficulty)
         {
             case LevelDifficulty.Medium:
                 multiplier = MediumMultiplier;
+                buffer = MediumAdditiveBuffer;
                 break;
             case LevelDifficulty.Hard:
                 multiplier = HardMultiplier;
+                buffer = HardAdditiveBuffer;
                 break;
             case LevelDifficulty.Easy:
             default:
                 multiplier = EasyMultiplier;
+                buffer = EasyAdditiveBuffer;
                 break;
         }
 
-        return Mathf.CeilToInt(minimumMoves * multiplier) + AdditiveBuffer;
+        return Mathf.CeilToInt(minimumMoves * multiplier) + buffer;
     }
 
     /// <summary>True when the forgiving global failure check should run.</summary>

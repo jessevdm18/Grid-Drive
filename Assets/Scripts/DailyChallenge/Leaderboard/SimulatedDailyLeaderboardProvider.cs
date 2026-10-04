@@ -4,6 +4,8 @@ using UnityEngine;
 /// <summary>
 /// Phase 3 provider: deterministic simulated placeholder players + optional local YOU.
 /// Simulated entries are display-fill only — never authoritative for prizes/rewards.
+/// Phase 4.3 settlement reads ONLY Firestore Completed+scoreTrusted attempts;
+/// no isSimulated row can ever enter reward settlement.
 /// Scores always go through <see cref="DailyChallengeScoreCalculator"/>.
 /// </summary>
 public sealed class SimulatedDailyLeaderboardProvider : IDailyLeaderboardProvider

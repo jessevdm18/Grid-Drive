@@ -201,162 +201,219 @@ public static class DailyChallengeIdentityService
     public static async Task<AccountLinkOutcome> LinkGooglePlayAsync()
     {
         const string providerKey = "google_play";
+        const int overallLinkTimeoutMs = 90000;
+
+        Debug.Log("[Account] LinkGooglePlayAsync entered");
 
         if (linkInFlight)
         {
-            return AccountLinkOutcome.From(AccountLinkResult.UnknownError, providerKey, "Linking in progress.");
+            var busy = AccountLinkOutcome.From(
+                AccountLinkResult.UnknownError,
+                providerKey,
+                "Linking in progress.");
+            Debug.Log("[Account] LinkGooglePlayAsync completed: " + busy.Result);
+            return busy;
         }
 
         linkInFlight = true;
         AccountLinkState previousState = linkState;
+        AccountLinkOutcome outcome = AccountLinkOutcome.From(
+            AccountLinkResult.UnknownError,
+            providerKey);
         try
         {
             GameAnalytics.LogAccountLinkStarted(providerKey);
 
-            if (!await EnsureSignedInAsync())
+            Task<AccountLinkOutcome> work = LinkGooglePlayInternalAsync(
+                providerKey,
+                previousState);
+            Task delay = Task.Delay(overallLinkTimeoutMs);
+            Task finished = await Task.WhenAny(work, delay);
+            if (finished != work)
             {
-                var fail = AccountLinkOutcome.From(
-                    AccountLinkResult.AuthenticationError,
-                    providerKey);
-                GameAnalytics.LogAccountLinkFailed(providerKey, fail.Result.ToString());
-                return fail;
-            }
-
-            await RefreshAccountStateAsync();
-            if (HasProvider(AccountProvider.GooglePlay))
-            {
-                var already = AccountLinkOutcome.From(AccountLinkResult.AlreadyLinked, providerKey);
-                GameAnalytics.LogAccountLinkSuccess(providerKey);
-                return already;
-            }
-
-            if (googlePlayProvider == null || !googlePlayProvider.IsAvailable)
-            {
-                var unavailable = AccountLinkOutcome.From(
-                    AccountLinkResult.ProviderUnavailable,
-                    providerKey);
-                GameAnalytics.LogAccountLinkFailed(providerKey, unavailable.Result.ToString());
-                return unavailable;
-            }
-
-            string uidBefore = UserId;
-            if (string.IsNullOrEmpty(uidBefore))
-            {
-                var authFail = AccountLinkOutcome.From(
-                    AccountLinkResult.AuthenticationError,
-                    providerKey);
-                GameAnalytics.LogAccountLinkFailed(providerKey, authFail.Result.ToString());
-                return authFail;
-            }
-
-            linkState = AccountLinkState.Linking;
-
-            ExternalAccountAuthResult auth = await googlePlayProvider.AuthenticateForLinkAsync();
-            if (auth.Result != AccountLinkResult.Success || auth.Credential == null)
-            {
-                linkState = previousState == AccountLinkState.Linking
-                    ? AccountLinkState.GuestAnonymous
-                    : previousState;
-                var providerFail = AccountLinkOutcome.From(
-                    auth.Result == AccountLinkResult.Success
-                        ? AccountLinkResult.AuthenticationError
-                        : auth.Result,
-                    providerKey,
-                    string.IsNullOrEmpty(auth.Message)
-                        ? null
-                        : auth.Message);
-                GameAnalytics.LogAccountLinkFailed(providerKey, providerFail.Result.ToString());
-                return providerFail;
-            }
-
-            DailyChallengeFirebaseSettings settings = DailyChallengeFirebaseSettings.LoadDefault();
-            FirebaseRestClient.FirebaseLinkIdpResult link =
-                await FirebaseRestClient.TryLinkIdpAsync(
-                    settings.ApiKey,
-                    IdToken,
-                    auth.Credential);
-
-            // Retry once after token refresh on auth failure.
-            if (link.Result == AccountLinkResult.AuthenticationError &&
-                await TryRefreshSessionAsync())
-            {
-                link = await FirebaseRestClient.TryLinkIdpAsync(
-                    settings.ApiKey,
-                    IdToken,
-                    auth.Credential);
-            }
-
-            if (link.Result != AccountLinkResult.Success)
-            {
-                linkState = previousState == AccountLinkState.Linking
-                    ? AccountLinkState.GuestAnonymous
-                    : previousState;
-                var fail = AccountLinkOutcome.From(link.Result, providerKey);
-                GameAnalytics.LogAccountLinkFailed(providerKey, fail.Result.ToString());
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
                 Debug.LogWarning(
-                    "[Account] Google Play link failed: " + link.Result +
-                    " code=" + link.ErrorCode);
-#endif
-                return fail;
+                    "[Account] LinkGooglePlayAsync overall timeout after " +
+                    overallLinkTimeoutMs + "ms");
+                outcome = AccountLinkOutcome.From(
+                    AccountLinkResult.NetworkError,
+                    providerKey,
+                    "Could not connect. Try again.");
+                GameAnalytics.LogAccountLinkFailed(providerKey, outcome.Result.ToString());
             }
-
-            // CRITICAL: Firebase UID must remain the same.
-            if (!string.Equals(link.LocalId, uidBefore, StringComparison.Ordinal))
+            else
             {
-                Debug.LogError(
-                    "[Account] IDENTITY CONTINUITY ERROR: Firebase UID changed during Google Play link. " +
-                    "Refusing to adopt new session. Daily data ownership is not guaranteed.");
-                linkState = AccountLinkState.Error;
-                var continuity = AccountLinkOutcome.From(
-                    AccountLinkResult.IdentityContinuityError,
-                    providerKey);
-                GameAnalytics.LogAccountLinkFailed(providerKey, continuity.Result.ToString());
-                return continuity;
+                outcome = await work;
             }
-
-            ApplySession(
-                link.LocalId,
-                link.IdToken,
-                string.IsNullOrEmpty(link.RefreshToken)
-                    ? PlayerPrefs.GetString(RefreshTokenKey, string.Empty)
-                    : link.RefreshToken,
-                link.ExpiresInSeconds);
-
-            if (!string.IsNullOrEmpty(auth.Credential.DisplayNameHint))
-            {
-                optionalDisplayName = auth.Credential.DisplayNameHint;
-            }
-
-            await RefreshAccountStateAsync();
-
-            if (!HasProvider(AccountProvider.GooglePlay))
-            {
-                // Link API succeeded but lookup didn't show provider — still treat as soft success
-                // if UID matched; mark LinkedGooglePlay for presentation.
-                linkedProviders.Clear();
-                linkedProviders.Add(AccountProvider.Anonymous);
-                linkedProviders.Add(AccountProvider.GooglePlay);
-                linkState = AccountLinkState.LinkedGooglePlay;
-                CachePresentationState();
-            }
-
-            GameAnalytics.LogAccountLinkSuccess(providerKey);
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
-            Debug.Log("[Account] Firebase provider link success");
-            Debug.Log(
-                "[Account] UID continuity verified (uidLength=" + uidBefore.Length + ")");
-#endif
-            return AccountLinkOutcome.From(AccountLinkResult.Success, providerKey);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogWarning("[Account] LinkGooglePlayAsync exception: " + ex.GetType().Name);
+            outcome = AccountLinkOutcome.From(
+                AccountLinkResult.UnknownError,
+                providerKey,
+                "Could not connect. Try again.");
+            GameAnalytics.LogAccountLinkFailed(providerKey, outcome.Result.ToString());
         }
         finally
         {
             linkInFlight = false;
             if (linkState == AccountLinkState.Linking)
             {
-                linkState = previousState;
+                linkState = previousState == AccountLinkState.Linking
+                    ? AccountLinkState.GuestAnonymous
+                    : previousState;
             }
+
+            Debug.Log("[Account] LinkGooglePlayAsync completed: " + outcome.Result);
         }
+
+        return outcome;
+    }
+
+    private static async Task<AccountLinkOutcome> LinkGooglePlayInternalAsync(
+        string providerKey,
+        AccountLinkState previousState)
+    {
+        if (!await EnsureSignedInAsync())
+        {
+            var fail = AccountLinkOutcome.From(
+                AccountLinkResult.AuthenticationError,
+                providerKey);
+            GameAnalytics.LogAccountLinkFailed(providerKey, fail.Result.ToString());
+            return fail;
+        }
+
+        Debug.Log("[Account] Firebase account lookup started");
+        await RefreshAccountStateAsync();
+        Debug.Log("[Account] Firebase account lookup completed");
+
+        if (HasProvider(AccountProvider.GooglePlay))
+        {
+            var already = AccountLinkOutcome.From(AccountLinkResult.AlreadyLinked, providerKey);
+            GameAnalytics.LogAccountLinkSuccess(providerKey);
+            return already;
+        }
+
+        if (googlePlayProvider == null || !googlePlayProvider.IsAvailable)
+        {
+            var unavailable = AccountLinkOutcome.From(
+                AccountLinkResult.ProviderUnavailable,
+                providerKey);
+            GameAnalytics.LogAccountLinkFailed(providerKey, unavailable.Result.ToString());
+            return unavailable;
+        }
+
+        string uidBefore = UserId;
+        if (string.IsNullOrEmpty(uidBefore))
+        {
+            var authFail = AccountLinkOutcome.From(
+                AccountLinkResult.AuthenticationError,
+                providerKey);
+            GameAnalytics.LogAccountLinkFailed(providerKey, authFail.Result.ToString());
+            return authFail;
+        }
+
+        linkState = AccountLinkState.Linking;
+
+        ExternalAccountAuthResult auth = await googlePlayProvider.AuthenticateForLinkAsync();
+        if (auth.Result != AccountLinkResult.Success || auth.Credential == null)
+        {
+            linkState = previousState == AccountLinkState.Linking
+                ? AccountLinkState.GuestAnonymous
+                : previousState;
+            var providerFail = AccountLinkOutcome.From(
+                auth.Result == AccountLinkResult.Success
+                    ? AccountLinkResult.AuthenticationError
+                    : auth.Result,
+                providerKey,
+                string.IsNullOrEmpty(auth.Message)
+                    ? null
+                    : auth.Message);
+            GameAnalytics.LogAccountLinkFailed(providerKey, providerFail.Result.ToString());
+            return providerFail;
+        }
+
+        DailyChallengeFirebaseSettings settings = DailyChallengeFirebaseSettings.LoadDefault();
+        Debug.Log("[Account] Firebase REST link started");
+        FirebaseRestClient.FirebaseLinkIdpResult link =
+            await FirebaseRestClient.TryLinkIdpAsync(
+                settings.ApiKey,
+                IdToken,
+                auth.Credential);
+
+        // Retry once after token refresh on auth failure.
+        if (link.Result == AccountLinkResult.AuthenticationError &&
+            await TryRefreshSessionAsync())
+        {
+            link = await FirebaseRestClient.TryLinkIdpAsync(
+                settings.ApiKey,
+                IdToken,
+                auth.Credential);
+        }
+
+        Debug.Log(
+            "[Account] Firebase REST link response received result=" + link.Result +
+            (string.IsNullOrEmpty(link.ErrorCode) ? string.Empty : (" err=" + link.ErrorCode)));
+
+        if (link.Result != AccountLinkResult.Success)
+        {
+            // Preserve anonymous Firebase session / UID / Daily data — do not ApplySession.
+            linkState = previousState == AccountLinkState.Linking
+                ? AccountLinkState.GuestAnonymous
+                : previousState;
+            var fail = AccountLinkOutcome.From(link.Result, providerKey);
+            GameAnalytics.LogAccountLinkFailed(
+                providerKey,
+                ToAccountLinkFailureReason(link.Result, link.ErrorCode));
+            return fail;
+        }
+
+        // CRITICAL: Firebase UID must remain the same.
+        if (!string.Equals(link.LocalId, uidBefore, StringComparison.Ordinal))
+        {
+            Debug.LogError(
+                "[Account] IDENTITY CONTINUITY ERROR: Firebase UID changed during Google Play link. " +
+                "Refusing to adopt new session. Daily data ownership is not guaranteed.");
+            linkState = AccountLinkState.Error;
+            var continuity = AccountLinkOutcome.From(
+                AccountLinkResult.IdentityContinuityError,
+                providerKey);
+            GameAnalytics.LogAccountLinkFailed(providerKey, continuity.Result.ToString());
+            return continuity;
+        }
+
+        Debug.Log("[Account] UID continuity verified");
+
+        ApplySession(
+            link.LocalId,
+            link.IdToken,
+            string.IsNullOrEmpty(link.RefreshToken)
+                ? PlayerPrefs.GetString(RefreshTokenKey, string.Empty)
+                : link.RefreshToken,
+            link.ExpiresInSeconds);
+
+        if (!string.IsNullOrEmpty(auth.Credential.DisplayNameHint))
+        {
+            optionalDisplayName = auth.Credential.DisplayNameHint;
+        }
+
+        Debug.Log("[Account] Firebase account lookup started");
+        await RefreshAccountStateAsync();
+        Debug.Log("[Account] Firebase account lookup completed");
+
+        if (!HasProvider(AccountProvider.GooglePlay))
+        {
+            // Link API succeeded but lookup didn't show provider — still treat as soft success
+            // if UID matched; mark LinkedGooglePlay for presentation.
+            linkedProviders.Clear();
+            linkedProviders.Add(AccountProvider.Anonymous);
+            linkedProviders.Add(AccountProvider.GooglePlay);
+            linkState = AccountLinkState.LinkedGooglePlay;
+            CachePresentationState();
+        }
+
+        GameAnalytics.LogAccountLinkSuccess(providerKey);
+        return AccountLinkOutcome.From(AccountLinkResult.Success, providerKey);
     }
 
     /// <summary>Future Apple link — not implemented in Phase 4.2A.</summary>
@@ -517,5 +574,20 @@ public static class DailyChallengeIdentityService
         // Non-authoritative presentation hint only.
         PlayerPrefs.SetInt(PresentationLinkCacheKey, (int)linkState);
         PlayerPrefs.Save();
+    }
+
+    private static string ToAccountLinkFailureReason(AccountLinkResult result, string errorCode)
+    {
+        if (result == AccountLinkResult.ProviderBackendUnavailable)
+        {
+            return "provider_backend_unavailable";
+        }
+
+        if (!string.IsNullOrEmpty(errorCode))
+        {
+            return errorCode;
+        }
+
+        return result.ToString();
     }
 }

@@ -312,6 +312,68 @@ public static class DailyChallengeAuthoringMenu
         EditorSceneManager.SaveScene(scene);
     }
 
+    [MenuItem("Rush Out/UI/Create Daily Reward UI (MainMenu)")]
+    public static void CreateDailyRewardUiMainMenu()
+    {
+        Scene scene = EditorSceneManager.OpenScene(MainMenuPath, OpenSceneMode.Single);
+        Transform parent = FindMainMenuUiParent();
+        if (parent == null)
+        {
+            Debug.LogError("[DailyReward] No MainMenu UI parent found.");
+            return;
+        }
+
+        Transform existing = parent.Find("DailyRewardPanel");
+        if (existing != null)
+        {
+            Selection.activeGameObject = existing.gameObject;
+            Debug.LogWarning("[DailyReward] DailyRewardPanel already exists — selected it.");
+            return;
+        }
+
+        GameObject root = CreateUi("DailyRewardPanel", parent);
+        RectTransform rootRt = root.GetComponent<RectTransform>();
+        Stretch(rootRt);
+        Image dim = root.AddComponent<Image>();
+        dim.color = new Color(0f, 0f, 0f, 0.65f);
+
+        GameObject panel = CreateUi("Panel", root.transform);
+        Image panelImg = panel.AddComponent<Image>();
+        panelImg.color = new Color(0.12f, 0.14f, 0.18f, 0.98f);
+        RectTransform panelRt = panel.GetComponent<RectTransform>();
+        SetRect(panelRt, Vector2.zero, new Vector2(420f, 320f));
+
+        TextMeshProUGUI title = CreateTmp("Title", panel.transform, "DAILY WINNER", 40f);
+        SetRect(title.rectTransform, new Vector2(0f, 100f), new Vector2(380f, 48f));
+        title.fontStyle = FontStyles.Bold;
+
+        TextMeshProUGUI rank = CreateTmp("Rank", panel.transform, "#1", 48f);
+        SetRect(rank.rectTransform, new Vector2(0f, 40f), new Vector2(380f, 56f));
+        rank.fontStyle = FontStyles.Bold;
+
+        TextMeshProUGUI body = CreateTmp("Body", panel.transform, "YOU WON 1000 COINS", 28f);
+        SetRect(body.rectTransform, new Vector2(0f, -20f), new Vector2(380f, 40f));
+
+        Button claim = CreateButton("ClaimButton", panel.transform, "CLAIM", new Vector2(0f, -100f));
+        TextMeshProUGUI claimLabel = claim.GetComponentInChildren<TextMeshProUGUI>();
+
+        DailyRewardUI rewardUi = root.AddComponent<DailyRewardUI>();
+        SerializedObject so = new SerializedObject(rewardUi);
+        so.FindProperty("panelRoot").objectReferenceValue = root;
+        so.FindProperty("titleText").objectReferenceValue = title;
+        so.FindProperty("rankText").objectReferenceValue = rank;
+        so.FindProperty("bodyText").objectReferenceValue = body;
+        so.FindProperty("claimButton").objectReferenceValue = claim;
+        so.FindProperty("claimButtonLabel").objectReferenceValue = claimLabel;
+        so.ApplyModifiedPropertiesWithoutUndo();
+
+        root.SetActive(false);
+        Selection.activeGameObject = root;
+        EditorSceneManager.MarkSceneDirty(scene);
+        EditorSceneManager.SaveScene(scene);
+        Debug.Log("[DailyReward] Created DailyRewardPanel under MainMenu.");
+    }
+
     [MenuItem("Rush Out/UI/Create Daily Challenge Leaderboard UI (Gameplay)")]
     public static void CreateLeaderboardGameplay()
     {

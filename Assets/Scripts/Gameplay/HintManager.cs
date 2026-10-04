@@ -29,12 +29,18 @@ public class HintManager : MonoBehaviour
     [SerializeField] private GameManager gameManager;
     [SerializeField] private AudioManager audioManager;
 
-    [SerializeField] private int hintCost = 100;
+    [SerializeField]
+    [Tooltip("Legacy Inspector field — runtime cost is LivesEconomyConfig.HintCoinCost.")]
+    private int hintCost = LivesEconomyConfig.HintCoinCost;
+
+    [Tooltip("Optional CostText under HintButton — synced from LivesEconomyConfig.HintCoinCost.")]
+    [SerializeField] private TextMeshProUGUI hintCostLabel;
 
     [Tooltip("Ruimere search-limiet dan level-generation — mid-game 8x8 states.")]
     [SerializeField] private int hintSolverMaxStates = 200000;
 
-    public int HintCoinCost => hintCost;
+    /// <summary>Authoritative paid hint cost (centralized).</summary>
+    public int HintCoinCost => LivesEconomyConfig.HintCoinCost;
 
     [Header("Status Message")]
     [SerializeField] private TextMeshProUGUI hintStatusText;
@@ -142,6 +148,57 @@ public class HintManager : MonoBehaviour
         {
             hintStatusText.gameObject.SetActive(false);
         }
+
+        RefreshHintCostLabel();
+    }
+
+    /// <summary>
+    /// Keeps HintButton CostText aligned with LivesEconomyConfig.HintCoinCost.
+    /// </summary>
+    public void RefreshHintCostLabel()
+    {
+        if (hintCostLabel == null)
+        {
+            GameObject go = GameObject.Find("HintButton");
+            Transform hintButton = go != null ? go.transform : null;
+            if (hintButton != null)
+            {
+                Transform cost = FindDeepChild(hintButton, "CostText");
+                if (cost != null)
+                {
+                    hintCostLabel = cost.GetComponent<TextMeshProUGUI>();
+                }
+            }
+        }
+
+        if (hintCostLabel != null)
+        {
+            hintCostLabel.text = LivesEconomyConfig.HintCoinCost.ToString();
+        }
+    }
+
+    private static Transform FindDeepChild(Transform parent, string name)
+    {
+        if (parent == null)
+        {
+            return null;
+        }
+
+        if (parent.name == name)
+        {
+            return parent;
+        }
+
+        for (int i = 0; i < parent.childCount; i++)
+        {
+            Transform found = FindDeepChild(parent.GetChild(i), name);
+            if (found != null)
+            {
+                return found;
+            }
+        }
+
+        return null;
     }
 
     /// <summary>
@@ -198,8 +255,9 @@ public class HintManager : MonoBehaviour
             return;
         }
 
+        int cost = LivesEconomyConfig.HintCoinCost;
         int coinsBefore = coinManager.GetCoins();
-        if (!coinManager.CanAfford(hintCost))
+        if (!coinManager.CanAfford(cost))
         {
             LogHintRequest(
                 HintResult.NotEnoughCoins,
@@ -236,7 +294,7 @@ public class HintManager : MonoBehaviour
             // Duplicate request: re-show cached hint — never charge again.
             if (!compute.reusedCache)
             {
-                if (!coinManager.SpendCoins(hintCost))
+                if (!coinManager.SpendCoins(cost))
                 {
                     Debug.LogWarning(
                         "HintManager: SpendCoins faalde onverwacht na CanAfford — geen hint getoond."
@@ -972,7 +1030,7 @@ public class HintManager : MonoBehaviour
         StringBuilder log = new StringBuilder(512);
         log.AppendLine("=== HINT REQUEST ===");
         log.AppendLine("Paid hint: " + paidHint);
-        log.AppendLine("Cost: " + hintCost);
+        log.AppendLine("Cost: " + LivesEconomyConfig.HintCoinCost);
         log.AppendLine("Coins before: " + coinsBefore);
 
         if (solverResult != null)

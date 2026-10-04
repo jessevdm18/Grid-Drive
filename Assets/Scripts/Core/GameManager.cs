@@ -596,11 +596,12 @@ public class GameManager : MonoBehaviour
                     "Result was persisted; returning to MainMenu.");
                 DailyChallengeContext.ClearSession();
                 Time.timeScale = 1f;
+                PlayLevelCompleteFeedback();
                 SceneTransition.LoadScene("MainMenu");
                 return;
             }
 
-            audioManager?.PlayWin();
+            PlayLevelCompleteFeedback();
             return;
         }
 
@@ -764,11 +765,7 @@ public class GameManager : MonoBehaviour
             }
         }
 
-#if UNITY_ANDROID || UNITY_IOS
-        Handheld.Vibrate();
-#endif
-
-        audioManager?.PlayWin();
+        PlayLevelCompleteFeedback();
 
         // Interstitial-teller: één keer per level (beschermd door levelCompleted).
         completedLevelsSinceAd++;
@@ -778,6 +775,23 @@ public class GameManager : MonoBehaviour
         {
             uiManager.ShowWinPanel();
         }
+    }
+
+    /// <summary>
+    /// Shared completion SFX + haptic for campaign and Daily.
+    /// Exactly once per accepted CompleteLevel — no stars/coins/panel here.
+    /// </summary>
+    private void PlayLevelCompleteFeedback()
+    {
+        if (audioManager == null)
+        {
+            audioManager = AudioManager.Resolve();
+        }
+
+#if UNITY_ANDROID || UNITY_IOS
+        Handheld.Vibrate();
+#endif
+        audioManager?.PlayWin();
     }
 
     /// <summary>
@@ -860,16 +874,25 @@ public class GameManager : MonoBehaviour
             return;
         }
 
+        int previousLives = livesManager.CurrentLives;
         if (!livesManager.TryRemoveLife())
         {
             return;
         }
 
+        int newLives = livesManager.CurrentLives;
         Debug.Log(
             "[Lives] Failure consumed life: " +
-            livesManager.CurrentLives + "/" + LivesManager.MaxLives +
+            newLives + "/" + LivesManager.MaxLives +
             " | reason=" + failReason
         );
+
+        // Presentation-only — never create HUD from teardown / FailLevel.
+        LivesHUD hud = LivesHUD.FindInLoadedScenes();
+        if (hud != null)
+        {
+            hud.PlayLifeLostAnimation(previousLives, newLives);
+        }
     }
 
     private void ReportLevelCompleteTelemetry(int parMoves)

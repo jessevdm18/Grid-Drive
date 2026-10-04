@@ -42,6 +42,7 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioClip noTouchFailedClip;
     [SerializeField] private AudioClip fragileCargoFailedClip;
     [SerializeField] private AudioClip limitedVehicleLockedClip;
+    [SerializeField] private AudioClip starRevealClip;
 
     [Header("SFX Volumes")]
     [SerializeField, Range(0f, 1f)] private float buttonVolume = 0.7f;
@@ -66,6 +67,7 @@ public class AudioManager : MonoBehaviour
     [SerializeField, Range(0f, 1f)] private float noTouchFailedVolume = 0.75f;
     [SerializeField, Range(0f, 1f)] private float fragileCargoFailedVolume = 0.75f;
     [SerializeField, Range(0f, 1f)] private float limitedVehicleLockedVolume = 0.65f;
+    [SerializeField, Range(0f, 1f)] private float starRevealVolume = 0.75f;
 
     [Header("SFX Pitch (repeating gameplay)")]
     [SerializeField, Range(0.8f, 1.2f)] private float movePitchMin = 0.96f;
@@ -227,6 +229,7 @@ public class AudioManager : MonoBehaviour
         if (noTouchFailedClip == null) noTouchFailedClip = donor.noTouchFailedClip;
         if (fragileCargoFailedClip == null) fragileCargoFailedClip = donor.fragileCargoFailedClip;
         if (limitedVehicleLockedClip == null) limitedVehicleLockedClip = donor.limitedVehicleLockedClip;
+        if (starRevealClip == null) starRevealClip = donor.starRevealClip;
     }
 
     /// <summary>
@@ -303,6 +306,24 @@ public class AudioManager : MonoBehaviour
     public void PlayWin()
     {
         PlaySfx(winClip, winVolume);
+    }
+
+    /// <summary>
+    /// One SFX per actually revealed win star. Falls back to upgrade/coin clip if unset.
+    /// Optional subtle pitch variation per starIndex (0..2).
+    /// </summary>
+    public void PlayStarReveal(int starIndex = 0)
+    {
+        AudioClip clip = starRevealClip != null
+            ? starRevealClip
+            : (upgradeClip != null ? upgradeClip : coinClip);
+        if (clip == null)
+        {
+            return;
+        }
+
+        float pitch = 1f + (Mathf.Clamp(starIndex, 0, 2) * 0.04f);
+        PlaySfx(clip, starRevealVolume, pitch, pitch);
     }
 
     /// <summary>

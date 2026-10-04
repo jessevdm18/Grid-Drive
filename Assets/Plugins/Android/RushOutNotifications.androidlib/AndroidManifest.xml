@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Phase 4.4 — POST_NOTIFICATIONS + FCM auto-init OFF by default.
+  Runtime permission is requested only when the user enables Daily notifications.
+  RegistrationOnInitEnabled is also set from DailyNotificationService.Bootstrap.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="com.raddergames.griddrive.notifications">
+  <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+  <application>
+    <meta-data
+        android:name="firebase_messaging_auto_init_enabled"
+        android:value="false" />
+  </application>
+</manifest>

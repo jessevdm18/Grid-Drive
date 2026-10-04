@@ -4,7 +4,8 @@ using UnityEngine;
 
 /// <summary>
 /// Combines real online Completed results with client-only simulated fillers
-/// until minimum population is reached. Simulated rows are NEVER uploaded.
+/// until minimum population is reached. Simulated rows are NEVER uploaded and
+/// are NEVER eligible for Phase 4.3 Daily #1 rewards (server settlement only).
 /// </summary>
 public sealed class HybridDailyLeaderboardProvider : IDailyLeaderboardProvider
 {

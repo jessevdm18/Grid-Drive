@@ -6838,7 +6838,8 @@ MonoBehaviour:
   levelManager: {fileID: 1990499621}
   gameManager: {fileID: 1988114883}
   audioManager: {fileID: 0}
-  hintCost: 100
+  hintCost: 50
+  hintCostLabel: {fileID: 0}
   hintSolverMaxStates: 200000
   hintStatusText: {fileID: 910020004}
   hintStatusDuration: 2
@@ -8355,7 +8356,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 100
+  m_text: 50
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 2c91d7ab60b3e9e43ba878f2b7f64a83, type: 2}
   m_sharedMaterial: {fileID: -4434231809896357490, guid: 2c91d7ab60b3e9e43ba878f2b7f64a83, type: 2}
@@ -28620,6 +28621,7 @@ MonoBehaviour:
   noTouchFailedClip: {fileID: 8300000, guid: 2cd4c6c31d5620e4da65d4d0ff60f20a, type: 3}
   fragileCargoFailedClip: {fileID: 8300000, guid: 46e4f178c807a5642bb173dd9a5c8031, type: 3}
   limitedVehicleLockedClip: {fileID: 8300000, guid: b7ec79a44f7dee547a1533e6dbe38fc1, type: 3}
+  starRevealClip: {fileID: 0}
   buttonVolume: 0.5
   moveVolume: 0.8
   blockedVolume: 0.8
@@ -28642,6 +28644,7 @@ MonoBehaviour:
   noTouchFailedVolume: 0.75
   fragileCargoFailedVolume: 0.575
   limitedVehicleLockedVolume: 0.325
+  starRevealVolume: 0.75
   movePitchMin: 0.96
   movePitchMax: 1.04
   blockedPitchMin: 0.98
@@ -49773,6 +49776,12 @@ MonoBehaviour:
   movesValueText: {fileID: 58010480}
   difficultyText: {fileID: 1691293306}
   difficultyLabelRoot: {fileID: 1037384114}
+  movesNormalColor: {r: 1, g: 1, b: 1, a: 1}
+  movesWarningColor: {r: 1, g: 0.78, b: 0.15, a: 1}
+  movesCriticalColor: {r: 1, g: 0.28, b: 0.22, a: 1}
+  movesCriticalPulseSpeed: 2
+  movesCriticalPulseScale: 1.08
+  audioManager: {fileID: 0}
 --- !u!114 &2010639861
 MonoBehaviour:
   m_ObjectHideFlags: 0

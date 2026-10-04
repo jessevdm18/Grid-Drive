@@ -9,5 +9,10 @@ public enum AccountLinkResult
     NetworkError = 5,
     AuthenticationError = 6,
     IdentityContinuityError = 7,
-    UnknownError = 8
+    UnknownError = 8,
+    /// <summary>
+    /// Provider auth succeeded but the Firebase/Identity Toolkit backend rejected the IdP
+    /// credential due to a known temporary backend limitation (not a client config error).
+    /// </summary>
+    ProviderBackendUnavailable = 9
 }

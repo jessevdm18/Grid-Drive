@@ -24,14 +24,124 @@ public class LivesHUD : MonoBehaviour
 
     private LivesManager livesManager;
     private Coroutine tickRoutine;
+    private Coroutine lifeLostRoutine;
     private bool subscribed;
+    private Color livesIconBaseColor = Color.white;
+    private Vector3 livesIconBaseScale = Vector3.one;
+    private Vector3 livesIconBasePos;
+    private bool livesIconVisualCached;
 
     /// <summary>
     /// Finds an authored LivesHUD in the loaded scenes. Does not create visuals.
     /// </summary>
     public static LivesHUD FindInLoadedScenes()
     {
-        return FindAnyObjectByType<LivesHUD>();
+        return FindAnyObjectByType<LivesHUD>(FindObjectsInactive.Include);
+    }
+
+    /// <summary>
+    /// Short non-blocking feedback when a genuine FailLevel consumes one life.
+    /// Safe if HUD is inactive/missing icon — no EnsureInstance, no hierarchy spawn.
+    /// </summary>
+    public void PlayLifeLostAnimation(int previousLives, int newLives)
+    {
+        if (!isActiveAndEnabled)
+        {
+            return;
+        }
+
+        // Count should already reflect newLives via OnLivesChanged; force settle.
+        RefreshFromManager();
+
+        if (livesIcon == null)
+        {
+            return;
+        }
+
+        CacheLivesIconVisual();
+        if (lifeLostRoutine != null)
+        {
+            StopCoroutine(lifeLostRoutine);
+            ResetLivesIconVisual();
+        }
+
+        lifeLostRoutine = StartCoroutine(LifeLostRoutine(previousLives, newLives));
+    }
+
+    private void CacheLivesIconVisual()
+    {
+        if (livesIconVisualCached || livesIcon == null)
+        {
+            return;
+        }
+
+        livesIconBaseColor = livesIcon.color;
+        livesIconBaseScale = livesIcon.rectTransform.localScale;
+        livesIconBasePos = livesIcon.rectTransform.anchoredPosition;
+        livesIconVisualCached = true;
+    }
+
+    private void ResetLivesIconVisual()
+    {
+        if (livesIcon == null || !livesIconVisualCached)
+        {
+            return;
+        }
+
+        livesIcon.color = livesIconBaseColor;
+        livesIcon.rectTransform.localScale = livesIconBaseScale;
+        livesIcon.rectTransform.anchoredPosition = livesIconBasePos;
+    }
+
+    private IEnumerator LifeLostRoutine(int previousLives, int newLives)
+    {
+        CacheLivesIconVisual();
+        RectTransform iconRt = livesIcon.rectTransform;
+        Color flash = new Color(1f, 0.25f, 0.22f, livesIconBaseColor.a);
+        const float punchDuration = 0.12f;
+        const float settleDuration = 0.16f;
+        const float punchScale = 1.28f;
+        const float shakePx = 4f;
+
+        // Punch + red flash
+        float elapsed = 0f;
+        while (elapsed < punchDuration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            float n = Mathf.Clamp01(elapsed / punchDuration);
+            float eased = Mathf.SmoothStep(0f, 1f, n);
+            iconRt.localScale = Vector3.Lerp(livesIconBaseScale, livesIconBaseScale * punchScale, eased);
+            livesIcon.color = Color.Lerp(livesIconBaseColor, flash, eased);
+            float shake = Mathf.Sin(n * Mathf.PI * 4f) * shakePx * (1f - n);
+            iconRt.anchoredPosition = livesIconBasePos + new Vector3(shake, 0f, 0f);
+            yield return null;
+        }
+
+        // Settle
+        elapsed = 0f;
+        while (elapsed < settleDuration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            float n = Mathf.Clamp01(elapsed / settleDuration);
+            float eased = Mathf.SmoothStep(0f, 1f, n);
+            iconRt.localScale = Vector3.Lerp(livesIconBaseScale * punchScale, livesIconBaseScale, eased);
+            livesIcon.color = Color.Lerp(flash, livesIconBaseColor, eased);
+            iconRt.anchoredPosition = Vector3.Lerp(
+                iconRt.anchoredPosition,
+                livesIconBasePos,
+                eased);
+            yield return null;
+        }
+
+        ResetLivesIconVisual();
+        RefreshFromManager();
+        lifeLostRoutine = null;
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        Debug.Log(
+            "[LivesHUD] Life-loss anim " + previousLives + "→" + newLives
+        );
+#endif
     }
 
     private void OnEnable()
@@ -51,12 +161,19 @@ public class LivesHUD : MonoBehaviour
     {
         UnsubscribeOnly();
         StopTick();
+        if (lifeLostRoutine != null)
+        {
+            StopCoroutine(lifeLostRoutine);
+            lifeLostRoutine = null;
+            ResetLivesIconVisual();
+        }
     }
 
     private void OnDestroy()
     {
         UnsubscribeOnly();
         StopTick();
+        lifeLostRoutine = null;
     }
 
     private void ResolveManager(bool allowCreate)

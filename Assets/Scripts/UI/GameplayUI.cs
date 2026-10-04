@@ -4,6 +4,7 @@ using TMPro;
 /// <summary>
 /// Toont coins, levelnummer, difficulty en moves tijdens Gameplay.
 /// Level/Moves: alleen ValueText (cijfers); LabelText blijft "LEVEL" / "MOVES".
+/// Global/normal move-limit card shares urgency bands with MoveLimitUrgency.
 /// </summary>
 public class GameplayUI : MonoBehaviour
 {
@@ -29,6 +30,21 @@ public class GameplayUI : MonoBehaviour
     [Tooltip("Optional root to show/hide the difficulty label.")]
     [SerializeField] private GameObject difficultyLabelRoot;
 
+    [Header("Global move-limit urgency (normal campaign)")]
+    [SerializeField] private Color movesNormalColor = Color.white;
+    [SerializeField] private Color movesWarningColor = new Color(1f, 0.78f, 0.15f, 1f);
+    [SerializeField] private Color movesCriticalColor = new Color(1f, 0.28f, 0.22f, 1f);
+    [SerializeField, Range(0.1f, 8f)] private float movesCriticalPulseSpeed = 2f;
+    [SerializeField, Range(1f, 1.25f)] private float movesCriticalPulseScale = 1.08f;
+    [SerializeField] private AudioManager audioManager;
+
+    private bool movesPulseActive;
+    private Vector3 movesBaseScale = Vector3.one;
+    private bool movesScaleCached;
+    private bool movesWarningSfxPlayed;
+    private int lastMovesRemaining = int.MinValue;
+    private bool urgencyActive;
+
     private void Start()
     {
         if (gameManager == null)
@@ -36,6 +52,12 @@ public class GameplayUI : MonoBehaviour
             gameManager = FindAnyObjectByType<GameManager>();
         }
 
+        if (audioManager == null)
+        {
+            audioManager = AudioManager.Resolve();
+        }
+
+        CacheMovesScale();
         UpdateCoinText(coinManager != null ? coinManager.GetCoins() : 0);
         UpdateLevelText();
 
@@ -49,6 +71,20 @@ public class GameplayUI : MonoBehaviour
         {
             UpdateMovesText(0);
         }
+    }
+
+    private void Update()
+    {
+        if (!movesPulseActive || movesValueText == null || !urgencyActive)
+        {
+            return;
+        }
+
+        float wave =
+            (Mathf.Sin(Time.unscaledTime * movesCriticalPulseSpeed * Mathf.PI * 2f) + 1f) *
+            0.5f;
+        float scaleMul = Mathf.Lerp(1f, movesCriticalPulseScale, wave);
+        movesValueText.rectTransform.localScale = movesBaseScale * scaleMul;
     }
 
     private void OnEnable()
@@ -187,10 +223,104 @@ public class GameplayUI : MonoBehaviour
         if (showLimit && limit > 0)
         {
             movesValueText.text = moves.ToString() + " / " + limit.ToString();
+            // Daily: no performance failure — suppress urgency on the moves card.
+            bool daily =
+                DailyChallengeGameplayPolicy.IsActive ||
+                (levelManager != null && levelManager.IsDailyChallengeSession);
+            // Urgency bands are for forgiving/global campaign limits only.
+            // Special MoveLimit keeps its own MissionUI thresholds/SFX unchanged.
+            bool globalLimitActive =
+                gameManager != null && gameManager.EffectiveGlobalMoveLimit > 0;
+            if (daily || !globalLimitActive)
+            {
+                ClearMovesUrgency();
+            }
+            else
+            {
+                ApplyMovesUrgency(Mathf.Max(0, limit - moves));
+            }
         }
         else
         {
             movesValueText.text = moves.ToString();
+            ClearMovesUrgency();
         }
+    }
+
+    private void ApplyMovesUrgency(int remaining)
+    {
+        urgencyActive = true;
+        CacheMovesScale();
+
+        // Reset one-shot SFX when remaining climbs (restart / undo recovery).
+        if (remaining > MoveLimitUrgency.WarningRemaining)
+        {
+            movesWarningSfxPlayed = false;
+        }
+
+        MoveLimitUrgency.Band band = MoveLimitUrgency.Evaluate(remaining);
+        movesValueText.color = MoveLimitUrgency.ColorFor(
+            band,
+            movesNormalColor,
+            movesWarningColor,
+            movesCriticalColor);
+
+        movesPulseActive = band == MoveLimitUrgency.Band.Critical;
+        if (!movesPulseActive)
+        {
+            movesValueText.rectTransform.localScale = movesBaseScale;
+        }
+
+        // One warning SFX when first entering warning band (not every frame / move).
+        if (band != MoveLimitUrgency.Band.Normal &&
+            !movesWarningSfxPlayed &&
+            remaining <= MoveLimitUrgency.WarningRemaining &&
+            (lastMovesRemaining == int.MinValue ||
+             lastMovesRemaining > MoveLimitUrgency.WarningRemaining))
+        {
+            movesWarningSfxPlayed = true;
+            if (audioManager == null)
+            {
+                audioManager = AudioManager.Resolve();
+            }
+
+            audioManager?.PlayMoveLimitWarning();
+        }
+
+        lastMovesRemaining = remaining;
+    }
+
+    private void ClearMovesUrgency()
+    {
+        urgencyActive = false;
+        movesPulseActive = false;
+        movesWarningSfxPlayed = false;
+        lastMovesRemaining = int.MinValue;
+        if (movesValueText == null)
+        {
+            return;
+        }
+
+        movesValueText.color = movesNormalColor;
+        if (movesScaleCached)
+        {
+            movesValueText.rectTransform.localScale = movesBaseScale;
+        }
+    }
+
+    private void CacheMovesScale()
+    {
+        if (movesScaleCached || movesValueText == null)
+        {
+            return;
+        }
+
+        movesBaseScale = movesValueText.rectTransform.localScale;
+        if (movesBaseScale.sqrMagnitude < 0.0001f)
+        {
+            movesBaseScale = Vector3.one;
+        }
+
+        movesScaleCached = true;
     }
 }

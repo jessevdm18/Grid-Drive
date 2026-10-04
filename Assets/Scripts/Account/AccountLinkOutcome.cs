@@ -34,6 +34,8 @@ public readonly struct AccountLinkOutcome
                 return "Linking cancelled.";
             case AccountLinkResult.ProviderUnavailable:
                 return "Google Play is not available on this device.";
+            case AccountLinkResult.ProviderBackendUnavailable:
+                return "Google Play linking is temporarily unavailable. Please try again later.";
             case AccountLinkResult.NetworkError:
                 return "Could not connect. Try again.";
             case AccountLinkResult.AuthenticationError:

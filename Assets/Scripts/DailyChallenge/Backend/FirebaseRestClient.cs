@@ -103,8 +103,26 @@ public static class FirebaseRestClient
             return FirebaseLinkIdpResult.Fail(AccountLinkResult.AuthenticationError, "missing_credential");
         }
 
+        const string endpointPath = "/v1/accounts:signInWithIdp";
+        const string requestUri = "http://localhost";
+        string providerId = !string.IsNullOrEmpty(credential.FirebaseProviderId)
+            ? credential.FirebaseProviderId
+            : ExtractPostBodyKeyValue(credential.IdpPostBody, "providerId");
+        string postBodyCredentialKey = DetectPostBodyCredentialKey(credential.IdpPostBody);
+        bool idTokenIncluded = !string.IsNullOrEmpty(currentIdToken);
+
+        // Non-secret request shape only — never log postBody values / tokens.
+        Debug.Log(
+            "[Account] Firebase link request shape: " +
+            "endpoint=" + endpointPath +
+            " providerId=" + (providerId ?? string.Empty) +
+            " requestUri=" + requestUri +
+            " idTokenFieldIncluded=" + idTokenIncluded +
+            " postBodyCredentialKey=" + postBodyCredentialKey +
+            " returnSecureToken=true returnIdpCredential=true");
+
         string url =
-            "https://identitytoolkit.googleapis.com/v1/accounts:signInWithIdp?key=" +
+            "https://identitytoolkit.googleapis.com" + endpointPath + "?key=" +
             UnityWebRequest.EscapeURL(apiKey);
 
         // requestUri is required by Identity Toolkit; localhost is the conventional value for mobile.
@@ -112,22 +130,44 @@ public static class FirebaseRestClient
             "{" +
             "\"idToken\":\"" + Escape(currentIdToken ?? string.Empty) + "\"," +
             "\"postBody\":\"" + Escape(credential.IdpPostBody) + "\"," +
-            "\"requestUri\":\"http://localhost\"," +
+            "\"requestUri\":\"" + Escape(requestUri) + "\"," +
             "\"returnIdpCredential\":true," +
             "\"returnSecureToken\":true" +
             "}";
 
         var http = await PostJsonDetailedAsync(url, body, bearerToken: null);
+        Debug.Log("[Account] Firebase link HTTP status=" + http.Status);
+
         if (string.IsNullOrEmpty(http.Body))
         {
+            Debug.LogWarning(
+                "[Account] Firebase link backend error=empty_body" +
+                " message=(no response body)");
             return FirebaseLinkIdpResult.Fail(AccountLinkResult.NetworkError, "empty");
         }
 
         string errorMessage = ExtractJsonString(http.Body, "message");
-        if (!http.Ok || !string.IsNullOrEmpty(errorMessage) &&
-            http.Body.IndexOf("\"error\"", StringComparison.Ordinal) >= 0)
+        string errorsStatus = ExtractNestedErrorStatus(http.Body);
+        string classified = ClassifyIdentityToolkitError(http.Body, errorMessage);
+        string sanitizedMessage = SanitizeIdentityToolkitMessage(errorMessage);
+
+        if (!http.Ok ||
+            (!string.IsNullOrEmpty(errorMessage) &&
+             http.Body.IndexOf("\"error\"", StringComparison.Ordinal) >= 0))
         {
-            return MapLinkError(errorMessage, http.Body);
+            Debug.LogWarning(
+                "[Account] Firebase link backend error=" +
+                (string.IsNullOrEmpty(classified) ? "unknown" : classified));
+            Debug.LogWarning(
+                "[Account] Firebase link backend message=" +
+                (string.IsNullOrEmpty(sanitizedMessage) ? "(none)" : sanitizedMessage));
+            if (!string.IsNullOrEmpty(errorsStatus))
+            {
+                Debug.LogWarning(
+                    "[Account] Firebase link REST error status=" + errorsStatus);
+            }
+
+            return MapLinkError(errorMessage, http.Body, providerId);
         }
 
         string localId = ExtractJsonString(http.Body, "localId");
@@ -136,6 +176,9 @@ public static class FirebaseRestClient
         int expires = ExtractJsonInt(http.Body, "expiresIn", 3600);
         if (string.IsNullOrEmpty(localId) || string.IsNullOrEmpty(idToken))
         {
+            Debug.LogWarning(
+                "[Account] Firebase link backend error=missing_tokens" +
+                " message=(success HTTP but localId/idToken absent)");
             return FirebaseLinkIdpResult.Fail(AccountLinkResult.AuthenticationError, "missing_tokens");
         }
 
@@ -187,7 +230,7 @@ public static class FirebaseRestClient
         }
     }
 
-    private static FirebaseLinkIdpResult MapLinkError(string message, string body)
+    private static FirebaseLinkIdpResult MapLinkError(string message, string body, string providerId)
     {
         string m = (message ?? string.Empty) + " " + (body ?? string.Empty);
         if (m.IndexOf("CREDENTIAL_ALREADY_IN_USE", StringComparison.OrdinalIgnoreCase) >= 0 ||
@@ -197,6 +240,18 @@ public static class FirebaseRestClient
             return FirebaseLinkIdpResult.Fail(
                 AccountLinkResult.AlreadyLinkedToAnotherAccount,
                 "already_linked_other");
+        }
+
+        // TEMPORARY WORKAROUND — remove when Firebase/Identity Toolkit fixes Play Games IdP.
+        // Observed on device: HTTP 400 INVALID_CREDENTIAL_OR_PROVIDER_ID
+        // ("Invalid IdP response/credential") for providerId=playgames.google.com despite a
+        // valid Play Games server auth code. Do NOT broaden this mapping to other providers.
+        if (string.Equals(providerId, "playgames.google.com", StringComparison.Ordinal) &&
+            m.IndexOf("INVALID_CREDENTIAL_OR_PROVIDER_ID", StringComparison.OrdinalIgnoreCase) >= 0)
+        {
+            return FirebaseLinkIdpResult.Fail(
+                AccountLinkResult.ProviderBackendUnavailable,
+                "provider_backend_unavailable");
         }
 
         if (m.IndexOf("TOKEN_EXPIRED", StringComparison.OrdinalIgnoreCase) >= 0 ||
@@ -211,6 +266,152 @@ public static class FirebaseRestClient
         }
 
         return FirebaseLinkIdpResult.Fail(AccountLinkResult.UnknownError, "link_failed");
+    }
+
+    private static readonly string[] KnownIdentityToolkitErrors =
+    {
+        "INVALID_CREDENTIAL_OR_PROVIDER_ID",
+        "INVALID_IDP_RESPONSE",
+        "FEDERATED_USER_ID_ALREADY_LINKED",
+        "CREDENTIAL_ALREADY_IN_USE",
+        "OPERATION_NOT_ALLOWED",
+        "TOKEN_EXPIRED",
+        "INVALID_ID_TOKEN",
+        "EXPIRED_OOB_CODE",
+        "USER_DISABLED",
+        "TOO_MANY_ATTEMPTS_TRY_LATER",
+        "INVALID_REFRESH_TOKEN",
+        "MISSING_OR_INVALID_NONCE"
+    };
+
+    /// <summary>
+    /// Classify Identity Toolkit error without logging secrets from the raw body.
+    /// </summary>
+    private static string ClassifyIdentityToolkitError(string body, string message)
+    {
+        string haystack = (message ?? string.Empty) + " " + (body ?? string.Empty);
+        for (int i = 0; i < KnownIdentityToolkitErrors.Length; i++)
+        {
+            string code = KnownIdentityToolkitErrors[i];
+            if (haystack.IndexOf(code, StringComparison.OrdinalIgnoreCase) >= 0)
+            {
+                return code;
+            }
+        }
+
+        // Fall back to error.message when it looks like a bare ERROR_CODE token.
+        if (!string.IsNullOrEmpty(message))
+        {
+            string trimmed = message.Trim();
+            int colon = trimmed.IndexOf(':');
+            if (colon > 0)
+            {
+                trimmed = trimmed.Substring(0, colon).Trim();
+            }
+
+            bool looksLikeCode = trimmed.Length > 0 && trimmed.Length < 80;
+            for (int i = 0; i < trimmed.Length && looksLikeCode; i++)
+            {
+                char c = trimmed[i];
+                if (!(char.IsUpper(c) || char.IsDigit(c) || c == '_'))
+                {
+                    looksLikeCode = false;
+                }
+            }
+
+            if (looksLikeCode)
+            {
+                return trimmed;
+            }
+        }
+
+        return "unclassified";
+    }
+
+    private static string SanitizeIdentityToolkitMessage(string message)
+    {
+        if (string.IsNullOrEmpty(message))
+        {
+            return string.Empty;
+        }
+
+        // Keep short enum-like codes; strip long token-looking segments.
+        string sanitized = message.Trim();
+        if (sanitized.Length > 160)
+        {
+            sanitized = sanitized.Substring(0, 160) + "...";
+        }
+
+        // Redact JWT-shaped substrings (three base64url segments).
+        if (sanitized.IndexOf('.') >= 0 && sanitized.Length > 40)
+        {
+            string[] parts = sanitized.Split(' ');
+            for (int i = 0; i < parts.Length; i++)
+            {
+                if (parts[i].Length > 20 && parts[i].Split('.').Length >= 3)
+                {
+                    parts[i] = "[redacted]";
+                }
+            }
+
+            sanitized = string.Join(" ", parts);
+        }
+
+        return sanitized;
+    }
+
+    private static string DetectPostBodyCredentialKey(string postBody)
+    {
+        if (string.IsNullOrEmpty(postBody))
+        {
+            return "(none)";
+        }
+
+        if (postBody.IndexOf("authCode=", StringComparison.OrdinalIgnoreCase) >= 0)
+        {
+            return "authCode";
+        }
+
+        if (postBody.IndexOf("serverAuthCode=", StringComparison.OrdinalIgnoreCase) >= 0)
+        {
+            return "serverAuthCode";
+        }
+
+        if (postBody.IndexOf("access_token=", StringComparison.OrdinalIgnoreCase) >= 0)
+        {
+            return "access_token";
+        }
+
+        if (postBody.IndexOf("id_token=", StringComparison.OrdinalIgnoreCase) >= 0)
+        {
+            return "id_token";
+        }
+
+        return "unknown";
+    }
+
+    private static string ExtractPostBodyKeyValue(string postBody, string key)
+    {
+        if (string.IsNullOrEmpty(postBody) || string.IsNullOrEmpty(key))
+        {
+            return string.Empty;
+        }
+
+        string marker = key + "=";
+        int i = postBody.IndexOf(marker, StringComparison.OrdinalIgnoreCase);
+        if (i < 0)
+        {
+            return string.Empty;
+        }
+
+        int start = i + marker.Length;
+        int end = postBody.IndexOf('&', start);
+        if (end < 0)
+        {
+            end = postBody.Length;
+        }
+
+        return UnityWebRequest.UnEscapeURL(postBody.Substring(start, end - start));
     }
 
     private static FirebaseAccountInfo ParseAccountInfo(string json)

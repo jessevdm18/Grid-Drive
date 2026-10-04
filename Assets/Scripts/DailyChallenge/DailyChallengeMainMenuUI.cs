@@ -397,11 +397,42 @@ public class DailyChallengeMainMenuUI : MonoBehaviour
         try
         {
             await manager.SyncFromAuthorityAsync();
+            await SyncDailyRewardsAsync();
         }
         finally
         {
             syncInFlight = false;
             RefreshPresentation();
+        }
+    }
+
+    private async Task SyncDailyRewardsAsync()
+    {
+        try
+        {
+            bool hasPending = await DailyRewardService.SyncPendingAsync();
+            if (!hasPending)
+            {
+                return;
+            }
+
+            DailyRewardUI rewardUi = DailyRewardUI.FindInScene();
+            if (rewardUi != null)
+            {
+                rewardUi.PresentPendingIfAny();
+            }
+            else
+            {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                Debug.LogWarning(
+                    "[DailyReward] Pending reward exists but DailyRewardUI missing — " +
+                    "run Rush Out → UI → Create Daily Reward UI (MainMenu).");
+#endif
+            }
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogWarning("[DailyReward] Sync failed: " + ex.GetType().Name);
         }
     }
 

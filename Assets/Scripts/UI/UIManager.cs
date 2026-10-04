@@ -583,6 +583,11 @@ public class UIManager : MonoBehaviour
         earnedStars = Mathf.Clamp(earnedStars, 0, 3);
         Image[] stars = { star1, star2, star3 };
 
+        if (audioManager == null)
+        {
+            audioManager = AudioManager.Resolve();
+        }
+
         for (int i = 0; i < earnedStars; i++)
         {
             yield return new WaitForSeconds(starRevealDelay);
@@ -593,7 +598,10 @@ public class UIManager : MonoBehaviour
                 continue;
             }
 
+            // One reveal SFX per actually shown star (not per earned if Image missing).
+            // Root cause of missing audio: this routine never fired SFX before.
             SetStarImage(star, true);
+            audioManager?.PlayStarReveal(i);
             yield return AnimateStarPop(star);
         }
     }

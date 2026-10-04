@@ -47,15 +47,16 @@ public static class GlobalMoveLimitEditorMenu
             }
         }
 
+        // Easy: ceil(min*1.75)+3  Medium: ceil(min*1.70)+4  Hard: ceil(min*1.75)+5
         Check("A", 3, LevelDifficulty.Easy, 9);
         Check("B", 7, LevelDifficulty.Easy, 16);
         Check("C", 9, LevelDifficulty.Easy, 19);
-        Check("D", 10, LevelDifficulty.Medium, 19);
-        Check("E", 13, LevelDifficulty.Medium, 24);
-        Check("F", 15, LevelDifficulty.Medium, 27);
-        Check("G", 16, LevelDifficulty.Hard, 27);
-        Check("H", 18, LevelDifficulty.Hard, 30);
-        Check("I", 30, LevelDifficulty.Hard, 48);
+        Check("D", 10, LevelDifficulty.Medium, 21);
+        Check("E", 13, LevelDifficulty.Medium, 27);
+        Check("F", 15, LevelDifficulty.Medium, 30);
+        Check("G", 16, LevelDifficulty.Hard, 33);
+        Check("H", 18, LevelDifficulty.Hard, 37);
+        Check("I", 30, LevelDifficulty.Hard, 58);
 
         // Extra safety: special MoveLimit mode, invalid data
         LevelData fakeSpecial = ScriptableObject.CreateInstance<LevelData>();

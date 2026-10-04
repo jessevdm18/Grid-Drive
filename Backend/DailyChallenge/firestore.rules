@@ -6,8 +6,9 @@ service cloud.firestore {
       return request.auth != null && request.auth.uid != null;
     }
 
-    // Phase 4.1B: ALL authoritative Daily writes go through Cloud Functions (Admin SDK).
+    // Phase 4.1B / 4.3: ALL authoritative Daily writes go through Cloud Functions (Admin SDK).
     // Clients have READ access only for challenge / attempts / leaderboard presentation.
+    // Rewards are Admin + callable only (no client Firestore read/write).
 
     match /dailyMeta/{docId} {
       allow read: if isSignedIn();
@@ -23,6 +24,11 @@ service cloud.firestore {
         // Own attempt readable for UI sync. No client writes.
         allow read: if isSignedIn();
         allow create, update, delete: if false;
+      }
+
+      match /rewards/{userId} {
+        // Phase 4.3: pending/claim via getPendingDailyRewards / claimDailyReward only.
+        allow read, write: if false;
       }
     }
 

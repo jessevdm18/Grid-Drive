@@ -18,11 +18,19 @@ Unity (ID token)
        startDailyAttempt
        submitDailyResult
        abandonDailyAttempt
+       getPendingDailyRewards
+       claimDailyReward
+       sendDailyChallengeDevNotification  // test topic only
+  -> Scheduled
+       publishDailyChallengeAndNotify  // 00:01 UTC — today + FCM
+       settleDailyChallengeWinners     // 00:05 UTC — previous day #1 reward
   -> Firestore (eur3)
 
 Unity may READ Firestore for Completed leaderboard rows.
-Unity must NOT write challenge/attempt documents (rules enforce write:false).
+Unity must NOT write challenge/attempt/reward documents (rules enforce write:false).
 ```
+
+Phase 4.3 rewards: see **[REWARDS.md](./REWARDS.md)**.
 
 Ownership key: **Firebase UID** (`request.auth.uid`). Provider-independent.
 Anonymous Auth is V1 startup identity. Optional Google Play linking (Phase 4.2B) preserves the same UID — see [ACCOUNT_LINKING.md](./ACCOUNT_LINKING.md).
@@ -61,10 +69,12 @@ Rules in this folder replace client write permissions (deploy rules; do not recr
 cd functions
 npm install
 npm run test:scoring
+npm run test:rewards
 cd ..
 ```
 
-`npm run test:scoring` must exit 0 (exact integer score parity).
+`npm run test:scoring` must exit 0 (exact integer score parity).  
+`npm run test:rewards` must exit 0 (eligibility + ranking order).
 
 ### 5. Export / verify Daily level catalog
 
@@ -99,6 +109,11 @@ Deployed callables should be in **europe-west1**:
 - `startDailyAttempt`
 - `submitDailyResult`
 - `abandonDailyAttempt`
+- `getPendingDailyRewards`
+- `claimDailyReward`
+- `sendDailyChallengeDevNotification`
+- `publishDailyChallengeAndNotify` (scheduled 00:01 UTC)
+- `settleDailyChallengeWinners` (scheduled 00:05 UTC)
 
 Callable base URL shape:
 
@@ -155,10 +170,23 @@ Release player builds ignore emulator flags.
 - Client-reported `moves`
 - Client-reported `completionTimeMs`
 
+**Phase 4.3 rewards**
+
+- Scheduled #1 settlement (1000 coins) — see REWARDS.md
+- Claim via callables; local PlayerPrefs coin grant after `granted=true`
+- Simulated leaderboard rows never eligible
+
+**Phase 4.4 notifications**
+
+- Scheduled publish + FCM topic `daily_challenge_new` — see NOTIFICATIONS.md
+- Client opt-in only; Firebase Messaging 13.15.0 typed API
+- Google Play link not required
+
 **Not implemented**
 
-- Google Play Games / Sign in with Apple
-- Friends / rewards / push
+- #2/#3 / streak / real-money prizes
+- Friends / marketing / winner-result pushes
+- Full Apple APNs setup
 - Replay verification
 - App Check / Play Integrity / App Attest
 

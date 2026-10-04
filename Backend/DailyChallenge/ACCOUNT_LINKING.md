@@ -75,6 +75,37 @@ Google credential already linked to another Firebase UID:
 → current anonymous UID unchanged  
 → no merge / no account switch
 
+## Temporary Firebase Play Games backend limitation
+
+As of device testing (Play Games auth OK, server auth code present), Firebase Identity Toolkit
+rejects Play Games linking via REST:
+
+```
+POST /v1/accounts:signInWithIdp
+providerId=playgames.google.com
+→ HTTP 400
+→ INVALID_CREDENTIAL_OR_PROVIDER_ID
+→ "Invalid IdP response/credential"
+```
+
+This is a known Firebase / Identity Toolkit Play Games provider failure, **not** a client
+OAuth / SHA-1 / package-name / Web Client ID misconfiguration when PGS already returns a
+valid server auth code.
+
+Client handling:
+
+| Item | Behavior |
+|------|----------|
+| Result | `AccountLinkResult.ProviderBackendUnavailable` |
+| UI | "Google Play linking is temporarily unavailable. Please try again later." |
+| Session | Anonymous Firebase UID + Daily Challenge data unchanged |
+| Retry | None automatic — user may tap LINK GOOGLE PLAY again later |
+| Analytics | `account_link_failed` · `provider=google_play` · `reason=provider_backend_unavailable` |
+
+Mapping is scoped to `providerId=playgames.google.com` + `INVALID_CREDENTIAL_OR_PROVIDER_ID`
+only (see `FirebaseRestClient.MapLinkError`). Remove the special case once Firebase fixes
+the IdP backend.
+
 ## Tester requirements (manual)
 
 Depending on Play Games publishing state:

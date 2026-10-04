@@ -85,6 +85,7 @@ public class AccountLinkUI : MonoBehaviour
             return;
         }
 
+        Debug.Log("[Account] Link button pressed");
         _ = LinkGooglePlayAsync();
     }
 
@@ -92,14 +93,27 @@ public class AccountLinkUI : MonoBehaviour
     {
         linkInFlight = true;
         ApplyLinkingPresentation();
+        AccountLinkOutcome outcome = AccountLinkOutcome.From(
+            AccountLinkResult.UnknownError,
+            "google_play",
+            "Could not connect. Try again.");
         try
         {
-            AccountLinkOutcome outcome = await DailyChallengeIdentityService.LinkGooglePlayAsync();
-            ApplyPresentation(outcome.Message);
+            outcome = await DailyChallengeIdentityService.LinkGooglePlayAsync();
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogWarning("[Account] Link UI exception: " + ex.GetType().Name);
+            outcome = AccountLinkOutcome.From(
+                AccountLinkResult.UnknownError,
+                "google_play",
+                "Could not connect. Try again.");
         }
         finally
         {
+            // Clear in-flight BEFORE presentation so button/status leave Connecting.
             linkInFlight = false;
+            ApplyPresentation(outcome.Message);
         }
     }
 

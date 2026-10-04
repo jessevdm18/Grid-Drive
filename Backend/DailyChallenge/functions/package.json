@@ -1,12 +1,14 @@
 {
   "name": "rushout-daily-challenge-functions",
-  "description": "Authoritative Daily Challenge Cloud Functions (Phase 4.1B)",
+  "description": "Authoritative Daily Challenge Cloud Functions (Phase 4.1B / 4.3)",
   "engines": {
     "node": "22"
   },
   "main": "index.js",
   "scripts": {
     "test:scoring": "node daily/runScoreParity.js",
+    "test:rewards": "node daily/runRewardRankingTest.js",
+    "test:notifications": "node daily/runNotificationConstantsTest.js",
     "serve": "firebase emulators:start --only functions,firestore",
     "deploy": "firebase deploy --only functions --project grid-drive"
   },

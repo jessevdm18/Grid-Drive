@@ -11,4 +11,7 @@ public static class LivesEconomyConfig
     /// Failed-attempt Retry is free — the life was already consumed by FailLevel.
     /// </summary>
     public const int RestartCoinCost = 25;
+
+    /// <summary>Coin cost for a successful paid hint reveal.</summary>
+    public const int HintCoinCost = 50;
 }

@@ -13,10 +13,17 @@ using UnityEngine.Networking;
 /// Android player only. Editor / iOS / missing config → unavailable (no Play UI).
 /// Never authenticates at startup — only when <see cref="AuthenticateForLinkAsync"/> runs
 /// after an explicit LINK GOOGLE PLAY tap.
+///
+/// PGS v2 may already be platform-authenticated (banner at launch). That is OK and is
+/// NOT Firebase linking. When already authenticated, we skip ManuallyAuthenticate and
+/// request a server auth code directly.
 /// </summary>
 public sealed class GooglePlayGamesAccountProvider : IGooglePlayAccountProvider
 {
     private const string FirebasePlayGamesProviderId = "playgames.google.com";
+    private const int AuthenticateTimeoutMs = 45000;
+    private const int ServerAuthCodeTimeoutMs = 30000;
+    private const int OverallProviderTimeoutMs = 60000;
 
     public AccountProvider Provider => AccountProvider.GooglePlay;
 
@@ -35,7 +42,12 @@ public sealed class GooglePlayGamesAccountProvider : IGooglePlayAccountProvider
     public Task<ExternalAccountAuthResult> AuthenticateForLinkAsync()
     {
 #if UNITY_ANDROID && !UNITY_EDITOR
-        return AuthenticateForLinkAndroidAsync();
+        return WithTimeoutAsync(
+            AuthenticateForLinkAndroidAsync(),
+            OverallProviderTimeoutMs,
+            ExternalAccountAuthResult.Fail(
+                AccountLinkResult.NetworkError,
+                "Could not connect. Try again."));
 #else
         return Task.FromResult(
             ExternalAccountAuthResult.Fail(
@@ -65,52 +77,91 @@ public sealed class GooglePlayGamesAccountProvider : IGooglePlayAccountProvider
                 "Google Play is not configured in this build.");
         }
 
+        string stage = "init";
         try
         {
-            // Activate platform binding only when the user explicitly links.
-            // Do not call Authenticate() here — that path is for silent status checks.
+            stage = "PlayGamesPlatform.Activate";
+            Debug.Log("[Account] PlayGamesPlatform.Activate starting");
             PlayGamesPlatform.Activate();
+            Debug.Log("[Account] PlayGamesPlatform.Activate completed");
 
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
-            Debug.Log("[Account] Google Play auth started");
-#endif
+            stage = "PGS IsAuthenticated check";
+            Debug.Log("[Account] PGS IsAuthenticated check starting");
+            bool pluginAuthenticated = PlayGamesPlatform.Instance.IsAuthenticated();
+            Debug.Log("[Account] PGS IsAuthenticated=" + pluginAuthenticated);
 
-            SignInStatus status = await ManuallyAuthenticateAsync();
-            if (status == SignInStatus.Canceled)
+            // Silent status check (isAuthenticated). Does NOT show sign-in UI.
+            // Syncs plugin AuthState with PGS v2 platform auto-auth if already signed in.
+            stage = "Silent Authenticate";
+            Debug.Log("[Account] Silent Authenticate starting");
+            SignInStatus silent = await WithTimeoutAsync(
+                SilentAuthenticateAsync(),
+                AuthenticateTimeoutMs,
+                SignInStatus.InternalError);
+            Debug.Log("[Account] Silent Authenticate callback=" + silent);
+
+            bool alreadyAuthenticated =
+                silent == SignInStatus.Success ||
+                PlayGamesPlatform.Instance.IsAuthenticated();
+
+            Debug.Log("[Account] PGS already authenticated? " + alreadyAuthenticated);
+
+            if (!alreadyAuthenticated)
             {
-                return ExternalAccountAuthResult.Fail(AccountLinkResult.Cancelled);
+                stage = "Manual Authenticate";
+                Debug.Log("[Account] Manual Authenticate starting");
+                SignInStatus status = await WithTimeoutAsync(
+                    ManuallyAuthenticateAsync(),
+                    AuthenticateTimeoutMs,
+                    SignInStatus.InternalError);
+                Debug.Log("[Account] Manual Authenticate callback=" + status);
+
+                if (status == SignInStatus.Canceled)
+                {
+                    return ExternalAccountAuthResult.Fail(AccountLinkResult.Cancelled);
+                }
+
+                if (status != SignInStatus.Success)
+                {
+                    return ExternalAccountAuthResult.Fail(
+                        AccountLinkResult.AuthenticationError,
+                        "Google Play authentication failed.");
+                }
+            }
+            else
+            {
+                Debug.Log(
+                    "[Account] ManuallyAuthenticate skipped (already authenticated)");
             }
 
-            if (status != SignInStatus.Success)
-            {
-                return ExternalAccountAuthResult.Fail(
-                    AccountLinkResult.AuthenticationError,
-                    "Google Play authentication failed.");
-            }
+            stage = "RequestServerSideAccess";
+            Debug.Log("[Account] RequestServerSideAccess started");
+            string authCode = await WithTimeoutAsync(
+                RequestServerAuthCodeAsync(forceRefreshToken: true),
+                ServerAuthCodeTimeoutMs,
+                null);
 
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
-            Debug.Log("[Account] Google Play auth success");
-#endif
+            bool codePresent = !string.IsNullOrEmpty(authCode);
+            Debug.Log(
+                "[Account] RequestServerSideAccess callback received: codePresent=" +
+                codePresent);
 
-            string authCode = await RequestServerAuthCodeAsync(forceRefreshToken: true);
-            if (string.IsNullOrEmpty(authCode))
+            if (!codePresent)
             {
                 return ExternalAccountAuthResult.Fail(
                     AccountLinkResult.AuthenticationError,
                     "Could not get Google Play server auth code.");
             }
 
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
-            Debug.Log("[Account] Server auth code received");
-#endif
-
+            stage = "GetUserDisplayName";
             string displayName = null;
             try
             {
                 displayName = PlayGamesPlatform.Instance.GetUserDisplayName();
             }
-            catch (Exception)
+            catch (Exception displayEx)
             {
+                LogAndroidAuthException("GetUserDisplayName", displayEx);
                 displayName = null;
             }
 
@@ -132,11 +183,33 @@ public sealed class GooglePlayGamesAccountProvider : IGooglePlayAccountProvider
         }
         catch (Exception ex)
         {
-            Debug.LogWarning("[Account] Google Play auth exception: " + ex.GetType().Name);
+            LogAndroidAuthException(stage, ex);
             return ExternalAccountAuthResult.Fail(
                 AccountLinkResult.AuthenticationError,
                 "Could not connect. Try again.");
         }
+    }
+
+    /// <summary>
+    /// Silent auth status (GamesSignInClient.isAuthenticated). No interactive UI.
+    /// </summary>
+    private static Task<SignInStatus> SilentAuthenticateAsync()
+    {
+        var tcs = new TaskCompletionSource<SignInStatus>();
+        try
+        {
+            PlayGamesPlatform.Instance.Authenticate(status =>
+            {
+                tcs.TrySetResult(status);
+            });
+        }
+        catch (Exception ex)
+        {
+            LogAndroidAuthException("Silent Authenticate invoke", ex);
+            tcs.TrySetResult(SignInStatus.InternalError);
+        }
+
+        return tcs.Task;
     }
 
     private static Task<SignInStatus> ManuallyAuthenticateAsync()
@@ -151,7 +224,7 @@ public sealed class GooglePlayGamesAccountProvider : IGooglePlayAccountProvider
         }
         catch (Exception ex)
         {
-            Debug.LogWarning("[Account] ManuallyAuthenticate failed: " + ex.GetType().Name);
+            LogAndroidAuthException("Manual Authenticate invoke", ex);
             tcs.TrySetResult(SignInStatus.InternalError);
         }
 
@@ -170,11 +243,86 @@ public sealed class GooglePlayGamesAccountProvider : IGooglePlayAccountProvider
         }
         catch (Exception ex)
         {
-            Debug.LogWarning("[Account] RequestServerSideAccess failed: " + ex.GetType().Name);
+            LogAndroidAuthException("RequestServerSideAccess invoke", ex);
             tcs.TrySetResult(null);
         }
 
         return tcs.Task;
+    }
+
+    private static async Task<T> WithTimeoutAsync<T>(
+        Task<T> task,
+        int timeoutMs,
+        T timeoutValue)
+    {
+        if (task == null)
+        {
+            return timeoutValue;
+        }
+
+        Task delay = Task.Delay(timeoutMs);
+        Task completed = await Task.WhenAny(task, delay);
+        if (completed != task)
+        {
+            Debug.LogWarning(
+                "[Account] Operation timed out after " + timeoutMs + "ms");
+            return timeoutValue;
+        }
+
+        return await task;
+    }
+
+    /// <summary>
+    /// Diagnostic-only logging for AndroidJavaException / auth failures.
+    /// Never logs tokens, auth codes, secrets, or player IDs.
+    /// </summary>
+    private static void LogAndroidAuthException(string stage, Exception ex)
+    {
+        if (ex == null)
+        {
+            Debug.LogWarning(
+                "[Account] Google Play auth exception at stage=" + stage + " (null)");
+            return;
+        }
+
+        Debug.LogWarning(
+            "[Account] Google Play auth exception at stage=" + stage +
+            " type=" + ex.GetType().FullName);
+
+        string message = ex.Message;
+        if (!string.IsNullOrEmpty(message))
+        {
+            Debug.LogWarning("[Account] Exception.Message: " + message);
+        }
+
+        string stack = ex.StackTrace;
+        if (!string.IsNullOrEmpty(stack))
+        {
+            Debug.LogWarning("[Account] Exception.StackTrace: " + stack);
+        }
+
+        // AndroidJavaException.ToString() includes the Java exception class + message +
+        // Java stack when Unity surfaces it — still no auth secrets.
+        if (ex is AndroidJavaException)
+        {
+            string javaDetails = ex.ToString();
+            if (!string.IsNullOrEmpty(javaDetails))
+            {
+                Debug.LogWarning("[Account] AndroidJavaException details: " + javaDetails);
+            }
+        }
+
+        Exception inner = ex.InnerException;
+        if (inner != null)
+        {
+            Debug.LogWarning(
+                "[Account] InnerException type=" + inner.GetType().FullName +
+                " message=" + (inner.Message ?? string.Empty));
+            if (!string.IsNullOrEmpty(inner.StackTrace))
+            {
+                Debug.LogWarning("[Account] InnerException.StackTrace: " + inner.StackTrace);
+            }
+        }
     }
 #endif
 }

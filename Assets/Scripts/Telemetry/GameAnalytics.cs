@@ -570,6 +570,87 @@ public static class GameAnalytics
         LogDailySimple("daily_result_submit_error", dayId, null, reason);
     }
 
+    public static void LogDailyNotificationOptIn(string source)
+    {
+        LogDailyNotificationSimple("daily_notification_opt_in", source, null);
+    }
+
+    public static void LogDailyNotificationOptOut(string source)
+    {
+        LogDailyNotificationSimple("daily_notification_opt_out", source, null);
+    }
+
+    public static void LogDailyNotificationReceived(string dayId)
+    {
+        LogDailyNotificationSimple("daily_notification_received", "runtime", dayId);
+    }
+
+    public static void LogDailyNotificationOpened(string dayId)
+    {
+        LogDailyNotificationSimple("daily_notification_opened", "runtime", dayId);
+    }
+
+    private static void LogDailyNotificationSimple(string eventName, string source, string dayId)
+    {
+        if (!FirebaseManager.IsReady)
+        {
+            return;
+        }
+
+        try
+        {
+            var parameters = new List<Parameter>
+            {
+                new Parameter("source", Safe(source))
+            };
+            if (!string.IsNullOrEmpty(dayId))
+            {
+                parameters.Add(new Parameter("day_id", Safe(dayId)));
+            }
+
+            FirebaseAnalytics.LogEvent(eventName, parameters.ToArray());
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError("GameAnalytics." + eventName + " failed — " + ex.Message);
+        }
+    }
+
+    public static void LogDailyRewardCreated(int rank, string rewardType, int rewardAmount)
+    {
+        LogDailyReward("daily_reward_created", rank, rewardType, rewardAmount);
+    }
+
+    public static void LogDailyRewardClaimed(int rank, string rewardType, int rewardAmount)
+    {
+        LogDailyReward("daily_reward_claimed", rank, rewardType, rewardAmount);
+    }
+
+    private static void LogDailyReward(
+        string eventName,
+        int rank,
+        string rewardType,
+        int rewardAmount)
+    {
+        if (!FirebaseManager.IsReady)
+        {
+            return;
+        }
+
+        try
+        {
+            FirebaseAnalytics.LogEvent(
+                eventName,
+                new Parameter("rank", (long)rank),
+                new Parameter("reward_type", Safe(rewardType)),
+                new Parameter("reward_amount", (long)rewardAmount));
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError("GameAnalytics." + eventName + " failed — " + ex.Message);
+        }
+    }
+
     public static void LogAccountLinkStarted(string provider)
     {
         LogAccountLink("account_link_started", provider, null);

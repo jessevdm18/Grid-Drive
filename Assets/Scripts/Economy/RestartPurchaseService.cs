@@ -112,11 +112,6 @@ public static class RestartPurchaseService
                 AudioManager.Resolve()?.PlayInsufficientCoins();
                 return RestartPurchaseResult.NotEnoughCoins;
             }
-
-            if (cost > 0)
-            {
-                AudioManager.Resolve()?.PlayCoinSpend();
-            }
         }
 
         restartInProgress = true;
@@ -147,6 +142,13 @@ public static class RestartPurchaseService
             }
 
             return RestartPurchaseResult.LivesBlocked;
+        }
+
+        // Coin-spend SFX only after SpendCoins succeeded AND restart was accepted.
+        // Free retry / win-panel / Daily / insufficient → never reach here with cost>0 spend.
+        if (cost > 0)
+        {
+            AudioManager.Resolve()?.PlayCoinSpend();
         }
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
