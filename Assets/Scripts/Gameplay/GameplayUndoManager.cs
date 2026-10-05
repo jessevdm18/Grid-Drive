@@ -72,6 +72,14 @@ public class GameplayUndoManager : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        if (undoButton != null)
+        {
+            undoButton.gameObject.SetActive(!DailyChallengeGameplayPolicy.IsActive);
+        }
+    }
+
     private void OnEnable()
     {
         if (undoButton != null)
@@ -117,6 +125,16 @@ public class GameplayUndoManager : MonoBehaviour
     /// </summary>
     public bool TryUndoLastMove()
     {
+        if (DailyChallengeGameplayPolicy.IsActive)
+        {
+            if (undoButton != null)
+            {
+                undoButton.gameObject.SetActive(false);
+            }
+
+            return false;
+        }
+
         if (!EvaluateCanUndo())
         {
             RefreshUndoAvailability(forceNotify: true);
@@ -165,7 +183,8 @@ public class GameplayUndoManager : MonoBehaviour
 
         if (undoCoinCost > 0)
         {
-            audioManager?.PlayCoinSpend();
+            // Scene AudioManager is destroyed when the menu DDOL instance survives.
+            AudioManager.Resolve()?.PlayCoinSpend();
         }
 
         history.RemoveAt(history.Count - 1);

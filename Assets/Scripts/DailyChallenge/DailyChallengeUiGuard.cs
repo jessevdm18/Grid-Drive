@@ -69,6 +69,64 @@ public static class DailyChallengeUiGuard
         }
     }
 
+    private static GameObject hintButton;
+    private static GameObject rewardedHintButton;
+    private static GameObject undoButton;
+    private static GameObject hintStatusText;
+
+    /// <summary>
+    /// Daily hides authored Hint and Undo. Non-Daily shows them again.
+    /// HintStatusText stays under HintManager (hidden until a status message).
+    /// There is no separate Redo control — UndoButton is the move-reversal button.
+    /// </summary>
+    public static void ApplyAssistControls()
+    {
+        bool show = !IsDailyActive;
+        SetNamed("HintButton", ref hintButton, show);
+        SetNamed("RewardedHintButton", ref rewardedHintButton, show);
+        SetNamed("UndoButton", ref undoButton, show);
+        if (!show)
+        {
+            SetNamed("HintStatusText", ref hintStatusText, false);
+        }
+    }
+
+    private static void SetNamed(string objectName, ref GameObject cached, bool active)
+    {
+        if (cached == null)
+        {
+            cached = FindNamed(objectName);
+        }
+
+        if (cached != null && cached.activeSelf != active)
+        {
+            cached.SetActive(active);
+        }
+    }
+
+    private static GameObject FindNamed(string objectName)
+    {
+        GameObject activeGo = GameObject.Find(objectName);
+        if (activeGo != null)
+        {
+            return activeGo;
+        }
+
+        Transform[] transforms = Object.FindObjectsByType<Transform>(
+            FindObjectsInactive.Include,
+            FindObjectsSortMode.None);
+        for (int i = 0; i < transforms.Length; i++)
+        {
+            Transform t = transforms[i];
+            if (t != null && t.gameObject.scene.IsValid() && t.name == objectName)
+            {
+                return t.gameObject;
+            }
+        }
+
+        return null;
+    }
+
     public static void ExitToMainMenu(string reason)
     {
         Time.timeScale = 1f;

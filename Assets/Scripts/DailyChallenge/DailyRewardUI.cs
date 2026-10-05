@@ -27,10 +27,16 @@ public class DailyRewardUI : MonoBehaviour
     private DailyRewardRecord currentReward;
     private bool hasReward;
     private bool claimInFlight;
+    private bool resultOnly;
+
+    public bool IsShowing =>
+        panelRoot != null ? panelRoot.activeSelf : gameObject.activeSelf;
 
     private void Awake()
     {
-        if (panelRoot != null)
+        // panelRoot is this object in MainMenu. Deactivating self here runs on the
+        // first Show and immediately hides the panel. The scene already starts inactive.
+        if (panelRoot != null && panelRoot != gameObject)
         {
             panelRoot.SetActive(false);
         }
@@ -79,6 +85,7 @@ public class DailyRewardUI : MonoBehaviour
         currentReward = reward;
         hasReward = true;
         claimInFlight = false;
+        resultOnly = false;
 
         if (titleText != null)
         {
@@ -95,7 +102,9 @@ public class DailyRewardUI : MonoBehaviour
             int amount = reward.RewardAmount > 0
                 ? reward.RewardAmount
                 : DailyRewardService.FirstPlaceCoinReward;
-            bodyText.text = "YOU WON " + amount + " COINS";
+            bodyText.text =
+                "YOU WON " + amount + " COINS\n\n" +
+                FormatStats(reward.Score, reward.Moves, reward.CompletionTimeMilliseconds);
         }
 
         SetClaimInteractable(true);
@@ -123,10 +132,82 @@ public class DailyRewardUI : MonoBehaviour
         Show(preview);
     }
 
+    /// <summary>
+    /// Final settled placement. Rank #1 with an unclaimed reward uses the existing claim panel.
+    /// Other ranks dismiss only — no coin grant.
+    /// </summary>
+    public bool ShowSettledResult(DailySettledResult settled)
+    {
+        if (!settled.Found || !settled.Settled || settled.Rank <= 0)
+        {
+            return false;
+        }
+
+        if (settled.HasUnclaimedReward)
+        {
+            int amount = settled.RewardAmount > 0
+                ? settled.RewardAmount
+                : DailyRewardService.FirstPlaceCoinReward;
+            Show(new DailyRewardRecord(
+                settled.DayId,
+                settled.Rank,
+                "coins",
+                amount,
+                claimed: false,
+                source: "daily_first_place",
+                settled.Score,
+                settled.Moves,
+                settled.CompletionTimeMilliseconds,
+                isDevelopmentTest: false));
+            return IsShowing;
+        }
+
+        resultOnly = true;
+        hasReward = false;
+        claimInFlight = false;
+        currentReward = default;
+
+        if (titleText != null)
+        {
+            titleText.text = "DAILY CHALLENGE RESULTS";
+        }
+
+        if (rankText != null)
+        {
+            rankText.text = "#" + settled.Rank;
+        }
+
+        if (bodyText != null)
+        {
+            bodyText.text = FormatStats(
+                settled.Score,
+                settled.Moves,
+                settled.CompletionTimeMilliseconds);
+        }
+
+        SetClaimInteractable(true);
+        if (claimButtonLabel != null)
+        {
+            claimButtonLabel.text = "OK";
+        }
+
+        if (panelRoot != null)
+        {
+            panelRoot.SetActive(true);
+        }
+        else
+        {
+            gameObject.SetActive(true);
+        }
+
+        return IsShowing;
+    }
+
     public void Hide()
     {
         hasReward = false;
         claimInFlight = false;
+        resultOnly = false;
         if (panelRoot != null)
         {
             panelRoot.SetActive(false);
@@ -135,12 +216,26 @@ public class DailyRewardUI : MonoBehaviour
 
     private void OnClaimClicked()
     {
+        if (resultOnly)
+        {
+            Hide();
+            return;
+        }
+
         if (claimInFlight || !hasReward)
         {
             return;
         }
 
         _ = ClaimAsync();
+    }
+
+    private static string FormatStats(int score, int moves, long completionTimeMs)
+    {
+        return
+            "SCORE\n" + DailyChallengeTimeFormat.FormatScore(score) + "\n\n" +
+            "MOVES\n" + moves + "\n\n" +
+            "TIME\n" + DailyChallengeTimeFormat.Format(completionTimeMs);
     }
 
     private async Task ClaimAsync()

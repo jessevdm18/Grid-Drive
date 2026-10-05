@@ -14,6 +14,7 @@ public class DailyChallengeGameplayHud : MonoBehaviour
     private void Start()
     {
         bool daily = DailyChallengeGameplayPolicy.IsActive;
+        DailyChallengeUiGuard.ApplyAssistControls();
         GameObject visual = root != null ? root : gameObject;
 
         if (!daily)
@@ -38,5 +39,18 @@ public class DailyChallengeGameplayHud : MonoBehaviour
         }
 
         DailyChallengeRunTracker.EnsureInScene();
+    }
+
+    private bool assistControlsAppliedLate;
+
+    private void LateUpdate()
+    {
+        if (assistControlsAppliedLate)
+        {
+            return;
+        }
+
+        DailyChallengeUiGuard.ApplyAssistControls();
+        assistControlsAppliedLate = true;
     }
 }

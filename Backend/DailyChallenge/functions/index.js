@@ -24,6 +24,7 @@ const {
   getPendingDailyRewardsHandler,
   claimDailyRewardHandler,
   createDevDailyRewardHandler,
+  getSettledDailyResultHandler,
 } = require('./daily/rewards');
 const {
   publishDailyChallengeAndNotify,
@@ -64,6 +65,12 @@ exports.abandonDailyAttempt = onCall(wrap(abandonDailyAttemptHandler));
 
 /** Phase 4.3 — pending #1 rewards for the authenticated Firebase UID. */
 exports.getPendingDailyRewards = onCall(wrap(getPendingDailyRewardsHandler));
+
+/**
+ * Settled final placement for the authenticated player (any rank).
+ * Does not grant coins. Rank #1 rewards stay on getPendingDailyRewards / claimDailyReward.
+ */
+exports.getSettledDailyResult = onCall(wrap(getSettledDailyResultHandler));
 
 /** Phase 4.3 — claim one day reward; idempotent AlreadyClaimed (no second grant). */
 exports.claimDailyReward = onCall(wrap(claimDailyRewardHandler));

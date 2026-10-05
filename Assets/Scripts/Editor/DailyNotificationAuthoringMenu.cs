@@ -49,46 +49,55 @@ public static class DailyNotificationAuthoringMenu
 
         GameObject section = CreateUi("DailyNotificationsSection", panel.transform);
         RectTransform sectionRt = section.GetComponent<RectTransform>();
-        sectionRt.anchorMin = new Vector2(0.05f, 0.30f);
-        sectionRt.anchorMax = new Vector2(0.95f, 0.48f);
-        sectionRt.offsetMin = Vector2.zero;
-        sectionRt.offsetMax = Vector2.zero;
+        sectionRt.anchorMin = new Vector2(0.5f, 0.5f);
+        sectionRt.anchorMax = new Vector2(0.5f, 0.5f);
+        sectionRt.pivot = new Vector2(0.5f, 0.5f);
+        sectionRt.sizeDelta = new Vector2(560f, 110f);
+        sectionRt.anchoredPosition = new Vector2(0f, -110f);
 
         TextMeshProUGUI title = CreateTmp(
             "Title",
             section.transform,
             "DAILY NOTIFICATIONS",
-            32,
-            FontStyles.Bold);
-        Place(title.rectTransform, 0f, 0.72f, 1f, 1f);
+            40,
+            FontStyles.Normal);
+        title.alignment = TextAlignmentOptions.Center;
+        PlaceCentered(title.rectTransform, new Vector2(0f, 20f), new Vector2(458.7f, 69.1f));
 
         TextMeshProUGUI helper = CreateTmp(
             "Helper",
             section.transform,
-            "Get notified when a new Daily Challenge is ready.",
-            20,
+            "Push notifications unavailable in Editor",
+            16,
             FontStyles.Normal);
-        Place(helper.rectTransform, 0f, 0.42f, 1f, 0.72f);
+        helper.color = new Color(0.85f, 0.85f, 0.85f, 0.75f);
+        helper.alignment = TextAlignmentOptions.Center;
+        PlaceCentered(helper.rectTransform, new Vector2(0f, -28f), new Vector2(458f, 24f));
+        helper.gameObject.SetActive(false);
 
         TextMeshProUGUI status = CreateTmp(
             "Status",
             section.transform,
-            "OFF",
+            string.Empty,
             22,
             FontStyles.Normal);
-        Place(status.rectTransform, 0.55f, 0.05f, 1f, 0.40f);
+        status.gameObject.SetActive(false);
 
         GameObject toggleGo = CreateUi("NotificationsToggle", section.transform);
         Toggle toggle = toggleGo.AddComponent<Toggle>();
         Image bg = toggleGo.AddComponent<Image>();
-        bg.color = new Color(0.25f, 0.25f, 0.28f, 1f);
+        bg.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>("UI/Skin/UISprite.psd");
+        bg.type = Image.Type.Sliced;
+        bg.color = Color.white;
         RectTransform toggleRt = toggleGo.GetComponent<RectTransform>();
-        Place(toggleRt, 0.05f, 0.05f, 0.50f, 0.40f);
+        toggleRt.localScale = new Vector3(3.4f, 3.4f, 3.4f);
+        PlaceCentered(toggleRt, new Vector2(202.8f, 20f), new Vector2(20f, 20f));
 
         GameObject checkGo = CreateUi("Checkmark", toggleGo.transform);
         Image check = checkGo.AddComponent<Image>();
-        check.color = new Color(0.25f, 0.75f, 0.40f, 1f);
-        Place(checkGo.GetComponent<RectTransform>(), 0.1f, 0.15f, 0.9f, 0.85f);
+        check.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>("UI/Skin/Checkmark.psd");
+        check.color = Color.white;
+        PlaceCentered(checkGo.GetComponent<RectTransform>(), Vector2.zero, new Vector2(20f, 20f));
         toggle.graphic = check;
         toggle.targetGraphic = bg;
         toggle.isOn = false;
@@ -141,12 +150,13 @@ public static class DailyNotificationAuthoringMenu
         return tmp;
     }
 
-    private static void Place(RectTransform rt, float xMin, float yMin, float xMax, float yMax)
+    private static void PlaceCentered(RectTransform rt, Vector2 anchoredPosition, Vector2 size)
     {
-        rt.anchorMin = new Vector2(xMin, yMin);
-        rt.anchorMax = new Vector2(xMax, yMax);
-        rt.offsetMin = Vector2.zero;
-        rt.offsetMax = Vector2.zero;
+        rt.anchorMin = new Vector2(0.5f, 0.5f);
+        rt.anchorMax = new Vector2(0.5f, 0.5f);
+        rt.pivot = new Vector2(0.5f, 0.5f);
+        rt.anchoredPosition = anchoredPosition;
+        rt.sizeDelta = size;
     }
 }
 #endif

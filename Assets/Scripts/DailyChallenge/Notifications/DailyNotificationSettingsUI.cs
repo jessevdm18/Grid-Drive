@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 /// <summary>
 /// Authored Settings control for Daily Challenge notifications.
-/// Runtime owns toggle state / helper text; Inspector owns layout/visuals.
+/// Runtime owns toggle state and interactivity; Inspector owns layout/visuals.
 /// Never prompts at startup — only when the user enables the toggle.
 /// </summary>
 public class DailyNotificationSettingsUI : MonoBehaviour
@@ -69,42 +69,22 @@ public class DailyNotificationSettingsUI : MonoBehaviour
 
             if (helperText != null)
             {
+                helperText.gameObject.SetActive(editor);
                 if (editor)
                 {
-                    helperText.text =
-                        "Push notifications are unavailable in the Editor.";
-                }
-                else
-                {
-                    helperText.text =
-                        "Get notified when a new Daily Challenge is ready.";
+                    helperText.text = "Push notifications unavailable in Editor";
                 }
             }
 
             if (statusText != null)
             {
-                if (editor)
-                {
-                    statusText.text = preferred ? "ON (Editor preview)" : "OFF";
-                }
-                else if (!messagingOk)
-                {
-                    statusText.text = "UNAVAILABLE";
-                }
-                else if (preferred && !AndroidNotificationPermission.HasPermission)
-                {
-                    statusText.text = "OFF";
-                }
-                else
-                {
-                    statusText.text = preferred ? "ON" : "OFF";
-                }
+                statusText.text = string.Empty;
+                statusText.gameObject.SetActive(false);
             }
 
             if (notificationsToggle != null)
             {
-                bool interactable = !changeInFlight && (editor || messagingOk);
-                notificationsToggle.interactable = interactable;
+                notificationsToggle.interactable = CanInteract(editor, messagingOk);
                 notificationsToggle.SetIsOnWithoutNotify(preferred && (editor || messagingOk));
             }
         }
@@ -150,10 +130,15 @@ public class DailyNotificationSettingsUI : MonoBehaviour
             changeInFlight = false;
             if (notificationsToggle != null)
             {
-                notificationsToggle.interactable =
-                    DailyNotificationService.IsEditorUnsupported ||
-                    DailyNotificationService.IsMessagingSdkAvailable;
+                notificationsToggle.interactable = CanInteract(
+                    DailyNotificationService.IsEditorUnsupported,
+                    DailyNotificationService.IsMessagingSdkAvailable);
             }
         }
+    }
+
+    private bool CanInteract(bool editor, bool messagingOk)
+    {
+        return !changeInFlight && !editor && messagingOk;
     }
 }

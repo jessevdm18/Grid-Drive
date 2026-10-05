@@ -3,7 +3,8 @@ using TMPro;
 
 /// <summary>
 /// Toont coins, levelnummer, difficulty en moves tijdens Gameplay.
-/// Level/Moves: alleen ValueText (cijfers); LabelText blijft "LEVEL" / "MOVES".
+/// Campaign: LevelCard label stays authored "LEVEL"; value is the level number.
+/// Daily: the same LevelCard shows TIME / MM:SS from DailyChallengeRunTracker.
 /// Global/normal move-limit card shares urgency bands with MoveLimitUrgency.
 /// </summary>
 public class GameplayUI : MonoBehaviour
@@ -18,8 +19,11 @@ public class GameplayUI : MonoBehaviour
     [SerializeField] private LevelManager levelManager;
     [SerializeField] private GameManager gameManager;
 
-    [Tooltip("LevelCard/ValueText — alleen het levelnummer, bijv. \"8\".")]
+    [Tooltip("LevelCard/ValueText — campaign level number, or Daily MM:SS.")]
     [SerializeField] private TextMeshProUGUI levelValueText;
+
+    [Tooltip("LevelCard/LabelText. Authored LEVEL. Daily runtime sets TIME. Resolved from the value's sibling if empty.")]
+    [SerializeField] private TextMeshProUGUI levelLabelText;
 
     [Tooltip("MovesCard/ValueText — alleen het aantal moves, bijv. \"0\".")]
     [SerializeField] private TextMeshProUGUI movesValueText;
@@ -38,6 +42,8 @@ public class GameplayUI : MonoBehaviour
     [SerializeField, Range(1f, 1.25f)] private float movesCriticalPulseScale = 1.08f;
     [SerializeField] private AudioManager audioManager;
 
+    private bool dailyTimerMode;
+    private string lastDailyTimerText;
     private bool movesPulseActive;
     private Vector3 movesBaseScale = Vector3.one;
     private bool movesScaleCached;
@@ -75,6 +81,11 @@ public class GameplayUI : MonoBehaviour
 
     private void Update()
     {
+        if (dailyTimerMode)
+        {
+            RefreshDailyTimer();
+        }
+
         if (!movesPulseActive || movesValueText == null || !urgencyActive)
         {
             return;
@@ -128,18 +139,126 @@ public class GameplayUI : MonoBehaviour
     }
 
     /// <summary>
-    /// Zet LevelCard/ValueText + difficulty label (LevelData.difficulty).
-    /// Raakt LabelText ("LEVEL") niet aan.
+    /// Campaign: level number + difficulty.
+    /// Daily: reuse this tile as the run timer and hide campaign-only HUD.
     /// </summary>
     public void UpdateLevelText()
     {
-        if (levelValueText != null && levelManager != null)
+        if (DailyChallengeGameplayPolicy.IsActive)
         {
-            int displayNumber = levelManager.GetDisplayLevelNumber();
-            levelValueText.text = displayNumber.ToString();
+            ApplyDailyHudMode();
+            RefreshDailyTimer();
+            return;
         }
 
+        ApplyCampaignHudMode();
+    }
+
+    /// <summary>
+    /// Daily: hide lives and difficulty, label the level tile TIME.
+    /// </summary>
+    private void ApplyDailyHudMode()
+    {
+        dailyTimerMode = true;
+        ResolveLevelLabel();
+
+        if (levelLabelText != null)
+        {
+            levelLabelText.text = "TIME";
+        }
+
+        if (levelValueText != null && !levelValueText.enableAutoSizing)
+        {
+            levelValueText.enableAutoSizing = true;
+            if (levelValueText.fontSizeMax < levelValueText.fontSize)
+            {
+                levelValueText.fontSizeMax = levelValueText.fontSize;
+            }
+        }
+
+        SetDifficultyLabelVisible(false);
+        SetLivesHudVisible(false);
+    }
+
+    /// <summary>
+    /// Campaign: show lives and difficulty, restore LEVEL plus the ordered level number.
+    /// Every call overwrites a leftover TIME label.
+    /// </summary>
+    private void ApplyCampaignHudMode()
+    {
+        dailyTimerMode = false;
+        lastDailyTimerText = null;
+        ResolveLevelLabel();
+
+        if (levelLabelText != null)
+        {
+            levelLabelText.text = "LEVEL";
+        }
+
+        if (levelValueText != null && levelManager != null)
+        {
+            levelValueText.text = levelManager.GetDisplayLevelNumber().ToString();
+        }
+
+        SetLivesHudVisible(true);
         UpdateDifficultyLabel();
+        SetDifficultyLabelVisible(true);
+    }
+
+    private static void SetLivesHudVisible(bool visible)
+    {
+        LivesHUD lives = LivesHUD.FindInLoadedScenes();
+        if (lives != null)
+        {
+            lives.gameObject.SetActive(visible);
+        }
+    }
+
+    private void ResolveLevelLabel()
+    {
+        if (levelLabelText != null || levelValueText == null)
+        {
+            return;
+        }
+
+        Transform parent = levelValueText.transform.parent;
+        if (parent == null)
+        {
+            return;
+        }
+
+        Transform label = parent.Find("LabelText");
+        if (label != null)
+        {
+            levelLabelText = label.GetComponent<TextMeshProUGUI>();
+        }
+    }
+
+    /// <summary>
+    /// Same clock as the submitted Daily time (unscaled). Pause does not reset it.
+    /// </summary>
+    private void RefreshDailyTimer()
+    {
+        if (levelValueText == null)
+        {
+            return;
+        }
+
+        long milliseconds = 0;
+        DailyChallengeRunTracker tracker = DailyChallengeRunTracker.Instance;
+        if (tracker != null)
+        {
+            milliseconds = tracker.ElapsedMilliseconds;
+        }
+
+        string text = DailyChallengeTimeFormat.FormatMinutesSeconds(milliseconds);
+        if (text == lastDailyTimerText)
+        {
+            return;
+        }
+
+        lastDailyTimerText = text;
+        levelValueText.text = text;
     }
 
     /// <summary>

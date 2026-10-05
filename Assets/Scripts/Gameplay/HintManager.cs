@@ -152,6 +152,11 @@ public class HintManager : MonoBehaviour
         RefreshHintCostLabel();
     }
 
+    private void Start()
+    {
+        DailyChallengeUiGuard.ApplyAssistControls();
+    }
+
     /// <summary>
     /// Keeps HintButton CostText aligned with LivesEconomyConfig.HintCoinCost.
     /// </summary>
@@ -243,6 +248,11 @@ public class HintManager : MonoBehaviour
     /// </summary>
     public void UseHint()
     {
+        if (DailyChallengeGameplayPolicy.IsActive)
+        {
+            return;
+        }
+
         if (isHintRequestInProgress)
         {
             Debug.Log("HintManager: hint request already in progress.");
@@ -336,6 +346,11 @@ public class HintManager : MonoBehaviour
     /// </summary>
     public void UseRewardedHint()
     {
+        if (DailyChallengeGameplayPolicy.IsActive)
+        {
+            return;
+        }
+
         if (isHintRequestInProgress)
         {
             Debug.Log("HintManager: hint request already in progress.");

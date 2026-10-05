@@ -8,6 +8,7 @@
 const {
   isEligibleAttempt,
   compareRankRows,
+  findPlayerRank,
   REWARD_AMOUNT_COINS,
 } = require('./rewards');
 
@@ -84,6 +85,11 @@ assert(ranked[1].uid === 'c', 'moves ASC among same score (#2 = c)');
 assert(ranked[2].uid === 'd', 'time ASC among same score+moves (#3 = d)');
 assert(ranked[3].uid === 'b', 'uid ASC final tie-break (#4 = b before e)');
 assert(ranked[4].uid === 'e', 'uid ASC final tie-break (#5 = e)');
+assert(findPlayerRank(ranked, 'a') === 1, 'findPlayerRank #1');
+assert(findPlayerRank(ranked, 'c') === 2, 'findPlayerRank #2');
+assert(findPlayerRank(ranked, 'd') === 3, 'findPlayerRank #3');
+assert(findPlayerRank(ranked, 'missing') === 0, 'findPlayerRank absent');
+assert(findPlayerRank(ranked, '') === 0, 'findPlayerRank empty uid');
 
 assert(REWARD_AMOUNT_COINS === 1000, 'V1 reward amount is 1000 coins');
 

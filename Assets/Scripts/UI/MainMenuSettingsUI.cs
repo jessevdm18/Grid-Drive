@@ -38,10 +38,7 @@ public class MainMenuSettingsUI : MonoBehaviour
 
     private void Awake()
     {
-        if (audioManager == null)
-        {
-            audioManager = AudioManager.Resolve();
-        }
+        BindPersistentAudio();
 
         // SettingsPanel start standaard dicht.
         if (settingsPanel != null)
@@ -68,6 +65,7 @@ public class MainMenuSettingsUI : MonoBehaviour
     /// </summary>
     public void OpenSettings()
     {
+        BindPersistentAudio();
         if (settingsPanel == null)
         {
             Debug.LogWarning("MainMenuSettingsUI: settingsPanel is not assigned.");
@@ -151,6 +149,7 @@ public class MainMenuSettingsUI : MonoBehaviour
     /// </summary>
     public void ToggleMusic()
     {
+        BindPersistentAudio();
         if (audioManager == null)
         {
             Debug.LogWarning("MainMenuSettingsUI: AudioManager is not assigned.");
@@ -166,6 +165,7 @@ public class MainMenuSettingsUI : MonoBehaviour
     /// </summary>
     public void ToggleSound()
     {
+        BindPersistentAudio();
         if (audioManager == null)
         {
             Debug.LogWarning("MainMenuSettingsUI: AudioManager is not assigned.");
@@ -174,6 +174,16 @@ public class MainMenuSettingsUI : MonoBehaviour
 
         audioManager.ToggleSfx();
         UpdateIcons();
+    }
+
+    /// <summary>
+    /// Scene AudioManagers are destroyed when the persistent one already exists.
+    /// Rebind so a return to MainMenu does not keep the duplicate reference.
+    /// </summary>
+    private void BindPersistentAudio()
+    {
+        // Assigning null drops a destroyed scene AudioManager (Unity fake-null).
+        audioManager = AudioManager.Resolve();
     }
 
     private void SyncAnalyticsToggleFromPreference()
@@ -194,6 +204,7 @@ public class MainMenuSettingsUI : MonoBehaviour
 
     private void UpdateIcons()
     {
+        BindPersistentAudio();
         if (audioManager == null)
         {
             Debug.LogWarning("MainMenuSettingsUI: kan iconen niet updaten — AudioManager ontbreekt.");

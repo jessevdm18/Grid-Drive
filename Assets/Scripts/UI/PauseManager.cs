@@ -59,14 +59,23 @@ public class PauseManager : MonoBehaviour
 
     private void Start()
     {
-        if (audioManager == null)
-        {
-            audioManager = AudioManager.Resolve();
-        }
+        // Scene AudioManager is destroyed when a persistent one already exists.
+        // Always bind the survivor so Music/Sound are not left on a dead reference.
+        BindPersistentAudio();
 
         ResolveRestartRefs();
         RefreshRestartPresentation();
         UpdateAudioIcons();
+    }
+
+    /// <summary>
+    /// Prefer the DontDestroyOnLoad AudioManager. A serialized scene reference
+    /// becomes null at end of frame when that scene instance is the duplicate.
+    /// </summary>
+    private void BindPersistentAudio()
+    {
+        // Assigning null drops a destroyed scene AudioManager (Unity fake-null).
+        audioManager = AudioManager.Resolve();
     }
 
     /// <summary>
@@ -107,6 +116,7 @@ public class PauseManager : MonoBehaviour
     /// </summary>
     public void OpenPauseMenu()
     {
+        BindPersistentAudio();
         bool opened = false;
 
         if (pausePanel != null && !pausePanel.activeSelf)
@@ -343,6 +353,7 @@ public class PauseManager : MonoBehaviour
     /// </summary>
     public void ToggleMusic()
     {
+        BindPersistentAudio();
         if (audioManager == null)
         {
             Debug.LogWarning("PauseManager: geen AudioManager gekoppeld.");
@@ -358,6 +369,7 @@ public class PauseManager : MonoBehaviour
     /// </summary>
     public void ToggleSound()
     {
+        BindPersistentAudio();
         if (audioManager == null)
         {
             Debug.LogWarning("PauseManager: geen AudioManager gekoppeld.");
@@ -373,6 +385,7 @@ public class PauseManager : MonoBehaviour
     /// </summary>
     private void UpdateAudioIcons()
     {
+        BindPersistentAudio();
         if (audioManager == null)
         {
             Debug.LogWarning("PauseManager: kan audio-iconen niet updaten — AudioManager ontbreekt.");

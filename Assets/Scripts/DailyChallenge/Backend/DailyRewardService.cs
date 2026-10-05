@@ -177,6 +177,124 @@ public static class DailyRewardService
         cachedPending.Clear();
     }
 
+    private const string SeenDaysKey = "RushOut_DailyResultSeenDays";
+    private const int MaxSeenDays = 30;
+
+    /// <summary>
+    /// Local acknowledgement only. Never written when the result was not shown.
+    /// </summary>
+    public static bool IsResultSeen(string dayId)
+    {
+        if (!IsUtcDayId(dayId))
+        {
+            return false;
+        }
+
+        string raw = PlayerPrefs.GetString(SeenDaysKey, string.Empty);
+        if (string.IsNullOrEmpty(raw))
+        {
+            return false;
+        }
+
+        string[] parts = raw.Split(',');
+        for (int i = 0; i < parts.Length; i++)
+        {
+            if (string.Equals(parts[i], dayId, StringComparison.Ordinal))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static void MarkResultSeen(string dayId)
+    {
+        if (!IsUtcDayId(dayId) || IsResultSeen(dayId))
+        {
+            return;
+        }
+
+        var days = new List<string>();
+        string raw = PlayerPrefs.GetString(SeenDaysKey, string.Empty);
+        if (!string.IsNullOrEmpty(raw))
+        {
+            string[] parts = raw.Split(',');
+            for (int i = 0; i < parts.Length; i++)
+            {
+                if (IsUtcDayId(parts[i]))
+                {
+                    days.Add(parts[i]);
+                }
+            }
+        }
+
+        days.Add(dayId);
+        if (days.Count > MaxSeenDays)
+        {
+            days.RemoveRange(0, days.Count - MaxSeenDays);
+        }
+
+        PlayerPrefs.SetString(SeenDaysKey, string.Join(",", days));
+        PlayerPrefs.Save();
+    }
+
+    /// <summary>
+    /// Fetches the newest settled final placement the player has not acknowledged.
+    /// success is false when the call did not succeed (offline / unsigned). Does not mark seen.
+    /// success is true with <see cref="DailySettledResult.None"/> when the server has nothing to show.
+    /// </summary>
+    public static async Task<(bool success, DailySettledResult result)> TryFetchLatestSettledResultAsync()
+    {
+        try
+        {
+            if (!await DailyChallengeIdentityService.EnsureSignedInAsync())
+            {
+                return (false, DailySettledResult.None);
+            }
+
+            DailyChallengeFirebaseSettings settings = DailyChallengeFirebaseSettings.LoadDefault();
+            if (settings == null || !settings.IsConfigured)
+            {
+                return (false, DailySettledResult.None);
+            }
+
+            string dataJson =
+                "{\"acknowledgedDayIds\":" + BuildAcknowledgedDayIdsJson() + "}";
+            FirebaseRestClient.CallableResponse response =
+                await CallWithAuthRetryAsync("getSettledDailyResult", dataJson);
+            if (!response.Ok || string.IsNullOrEmpty(response.ResultJson))
+            {
+                return (false, DailySettledResult.None);
+            }
+
+            if (!ExtractBool(response.ResultJson, "success"))
+            {
+                return (false, DailySettledResult.None);
+            }
+
+            if (!ExtractBool(response.ResultJson, "found"))
+            {
+                return (true, DailySettledResult.None);
+            }
+
+            DailySettledResult parsed = ParseSettledResult(response.ResultJson);
+            if (!parsed.Found || !parsed.Settled || parsed.Rank <= 0 || !IsUtcDayId(parsed.DayId))
+            {
+                return (false, DailySettledResult.None);
+            }
+
+            return (true, parsed);
+        }
+        catch (Exception ex)
+        {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            Debug.LogWarning("[DailyReward] getSettledDailyResult failed: " + ex.GetType().Name);
+#endif
+            return (false, DailySettledResult.None);
+        }
+    }
+
     private static void RemovePending(string dayId)
     {
         for (int i = cachedPending.Count - 1; i >= 0; i--)
@@ -278,6 +396,88 @@ public static class DailyRewardService
             into.Add(ParseRewardObject(obj));
             i = objStart + obj.Length;
         }
+    }
+
+    private static bool IsUtcDayId(string dayId)
+    {
+        if (string.IsNullOrEmpty(dayId) || dayId.Length != 10)
+        {
+            return false;
+        }
+
+        for (int i = 0; i < dayId.Length; i++)
+        {
+            char c = dayId[i];
+            if (i == 4 || i == 7)
+            {
+                if (c != '-')
+                {
+                    return false;
+                }
+            }
+            else if (c < '0' || c > '9')
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static string BuildAcknowledgedDayIdsJson()
+    {
+        string raw = PlayerPrefs.GetString(SeenDaysKey, string.Empty);
+        if (string.IsNullOrEmpty(raw))
+        {
+            return "[]";
+        }
+
+        var sb = new System.Text.StringBuilder();
+        sb.Append('[');
+        bool any = false;
+        string[] parts = raw.Split(',');
+        for (int i = 0; i < parts.Length; i++)
+        {
+            if (!IsUtcDayId(parts[i]))
+            {
+                continue;
+            }
+
+            if (any)
+            {
+                sb.Append(',');
+            }
+
+            sb.Append('"');
+            sb.Append(parts[i]);
+            sb.Append('"');
+            any = true;
+        }
+
+        sb.Append(']');
+        return sb.ToString();
+    }
+
+    private static DailySettledResult ParseSettledResult(string json)
+    {
+        bool settled = ExtractBool(json, "settled");
+        string dayId = FirebaseRestClient.ExtractJsonString(json, "dayId");
+        int rank = (int)ExtractLong(json, "rank", 0);
+        if (!settled || rank <= 0 || !IsUtcDayId(dayId))
+        {
+            return DailySettledResult.None;
+        }
+
+        return new DailySettledResult(
+            found: true,
+            settled: true,
+            dayId: dayId,
+            rank: rank,
+            score: (int)ExtractLong(json, "score", 0),
+            moves: (int)ExtractLong(json, "moves", 0),
+            completionTimeMilliseconds: ExtractLong(json, "completionTimeMs", 0),
+            hasUnclaimedReward: ExtractBool(json, "hasUnclaimedReward"),
+            rewardAmount: (int)ExtractLong(json, "rewardAmount", 0));
     }
 
     private static DailyRewardRecord ParseRewardObject(string json)

@@ -41,6 +41,20 @@ public static class DailyChallengeTimeFormat
             cs);
     }
 
+    /// <summary>MM:SS for the Daily gameplay tile. Does not change result formatting.</summary>
+    public static string FormatMinutesSeconds(long milliseconds)
+    {
+        if (milliseconds < 0)
+        {
+            milliseconds = 0;
+        }
+
+        long totalSeconds = milliseconds / 1000;
+        long seconds = totalSeconds % 60;
+        long minutes = totalSeconds / 60;
+        return string.Format("{0:00}:{1:00}", minutes, seconds);
+    }
+
     public static string FormatScore(int score)
     {
         return score.ToString("N0");

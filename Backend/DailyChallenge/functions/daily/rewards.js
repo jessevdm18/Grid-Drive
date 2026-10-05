@@ -216,6 +216,10 @@ async function settleDay(dayId, options = {}) {
   const existingDay = await dayDocumentRef.get();
   if (existingDay.exists && isDaySettled(existingDay.data())) {
     const data = existingDay.data() || {};
+    if (data.finalRanksPublished !== true) {
+      const existingRanking = await loadEligibleRanking(dayId);
+      await publishFinalRanks(dayId, existingRanking);
+    }
     return {
       ok: true,
       dayId,
@@ -295,6 +299,10 @@ async function settleDay(dayId, options = {}) {
     };
   });
 
+  // Persist server rank on real attempt docs only. Simulated rows are never loaded.
+  // Reward doc creation above is unchanged (rank #1 coins only).
+  await publishFinalRanks(dayId, ranking);
+
   if (outcome.rewardCreated) {
     // Structured audit log for analytics pipelines (no UID).
     console.log(
@@ -346,6 +354,76 @@ async function settlePreviousUtcDay(serverNow = new Date()) {
       !!result.firstPlaceUid
   );
   return result;
+}
+
+const SETTLED_RESULT_LOOKBACK_DAYS = 14;
+const FINAL_RANK_BATCH = 400;
+
+/**
+ * 1-based rank in an already-sorted eligible ranking. 0 if uid is absent.
+ * Simulated leaderboard rows are never in this list.
+ */
+function findPlayerRank(ranking, uid) {
+  if (!uid || !Array.isArray(ranking)) {
+    return 0;
+  }
+  for (let i = 0; i < ranking.length; i++) {
+    if (ranking[i] && ranking[i].uid === uid) {
+      return i + 1;
+    }
+  }
+  return 0;
+}
+
+function utcDayIdDaysAgo(serverNow, daysAgo) {
+  const t = Date.UTC(
+    serverNow.getUTCFullYear(),
+    serverNow.getUTCMonth(),
+    serverNow.getUTCDate() - daysAgo,
+    0,
+    0,
+    0,
+    0
+  );
+  return utcDayId(new Date(t));
+}
+
+/**
+ * Write finalRank onto eligible attempt docs after settlement.
+ * Does not create reward docs and does not change #1 coin rules.
+ */
+async function publishFinalRanks(dayId, ranking) {
+  const rows = Array.isArray(ranking) ? ranking : [];
+  for (let i = 0; i < rows.length; i += FINAL_RANK_BATCH) {
+    const batch = db().batch();
+    const slice = rows.slice(i, i + FINAL_RANK_BATCH);
+    let writes = 0;
+    for (let j = 0; j < slice.length; j++) {
+      const row = slice[j];
+      if (!row || !row.uid) {
+        continue;
+      }
+      batch.set(
+        attemptsCol(dayId).doc(row.uid),
+        {
+          finalRank: i + j + 1,
+          finalRankSettlementVersion: REWARD_SETTLEMENT_VERSION,
+        },
+        { merge: true }
+      );
+      writes += 1;
+    }
+    if (writes > 0) {
+      await batch.commit();
+    }
+  }
+
+  await dayRef(dayId).set(
+    {
+      finalRanksPublished: true,
+    },
+    { merge: true }
+  );
 }
 
 function rewardToClient(data) {
@@ -593,6 +671,122 @@ async function claimDailyRewardHandler(request) {
   };
 }
 
+function parseAcknowledgedDayIds(data) {
+  const out = new Set();
+  const raw = data && data.acknowledgedDayIds;
+  if (!Array.isArray(raw)) {
+    return out;
+  }
+  const limit = Math.min(raw.length, 30);
+  for (let i = 0; i < limit; i++) {
+    const id = raw[i];
+    if (typeof id === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(id)) {
+      out.add(id);
+    }
+  }
+  return out;
+}
+
+/**
+ * Server rank for one real eligible attempt.
+ * Uses the rank written at settlement when present; otherwise recomputes
+ * from attempt documents only (never simulated leaderboard rows).
+ */
+async function resolveFinalRank(dayId, uid, attemptData) {
+  const stored = Number(attemptData && attemptData.finalRank);
+  if (
+    Number.isInteger(stored) &&
+    stored > 0 &&
+    attemptData.finalRankSettlementVersion === REWARD_SETTLEMENT_VERSION
+  ) {
+    return stored;
+  }
+
+  const ranking = await loadEligibleRanking(dayId);
+  const rank = findPlayerRank(ranking, uid);
+  if (rank > 0) {
+    await attemptsCol(dayId).doc(uid).set(
+      {
+        finalRank: rank,
+        finalRankSettlementVersion: REWARD_SETTLEMENT_VERSION,
+      },
+      { merge: true }
+    );
+  }
+  return rank;
+}
+
+/**
+ * Newest settled Daily the caller completed and has not acknowledged.
+ * Today is never returned (rank is not final until settlement).
+ * Does not create rewards. Rank #1 coins stay on the existing reward doc.
+ */
+async function getSettledDailyResultHandler(request) {
+  const uid = requireAuth(request);
+  const acknowledged = parseAcknowledgedDayIds(request.data || {});
+  const serverNow = new Date();
+
+  for (let daysAgo = 1; daysAgo <= SETTLED_RESULT_LOOKBACK_DAYS; daysAgo++) {
+    const dayId = utcDayIdDaysAgo(serverNow, daysAgo);
+    if (acknowledged.has(dayId)) {
+      continue;
+    }
+
+    const daySnap = await dayRef(dayId).get();
+    if (!daySnap.exists || !isDaySettled(daySnap.data())) {
+      continue;
+    }
+
+    const attemptSnap = await attemptsCol(dayId).doc(uid).get();
+    if (!attemptSnap.exists) {
+      continue;
+    }
+
+    const attempt = attemptSnap.data() || {};
+    if (!isEligibleAttempt(attempt, uid)) {
+      continue;
+    }
+
+    const rank = await resolveFinalRank(dayId, uid, attempt);
+    if (rank <= 0) {
+      continue;
+    }
+
+    let hasUnclaimedReward = false;
+    let rewardAmount = 0;
+    if (rank === FIRST_PLACE_RANK) {
+      const rewardSnap = await rewardRef(dayId, uid).get();
+      if (rewardSnap.exists) {
+        const reward = rewardSnap.data() || {};
+        hasUnclaimedReward = reward.claimed !== true;
+        rewardAmount =
+          reward.rewardAmount != null
+            ? Number(reward.rewardAmount)
+            : REWARD_AMOUNT_COINS;
+      }
+    }
+
+    return {
+      success: true,
+      found: true,
+      settled: true,
+      dayId,
+      rank,
+      score: Number(attempt.score),
+      moves: Number(attempt.moves),
+      completionTimeMs: Number(attempt.completionTimeMs),
+      hasUnclaimedReward,
+      rewardAmount: rank === FIRST_PLACE_RANK ? rewardAmount : 0,
+    };
+  }
+
+  return {
+    success: true,
+    found: false,
+    settled: false,
+  };
+}
+
 module.exports = {
   REWARD_SETTLEMENT_VERSION,
   FIRST_PLACE_RANK,
@@ -604,11 +798,13 @@ module.exports = {
   previousUtcDayId,
   isEligibleAttempt,
   compareRankRows,
+  findPlayerRank,
   loadEligibleRanking,
   settleDay,
   settlePreviousUtcDay,
   getPendingDailyRewardsHandler,
   claimDailyRewardHandler,
   createDevDailyRewardHandler,
+  getSettledDailyResultHandler,
   isDevDailyRewardCreationEnabled,
 };

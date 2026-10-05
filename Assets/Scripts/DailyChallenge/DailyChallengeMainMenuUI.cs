@@ -411,23 +411,51 @@ public class DailyChallengeMainMenuUI : MonoBehaviour
         try
         {
             bool hasPending = await DailyRewardService.SyncPendingAsync();
-            if (!hasPending)
+            DailyRewardUI rewardUi = DailyRewardUI.FindInScene();
+            bool showedReward = false;
+            if (hasPending)
+            {
+                if (rewardUi != null)
+                {
+                    rewardUi.PresentPendingIfAny();
+                    if (rewardUi.IsShowing &&
+                        DailyRewardService.TryGetFirstPending(out DailyRewardRecord reward))
+                    {
+                        // Claim panel is the result for this day. Do not also pop a result-only card.
+                        DailyRewardService.MarkResultSeen(reward.DayId);
+                        showedReward = true;
+                    }
+                }
+                else
+                {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                    Debug.LogWarning(
+                        "[DailyReward] Pending reward exists but DailyRewardUI missing — " +
+                        "run Rush Out → UI → Create Daily Reward UI (MainMenu).");
+#endif
+                }
+            }
+
+            if (showedReward || rewardUi == null)
             {
                 return;
             }
 
-            DailyRewardUI rewardUi = DailyRewardUI.FindInScene();
-            if (rewardUi != null)
+            (bool fetched, DailySettledResult settled) =
+                await DailyRewardService.TryFetchLatestSettledResultAsync();
+            if (!fetched || !settled.Found)
             {
-                rewardUi.PresentPendingIfAny();
+                return;
             }
-            else
+
+            if (DailyRewardService.IsResultSeen(settled.DayId))
             {
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
-                Debug.LogWarning(
-                    "[DailyReward] Pending reward exists but DailyRewardUI missing — " +
-                    "run Rush Out → UI → Create Daily Reward UI (MainMenu).");
-#endif
+                return;
+            }
+
+            if (rewardUi.ShowSettledResult(settled))
+            {
+                DailyRewardService.MarkResultSeen(settled.DayId);
             }
         }
         catch (System.Exception ex)
