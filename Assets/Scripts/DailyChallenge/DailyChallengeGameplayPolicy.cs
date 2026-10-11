@@ -15,6 +15,13 @@ public static class DailyChallengeGameplayPolicy
     {
         get
         {
+#if UNITY_EDITOR
+            if (DailyChallengeEditorPreview.IsActive)
+            {
+                return true;
+            }
+#endif
+
             LevelManager lm = Object.FindFirstObjectByType<LevelManager>();
             if (lm != null && lm.IsDailyChallengeSession)
             {

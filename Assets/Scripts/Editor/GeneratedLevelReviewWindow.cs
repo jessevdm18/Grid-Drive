@@ -5,16 +5,18 @@ using UnityEditor;
 using UnityEngine;
 
 /// <summary>
-/// Editor-only reviewtool voor gegenereerde levels.
-/// Menu: RushOut â†’ Generated Levels â†’ Review
+/// Editor-only reviewtool voor gegenereerde campaign levels.
+/// Menu: RushOut → Generated Levels → Review
 ///
-/// Accepteer â†’ Assets/Data/Levels + MainLevelDatabase
-/// Afwijzen â†’ asset verwijderen
+/// Accepteer → Assets/Data/Levels + MainLevelDatabase
+/// Afwijzen → asset verwijderen
+/// Assets/Data/GeneratedLevels/Daily is excluded; Daily review lives in the Daily auditor.
 /// </summary>
 public class GeneratedLevelReviewWindow : EditorWindow
 {
     private const string GeneratedFolder = "Assets/Data/GeneratedLevels";
     private const string ApprovedFolder = "Assets/Data/Levels";
+    private const string DailyGeneratedFolder = GeneratedFolder + "/Daily";
 
     private readonly List<LevelData> reviewList = new List<LevelData>();
     private int currentIndex;
@@ -94,7 +96,7 @@ public class GeneratedLevelReviewWindow : EditorWindow
             GUILayout.ExpandWidth(false)
         );
         previewRect.x = (position.width - previewSize) * 0.5f;
-        DrawGridPreview(previewRect, level);
+        DrawReviewGridPreview(previewRect, level);
 
         EditorGUILayout.Space(8f);
         DrawVehicleList(level);
@@ -292,7 +294,30 @@ public class GeneratedLevelReviewWindow : EditorWindow
     // Grid preview (Editor GUI only)
     // -------------------------------------------------------------------------
 
-    private void DrawGridPreview(Rect area, LevelData level)
+    public static void DrawReviewGridPreview(Rect area, LevelData level)
+    {
+        if (level == null)
+        {
+            return;
+        }
+
+        DrawGridPreview(area, level);
+    }
+
+    private static bool IsDailyGeneratedPath(string path)
+    {
+        if (string.IsNullOrEmpty(path))
+        {
+            return false;
+        }
+
+        string normalized = path.Replace('\\', '/');
+        return normalized.StartsWith(
+            DailyGeneratedFolder + "/",
+            StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static void DrawGridPreview(Rect area, LevelData level)
     {
         int gridWidth = level.ResolvedGridWidth;
         int gridHeight = level.ResolvedGridHeight;
@@ -354,7 +379,7 @@ public class GeneratedLevelReviewWindow : EditorWindow
         Handles.EndGUI();
     }
 
-    private void DrawVehicleRect(
+    private static void DrawVehicleRect(
         Rect area,
         float cell,
         int gridHeight,
@@ -403,7 +428,7 @@ public class GeneratedLevelReviewWindow : EditorWindow
         GUI.Label(vehicleRect, label, style);
     }
 
-    private void DrawExitMarker(Rect area, float cell, int gridHeight, int exitRow)
+    private static void DrawExitMarker(Rect area, float cell, int gridHeight, int exitRow)
     {
         exitRow = Mathf.Clamp(exitRow, 0, gridHeight - 1);
         float markerWidth = cell * 0.35f;
@@ -457,6 +482,11 @@ public class GeneratedLevelReviewWindow : EditorWindow
         foreach (string guid in guids)
         {
             string path = AssetDatabase.GUIDToAssetPath(guid);
+            if (IsDailyGeneratedPath(path))
+            {
+                continue;
+            }
+
             LevelData level = AssetDatabase.LoadAssetAtPath<LevelData>(path);
             if (level != null)
             {

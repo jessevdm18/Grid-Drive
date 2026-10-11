@@ -24,8 +24,11 @@ public class GameManager : MonoBehaviour
     // Target-exit animatie gestart — fail mag niet meer winnen van win.
     private bool targetExitInProgress;
 
-    // Telt voltooide levels sinds de laatste interstitial.
-    private int completedLevelsSinceAd = 0;
+    // Campaign attempts ended since the last shown interstitial.
+    // Counts a completion, a genuine failure, or a paid restart of an unfinished level.
+    // Persisted so the cadence survives app restarts. Scene loads only read it.
+    private const string CampaignAttemptsSinceAdKey = "RushOut_CampaignAttemptsSinceAd";
+    private int campaignAttemptsSinceAd = 0;
 
     // Aantal geldige voertuig-moves in het huidige level.
     private int currentMoves = 0;
@@ -166,6 +169,10 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
+        campaignAttemptsSinceAd = Mathf.Max(
+            0,
+            PlayerPrefs.GetInt(CampaignAttemptsSinceAdKey, 0));
+
         audioManager = AudioManager.Resolve();
 
         if (gameplayUI == null)
@@ -572,7 +579,21 @@ public class GameManager : MonoBehaviour
         // Daily Challenge: persist scored result; skip campaign writes / normal win panel.
         if (dailySolved)
         {
-            DailyChallengeManager.EnsureInstance()?.NotifyGameplayCompleted(dailyResult);
+#if UNITY_EDITOR
+            bool editorPreview = DailyChallengeEditorPreview.IsActive;
+#else
+            bool editorPreview = false;
+#endif
+            if (editorPreview)
+            {
+                Debug.LogWarning(
+                    "[DailyPreview] LOCAL DAILY PREVIEW complete. " +
+                    "Score was not submitted and today's Daily challenge was not changed.");
+            }
+            else
+            {
+                DailyChallengeManager.EnsureInstance()?.NotifyGameplayCompleted(dailyResult);
+            }
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             Debug.Log(
@@ -590,11 +611,21 @@ public class GameManager : MonoBehaviour
             }
             else
             {
-                Debug.LogError(
-                    "[DailyChallenge] No DailyChallengeResultUI in scene — " +
-                    "run Rush Out → UI → Create Daily Challenge Gameplay Result UI. " +
-                    "Result was persisted; returning to MainMenu.");
-                DailyChallengeContext.ClearSession();
+                if (editorPreview)
+                {
+                    Debug.LogWarning(
+                        "[DailyPreview] No DailyChallengeResultUI. " +
+                        "Returning to MainMenu without saving a result.");
+                    DailyChallengeEditorPreview.ClearWithoutTouchingDailyAttempt();
+                }
+                else
+                {
+                    Debug.LogError(
+                        "[DailyChallenge] No DailyChallengeResultUI in scene — " +
+                        "run Rush Out → UI → Create Daily Challenge Gameplay Result UI. " +
+                        "Result was persisted; returning to MainMenu.");
+                    DailyChallengeContext.ClearSession();
+                }
                 Time.timeScale = 1f;
                 PlayLevelCompleteFeedback();
                 SceneTransition.LoadScene("MainMenu");
@@ -767,9 +798,8 @@ public class GameManager : MonoBehaviour
 
         PlayLevelCompleteFeedback();
 
-        // Interstitial-teller: één keer per level (beschermd door levelCompleted).
-        completedLevelsSinceAd++;
-        Debug.Log("Completed levels since ad: " + completedLevelsSinceAd);
+        // One campaign attempt ended. Daily already returned above.
+        RegisterCampaignAttemptEnded();
 
         if (uiManager != null)
         {
@@ -833,6 +863,9 @@ public class GameManager : MonoBehaviour
         levelObjectiveController?.NotifyLevelFailed();
 
         ReportLevelFailTelemetry(failReason);
+
+        // First accepted FailLevel only. Retry must not count again.
+        RegisterCampaignAttemptEnded();
 
         Debug.Log("LEVEL FAILED (special mission).");
         return true;
@@ -975,12 +1008,80 @@ public class GameManager : MonoBehaviour
         return LevelMinMoves.CalculateStars(currentMoves, levelData, out parMoves);
     }
 
+    private const int CampaignAttemptsPerInterstitial = 3;
+
     /// <summary>
-    /// True als er al 3 levels voltooid zijn sinds de laatste interstitial.
+    /// True when the next campaign attempt should be preceded by an interstitial.
     /// </summary>
     public bool ShouldShowInterstitial()
     {
-        return completedLevelsSinceAd >= 3;
+        return campaignAttemptsSinceAd >= CampaignAttemptsPerInterstitial;
+    }
+
+    /// <summary>
+    /// True when ending one more campaign attempt would reach the interstitial threshold.
+    /// Used by a paid active restart, which both ends the current attempt and starts the next.
+    /// </summary>
+    public bool NextEndingWouldTriggerInterstitial()
+    {
+        return campaignAttemptsSinceAd + 1 >= CampaignAttemptsPerInterstitial;
+    }
+
+    /// <summary>
+    /// Counts one ended normal campaign attempt. Daily and V1 playtest do not count.
+    /// </summary>
+    public void RegisterCampaignAttemptEnded()
+    {
+        if (levelManager != null && levelManager.IsNonCampaignSession)
+        {
+            return;
+        }
+
+        if (DailyChallengeGameplayPolicy.IsActive || DailyChallengeContext.IsActiveSession)
+        {
+            return;
+        }
+
+        campaignAttemptsSinceAd++;
+        PersistCampaignAttemptsSinceAd();
+        Debug.Log("Campaign attempts since ad: " + campaignAttemptsSinceAd);
+    }
+
+    /// <summary>
+    /// Runs <paramref name="continueWith"/> after a due interstitial closes.
+    /// If no ad is due or none is ready, continues immediately and leaves the counter.
+    /// </summary>
+    public void ContinueAfterInterstitialOpportunity(Action continueWith, AdsManager ads = null)
+    {
+        if (continueWith == null)
+        {
+            return;
+        }
+
+        if (!ShouldShowInterstitial())
+        {
+            continueWith();
+            return;
+        }
+
+        if (ads == null)
+        {
+            ads = adsManager;
+        }
+
+        if (ads == null)
+        {
+            ads = FindAnyObjectByType<AdsManager>();
+        }
+
+        if (ads != null && ads.IsInterstitialReady())
+        {
+            ResetInterstitialCounter();
+            ads.ShowInterstitialAd(() => continueWith());
+            return;
+        }
+
+        continueWith();
     }
 
     /// <summary>
@@ -988,7 +1089,14 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void ResetInterstitialCounter()
     {
-        completedLevelsSinceAd = 0;
+        campaignAttemptsSinceAd = 0;
+        PersistCampaignAttemptsSinceAd();
+    }
+
+    private void PersistCampaignAttemptsSinceAd()
+    {
+        PlayerPrefs.SetInt(CampaignAttemptsSinceAdKey, campaignAttemptsSinceAd);
+        PlayerPrefs.Save();
     }
 
     /// <summary>

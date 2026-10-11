@@ -230,8 +230,8 @@ public class FirebaseManager : MonoBehaviour
                     IsReady = true;
                     LogInit("Ready", "AppName=" + app.Name);
 
-                    // Phase 4.4: apply FCM TokenRegistrationOnInitEnabled from opt-in pref (13.15.0).
-                    // Does NOT request notification permission or subscribe at startup.
+                    // Phase 4.4: dependencies are Available. Re-subscribe if the user opted in.
+                    // Does NOT request notification permission.
                     try
                     {
                         DailyNotificationService.Bootstrap();

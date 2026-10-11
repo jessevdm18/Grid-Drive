@@ -91,6 +91,16 @@ public class DailyChallengeManager : MonoBehaviour
             config = DailyChallengeConfig.LoadDefault();
         }
 
+#if UNITY_EDITOR
+        if (DailyChallengeEditorPreview.HasPending || DailyChallengeEditorPreview.IsActive)
+        {
+            // Read the cache only. A local preview must not roll the day, recover, or persist.
+            LoadCachedDailyState();
+            SceneManager.sceneLoaded += OnSceneLoaded;
+            return;
+        }
+#endif
+
         RefreshFromStoreAndRecover();
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
@@ -316,6 +326,14 @@ public class DailyChallengeManager : MonoBehaviour
 
     public void NotifyGameplayCompleted(DailyChallengeResult result)
     {
+#if UNITY_EDITOR
+        if (DailyChallengeEditorPreview.IsActive)
+        {
+            Debug.LogWarning(
+                "[DailyPreview] Ignored completion. Local preview does not submit or save a Daily result.");
+            return;
+        }
+#endif
         EnsureDaySynced();
         if (cachedState == DailyChallengeState.Completed && result.Completed)
         {
@@ -364,6 +382,16 @@ public class DailyChallengeManager : MonoBehaviour
     /// <summary>Abandoned / unsolved exit — no score.</summary>
     public void NotifyAbandoned(string reason = "abandon")
     {
+#if UNITY_EDITOR
+        if (DailyChallengeEditorPreview.IsActive)
+        {
+            DailyChallengeEditorPreview.ClearWithoutTouchingDailyAttempt();
+            Debug.LogWarning(
+                "[DailyPreview] Left local preview (" + reason +
+                "). The real Daily attempt was not changed.");
+            return;
+        }
+#endif
         EnsureDaySynced();
         if (cachedState == DailyChallengeState.Completed)
         {
@@ -674,6 +702,14 @@ public class DailyChallengeManager : MonoBehaviour
 
     public void RefreshFromStoreAndRecover()
     {
+        LoadCachedDailyState();
+        EnsureDaySynced();
+        RecoverStaleInProgressIfNeeded();
+        ResolveSelectedLevel(Config, cachedDayId, persistSelection: false);
+    }
+
+    private void LoadCachedDailyState()
+    {
         if (DailyChallengeLocalStore.TryLoad(
                 out string dayId,
                 out DailyChallengeState state,
@@ -689,10 +725,6 @@ public class DailyChallengeManager : MonoBehaviour
         {
             cachedDayId = null;
         }
-
-        EnsureDaySynced();
-        RecoverStaleInProgressIfNeeded();
-        ResolveSelectedLevel(Config, cachedDayId, persistSelection: false);
     }
 
     private void RecoverStaleInProgressIfNeeded()
@@ -701,6 +733,18 @@ public class DailyChallengeManager : MonoBehaviour
         {
             return;
         }
+
+#if UNITY_EDITOR
+        if (DailyChallengeEditorPreview.HasPending || DailyChallengeEditorPreview.IsActive)
+        {
+            return;
+        }
+
+        if (DailyChallengeEditorPreview.ConsumeSuppressStaleRecover())
+        {
+            return;
+        }
+#endif
 
         // Still launching into Gameplay — keep InProgress.
         if (DailyChallengeContext.HasPending)

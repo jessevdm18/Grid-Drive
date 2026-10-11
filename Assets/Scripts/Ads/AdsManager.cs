@@ -569,6 +569,13 @@ public class AdsManager : MonoBehaviour
     /// </summary>
     public void ShowInterstitialAd(Action onAdClosed = null)
     {
+        if (AdsFreeService.IsOwned)
+        {
+            Debug.Log("[Ads] Interstitial skipped — Ads Free");
+            RunOnMainThread(() => onAdClosed?.Invoke());
+            return;
+        }
+
         if (!IsInterstitialReady())
         {
             Debug.Log("Interstitial not ready");

@@ -77,6 +77,13 @@ public class SceneTransition : MonoBehaviour
             return true;
         }
 
+        if (DailyChallengeEditorPreview.HasPending || DailyChallengeEditorPreview.IsActive)
+        {
+            LivesManager previewLives = LivesManager.EnsureInstance();
+            previewLives?.TryBeginLevelAttempt("scene_gameplay_daily_preview", bypassLivesGate: true);
+            return true;
+        }
+
         if (DailyChallengeContext.HasPending || DailyChallengeContext.IsActiveSession)
         {
             LivesManager bypassLog = LivesManager.EnsureInstance();

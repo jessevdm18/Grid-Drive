@@ -237,6 +237,19 @@ public class LevelManager : MonoBehaviour
 #endif
 
 #if UNITY_EDITOR
+        if (DailyChallengeEditorPreview.TryConsumePendingLevel(out LevelData previewLevel))
+        {
+            dailyChallengeLevel = previewLevel;
+            editorPlaytestLevel = null;
+            currentLevelIndex = -1;
+            DailyChallengeRunTracker.EnsureInScene();
+            LoadLevelData(previewLevel);
+            Debug.LogWarning(
+                "[DailyPreview] LOCAL DAILY PREVIEW loaded " + previewLevel.name +
+                ". No attempt was consumed and no score will be submitted.");
+            return;
+        }
+
         // Fresh / first-launch must never be hijacked by a leftover V1 playtest Pending GUID.
         if (!SaveManager.HasFirstLaunchCompletedKeyRaw())
         {

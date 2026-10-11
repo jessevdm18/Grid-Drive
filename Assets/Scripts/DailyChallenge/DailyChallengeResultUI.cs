@@ -193,6 +193,14 @@ public class DailyChallengeResultUI : MonoBehaviour
 
         showing = false;
         Time.timeScale = 1f;
+#if UNITY_EDITOR
+        if (DailyChallengeEditorPreview.IsActive)
+        {
+            DailyChallengeEditorPreview.ClearWithoutTouchingDailyAttempt();
+            SceneTransition.LoadScene("MainMenu");
+            return;
+        }
+#endif
         DailyChallengeContext.ClearSession();
         SceneTransition.LoadScene("MainMenu");
     }

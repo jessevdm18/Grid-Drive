@@ -311,14 +311,17 @@ public class MoveLimitMissionUI : MonoBehaviour
         }
 
         // Failed retry is free; lives gate may open OutOfLives without coin spend.
-        RestartPurchaseService.TryRestartWithEconomy(
+        // A due interstitial returns Restarted before the reload, while the
+        // board is still failed — only a real block should put the panel back.
+        RestartPurchaseResult restartResult = RestartPurchaseService.TryRestartWithEconomy(
             levelManager: levelManager,
             gameManager: gameManager,
             source: "mission_failed_limit");
 
         // Retry blocked at 0 lives — keep MissionFailedLimitPanel under OutOfLives
         // so the player can Retry again after earning a life (no auto-retry).
-        if (gameManager != null && gameManager.IsLevelFailed)
+        if (restartResult == RestartPurchaseResult.LivesBlocked ||
+            restartResult == RestartPurchaseResult.NotEnoughCoins)
         {
             failurePresentationPlayed = true;
             showingGlobalMoveLimitFailure = keepGlobalContext;

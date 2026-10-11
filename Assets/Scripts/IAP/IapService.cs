@@ -18,6 +18,9 @@ public class IapService : MonoBehaviour
     public const string ProductIdCoins5000 = "coins_5000";
     public const string ProductIdCoins12000 = "coins_12000";
 
+    /// <summary>Non-consumable. Create this SKU in Play Console before release.</summary>
+    public const string ProductIdAdsFree = "ads_free";
+
     public const int Coins1000GrantAmount = 1000;
     public const int Coins5000GrantAmount = 5000;
     public const int Coins12000GrantAmount = 12000;
@@ -57,6 +60,7 @@ public class IapService : MonoBehaviour
     private readonly Dictionary<string, string> localizedPriceByProductId =
         new Dictionary<string, string>(StringComparer.Ordinal);
     private readonly HashSet<string> readyProductIds = new HashSet<string>(StringComparer.Ordinal);
+    private string purchaseInProgressProductId;
 
 #if UNITY_ANDROID && !UNITY_EDITOR
     private CrossPlatformValidator googlePlayReceiptValidator;
@@ -161,9 +165,16 @@ public class IapService : MonoBehaviour
             return;
         }
 
-        if (!TryGetCoinRewardForProduct(productId, out _))
+        bool isAdsFree = productId == ProductIdAdsFree;
+        if (!isAdsFree && !TryGetCoinRewardForProduct(productId, out _))
         {
             OnPurchaseFailedMessage?.Invoke("Unknown store product.");
+            NotifyStateChanged();
+            return;
+        }
+
+        if (isAdsFree && AdsFreeService.IsOwned)
+        {
             NotifyStateChanged();
             return;
         }
@@ -184,6 +195,7 @@ public class IapService : MonoBehaviour
         }
 
         IsPurchaseInProgress = true;
+        purchaseInProgressProductId = productId;
         NotifyStateChanged();
         storeController.PurchaseProduct(product);
     }
@@ -313,6 +325,7 @@ public class IapService : MonoBehaviour
         IsStoreConnected = false;
         ClearProductMetadata();
         IsPurchaseInProgress = false;
+        purchaseInProgressProductId = null;
         Debug.LogWarning("[IapService] Store disconnected: " + failure.Message);
         NotifyStateChanged();
     }
@@ -322,6 +335,7 @@ public class IapService : MonoBehaviour
         // v5.4 clears product/purchase caches before this event.
         ClearProductMetadata();
         IsPurchaseInProgress = false;
+        purchaseInProgressProductId = null;
         NotifyStateChanged();
 
         if (storeController == null)
@@ -340,11 +354,13 @@ public class IapService : MonoBehaviour
             return;
         }
 
-        var defs = new List<ProductDefinition>(AllCoinPackProductIds.Length);
+        var defs = new List<ProductDefinition>(AllCoinPackProductIds.Length + 1);
         for (int i = 0; i < AllCoinPackProductIds.Length; i++)
         {
             defs.Add(new ProductDefinition(AllCoinPackProductIds[i], ProductType.Consumable));
         }
+
+        defs.Add(new ProductDefinition(ProductIdAdsFree, ProductType.NonConsumable));
 
         storeController.FetchProducts(defs);
     }
@@ -405,13 +421,83 @@ public class IapService : MonoBehaviour
             }
         }
 
-        IsProductAvailable = readyProductIds.Count > 0;
+        int coinPacksReady = readyProductIds.Count;
+        TryRegisterFetchedProduct(ProductIdAdsFree);
+        IsProductAvailable = coinPacksReady > 0;
         LocalizedPriceString = GetLocalizedPriceString(ProductIdCoins1000);
+    }
+
+    private void TryRegisterFetchedProduct(string productId)
+    {
+        if (storeController == null || string.IsNullOrEmpty(productId))
+        {
+            return;
+        }
+
+        Product product = storeController.GetProductById(productId);
+        if (product == null || product.metadata == null)
+        {
+            return;
+        }
+
+        string price = product.metadata.localizedPriceString;
+        if (string.IsNullOrEmpty(price))
+        {
+            return;
+        }
+
+        localizedPriceByProductId[productId] = price;
+        if (product.availableToPurchase)
+        {
+            readyProductIds.Add(productId);
+        }
     }
 
     private void OnPurchasesFetched(Orders orders)
     {
         // Pending orders are processed via OnPurchasePending when enabled (default).
+        // Confirmed non-consumables are the restore path and do not raise Pending.
+        if (OrdersContainProduct(orders, ProductIdAdsFree))
+        {
+            AdsFreeService.SetOwnedFromStore();
+            NotifyStateChanged();
+        }
+    }
+
+    private static bool OrdersContainProduct(Orders orders, string productId)
+    {
+        if (orders == null || string.IsNullOrEmpty(productId))
+        {
+            return false;
+        }
+
+        if (OrderListContainsProduct(orders.ConfirmedOrders, productId))
+        {
+            return true;
+        }
+
+        return OrderListContainsProduct(orders.PendingOrders, productId);
+    }
+
+    private static bool OrderListContainsProduct<T>(System.Collections.Generic.IReadOnlyList<T> orders, string productId)
+        where T : Order
+    {
+        if (orders == null)
+        {
+            return false;
+        }
+
+        for (int i = 0; i < orders.Count; i++)
+        {
+            Product product = GetFirstProduct(orders[i]);
+            string id = product != null && product.definition != null ? product.definition.id : null;
+            if (id == productId)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void OnPurchasesFetchFailed(PurchasesFetchFailureDescription failure)
@@ -423,6 +509,12 @@ public class IapService : MonoBehaviour
     {
         Product product = GetFirstProduct(order);
         string productId = product != null && product.definition != null ? product.definition.id : null;
+
+        if (productId == ProductIdAdsFree)
+        {
+            FulfillAdsFreePending(order);
+            return;
+        }
 
         if (!TryGetCoinRewardForProduct(productId, out int coinAmount))
         {
@@ -478,6 +570,35 @@ public class IapService : MonoBehaviour
 
         // Confirm/consume only after durable fulfillment (or prior fulfillment).
         storeController.ConfirmPurchase(order);
+    }
+
+    private void FulfillAdsFreePending(PendingOrder order)
+    {
+        bool userInitiated = IsPurchaseInProgress;
+        if (!TryValidateGooglePlayReceiptForNewGrant(order))
+        {
+            IsPurchaseInProgress = false;
+            purchaseInProgressProductId = null;
+            if (userInitiated)
+            {
+                OnPurchaseFailedMessage?.Invoke("Purchase could not be verified.");
+            }
+
+            NotifyStateChanged();
+            return;
+        }
+
+        bool newlyOwned = !AdsFreeService.IsOwned;
+        AdsFreeService.SetOwnedFromStore();
+        if (newlyOwned && IsPurchaseInProgress)
+        {
+            AudioManager.TryPlayRewardReceived();
+        }
+
+        storeController.ConfirmPurchase(order);
+        IsPurchaseInProgress = false;
+        purchaseInProgressProductId = null;
+        NotifyStateChanged();
     }
 
     /// <summary>
@@ -551,6 +672,7 @@ public class IapService : MonoBehaviour
     private void OnPurchaseConfirmed(Order order)
     {
         IsPurchaseInProgress = false;
+        purchaseInProgressProductId = null;
 
         switch (order)
         {
@@ -571,7 +693,17 @@ public class IapService : MonoBehaviour
 
     private void OnPurchaseFailed(FailedOrder order)
     {
+        bool wasAdsFree = purchaseInProgressProductId == ProductIdAdsFree;
         IsPurchaseInProgress = false;
+        purchaseInProgressProductId = null;
+
+        if (wasAdsFree && order != null && order.FailureReason == PurchaseFailureReason.DuplicateTransaction)
+        {
+            AdsFreeService.SetOwnedFromStore();
+            NotifyStateChanged();
+            return;
+        }
+
         string reason = order != null ? order.FailureReason.ToString() : "Unknown";
         string details = order != null ? order.Details : string.Empty;
         Debug.LogWarning("[IapService] Purchase failed: " + reason + " — " + details);
@@ -582,6 +714,7 @@ public class IapService : MonoBehaviour
     private void OnPurchaseDeferredInternal(DeferredOrder order)
     {
         IsPurchaseInProgress = false;
+        purchaseInProgressProductId = null;
         OnPurchaseDeferred?.Invoke();
         NotifyStateChanged();
     }

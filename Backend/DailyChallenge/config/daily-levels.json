@@ -1,5 +1,6 @@
 {
   "scoreVersion": 1,
+  "catalogVersion": 1,
   "scoring": {
     "baseMoveScore": 100000,
     "movePenaltyPerExtraMove": 2500,
@@ -14,15 +15,34 @@
     "maxCompletionTimeMs": 21600000
   },
   "levels": [
-    { "levelId": "Level_001", "levelVersion": "Level_001", "minimumMoves": 3 },
-    { "levelId": "Level_002", "levelVersion": "Level_002", "minimumMoves": 3 },
-    { "levelId": "Level_003", "levelVersion": "Level_003", "minimumMoves": 3 },
-    { "levelId": "Level_004", "levelVersion": "Level_004", "minimumMoves": 3 },
-    { "levelId": "Level_006", "levelVersion": "Level_006", "minimumMoves": 6 },
-    { "levelId": "Level_007", "levelVersion": "Level_007", "minimumMoves": 6 },
-    { "levelId": "Level_008", "levelVersion": "Level_008", "minimumMoves": 6 },
-    { "levelId": "Level_009", "levelVersion": "Level_009", "minimumMoves": 7 },
-    { "levelId": "Level_010", "levelVersion": "Level_010", "minimumMoves": 7 }
+    { "levelId": "Daily_001", "levelVersion": "Daily_001", "minimumMoves": 9, "assetGuid": "29d875e4cbd52f14a9b37a46ef978da9", "gridWidth": 6, "gridHeight": 6, "fingerprint": "gw=6|gh=6|exit=3|T:H2@2,3|N:H2@0,1|N:H3@1,2|N:V2@2,0|N:V2@3,0|N:V2@3,4|N:H2@4,0|N:V3@4,2", "enabled": true },
+    { "levelId": "Daily_002", "levelVersion": "Daily_002", "minimumMoves": 11, "assetGuid": "6f6a58bedfeaf9e45be416ea8ffbd056", "gridWidth": 6, "gridHeight": 6, "fingerprint": "gw=6|gh=6|exit=2|T:H2@1,2|N:H2@0,1|N:V2@0,2|N:H2@2,1|N:V2@2,3|N:V2@3,2|N:H3@3,4|N:V3@4,1|N:H2@4,5|N:V3@5,1", "enabled": true },
+    { "levelId": "Daily_003", "levelVersion": "Daily_003", "minimumMoves": 8, "assetGuid": "2a4174541bee8d442a734784b2505525", "gridWidth": 6, "gridHeight": 6, "fingerprint": "gw=6|gh=6|exit=2|T:H2@0,2|N:H2@0,1|N:V2@1,3|N:H3@1,5|N:H2@2,0|N:V3@2,1|N:V2@3,2|N:V2@4,0|N:V2@4,3|N:V3@5,1", "enabled": true },
+    { "levelId": "Daily_004", "levelVersion": "Daily_004", "minimumMoves": 8, "assetGuid": "758eaf19091de5a46bd39af482ff3676", "gridWidth": 6, "gridHeight": 6, "fingerprint": "gw=6|gh=6|exit=1|T:H2@2,1|N:H2@0,0|N:H2@0,2|N:V2@0,3|N:H2@1,4|N:H2@2,0|N:H3@2,3|N:H2@3,4|N:V3@4,0|N:V3@5,0", "enabled": true },
+    { "levelId": "Daily_005", "levelVersion": "Daily_005", "minimumMoves": 9, "assetGuid": "80e7f2c664516a94b8dd2583c0111180", "gridWidth": 6, "gridHeight": 6, "fingerprint": "gw=6|gh=6|exit=1|T:H2@2,1|N:V3@2,2|N:H3@2,5|N:H3@3,0|N:V2@3,2|N:V2@4,1|N:H2@4,3|N:V2@5,1|N:V2@5,4", "enabled": true },
+    { "levelId": "Daily_006", "levelVersion": "Daily_006", "minimumMoves": 11, "assetGuid": "1ef981b7eb3ab02488b1a5ff3baddfb2", "gridWidth": 6, "gridHeight": 6, "fingerprint": "gw=6|gh=6|exit=3|T:H2@0,3|N:V2@1,0|N:H2@3,1|N:V3@3,3|N:H2@4,5|N:V3@5,1", "enabled": true },
+    { "levelId": "Daily_007", "levelVersion": "Daily_007", "minimumMoves": 9, "assetGuid": "d1f04bf0ab02a8642bf1d36d75a76dfa", "gridWidth": 6, "gridHeight": 6, "fingerprint": "gw=6|gh=6|exit=2|T:H2@2,2|N:V3@0,0|N:H2@0,3|N:H2@1,0|N:V2@1,1|N:H2@3,0|N:H2@3,1|N:V3@3,3|N:H2@4,5|N:V3@5,1", "enabled": true },
+    { "levelId": "Daily_008", "levelVersion": "Daily_008", "minimumMoves": 9, "assetGuid": "dd293516273a42748bbc201d3ae73c45", "gridWidth": 6, "gridHeight": 6, "fingerprint": "gw=6|gh=6|exit=3|T:H2@2,3|N:V2@0,4|N:H2@1,0|N:V2@1,2|N:H2@3,0|N:V2@3,1|N:H2@4,1|N:V3@4,2|N:V2@5,3", "enabled": true },
+    { "levelId": "Daily_009", "levelVersion": "Daily_009", "minimumMoves": 8, "assetGuid": "9f085d3446aada6429f6524696a90312", "gridWidth": 6, "gridHeight": 6, "fingerprint": "gw=6|gh=6|exit=4|T:H2@0,4|N:H3@0,2|N:H2@2,0|N:V2@2,3|N:H2@2,5|N:V3@4,1|N:V2@5,4", "enabled": true },
+    { "levelId": "Daily_010", "levelVersion": "Daily_010", "minimumMoves": 8, "assetGuid": "3ccb70d7039558e4db67d8506e5cc57f", "gridWidth": 7, "gridHeight": 6, "fingerprint": "gw=7|gh=6|exit=1|T:H2@0,1|N:H2@0,2|N:H2@0,5|N:V3@2,0|N:V2@3,1|N:H2@3,3|N:H3@3,5|N:V2@5,1|N:H2@5,3|N:V3@6,0", "enabled": true },
+    { "levelId": "Daily_011", "levelVersion": "Daily_011", "minimumMoves": 8, "assetGuid": "366d57b295269c54f9aa3414f52a986a", "gridWidth": 7, "gridHeight": 6, "fingerprint": "gw=7|gh=6|exit=1|T:H2@0,1|N:V2@1,2|N:V2@2,0|N:V3@3,0|N:V3@4,2|N:H2@5,3|N:V2@6,0", "enabled": true },
+    { "levelId": "Daily_012", "levelVersion": "Daily_012", "minimumMoves": 8, "assetGuid": "4eaf4f7f0aba61644a86faffb638b1d4", "gridWidth": 7, "gridHeight": 6, "fingerprint": "gw=7|gh=6|exit=1|T:H2@2,1|N:V2@1,3|N:H2@2,4|N:H2@2,5|N:V2@3,2|N:V3@4,3|N:V3@5,1|N:H2@5,4|N:H2@5,5|N:V3@6,0", "enabled": true },
+    { "levelId": "Daily_013", "levelVersion": "Daily_013", "minimumMoves": 8, "assetGuid": "35f78cd6f3c9d9e4b977caa84cd1840d", "gridWidth": 7, "gridHeight": 6, "fingerprint": "gw=7|gh=6|exit=2|T:H2@0,2|N:H2@0,1|N:V3@2,1|N:H3@2,5|N:V2@3,1|N:V2@4,0|N:V2@4,2|N:H2@4,4|N:V2@5,1|N:V3@6,0", "enabled": true },
+    { "levelId": "Daily_014", "levelVersion": "Daily_014", "minimumMoves": 8, "assetGuid": "f2510b14022de7d47b6aa6043445cf48", "gridWidth": 7, "gridHeight": 6, "fingerprint": "gw=7|gh=6|exit=1|T:H2@0,1|N:V3@0,2|N:H2@1,4|N:V2@2,1|N:V2@3,0|N:H2@3,2|N:V2@4,0|N:V2@4,3|N:H2@5,5|N:V3@6,0", "enabled": true },
+    { "levelId": "Daily_015", "levelVersion": "Daily_015", "minimumMoves": 8, "assetGuid": "b145794df9023a7488ef52342d2f9d14", "gridWidth": 7, "gridHeight": 6, "fingerprint": "gw=7|gh=6|exit=3|T:H2@1,3|N:V3@2,0|N:H2@3,0|N:V3@3,3|N:V2@4,2|N:H2@5,0|N:H2@5,5|N:V2@6,3", "enabled": true },
+    { "levelId": "Daily_016", "levelVersion": "Daily_016", "minimumMoves": 12, "assetGuid": "40e6dc81abeae5b4d91534b87eb139e4", "gridWidth": 7, "gridHeight": 6, "fingerprint": "gw=7|gh=6|exit=3|T:H2@0,3|N:V3@1,0|N:H2@2,0|N:H2@2,1|N:V3@2,3|N:H2@4,0|N:V2@4,1|N:V3@5,2|N:H2@5,5|N:V2@6,1", "enabled": true },
+    { "levelId": "Daily_017", "levelVersion": "Daily_017", "minimumMoves": 11, "assetGuid": "9115183af8a189846a12d62e5fbdcd01", "gridWidth": 7, "gridHeight": 6, "fingerprint": "gw=7|gh=6|exit=3|T:H2@0,3|N:H2@0,5|N:H3@2,1|N:V3@2,3|N:V2@3,2|N:V2@5,0|N:V2@5,2|N:V2@6,3", "enabled": true },
+    { "levelId": "Daily_018", "levelVersion": "Daily_018", "minimumMoves": 8, "assetGuid": "ddbdaeb4fae988e4f98a7d5adb8f428d", "gridWidth": 7, "gridHeight": 6, "fingerprint": "gw=7|gh=6|exit=1|T:H2@0,1|N:V2@1,3|N:V3@2,1|N:H2@2,5|N:H2@3,2|N:V2@4,0|N:H3@4,3", "enabled": true },
+    { "levelId": "Daily_019", "levelVersion": "Daily_019", "minimumMoves": 11, "assetGuid": "795b8218008376b4fb586cbcd67cb621", "gridWidth": 7, "gridHeight": 6, "fingerprint": "gw=7|gh=6|exit=4|T:H2@2,4|N:H2@0,2|N:H3@0,5|N:V2@1,0|N:V2@2,1|N:H2@3,1|N:H2@4,0|N:H2@4,2|N:V3@4,3|N:V3@6,2", "enabled": true },
+    { "levelId": "Daily_020", "levelVersion": "Daily_020", "minimumMoves": 8, "assetGuid": "47449f91324748243921197a9646994c", "gridWidth": 7, "gridHeight": 6, "fingerprint": "gw=7|gh=6|exit=4|T:H2@0,4|N:H2@0,3|N:H3@1,2|N:H2@2,3|N:H3@3,1|N:V2@3,4|N:H2@5,2|N:V2@5,4", "enabled": true },
+    { "levelId": "Daily_021", "levelVersion": "Daily_021", "minimumMoves": 10, "assetGuid": "ba990eb0d4ddfa7429c9bac9b24913ad", "gridWidth": 7, "gridHeight": 6, "fingerprint": "gw=7|gh=6|exit=4|T:H2@0,4|N:H2@0,5|N:V2@1,0|N:V2@1,2|N:H2@2,3|N:H3@3,1|N:H2@3,2|N:V3@4,3|N:V2@5,4|N:V3@6,3", "enabled": true },
+    { "levelId": "Daily_022", "levelVersion": "Daily_022", "minimumMoves": 8, "assetGuid": "35c9d28d2777eb246b67766d465b753a", "gridWidth": 7, "gridHeight": 6, "fingerprint": "gw=7|gh=6|exit=1|T:H2@3,1|N:H2@0,4|N:H2@0,5|N:V2@2,2|N:V3@3,3|N:H3@4,3|N:V2@4,4|N:V2@5,0|N:H2@5,2|N:V2@5,4", "enabled": true },
+    { "levelId": "Daily_023", "levelVersion": "Daily_023", "minimumMoves": 9, "assetGuid": "16daf276091005243b83682bb57b7681", "gridWidth": 7, "gridHeight": 6, "fingerprint": "gw=7|gh=6|exit=1|T:H2@2,1|N:H2@0,2|N:V2@1,4|N:V2@2,3|N:V3@4,0|N:H3@4,4|N:V2@6,0|N:V2@6,2", "enabled": true },
+    { "levelId": "Daily_024", "levelVersion": "Daily_024", "minimumMoves": 10, "assetGuid": "84023ee3a5eaac74e9d6c3795e25a3d8", "gridWidth": 7, "gridHeight": 6, "fingerprint": "gw=7|gh=6|exit=1|T:H2@0,1|N:H3@1,0|N:V3@1,2|N:V2@2,1|N:H2@2,3|N:V2@2,4|N:H2@4,2|N:H2@4,3|N:V3@6,3", "enabled": true },
+    { "levelId": "Daily_025", "levelVersion": "Daily_025", "minimumMoves": 9, "assetGuid": "443c761f8ad95c946b67b549716b65ea", "gridWidth": 7, "gridHeight": 6, "fingerprint": "gw=7|gh=6|exit=4|T:H2@0,4|N:V2@0,1|N:V2@1,1|N:H2@1,3|N:V2@2,4|N:H2@3,1|N:H3@3,2|N:V2@3,4|N:H3@4,0|N:V3@4,3", "enabled": true },
+    { "levelId": "Daily_026", "levelVersion": "Daily_026", "minimumMoves": 8, "assetGuid": "9dd2010674797834ca3c46a61f9b89c7", "gridWidth": 7, "gridHeight": 6, "fingerprint": "gw=7|gh=6|exit=2|T:H2@1,2|N:V2@0,3|N:H3@1,3|N:V3@3,0|N:H2@3,5|N:H2@5,1|N:V3@5,2|N:V2@6,2|N:V2@6,4", "enabled": true },
+    { "levelId": "Daily_027", "levelVersion": "Daily_027", "minimumMoves": 9, "assetGuid": "2f38eeeb7af46fe4ba4c8a31bc37816a", "gridWidth": 7, "gridHeight": 6, "fingerprint": "gw=7|gh=6|exit=4|T:H2@0,4|N:V2@1,2|N:H2@2,3|N:V2@2,4|N:V2@3,0|N:V2@3,4|N:H2@4,2|N:V3@4,3|N:V3@5,3|N:V3@6,2", "enabled": true },
+    { "levelId": "Daily_028", "levelVersion": "Daily_028", "minimumMoves": 8, "assetGuid": "5d7b1a6ca3b935247856e95562066a89", "gridWidth": 7, "gridHeight": 6, "fingerprint": "gw=7|gh=6|exit=3|T:H2@1,3|N:V2@0,2|N:V3@1,0|N:H2@2,0|N:V2@2,1|N:V2@4,3|N:H2@5,0|N:V3@5,2|N:V3@6,1", "enabled": true }
   ],
-  "notes": "Exported from eligible Classic Daily pool. Deploy functions/config/daily-levels.json."
+  "notes": "Approved generated Daily candidates only. levelId matches the Unity asset name. assetGuid is the durable identity. Deploy functions/config/daily-levels.json."
 }

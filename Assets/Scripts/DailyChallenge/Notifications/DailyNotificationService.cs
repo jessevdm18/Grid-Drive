@@ -16,6 +16,10 @@ public static class DailyNotificationService
     private static bool bootstrapped;
     private static bool enableInFlight;
     private static bool handlersReady;
+    private static bool loggedNotReady;
+    private static bool pendingUnsubscribe;
+    private static bool subscribeAgain;
+    private static Task<bool> subscribeTask;
 
     /// <summary>User preference (persisted). Default false.</summary>
     public static bool PreferredEnabled => PlayerPrefs.GetInt(PrefsEnabledKey, 0) == 1;
@@ -53,24 +57,61 @@ public static class DailyNotificationService
             return;
         }
 
-        bootstrapped = true;
-
 #if UNITY_EDITOR
+        bootstrapped = true;
         // Still disable auto token registration in Editor so prefs stay consistent.
         FirebaseMessagingBridge.SetTokenRegistrationOnInitEnabled(false);
         Debug.Log(
             "[DailyNotify] Editor bootstrap — push unsupported. " + MessagingSdkStatus);
         return;
-#endif
-
-        // Explicit opt-in: do not auto-register FCM token until the user enables Daily notifications.
-        // 13.15.0 API: TokenRegistrationOnInitEnabled (not RegistrationOnInitEnabled / RegisterAsync).
-        FirebaseMessagingBridge.SetTokenRegistrationOnInitEnabled(PreferredEnabled);
-
-        if (PreferredEnabled && AndroidNotificationPermission.HasPermission)
+#else
+        // Settings can open before CheckAndFixDependenciesAsync finishes.
+        // Do not touch FirebaseMessaging, and do not consume bootstrap, until it has.
+        if (!FirebaseManager.IsReady)
         {
-            _ = EnsureSubscribedAsync();
+            if (!loggedNotReady)
+            {
+                loggedNotReady = true;
+                Debug.Log("[DailyNotify] Firebase not ready — notification bootstrap deferred.");
+            }
+
+            return;
         }
+
+        if (bootstrapped)
+        {
+            return;
+        }
+
+        bootstrapped = true;
+
+        if (pendingUnsubscribe)
+        {
+            pendingUnsubscribe = false;
+            _ = FirebaseMessagingBridge.UnsubscribeAsync(DailyNotificationTopics.ProductionNewDay);
+            _ = FirebaseMessagingBridge.UnsubscribeAsync(DailyNotificationTopics.Dev);
+            FirebaseMessagingBridge.SetTokenRegistrationOnInitEnabled(false);
+            Debug.Log("[DailyNotify] Opt-out applied after Firebase became ready.");
+            return;
+        }
+
+        bool canReceive = PreferredEnabled && AndroidNotificationPermission.HasPermission;
+        // 13.15.0 API: TokenRegistrationOnInitEnabled (not RegistrationOnInitEnabled / RegisterAsync).
+        FirebaseMessagingBridge.SetTokenRegistrationOnInitEnabled(canReceive);
+
+        if (!PreferredEnabled)
+        {
+            return;
+        }
+
+        if (!AndroidNotificationPermission.HasPermission)
+        {
+            Debug.Log("[DailyNotify] Permission denied — not subscribing.");
+            return;
+        }
+
+        _ = EnsureSubscribedAsync();
+#endif
     }
 
     /// <summary>
@@ -106,16 +147,17 @@ public static class DailyNotificationService
 #else
             if (!wantEnabled)
             {
+                if (!FirebaseManager.IsReady)
+                {
+                    PersistPreference(false);
+                    pendingUnsubscribe = true;
+                    Debug.Log("[DailyNotify] Firebase not ready — opt-out saved, unsubscribe deferred.");
+                    GameAnalytics.LogDailyNotificationOptOut(AnalyticsSourceSettings);
+                    return false;
+                }
+
                 await DisableInternalAsync();
                 GameAnalytics.LogDailyNotificationOptOut(AnalyticsSourceSettings);
-                return false;
-            }
-
-            if (!FirebaseMessagingBridge.IsSdkAvailable)
-            {
-                PersistPreference(false);
-                Debug.LogWarning(
-                    "[DailyNotify] Cannot enable — " + FirebaseMessagingBridge.SdkStatus);
                 return false;
             }
 
@@ -123,39 +165,26 @@ public static class DailyNotificationService
             if (!permitted)
             {
                 PersistPreference(false);
-                FirebaseMessagingBridge.SetTokenRegistrationOnInitEnabled(false);
-#if DEVELOPMENT_BUILD
+                if (FirebaseManager.IsReady)
+                {
+                    FirebaseMessagingBridge.SetTokenRegistrationOnInitEnabled(false);
+                }
+
                 Debug.Log("[DailyNotify] Permission denied — toggle stays OFF.");
-#endif
                 return false;
             }
 
+            // Preference is user intent. A failed subscribe must not turn it back off.
             PersistPreference(true);
-            FirebaseMessagingBridge.SetTokenRegistrationOnInitEnabled(true);
-            EnsureHandlers();
-            bool hasToken = await FirebaseMessagingBridge.EnsureTokenAsync();
-            if (!hasToken)
-            {
-                PersistPreference(false);
-                FirebaseMessagingBridge.SetTokenRegistrationOnInitEnabled(false);
-                Debug.LogWarning("[DailyNotify] GetTokenAsync failed — toggle OFF.");
-                return false;
-            }
-
-            bool subscribed = await FirebaseMessagingBridge.SubscribeAsync(
-                DailyNotificationTopics.ProductionNewDay);
-            if (!subscribed)
-            {
-                PersistPreference(false);
-                FirebaseMessagingBridge.SetTokenRegistrationOnInitEnabled(false);
-                Debug.LogWarning("[DailyNotify] Topic subscribe failed — toggle OFF.");
-                return false;
-            }
-
             GameAnalytics.LogDailyNotificationOptIn(AnalyticsSourceSettings);
-            Debug.Log(
-                "[DailyNotify] Opted in — subscribed topic=" +
-                DailyNotificationTopics.ProductionNewDay);
+            bool subscribed = await EnsureSubscribedAsync();
+            if (subscribed)
+            {
+                Debug.Log(
+                    "[DailyNotify] Opted in — subscribed topic=" +
+                    DailyNotificationTopics.ProductionNewDay);
+            }
+
             return true;
 #endif
         }
@@ -172,6 +201,12 @@ public static class DailyNotificationService
         Debug.LogWarning("[DailyNotify] Dev topic subscribe skipped in Editor.");
         return false;
 #else
+        if (!FirebaseManager.IsReady)
+        {
+            Debug.LogWarning("[DailyNotify] Dev topic skipped — Firebase not ready.");
+            return false;
+        }
+
         if (!FirebaseMessagingBridge.IsSdkAvailable)
         {
             return false;
@@ -198,18 +233,78 @@ public static class DailyNotificationService
         FirebaseMessagingBridge.SetTokenRegistrationOnInitEnabled(false);
     }
 
-    private static async Task EnsureSubscribedAsync()
+    /// <summary>
+    /// Subscribe to the production topic. Overlapping calls share one in-flight task
+    /// and a follow-up pass if a token refresh arrives mid-subscribe.
+    /// </summary>
+    private static Task<bool> EnsureSubscribedAsync()
+    {
+        if (subscribeTask != null && !subscribeTask.IsCompleted)
+        {
+            subscribeAgain = true;
+            return subscribeTask;
+        }
+
+        subscribeTask = RunSubscribeLoopAsync();
+        return subscribeTask;
+    }
+
+    private static async Task<bool> RunSubscribeLoopAsync()
+    {
+        bool ok = false;
+        do
+        {
+            subscribeAgain = false;
+            ok = await SubscribeProductionOnceAsync();
+        }
+        while (subscribeAgain);
+
+        return ok;
+    }
+
+    private static async Task<bool> SubscribeProductionOnceAsync()
     {
         if (!PreferredEnabled)
         {
-            return;
+            return false;
+        }
+
+        if (!FirebaseManager.IsReady)
+        {
+            Debug.Log("[DailyNotify] Subscription deferred — Firebase not ready.");
+            return false;
+        }
+
+        if (!AndroidNotificationPermission.HasPermission)
+        {
+            Debug.Log("[DailyNotify] Permission denied — not subscribing.");
+            return false;
         }
 
         EnsureHandlers();
         FirebaseMessagingBridge.SetTokenRegistrationOnInitEnabled(true);
-        await FirebaseMessagingBridge.EnsureTokenAsync();
-        await FirebaseMessagingBridge.SubscribeAsync(
+
+        bool hasToken = await FirebaseMessagingBridge.EnsureTokenAsync();
+        if (!hasToken)
+        {
+            Debug.LogWarning("[DailyNotify] Subscription failed — token unavailable.");
+            return false;
+        }
+
+        bool subscribed = await FirebaseMessagingBridge.SubscribeAsync(
             DailyNotificationTopics.ProductionNewDay);
+        if (!subscribed)
+        {
+            Debug.LogWarning(
+                "[DailyNotify] Subscription failed topic=" +
+                DailyNotificationTopics.ProductionNewDay);
+            return false;
+        }
+
+        Debug.Log(
+            "[DailyNotify] Subscription succeeded topic=" +
+            DailyNotificationTopics.ProductionNewDay);
+        return true;
     }
 
     private static void EnsureHandlers()
@@ -229,6 +324,13 @@ public static class DailyNotificationService
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         Debug.Log("[DailyNotify] FCM TokenReceived (token not logged).");
 #endif
+        if (!PreferredEnabled || !AndroidNotificationPermission.HasPermission)
+        {
+            return;
+        }
+
+        // Topic subscriptions do not survive FID / token rotation.
+        _ = EnsureSubscribedAsync();
     }
 
     private static void OnMessageReceived(object sender, MessageReceivedEventArgs e)

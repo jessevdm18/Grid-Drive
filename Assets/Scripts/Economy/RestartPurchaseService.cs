@@ -106,26 +106,108 @@ public static class RestartPurchaseService
 #endif
                 return RestartPurchaseResult.NotEnoughCoins;
             }
+        }
 
-            if (cost > 0 && !coinManager.SpendCoins(cost))
+        // Paid active restart ends the current attempt. Free retry / win-panel
+        // restart do not — those attempts were already counted at fail or win.
+        bool countPaidEnding = requiresPayment && cost > 0;
+        bool due = !isV1 && gameManager != null &&
+            (countPaidEnding
+                ? gameManager.NextEndingWouldTriggerInterstitial()
+                : gameManager.ShouldShowInterstitial());
+
+        bool livesOk = isV1 || CanStartCampaignAttempt();
+        AdsManager ads = null;
+        if (due && livesOk)
+        {
+            ads = Object.FindAnyObjectByType<AdsManager>();
+        }
+
+        if (due && livesOk && ads != null && ads.IsInterstitialReady())
+        {
+            // Ad closes before spend/reload. Reset now because the opportunity
+            // is consumed; the paid ending is included in that reset.
+            restartInProgress = true;
+            gameManager.ResetInterstitialCounter();
+            ads.ShowInterstitialAd(() =>
+            {
+                try
+                {
+                    CommitRestart(
+                        levelManager,
+                        gameManager,
+                        coinManager,
+                        cost,
+                        requiresPayment,
+                        countPaidEnding: false,
+                        restartType,
+                        source);
+                }
+                finally
+                {
+                    restartInProgress = false;
+                }
+            });
+
+            return RestartPurchaseResult.Restarted;
+        }
+
+        restartInProgress = true;
+        try
+        {
+            return CommitRestart(
+                levelManager,
+                gameManager,
+                coinManager,
+                cost,
+                requiresPayment,
+                countPaidEnding,
+                restartType,
+                source);
+        }
+        finally
+        {
+            restartInProgress = false;
+        }
+    }
+
+    private static bool CanStartCampaignAttempt()
+    {
+        LivesManager livesManager = LivesManager.EnsureInstance();
+        return livesManager == null || livesManager.CanStartLevelAttempt();
+    }
+
+    /// <summary>
+    /// Spends (when required) and reloads. Counts a paid active ending only
+    /// after <see cref="LevelManager.RestartLevel"/> accepts the reload.
+    /// </summary>
+    private static RestartPurchaseResult CommitRestart(
+        LevelManager levelManager,
+        GameManager gameManager,
+        CoinManager coinManager,
+        int cost,
+        bool requiresPayment,
+        bool countPaidEnding,
+        string restartType,
+        string source)
+    {
+        if (requiresPayment && cost > 0)
+        {
+            if (coinManager == null)
+            {
+                coinManager = CoinManager.EnsureInstance();
+            }
+
+            if (coinManager == null || !coinManager.SpendCoins(cost))
             {
                 AudioManager.Resolve()?.PlayInsufficientCoins();
                 return RestartPurchaseResult.NotEnoughCoins;
             }
         }
 
-        restartInProgress = true;
-        bool reloaded;
-        try
-        {
-            reloaded = levelManager.RestartLevel(
-                restartCost: cost,
-                restartType: restartType);
-        }
-        finally
-        {
-            restartInProgress = false;
-        }
+        bool reloaded = levelManager.RestartLevel(
+            restartCost: cost,
+            restartType: restartType);
 
         if (!reloaded)
         {
@@ -142,6 +224,11 @@ public static class RestartPurchaseService
             }
 
             return RestartPurchaseResult.LivesBlocked;
+        }
+
+        if (countPaidEnding && gameManager != null)
+        {
+            gameManager.RegisterCampaignAttemptEnded();
         }
 
         // Coin-spend SFX only after SpendCoins succeeded AND restart was accepted.

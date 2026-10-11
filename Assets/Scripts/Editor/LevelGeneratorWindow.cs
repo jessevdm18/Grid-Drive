@@ -25,12 +25,34 @@ public class LevelGeneratorWindow : EditorWindow
     }
 
     private const string GeneratedRoot = "Assets/Data/GeneratedLevels";
+    private const string DailyOutputFolder = GeneratedRoot + "/Daily";
+    private const int DailyMinMoves = 8;
+    private const int DailyMaxMoves = 13;
+    private const int DailyMinGrid = 5;
+    private const int DailyMaxGrid = 8;
     private const int BaselineBoardArea = 36; // 6x6
+
+    private enum ManualOutputMode
+    {
+        Campaign = 0,
+        Daily = 1
+    }
 
     // --- Preset / batch ---
     private DifficultyPreset difficultyPreset = DifficultyPreset.Custom;
+    private ManualOutputMode manualOutputMode = ManualOutputMode.Campaign;
     private string batchName = "Custom_Batch_01";
     private string outputFolder = "Assets/Data/GeneratedLevels/Custom";
+    private bool hasCampaignSnapshot;
+    private DifficultyPreset snapshotPreset;
+    private string snapshotBatchName;
+    private string snapshotOutputFolder;
+    private int snapshotGridWidth;
+    private int snapshotGridHeight;
+    private int snapshotMinMoves;
+    private int snapshotMaxMoves;
+    private bool snapshotEnforceV1GridRules;
+    private string lastRunSummary;
 
     // --- Grid ---
     private int gridWidth = LevelData.DefaultGridSize;
@@ -150,6 +172,8 @@ public class LevelGeneratorWindow : EditorWindow
         public int maxLength4Vehicles;
     }
 
+    private bool DailyMode => manualOutputMode == ManualOutputMode.Daily;
+
     private int BoardArea => gridWidth * gridHeight;
     private float AreaScale => BoardArea / (float)BaselineBoardArea;
 
@@ -161,6 +185,16 @@ public class LevelGeneratorWindow : EditorWindow
         LevelGeneratorWindow window = GetWindow<LevelGeneratorWindow>("Generate Levels");
         window.minSize = new Vector2(700f, 700f);
         window.Show();
+    }
+
+    [MenuItem("Rush Out/Daily/Generate Daily Candidates")]
+    public static void OpenDailyMode()
+    {
+        LevelGeneratorWindow window = GetWindow<LevelGeneratorWindow>("Generate Levels");
+        window.minSize = new Vector2(700f, 700f);
+        window.Show();
+        window.manualOutputMode = ManualOutputMode.Daily;
+        window.EnterDailyMode();
     }
 
     private void OnEnable()
@@ -227,18 +261,51 @@ public class LevelGeneratorWindow : EditorWindow
             MessageType.None
         );
 
-        DifficultyPreset newPreset = (DifficultyPreset)EditorGUILayout.EnumPopup(
-            "Difficulty Preset (filters only)",
-            difficultyPreset
-        );
-        if (newPreset != difficultyPreset)
+        using (new EditorGUI.DisabledScope(DailyMode))
         {
-            difficultyPreset = newPreset;
-            ApplyDifficultyPreset(difficultyPreset);
+            DifficultyPreset newPreset = (DifficultyPreset)EditorGUILayout.EnumPopup(
+                "Difficulty Preset (filters only)",
+                difficultyPreset
+            );
+            if (!DailyMode && newPreset != difficultyPreset)
+            {
+                difficultyPreset = newPreset;
+                ApplyDifficultyPreset(difficultyPreset);
+            }
         }
 
-        batchName = EditorGUILayout.TextField("Batch Name", batchName);
-        outputFolder = EditorGUILayout.TextField("Output Folder", outputFolder);
+        EditorGUI.BeginChangeCheck();
+        manualOutputMode = (ManualOutputMode)EditorGUILayout.EnumPopup(
+            "Output Mode",
+            manualOutputMode
+        );
+        if (EditorGUI.EndChangeCheck())
+        {
+            if (DailyMode)
+            {
+                EnterDailyMode();
+            }
+            else
+            {
+                ExitDailyMode();
+            }
+        }
+
+        if (DailyMode)
+        {
+            EditorGUILayout.HelpBox(
+                "Daily uses the same generator. Solver minimumMoves must be 8–13, " +
+                "objective is Classic, grid is 5–8. Assets go to " + DailyOutputFolder +
+                " and are not added to MainLevelDatabase or DailyChallengeConfig.",
+                MessageType.Info
+            );
+        }
+
+        using (new EditorGUI.DisabledScope(DailyMode))
+        {
+            batchName = EditorGUILayout.TextField("Batch Name", batchName);
+            outputFolder = EditorGUILayout.TextField("Output Folder", outputFolder);
+        }
 
         EditorGUILayout.Space(6f);
         EditorGUILayout.HelpBox(
@@ -250,39 +317,55 @@ public class LevelGeneratorWindow : EditorWindow
         EditorGUILayout.Space(6f);
         EditorGUILayout.LabelField("Grid / Count", EditorStyles.boldLabel);
 
-        enforceV1GridRules = EditorGUILayout.Toggle(
-            "Enforce V1 Grid Rules (optional: 5–8, |w-h|≤1)",
-            enforceV1GridRules
-        );
+        using (new EditorGUI.DisabledScope(DailyMode))
+        {
+            enforceV1GridRules = EditorGUILayout.Toggle(
+                "Enforce V1 Grid Rules (optional: 5–8, |w-h|≤1)",
+                enforceV1GridRules
+            );
+        }
         EditorGUILayout.LabelField(
-            "Dit valideert alleen dimensions — start GEEN V1 release batch.",
+            DailyMode
+                ? "Daily grids are 5×5 through 8×8. Each side is clamped on its own."
+                : "Dit valideert alleen dimensions — start GEEN V1 release batch.",
             EditorStyles.miniLabel
         );
 
         int prevW = gridWidth;
         int prevH = gridHeight;
-        int minDim = enforceV1GridRules
-            ? V1ReleaseContentPlan.MinDimension
-            : LevelData.MinGridSize;
-        int maxDim = enforceV1GridRules
-            ? V1ReleaseContentPlan.MaxDimension
-            : LevelData.MaxGridSize;
+        int minDim = DailyMode
+            ? DailyMinGrid
+            : enforceV1GridRules
+                ? V1ReleaseContentPlan.MinDimension
+                : LevelData.MinGridSize;
+        int maxDim = DailyMode
+            ? DailyMaxGrid
+            : enforceV1GridRules
+                ? V1ReleaseContentPlan.MaxDimension
+                : LevelData.MaxGridSize;
 
         gridWidth = EditorGUILayout.IntSlider("Grid Width", gridWidth, minDim, maxDim);
         gridHeight = EditorGUILayout.IntSlider("Grid Height", gridHeight, minDim, maxDim);
 
-        if (enforceV1GridRules)
+        if (DailyMode)
+        {
+            gridWidth = Mathf.Clamp(gridWidth, DailyMinGrid, DailyMaxGrid);
+            gridHeight = Mathf.Clamp(gridHeight, DailyMinGrid, DailyMaxGrid);
+        }
+        else if (enforceV1GridRules)
         {
             ClampGridToV1Rules();
         }
 
-        if ((gridWidth != prevW || gridHeight != prevH) &&
+        if (!DailyMode &&
+            (gridWidth != prevW || gridHeight != prevH) &&
             difficultyPreset != DifficultyPreset.Custom)
         {
             ApplyDifficultyPreset(difficultyPreset);
         }
 
-        if (enforceV1GridRules &&
+        if (!DailyMode &&
+            enforceV1GridRules &&
             !V1ReleaseContentPlan.IsAllowedDimension(gridWidth, gridHeight))
         {
             EditorGUILayout.HelpBox(
@@ -303,8 +386,11 @@ public class LevelGeneratorWindow : EditorWindow
 
         minVehicles = EditorGUILayout.IntField("Min Vehicles", minVehicles);
         maxVehicles = EditorGUILayout.IntField("Max Vehicles", maxVehicles);
-        minMinimumMoves = EditorGUILayout.IntField("Min Minimum Moves", minMinimumMoves);
-        maxMinimumMoves = EditorGUILayout.IntField("Max Minimum Moves", maxMinimumMoves);
+        using (new EditorGUI.DisabledScope(DailyMode))
+        {
+            minMinimumMoves = EditorGUILayout.IntField("Min Minimum Moves", minMinimumMoves);
+            maxMinimumMoves = EditorGUILayout.IntField("Max Minimum Moves", maxMinimumMoves);
+        }
         maxAttemptsPerLevel = EditorGUILayout.IntField("Attempts Per Level", maxAttemptsPerLevel);
         EditorGUILayout.LabelField(
             "Outer candidate attempts per requested level (not placement/solver safety).",
@@ -368,10 +454,18 @@ public class LevelGeneratorWindow : EditorWindow
 
         EditorGUILayout.Space(8f);
         EditorGUILayout.BeginHorizontal();
-        if (GUILayout.Button("Generate Levels (Manual)", GUILayout.Height(36f)))
+        if (GUILayout.Button(
+                DailyMode ? "Generate Daily Levels" : "Generate Levels (Manual)",
+                GUILayout.Height(36f)))
         {
             cancelGeneration = false;
-            GenerateLevels(assignDifficultyFromPreset: true);
+            activeDailyRun = DailyMode;
+            if (DailyMode)
+            {
+                ApplyDailySettings();
+            }
+
+            GenerateLevels(assignDifficultyFromPreset: !DailyMode);
         }
 
         if (GUILayout.Button("STOP / CANCEL", GUILayout.Height(36f), GUILayout.Width(140f)))
@@ -381,6 +475,12 @@ public class LevelGeneratorWindow : EditorWindow
         }
 
         EditorGUILayout.EndHorizontal();
+
+        if (DailyMode && !string.IsNullOrEmpty(lastRunSummary))
+        {
+            EditorGUILayout.Space(6f);
+            EditorGUILayout.HelpBox(lastRunSummary, MessageType.None);
+        }
     }
 
     private void DrawDifficultyCandidatesSection()
@@ -1098,6 +1198,52 @@ public class LevelGeneratorWindow : EditorWindow
         effectiveMaxOccupancy = maxBoardOccupancy;
     }
 
+    private void EnterDailyMode()
+    {
+        if (!hasCampaignSnapshot)
+        {
+            snapshotPreset = difficultyPreset;
+            snapshotBatchName = batchName;
+            snapshotOutputFolder = outputFolder;
+            snapshotGridWidth = gridWidth;
+            snapshotGridHeight = gridHeight;
+            snapshotMinMoves = minMinimumMoves;
+            snapshotMaxMoves = maxMinimumMoves;
+            snapshotEnforceV1GridRules = enforceV1GridRules;
+            hasCampaignSnapshot = true;
+        }
+
+        ApplyDailySettings();
+    }
+
+    private void ExitDailyMode()
+    {
+        if (!hasCampaignSnapshot)
+        {
+            return;
+        }
+
+        difficultyPreset = snapshotPreset;
+        batchName = snapshotBatchName;
+        outputFolder = snapshotOutputFolder;
+        gridWidth = snapshotGridWidth;
+        gridHeight = snapshotGridHeight;
+        minMinimumMoves = snapshotMinMoves;
+        maxMinimumMoves = snapshotMaxMoves;
+        enforceV1GridRules = snapshotEnforceV1GridRules;
+        hasCampaignSnapshot = false;
+    }
+
+    private void ApplyDailySettings()
+    {
+        minMinimumMoves = DailyMinMoves;
+        maxMinimumMoves = DailyMaxMoves;
+        gridWidth = Mathf.Clamp(gridWidth, DailyMinGrid, DailyMaxGrid);
+        gridHeight = Mathf.Clamp(gridHeight, DailyMinGrid, DailyMaxGrid);
+        batchName = "Daily";
+        outputFolder = DailyOutputFolder;
+    }
+
     private void ApplyDifficultyPreset(DifficultyPreset preset)
     {
         int baseMinV;
@@ -1625,9 +1771,13 @@ public class LevelGeneratorWindow : EditorWindow
         EditorUtility.DisplayDialog("Rectangular Smoke Test", sb.ToString(), "OK");
     }
 
+    private bool activeDailyRun;
+
     private void GenerateLevels(bool assignDifficultyFromPreset)
     {
         cancelGeneration = false;
+        bool dailyRun = activeDailyRun;
+        activeDailyRun = false;
 
         numberOfLevels = Mathf.Max(1, numberOfLevels);
         gridWidth = Mathf.Clamp(gridWidth, LevelData.MinGridSize, LevelData.MaxGridSize);
@@ -2030,6 +2180,11 @@ public class LevelGeneratorWindow : EditorWindow
                     // Accept
                     tempLevel.levelNumber = accepted + 1;
                     tempLevel.difficulty = tier;
+                    if (dailyRun)
+                    {
+                        tempLevel.objectiveType = LevelObjectiveType.Classic;
+                    }
+
                     LevelSolver.ApplyMetadata(tempLevel, result);
                     tempLevel.uniqueVehiclesInSolution = uniqueVehiclesMoved;
 
@@ -2236,8 +2391,15 @@ public class LevelGeneratorWindow : EditorWindow
         summary.AppendLine("tier: " + tier);
         summary.AppendLine("output: " + outputFolder);
         summary.AppendLine("(niet toegevoegd aan MainLevelDatabase)");
+        if (dailyRun)
+        {
+            summary.AppendLine("Daily mode: Classic, solver moves " +
+                               DailyMinMoves + "-" + DailyMaxMoves +
+                               ", not added to DailyChallengeConfig");
+        }
 
-        Debug.Log(summary.ToString());
+        lastRunSummary = summary.ToString();
+        Debug.Log(lastRunSummary);
         cancelGeneration = false;
     }
 

@@ -910,23 +910,9 @@ public class UIManager : MonoBehaviour
         Debug.Log("[LevelTransition] ResumeRequested");
 #endif
 
-        bool wantsInterstitial =
-            gameManager != null &&
-            gameManager.ShouldShowInterstitial();
-
-        bool adReady =
-            adsManager != null &&
-            adsManager.IsInterstitialReady();
-
-        if (wantsInterstitial && adReady)
+        if (gameManager != null)
         {
-            gameManager.ResetInterstitialCounter();
-
-            adsManager.ShowInterstitialAd(() =>
-            {
-                LoadNextLevelOnce();
-            });
-
+            gameManager.ContinueAfterInterstitialOpportunity(LoadNextLevelOnce, adsManager);
             return;
         }
 

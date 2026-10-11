@@ -130,6 +130,14 @@ public static class DailyChallengeUiGuard
     public static void ExitToMainMenu(string reason)
     {
         Time.timeScale = 1f;
+#if UNITY_EDITOR
+        if (DailyChallengeEditorPreview.IsActive)
+        {
+            DailyChallengeEditorPreview.ClearWithoutTouchingDailyAttempt();
+            SceneTransition.LoadScene("MainMenu");
+            return;
+        }
+#endif
         if (reason == "daily_win_continue")
         {
             // Completion already persisted in CompleteLevel.

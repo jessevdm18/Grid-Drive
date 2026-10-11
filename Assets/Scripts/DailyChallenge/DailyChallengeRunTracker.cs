@@ -140,7 +140,13 @@ public class DailyChallengeRunTracker : MonoBehaviour
             levelManager = FindAnyObjectByType<LevelManager>();
         }
 
+#if UNITY_EDITOR
+        DailyChallengeManager manager = DailyChallengeEditorPreview.IsActive
+            ? DailyChallengeManager.Instance
+            : DailyChallengeManager.EnsureInstance();
+#else
         DailyChallengeManager manager = DailyChallengeManager.EnsureInstance();
+#endif
         LevelData data = levelManager != null ? levelManager.CurrentLevelData : null;
         int moves = gameManager != null ? gameManager.CurrentMoves : 0;
         long ms = ElapsedMilliseconds;
