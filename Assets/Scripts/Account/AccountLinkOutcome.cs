@@ -25,17 +25,17 @@ public readonly struct AccountLinkOutcome
         switch (result)
         {
             case AccountLinkResult.Success:
-                return "Google Play linked.";
+                return "Google Play account linked.";
             case AccountLinkResult.AlreadyLinked:
-                return "Google Play linked.";
+                return "Google Play account linked.";
             case AccountLinkResult.AlreadyLinkedToAnotherAccount:
                 return "This Google Play account is already linked to another Rush Out account.";
             case AccountLinkResult.Cancelled:
-                return "Linking cancelled.";
+                return "Google Play sign-in was not completed.";
             case AccountLinkResult.ProviderUnavailable:
-                return "Google Play is not available on this device.";
+                return "Google Play Games is unavailable on this device.";
             case AccountLinkResult.ProviderBackendUnavailable:
-                return "Google Play linking is temporarily unavailable. Please try again later.";
+                return "Could not link your Google Play account. Please try again.";
             case AccountLinkResult.NetworkError:
                 return "Could not connect. Try again.";
             case AccountLinkResult.AuthenticationError:

@@ -11,8 +11,9 @@ public enum AccountLinkResult
     IdentityContinuityError = 7,
     UnknownError = 8,
     /// <summary>
-    /// Provider auth succeeded but the Firebase/Identity Toolkit backend rejected the IdP
-    /// credential due to a known temporary backend limitation (not a client config error).
+    /// Kept so older result values stay stable. New Play Games link failures use
+    /// UnknownError / AuthenticationError instead of treating Firebase rejection as
+    /// Play Games being unavailable.
     /// </summary>
     ProviderBackendUnavailable = 9
 }

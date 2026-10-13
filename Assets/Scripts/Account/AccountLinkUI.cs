@@ -85,6 +85,7 @@ public class AccountLinkUI : MonoBehaviour
             return;
         }
 
+        Debug.Log("[GooglePlayLink] button pressed");
         Debug.Log("[Account] Link button pressed");
         _ = LinkGooglePlayAsync();
     }
@@ -182,7 +183,7 @@ public class AccountLinkUI : MonoBehaviour
             {
                 helperText.text = playAvailable
                     ? "Link your account to protect your progress."
-                    : "Google Play linking will be available in a future update.";
+                    : "Google Play Games is unavailable on this device.";
             }
             else
             {

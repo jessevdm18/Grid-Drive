@@ -37,6 +37,8 @@ public class AnalyticsConsentPopup : MonoBehaviour
     private Action onChoiceComplete;
     private bool isShowing;
     private bool uiReady;
+
+    public bool IsVisible => isShowing;
     private bool builtRuntimeUi;
 
     /// <summary>True when RushOut_AnalyticsConsent is still Unknown.</summary>

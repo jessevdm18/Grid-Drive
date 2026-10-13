@@ -4,9 +4,9 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// Authored Settings control for Daily Challenge notifications.
-/// Runtime owns toggle state and interactivity; Inspector owns layout/visuals.
-/// Never prompts at startup — only when the user enables the toggle.
+/// Settings rows for Daily Challenge (FCM) and Lives Full (local alarm).
+/// Scene owns both rows. Runtime only updates toggle state and interactivity.
+/// Never prompts at startup — only when the user turns a toggle on.
 /// </summary>
 public class DailyNotificationSettingsUI : MonoBehaviour
 {
@@ -21,22 +21,26 @@ public class DailyNotificationSettingsUI : MonoBehaviour
     [Header("Toggle")]
     [SerializeField] private Toggle notificationsToggle;
 
+    [Header("Lives")]
+    [SerializeField] private TextMeshProUGUI livesTitleText;
+    [SerializeField] private Toggle livesToggle;
+
     private bool syncingUi;
     private bool changeInFlight;
 
-    private void Awake()
-    {
-        if (titleText != null)
-        {
-            titleText.text = "DAILY NOTIFICATIONS";
-        }
-    }
-
     private void OnEnable()
     {
+        // Authored in the scene. Runtime does not rewrite or create this label.
+        _ = livesTitleText;
+
         if (notificationsToggle != null)
         {
-            notificationsToggle.onValueChanged.AddListener(OnToggleChanged);
+            notificationsToggle.onValueChanged.AddListener(OnDailyToggleChanged);
+        }
+
+        if (livesToggle != null)
+        {
+            livesToggle.onValueChanged.AddListener(OnLivesToggleChanged);
         }
 
         DailyNotificationService.Bootstrap();
@@ -47,7 +51,12 @@ public class DailyNotificationSettingsUI : MonoBehaviour
     {
         if (notificationsToggle != null)
         {
-            notificationsToggle.onValueChanged.RemoveListener(OnToggleChanged);
+            notificationsToggle.onValueChanged.RemoveListener(OnDailyToggleChanged);
+        }
+
+        if (livesToggle != null)
+        {
+            livesToggle.onValueChanged.RemoveListener(OnLivesToggleChanged);
         }
     }
 
@@ -65,7 +74,7 @@ public class DailyNotificationSettingsUI : MonoBehaviour
         {
             bool messagingOk = DailyNotificationService.IsMessagingSdkAvailable;
             bool editor = DailyNotificationService.IsEditorUnsupported;
-            bool preferred = DailyNotificationService.PreferredEnabled;
+            bool dailyPreferred = DailyNotificationService.PreferredEnabled;
 
             if (helperText != null)
             {
@@ -84,8 +93,14 @@ public class DailyNotificationSettingsUI : MonoBehaviour
 
             if (notificationsToggle != null)
             {
-                notificationsToggle.interactable = CanInteract(editor, messagingOk);
-                notificationsToggle.SetIsOnWithoutNotify(preferred && (editor || messagingOk));
+                notificationsToggle.interactable = CanUseDaily(editor, messagingOk);
+                notificationsToggle.SetIsOnWithoutNotify(dailyPreferred && (editor || messagingOk));
+            }
+
+            if (livesToggle != null)
+            {
+                livesToggle.interactable = !changeInFlight;
+                livesToggle.SetIsOnWithoutNotify(LivesNotificationService.PreferredEnabled);
             }
         }
         finally
@@ -94,50 +109,87 @@ public class DailyNotificationSettingsUI : MonoBehaviour
         }
     }
 
-    private void OnToggleChanged(bool wantEnabled)
+    private void OnDailyToggleChanged(bool wantEnabled)
     {
         if (syncingUi || changeInFlight)
         {
             return;
         }
 
-        _ = ApplyToggleAsync(wantEnabled);
+        _ = ApplyDailyAsync(wantEnabled);
     }
 
-    private async Task ApplyToggleAsync(bool wantEnabled)
+    private void OnLivesToggleChanged(bool wantEnabled)
     {
-        changeInFlight = true;
-        if (notificationsToggle != null)
+        if (syncingUi || changeInFlight)
         {
-            notificationsToggle.interactable = false;
+            return;
         }
 
+        _ = ApplyLivesAsync(wantEnabled);
+    }
+
+    private async Task ApplyDailyAsync(bool wantEnabled)
+    {
+        changeInFlight = true;
+        SetInteractable(false);
         try
         {
-            bool enabled = await DailyNotificationService.SetEnabledFromSettingsAsync(wantEnabled);
-            // Keep toggle honest if permission denied / SDK missing.
-            syncingUi = true;
-            if (notificationsToggle != null)
+            NotificationOptInResult result = await DailyNotificationService.SetEnabledAsync(
+                wantEnabled,
+                DailyNotificationService.AnalyticsSourceSettings);
+            if (result == NotificationOptInResult.NeedsSettings)
             {
-                notificationsToggle.SetIsOnWithoutNotify(enabled);
+                NotificationPromptCoordinator.ShowSettingsExplainer(RefreshFromService);
             }
 
-            syncingUi = false;
             RefreshFromService();
         }
         finally
         {
             changeInFlight = false;
-            if (notificationsToggle != null)
-            {
-                notificationsToggle.interactable = CanInteract(
-                    DailyNotificationService.IsEditorUnsupported,
-                    DailyNotificationService.IsMessagingSdkAvailable);
-            }
+            RefreshFromService();
         }
     }
 
-    private bool CanInteract(bool editor, bool messagingOk)
+    private async Task ApplyLivesAsync(bool wantEnabled)
+    {
+        changeInFlight = true;
+        SetInteractable(false);
+        try
+        {
+            NotificationOptInResult result =
+                await LivesNotificationService.SetEnabledFromUserAsync(wantEnabled);
+            if (result == NotificationOptInResult.NeedsSettings)
+            {
+                NotificationPromptCoordinator.ShowSettingsExplainer(RefreshFromService);
+            }
+
+            RefreshFromService();
+        }
+        finally
+        {
+            changeInFlight = false;
+            RefreshFromService();
+        }
+    }
+
+    private void SetInteractable(bool fallback)
+    {
+        if (notificationsToggle != null)
+        {
+            notificationsToggle.interactable = fallback && CanUseDaily(
+                DailyNotificationService.IsEditorUnsupported,
+                DailyNotificationService.IsMessagingSdkAvailable);
+        }
+
+        if (livesToggle != null)
+        {
+            livesToggle.interactable = fallback && !changeInFlight;
+        }
+    }
+
+    private bool CanUseDaily(bool editor, bool messagingOk)
     {
         return !changeInFlight && !editor && messagingOk;
     }

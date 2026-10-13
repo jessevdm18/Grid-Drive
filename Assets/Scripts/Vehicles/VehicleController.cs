@@ -1140,6 +1140,10 @@ private bool CanPerformExitRight(Vector3 dragDifference)
         if (gameManager != null)
         {
             gameManager.RegisterMove(this);
+            if (gameManager.WillTargetExitCompleteLevel())
+            {
+                gameManager.CancelHintBundleBecauseLevelEnding();
+            }
         }
 
         NotifyVehicleMoved();

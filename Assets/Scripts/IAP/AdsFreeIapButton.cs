@@ -9,6 +9,7 @@ public class AdsFreeIapButton : MonoBehaviour
 {
     private const string PlaceholderPrice = "...";
     private const string OwnedLabel = "OWNED";
+    private const string UnavailableLabel = "UNAVAILABLE";
 
     [SerializeField] private Button ctaButton;
     [SerializeField] private TextMeshProUGUI priceLabel;
@@ -79,6 +80,10 @@ public class AdsFreeIapButton : MonoBehaviour
             else if (ready && !string.IsNullOrEmpty(localizedPrice))
             {
                 priceLabel.text = localizedPrice;
+            }
+            else if (service.IsAdsFreeProductUnavailable)
+            {
+                priceLabel.text = UnavailableLabel;
             }
             else
             {

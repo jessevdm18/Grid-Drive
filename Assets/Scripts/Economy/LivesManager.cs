@@ -78,6 +78,30 @@ public class LivesManager : MonoBehaviour
     public bool HasActiveNextLifeTimestamp =>
         !IsFull && nextLifeUtcTicks > NoNextLifeTicks;
 
+    /// <summary>
+    /// UTC instant when regeneration reaches <see cref="MaxLives"/>, using the stored
+    /// next-life timestamp plus one interval per life still missing after that one.
+    /// False when already full or no timer is active.
+    /// </summary>
+    public bool TryGetLivesFullUtc(out DateTime fullUtc)
+    {
+        fullUtc = default;
+        if (IsFull || !HasActiveNextLifeTimestamp)
+        {
+            return false;
+        }
+
+        int livesStillMissingAfterNext = MaxLives - (lives + 1);
+        if (livesStillMissingAfterNext < 0)
+        {
+            livesStillMissingAfterNext = 0;
+        }
+
+        fullUtc = GetNextLifeUtc().Add(
+            TimeSpan.FromTicks(RegenInterval.Ticks * livesStillMissingAfterNext));
+        return true;
+    }
+
     /// <summary>UTC instant of next life, or null when no active timer.</summary>
     public DateTime? NextLifeUtc
     {
@@ -209,6 +233,7 @@ public class LivesManager : MonoBehaviour
 
         LoadFromPrefs();
         RecalculateRegeneration(DateTime.UtcNow, "Awake");
+        SyncLivesFullNotification();
         LogState("Initialized");
     }
 
@@ -287,6 +312,7 @@ public class LivesManager : MonoBehaviour
 
     private void OnApplicationQuit()
     {
+        SyncLivesFullNotification();
         isApplicationQuitting = true;
     }
 
@@ -294,6 +320,7 @@ public class LivesManager : MonoBehaviour
     {
         if (pauseStatus)
         {
+            SyncLivesFullNotification();
             return;
         }
 
@@ -304,6 +331,7 @@ public class LivesManager : MonoBehaviour
     {
         if (!hasFocus)
         {
+            SyncLivesFullNotification();
             return;
         }
 
@@ -320,6 +348,7 @@ public class LivesManager : MonoBehaviour
         resumeRecalcQueued = true;
         RecalculateRegeneration(DateTime.UtcNow, "Resume");
         resumeRecalcQueued = false;
+        SyncLivesFullNotification();
     }
 
     /// <summary>
@@ -700,6 +729,23 @@ public class LivesManager : MonoBehaviour
     {
         SavePrefs();
         OnLivesChanged?.Invoke(lives);
+        SyncLivesFullNotification();
+    }
+
+    private void SyncLivesFullNotification()
+    {
+#if UNITY_EDITOR
+        if (creatingEphemeralEditorValidationHost)
+        {
+            return;
+        }
+#endif
+        if (Instance != this)
+        {
+            return;
+        }
+
+        LivesNotificationService.Sync(this);
     }
 
     private void SavePrefs()

@@ -11,7 +11,7 @@ public sealed class ExternalAccountCredential
 
     /// <summary>
     /// URL-encoded postBody parameters for accounts:signInWithIdp (without wrapping).
-    /// Example Play Games: authCode=CODE plus providerId=playgames.google.com
+    /// Example Play Games: code=CODE plus providerId=playgames.google.com
     /// </summary>
     public string IdpPostBody { get; set; }
 

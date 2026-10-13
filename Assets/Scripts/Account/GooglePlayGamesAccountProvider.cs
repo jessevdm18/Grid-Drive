@@ -72,9 +72,10 @@ public sealed class GooglePlayGamesAccountProvider : IGooglePlayAccountProvider
             Debug.LogWarning(
                 "[Account] Play Games App ID / Web Client ID not configured. " +
                 "Run Window → Google Play Games → Setup → Android setup.");
+            Debug.Log("[GooglePlayLink] Play Games available: false");
             return ExternalAccountAuthResult.Fail(
                 AccountLinkResult.ProviderUnavailable,
-                "Google Play is not configured in this build.");
+                "Google Play Games is unavailable on this device.");
         }
 
         string stage = "init";
@@ -105,6 +106,8 @@ public sealed class GooglePlayGamesAccountProvider : IGooglePlayAccountProvider
                 PlayGamesPlatform.Instance.IsAuthenticated();
 
             Debug.Log("[Account] PGS already authenticated? " + alreadyAuthenticated);
+            Debug.Log("[GooglePlayLink] Play Games available: true");
+            Debug.Log("[GooglePlayLink] Play Games authenticated: " + alreadyAuthenticated);
 
             if (!alreadyAuthenticated)
             {
@@ -125,7 +128,7 @@ public sealed class GooglePlayGamesAccountProvider : IGooglePlayAccountProvider
                 {
                     return ExternalAccountAuthResult.Fail(
                         AccountLinkResult.AuthenticationError,
-                        "Google Play authentication failed.");
+                        "Google Play sign-in was not completed.");
                 }
             }
             else
@@ -145,12 +148,16 @@ public sealed class GooglePlayGamesAccountProvider : IGooglePlayAccountProvider
             Debug.Log(
                 "[Account] RequestServerSideAccess callback received: codePresent=" +
                 codePresent);
+            Debug.Log(
+                "[GooglePlayLink] server auth code received: " +
+                (codePresent ? "yes" : "no") +
+                " length=" + (authCode == null ? 0 : authCode.Length));
 
             if (!codePresent)
             {
                 return ExternalAccountAuthResult.Fail(
                     AccountLinkResult.AuthenticationError,
-                    "Could not get Google Play server auth code.");
+                    "Could not connect to Google Play. Please try again.");
             }
 
             stage = "GetUserDisplayName";
@@ -165,10 +172,10 @@ public sealed class GooglePlayGamesAccountProvider : IGooglePlayAccountProvider
                 displayName = null;
             }
 
-            // Identity Toolkit postBody: authCode + playgames.google.com
+            // PlayGamesAuthProvider.GetCredential sends the server auth code as "code".
             // Do not persist or log the auth code.
             string postBody =
-                "authCode=" + UnityWebRequest.EscapeURL(authCode) +
+                "code=" + UnityWebRequest.EscapeURL(authCode) +
                 "&providerId=" + UnityWebRequest.EscapeURL(FirebasePlayGamesProviderId);
 
             var credential = new ExternalAccountCredential

@@ -16,6 +16,6 @@ public sealed class UnavailableGooglePlayAccountProvider : IGooglePlayAccountPro
         return Task.FromResult(
             ExternalAccountAuthResult.Fail(
                 AccountLinkResult.ProviderUnavailable,
-                "Google Play linking is not available in the Editor or on this platform."));
+                "Google Play Games is unavailable on this device."));
     }
 }

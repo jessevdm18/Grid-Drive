@@ -27,6 +27,7 @@ public class DailyChallengeMainMenuUI : MonoBehaviour
     [SerializeField] private GameObject confirmRoot;
     [SerializeField] private Button startChallengeButton;
     [SerializeField] private Button cancelButton;
+    [Tooltip("Authored on ConfirmBody in the scene. Runtime must not replace this text.")]
     [SerializeField] private TextMeshProUGUI confirmBodyText;
 
     [Header("Result placeholder (optional legacy)")]
@@ -348,13 +349,6 @@ public class DailyChallengeMainMenuUI : MonoBehaviour
 
         if (confirmRoot != null)
         {
-            if (confirmBodyText != null)
-            {
-                confirmBodyText.text =
-                    "You only get one attempt at today's Daily Challenge.\n\n" +
-                    "Once you start, your attempt is used — even if you quit early.";
-            }
-
             confirmRoot.SetActive(true);
         }
         else

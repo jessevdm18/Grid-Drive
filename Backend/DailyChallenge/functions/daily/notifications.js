@@ -10,8 +10,9 @@
  *   daily_challenge_new  — production (scheduled)
  *   daily_challenge_dev  — safe test callable only
  *
- * V1 duplicate limitation: crash after FCM accept but before Firestore
- * notificationSentAt can theoretically cause a duplicate on retry.
+ * notificationSentAt is written only after FCM accepts the send.
+ * A claim without sentAt does not count as delivered, so a later run can still send.
+ * A crash after FCM accept but before sentAt can still duplicate once on retry.
  */
 
 const admin = require('firebase-admin');
@@ -19,6 +20,7 @@ const { resolveChallengeForNow } = require('./challenge');
 const { requireAuth, utcDayId } = require('./validation');
 
 const NOTIFICATION_VERSION = 1;
+const CLAIM_IN_PROGRESS_MS = 75 * 1000;
 const TOPIC_PRODUCTION = 'daily_challenge_new';
 const TOPIC_DEV = 'daily_challenge_dev';
 const NOTIFICATION_TITLE = 'NEW DAILY CHALLENGE';
@@ -97,24 +99,20 @@ async function publishDailyChallengeAndNotify(serverNow = new Date()) {
         ' message=' +
         (err && err.message ? err.message : String(err))
     );
-    return {
-      ok: false,
-      dayId,
-      notified: false,
-      errorCode: code,
-    };
+    const wrapped = new Error(
+      'Daily challenge was not ready for notification. code=' + code
+    );
+    wrapped.code = code;
+    throw wrapped;
   }
 
   if (!challenge || !challenge.dayId || !challenge.levelId) {
     console.error(
       '[DailyNotify] Challenge missing levelId — NOT notifying. dayId=' + dayId
     );
-    return {
-      ok: false,
-      dayId,
-      notified: false,
-      errorCode: 'no_level',
-    };
+    const missing = new Error('Daily challenge has no levelId.');
+    missing.code = 'no_level';
+    throw missing;
   }
 
   const ref = dayRef(challenge.dayId);
@@ -136,25 +134,23 @@ async function publishDailyChallengeAndNotify(serverNow = new Date()) {
     };
   }
 
-  // Claim send slot transactionally before FCM to reduce duplicates.
-  // Remaining V1 gap: crash after FCM succeeds but before we confirm sentAt
-  // is already written — see REWARDS/NOTIFICATIONS docs.
+  // sentAt is the only proof of delivery. A fresh claim means another run is
+  // still sending; throw so the scheduler retries instead of reporting success.
+  // A stale claim means the previous run died before FCM success, so send.
   const claim = await db().runTransaction(async (tx) => {
     const snap = await tx.get(ref);
     const data = snap.exists ? snap.data() || {} : {};
     if (data.notificationSentAt) {
       return { proceed: false, alreadySent: true };
     }
-    if (data.notificationSendClaimedAt && !data.notificationSentAt) {
-      // Another invocation claimed recently — skip to avoid double send.
-      // Allow retry if claim is stale (>10 minutes) for failed runs.
+    if (data.notificationSendClaimedAt) {
       const claimed = data.notificationSendClaimedAt;
       let claimedMs = 0;
       if (claimed && typeof claimed.toMillis === 'function') {
         claimedMs = claimed.toMillis();
       }
-      if (claimedMs > 0 && Date.now() - claimedMs < 10 * 60 * 1000) {
-        return { proceed: false, alreadySent: false, claimed: true };
+      if (claimedMs > 0 && Date.now() - claimedMs < CLAIM_IN_PROGRESS_MS) {
+        return { proceed: false, alreadySent: false, inProgress: true };
       }
     }
 
@@ -171,13 +167,19 @@ async function publishDailyChallengeAndNotify(serverNow = new Date()) {
   });
 
   if (!claim.proceed) {
+    if (claim.inProgress) {
+      const busy = new Error(
+        'Daily notification send already in progress for dayId=' + challenge.dayId
+      );
+      busy.code = 'notification_in_progress';
+      throw busy;
+    }
     return {
       ok: true,
       dayId: challenge.dayId,
       levelId: challenge.levelId,
       notified: false,
       alreadySent: !!claim.alreadySent,
-      claimed: !!claim.claimed,
       challengeCreated: !!challenge.created,
     };
   }
@@ -201,14 +203,11 @@ async function publishDailyChallengeAndNotify(serverNow = new Date()) {
       },
       { merge: true }
     );
-    return {
-      ok: false,
-      dayId: challenge.dayId,
-      levelId: challenge.levelId,
-      notified: false,
-      errorCode: 'fcm_send_failed',
-      challengeCreated: !!challenge.created,
-    };
+    const failed = new Error(
+      'FCM send failed for dayId=' + challenge.dayId
+    );
+    failed.code = 'fcm_send_failed';
+    throw failed;
   }
 
   await ref.set(

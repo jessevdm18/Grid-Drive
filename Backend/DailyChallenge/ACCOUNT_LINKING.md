@@ -36,19 +36,20 @@ via the plugin asset:
 
 `Assets/GooglePlayGames/Resources/PlayGamesSettings.asset`
 
-## Unity setup (required before device link works)
+## Current configuration
 
-`PlayGamesSettings.asset` currently has empty `mAppId` / `mWebClientId`.
+`PlayGamesSettings.asset` is configured. Runtime scripts do not hardcode these IDs.
 
-1. Unity menu: **Window → Google Play Games → Setup → Android setup**
-2. Enter:
-   - Application ID (Play Games Services numeric App ID)
-   - Web App Client ID (Game Server / Web client used in Firebase Play Games provider)
-3. Complete setup so `PlayGamesSettings.asset` and `GooglePlayGamesManifest.androidlib` regenerate APP_ID metadata.
-4. Resolve Android dependencies (EDM4U) if prompted.
-5. Rebuild the Android player.
+| Item | Value |
+|------|--------|
+| Play Games App ID | `410107420523` (same as Firebase `project_number`) |
+| Web Client ID | `410107420523-lgj6m805i9819q3soa1doi5s2rjqi630.apps.googleusercontent.com` |
+| Package | `com.raddergames.griddrive` |
+| Firebase project | `grid-drive` |
 
-Do **not** hardcode IDs in runtime scripts.
+Firebase Console → Authentication → Play Games must use that same Web Client ID. The Web client secret stays in Firebase / Google Cloud only. Never put it in Unity.
+
+The Android OAuth client for `com.raddergames.griddrive` must include the certificate that actually signs the installed build. A build installed through Google Play is signed by the Play App Signing certificate, not only the upload keystore.
 
 ## Runtime flow (4.2B)
 
@@ -58,7 +59,7 @@ LINK GOOGLE PLAY (user tap)
   -> PlayGamesPlatform.Activate()          // bind platform; no prior boot auth
   -> ManuallyAuthenticate()                // explicit UI (signIn)
   -> RequestServerSideAccess(true)         // server auth code via Web client
-  -> ExternalAccountCredential (authCode + playgames.google.com)
+  -> ExternalAccountCredential (code + playgames.google.com)
   -> DailyChallengeIdentityService.LinkGooglePlayAsync
   -> FirebaseRestClient.TryLinkIdpAsync    // accounts:signInWithIdp
   -> UID continuity check
@@ -75,36 +76,30 @@ Google credential already linked to another Firebase UID:
 → current anonymous UID unchanged  
 → no merge / no account switch
 
-## Temporary Firebase Play Games backend limitation
+## Play Games credential shape
 
-As of device testing (Play Games auth OK, server auth code present), Firebase Identity Toolkit
-rejects Play Games linking via REST:
+`accounts:signInWithIdp` links the current anonymous user. The Play Games `postBody` must match `PlayGamesAuthProvider.GetCredential(serverAuthCode)`:
 
 ```
-POST /v1/accounts:signInWithIdp
-providerId=playgames.google.com
-→ HTTP 400
-→ INVALID_CREDENTIAL_OR_PROVIDER_ID
-→ "Invalid IdP response/credential"
+code=<URL-encoded server auth code>&providerId=playgames.google.com
 ```
 
-This is a known Firebase / Identity Toolkit Play Games provider failure, **not** a client
-OAuth / SHA-1 / package-name / Web Client ID misconfiguration when PGS already returns a
-valid server auth code.
+`providerId` is exactly `playgames.google.com`. The server auth code is the `code` field, not `authCode`, `id_token`, or `access_token`.
 
-Client handling:
+The request also sends the current anonymous user's `idToken`, `requestUri=http://localhost`, `returnIdpCredential=true`, and `returnSecureToken=true`. On success the Firebase UID must stay the same.
+
+`INVALID_CREDENTIAL_OR_PROVIDER_ID` means Firebase rejected this credential. It is a link failure, not proof that Play Games is unavailable, and it is not by itself a Firebase backend outage. After the `code` field is correct, the remaining checks are the Firebase Play Games provider Web Client ID and the Play App Signing SHA-1 on the Android OAuth client.
+
+A previous device test rejected this link because the client sent `authCode=` instead of `code=`.
+
+Client handling when Firebase still rejects the credential:
 
 | Item | Behavior |
 |------|----------|
-| Result | `AccountLinkResult.ProviderBackendUnavailable` |
-| UI | "Google Play linking is temporarily unavailable. Please try again later." |
+| Result | `AccountLinkResult.UnknownError` (`INVALID_CREDENTIAL_OR_PROVIDER_ID`) |
+| UI | "Could not link your Google Play account. Please try again." |
 | Session | Anonymous Firebase UID + Daily Challenge data unchanged |
-| Retry | None automatic — user may tap LINK GOOGLE PLAY again later |
-| Analytics | `account_link_failed` · `provider=google_play` · `reason=provider_backend_unavailable` |
-
-Mapping is scoped to `providerId=playgames.google.com` + `INVALID_CREDENTIAL_OR_PROVIDER_ID`
-only (see `FirebaseRestClient.MapLinkError`). Remove the special case once Firebase fixes
-the IdP backend.
+| Retry | None automatic — user may tap LINK GOOGLE PLAY again; each attempt requests a fresh server auth code |
 
 ## Tester requirements (manual)
 

@@ -276,7 +276,33 @@ public class GameManager : MonoBehaviour
 
         if (hintManager != null)
         {
-            hintManager.ClearCurrentHint();
+            hintManager.NotifyUndo();
+        }
+    }
+
+    /// <summary>
+    /// True when this target exit will finish the level, so a hint bundle must stop.
+    /// </summary>
+    public bool WillTargetExitCompleteLevel()
+    {
+        if (levelObjectiveController == null)
+        {
+            levelObjectiveController = FindAnyObjectByType<LevelObjectiveController>();
+        }
+
+        if (levelObjectiveController == null || !levelObjectiveController.IsMultiTargetRescueLevel)
+        {
+            return true;
+        }
+
+        return levelObjectiveController.TargetsRemaining <= 1;
+    }
+
+    public void CancelHintBundleBecauseLevelEnding()
+    {
+        if (hintManager != null)
+        {
+            hintManager.CancelHintBundleBecauseLevelEnding();
         }
     }
 
@@ -534,6 +560,11 @@ public class GameManager : MonoBehaviour
         levelCompleted = true;
         levelFailed = false;
         targetExitInProgress = true;
+
+        if (hintManager != null)
+        {
+            hintManager.CancelHintBundleBecauseLevelEnding();
+        }
 
         // Daily: freeze stopwatch at authoritative solve moment (before win UI / FX).
         DailyChallengeResult dailyResult = default;
@@ -849,6 +880,7 @@ public class GameManager : MonoBehaviour
 
         if (hintManager != null)
         {
+            hintManager.CancelHintBundleBecauseLevelEnding();
             hintManager.ClearCurrentHint();
         }
 
@@ -919,6 +951,11 @@ public class GameManager : MonoBehaviour
             newLives + "/" + LivesManager.MaxLives +
             " | reason=" + failReason
         );
+
+        if (newLives < LivesManager.MaxLives)
+        {
+            NotificationPromptCoordinator.NotifyGenuineLifeLost();
+        }
 
         // Presentation-only — never create HUD from teardown / FailLevel.
         LivesHUD hud = LivesHUD.FindInLoadedScenes();

@@ -11,6 +11,12 @@
  */
 
 const admin = require('firebase-admin');
+const {
+  getFirestore,
+  FieldValue,
+  Timestamp,
+} = require('firebase-admin/firestore');
+const { getMessaging } = require('firebase-admin/messaging');
 const { onCall, HttpsError } = require('firebase-functions/v2/https');
 const { onSchedule } = require('firebase-functions/v2/scheduler');
 const { setGlobalOptions } = require('firebase-functions/v2');
@@ -32,6 +38,19 @@ const {
 } = require('./daily/notifications');
 
 admin.initializeApp();
+
+// firebase-admin 14 removed the namespaced admin.firestore() / admin.messaging()
+// helpers. Existing call sites keep working through this shim.
+if (typeof admin.firestore !== 'function') {
+  const firestore = () => getFirestore();
+  firestore.FieldValue = FieldValue;
+  firestore.Timestamp = Timestamp;
+  admin.firestore = firestore;
+}
+if (typeof admin.messaging !== 'function') {
+  admin.messaging = () => getMessaging();
+}
+
 setGlobalOptions({ region: FUNCTIONS_REGION, maxInstances: 20 });
 
 function wrap(handler) {
@@ -90,6 +109,10 @@ exports.publishDailyChallengeAndNotify = onSchedule(
     schedule: '1 0 * * *',
     timeZone: 'UTC',
     region: FUNCTIONS_REGION,
+    retryCount: 4,
+    minBackoffSeconds: 90,
+    maxBackoffSeconds: 600,
+    maxRetrySeconds: 1800,
   },
   async () => {
     await publishDailyChallengeAndNotify(new Date());
@@ -105,6 +128,10 @@ exports.settleDailyChallengeWinners = onSchedule(
     schedule: '5 0 * * *',
     timeZone: 'UTC',
     region: FUNCTIONS_REGION,
+    retryCount: 4,
+    minBackoffSeconds: 90,
+    maxBackoffSeconds: 600,
+    maxRetrySeconds: 1800,
   },
   async () => {
     await settlePreviousUtcDay(new Date());

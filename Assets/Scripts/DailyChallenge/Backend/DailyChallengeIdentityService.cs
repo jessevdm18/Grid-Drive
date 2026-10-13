@@ -294,7 +294,9 @@ public static class DailyChallengeIdentityService
             return already;
         }
 
-        if (googlePlayProvider == null || !googlePlayProvider.IsAvailable)
+        bool playAvailable = googlePlayProvider != null && googlePlayProvider.IsAvailable;
+        Debug.Log("[GooglePlayLink] Play Games available: " + playAvailable);
+        if (!playAvailable)
         {
             var unavailable = AccountLinkOutcome.From(
                 AccountLinkResult.ProviderUnavailable,
@@ -304,6 +306,9 @@ public static class DailyChallengeIdentityService
         }
 
         string uidBefore = UserId;
+        Debug.Log(
+            "[GooglePlayLink] Firebase current UID " + uidBefore +
+            " anonymous: " + IsAnonymous);
         if (string.IsNullOrEmpty(uidBefore))
         {
             var authFail = AccountLinkOutcome.From(
@@ -334,6 +339,7 @@ public static class DailyChallengeIdentityService
         }
 
         DailyChallengeFirebaseSettings settings = DailyChallengeFirebaseSettings.LoadDefault();
+        Debug.Log("[GooglePlayLink] starting LinkWithCredential");
         Debug.Log("[Account] Firebase REST link started");
         FirebaseRestClient.FirebaseLinkIdpResult link =
             await FirebaseRestClient.TryLinkIdpAsync(
@@ -354,6 +360,12 @@ public static class DailyChallengeIdentityService
         Debug.Log(
             "[Account] Firebase REST link response received result=" + link.Result +
             (string.IsNullOrEmpty(link.ErrorCode) ? string.Empty : (" err=" + link.ErrorCode)));
+        if (link.Result != AccountLinkResult.Success)
+        {
+            Debug.Log(
+                "[GooglePlayLink] Firebase exception code=" +
+                (string.IsNullOrEmpty(link.ErrorCode) ? link.Result.ToString() : link.ErrorCode));
+        }
 
         if (link.Result != AccountLinkResult.Success)
         {
@@ -361,7 +373,14 @@ public static class DailyChallengeIdentityService
             linkState = previousState == AccountLinkState.Linking
                 ? AccountLinkState.GuestAnonymous
                 : previousState;
-            var fail = AccountLinkOutcome.From(link.Result, providerKey);
+            string failMessage = null;
+            if (link.Result != AccountLinkResult.AlreadyLinkedToAnotherAccount &&
+                link.Result != AccountLinkResult.NetworkError)
+            {
+                failMessage = "Could not link your Google Play account. Please try again.";
+            }
+
+            var fail = AccountLinkOutcome.From(link.Result, providerKey, failMessage);
             GameAnalytics.LogAccountLinkFailed(
                 providerKey,
                 ToAccountLinkFailureReason(link.Result, link.ErrorCode));
@@ -383,6 +402,8 @@ public static class DailyChallengeIdentityService
         }
 
         Debug.Log("[Account] UID continuity verified");
+        Debug.Log("[GooglePlayLink] link success");
+        Debug.Log("[GooglePlayLink] UID after link " + link.LocalId);
 
         ApplySession(
             link.LocalId,
@@ -411,6 +432,10 @@ public static class DailyChallengeIdentityService
             linkState = AccountLinkState.LinkedGooglePlay;
             CachePresentationState();
         }
+
+        Debug.Log(
+            "[GooglePlayLink] provider IDs after link: " +
+            (HasProvider(AccountProvider.GooglePlay) ? "playgames.google.com" : "(missing)"));
 
         GameAnalytics.LogAccountLinkSuccess(providerKey);
         return AccountLinkOutcome.From(AccountLinkResult.Success, providerKey);

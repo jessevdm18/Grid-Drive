@@ -242,16 +242,13 @@ public static class FirebaseRestClient
                 "already_linked_other");
         }
 
-        // TEMPORARY WORKAROUND — remove when Firebase/Identity Toolkit fixes Play Games IdP.
-        // Observed on device: HTTP 400 INVALID_CREDENTIAL_OR_PROVIDER_ID
-        // ("Invalid IdP response/credential") for providerId=playgames.google.com despite a
-        // valid Play Games server auth code. Do NOT broaden this mapping to other providers.
-        if (string.Equals(providerId, "playgames.google.com", StringComparison.Ordinal) &&
-            m.IndexOf("INVALID_CREDENTIAL_OR_PROVIDER_ID", StringComparison.OrdinalIgnoreCase) >= 0)
+        // Firebase rejected the IdP credential. That is a link failure, not Play Games
+        // being unavailable on the device.
+        if (m.IndexOf("INVALID_CREDENTIAL_OR_PROVIDER_ID", StringComparison.OrdinalIgnoreCase) >= 0)
         {
             return FirebaseLinkIdpResult.Fail(
-                AccountLinkResult.ProviderBackendUnavailable,
-                "provider_backend_unavailable");
+                AccountLinkResult.UnknownError,
+                "INVALID_CREDENTIAL_OR_PROVIDER_ID");
         }
 
         if (m.IndexOf("TOKEN_EXPIRED", StringComparison.OrdinalIgnoreCase) >= 0 ||
@@ -385,6 +382,14 @@ public static class FirebaseRestClient
         if (postBody.IndexOf("id_token=", StringComparison.OrdinalIgnoreCase) >= 0)
         {
             return "id_token";
+        }
+
+        // "code=" is the Play Games authorization-code field. Match it as its own
+        // parameter so it is not confused with authCode= or serverAuthCode=.
+        if (postBody.StartsWith("code=", StringComparison.OrdinalIgnoreCase) ||
+            postBody.IndexOf("&code=", StringComparison.OrdinalIgnoreCase) >= 0)
+        {
+            return "code";
         }
 
         return "unknown";

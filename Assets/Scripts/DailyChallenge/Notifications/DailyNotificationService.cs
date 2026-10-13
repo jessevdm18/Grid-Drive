@@ -11,7 +11,8 @@ using UnityEngine;
 public static class DailyNotificationService
 {
     private const string PrefsEnabledKey = "RushOut_DailyNotificationsEnabled";
-    private const string AnalyticsSourceSettings = "settings";
+    public const string AnalyticsSourceSettings = "settings";
+    public const string AnalyticsSourcePrompt = "prompt";
 
     private static bool bootstrapped;
     private static bool enableInFlight;
@@ -119,31 +120,50 @@ public static class DailyNotificationService
     /// </summary>
     public static async Task<bool> SetEnabledFromSettingsAsync(bool wantEnabled)
     {
+        NotificationOptInResult result = await SetEnabledAsync(wantEnabled, AnalyticsSourceSettings);
+        return result == NotificationOptInResult.Enabled;
+    }
+
+    /// <summary>
+    /// User intent for Daily notifications. Does not touch the Lives preference.
+    /// Already-granted POST_NOTIFICATIONS does not show another OS dialog.
+    /// </summary>
+    public static async Task<NotificationOptInResult> SetEnabledAsync(bool wantEnabled, string source)
+    {
         if (enableInFlight)
         {
-            return PreferredEnabled;
+            return PreferredEnabled
+                ? NotificationOptInResult.Enabled
+                : NotificationOptInResult.Disabled;
+        }
+
+        if (string.IsNullOrEmpty(source))
+        {
+            source = AnalyticsSourceSettings;
         }
 
         enableInFlight = true;
         try
         {
 #if UNITY_EDITOR
-            // Preview preference only — no permission dialogs, no FCM subscribe.
             PersistPreference(wantEnabled);
             FirebaseMessagingBridge.SetTokenRegistrationOnInitEnabled(false);
             if (wantEnabled)
             {
-                GameAnalytics.LogDailyNotificationOptIn(AnalyticsSourceSettings);
+                GameAnalytics.LogDailyNotificationOptIn(source);
             }
             else
             {
-                GameAnalytics.LogDailyNotificationOptOut(AnalyticsSourceSettings);
+                GameAnalytics.LogDailyNotificationOptOut(source);
             }
 
             Debug.Log(
                 "[DailyNotify] Editor preference set enabled=" + wantEnabled +
+                " source=" + source +
                 " (FCM subscribe skipped in Editor)");
-            return wantEnabled;
+            return wantEnabled
+                ? NotificationOptInResult.Enabled
+                : NotificationOptInResult.Disabled;
 #else
             if (!wantEnabled)
             {
@@ -152,13 +172,21 @@ public static class DailyNotificationService
                     PersistPreference(false);
                     pendingUnsubscribe = true;
                     Debug.Log("[DailyNotify] Firebase not ready — opt-out saved, unsubscribe deferred.");
-                    GameAnalytics.LogDailyNotificationOptOut(AnalyticsSourceSettings);
-                    return false;
+                    GameAnalytics.LogDailyNotificationOptOut(source);
+                    return NotificationOptInResult.Disabled;
                 }
 
                 await DisableInternalAsync();
-                GameAnalytics.LogDailyNotificationOptOut(AnalyticsSourceSettings);
-                return false;
+                GameAnalytics.LogDailyNotificationOptOut(source);
+                return NotificationOptInResult.Disabled;
+            }
+
+            if (AndroidNotificationPermission.GetStatus() ==
+                AndroidNotificationPermissionStatus.NeedsSettings)
+            {
+                PersistPreference(false);
+                Debug.Log("[DailyNotify] Permission needs system settings — preference stays OFF.");
+                return NotificationOptInResult.NeedsSettings;
             }
 
             bool permitted = await AndroidNotificationPermission.RequestIfNeededAsync();
@@ -171,12 +199,12 @@ public static class DailyNotificationService
                 }
 
                 Debug.Log("[DailyNotify] Permission denied — toggle stays OFF.");
-                return false;
+                return NotificationOptInResult.Disabled;
             }
 
             // Preference is user intent. A failed subscribe must not turn it back off.
             PersistPreference(true);
-            GameAnalytics.LogDailyNotificationOptIn(AnalyticsSourceSettings);
+            GameAnalytics.LogDailyNotificationOptIn(source);
             bool subscribed = await EnsureSubscribedAsync();
             if (subscribed)
             {
@@ -185,7 +213,7 @@ public static class DailyNotificationService
                     DailyNotificationTopics.ProductionNewDay);
             }
 
-            return true;
+            return NotificationOptInResult.Enabled;
 #endif
         }
         finally

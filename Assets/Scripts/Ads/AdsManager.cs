@@ -56,6 +56,11 @@ public class AdsManager : MonoBehaviour
     /// <summary>True while a rewarded Show is in flight (blocks overlapping shows).</summary>
     private bool rewardedShowInProgress;
 
+    /// <summary>True while a rewarded or interstitial fullscreen is up.</summary>
+    public bool IsFullScreenAdActive =>
+        rewardedShowInProgress ||
+        (interstitialClosedCallback != null && !interstitialCallbackInvoked);
+
     private bool adsInitialized;
     private bool subscribedToConsent;
 

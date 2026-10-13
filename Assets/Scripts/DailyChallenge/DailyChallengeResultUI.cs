@@ -191,16 +191,28 @@ public class DailyChallengeResultUI : MonoBehaviour
             return;
         }
 
-        showing = false;
-        Time.timeScale = 1f;
 #if UNITY_EDITOR
         if (DailyChallengeEditorPreview.IsActive)
         {
+            showing = false;
+            Time.timeScale = 1f;
             DailyChallengeEditorPreview.ClearWithoutTouchingDailyAttempt();
             SceneTransition.LoadScene("MainMenu");
             return;
         }
 #endif
+        if (NotificationPromptCoordinator.TryOfferDailyBeforeLeaving(LeaveResultForMenu))
+        {
+            return;
+        }
+
+        LeaveResultForMenu();
+    }
+
+    private void LeaveResultForMenu()
+    {
+        showing = false;
+        Time.timeScale = 1f;
         DailyChallengeContext.ClearSession();
         SceneTransition.LoadScene("MainMenu");
     }

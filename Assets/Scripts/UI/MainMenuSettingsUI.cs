@@ -60,6 +60,8 @@ public class MainMenuSettingsUI : MonoBehaviour
         }
     }
 
+    public bool IsOpen => settingsPanel != null && settingsPanel.activeSelf;
+
     /// <summary>
     /// SettingsButton OnClick: opent het panel met actuele audio/analytics-state.
     /// </summary>

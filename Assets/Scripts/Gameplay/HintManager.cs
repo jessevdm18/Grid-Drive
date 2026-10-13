@@ -124,6 +124,15 @@ public class HintManager : MonoBehaviour
     /// <summary>Prevents double OnRewardedAdCompleted for one ShowRewardedAd.</summary>
     private bool rewardedCompletionHandled;
 
+    /// <summary>One paid hint or one rewarded hint grants two solved moves.</summary>
+    private bool hintBundleActive;
+
+    /// <summary>How many hints in the current bundle have already been shown. 0, 1, or 2.</summary>
+    private int hintBundleShown;
+
+    private int hintBundleFollowUpToken;
+    private Coroutine hintBundleFollowUpCoroutine;
+
     /// <summary>coins / rewarded_ad — set before ShowHintVisual for analytics.</summary>
     private string pendingHintAnalyticsSource = "other";
 
@@ -221,6 +230,7 @@ public class HintManager : MonoBehaviour
         hasCachedHint = false;
         cachedHintVehicleIndex = -1;
         rewardedCompletionHandled = false;
+        ClearHintBundle();
         ClearCurrentHint("LevelReset");
     }
 
@@ -231,6 +241,137 @@ public class HintManager : MonoBehaviour
     {
         playerMoveGeneration++;
         hasCachedHint = false;
+        if (hintBundleActive && hintBundleShown == 1)
+        {
+            ScheduleSecondHint();
+        }
+    }
+
+    /// <summary>
+    /// Undo during an active bundle re-solves hint 1 from the restored board.
+    /// A finished bundle is not regenerated.
+    /// </summary>
+    public void NotifyUndo()
+    {
+        hasCachedHint = false;
+        CancelScheduledSecondHint();
+        if (hintBundleActive && hintBundleShown == 1)
+        {
+            if (!TryPresentSolvedHint("HINT 1/2"))
+            {
+                ClearCurrentHint("UndoNoHint");
+            }
+
+            return;
+        }
+
+        ClearCurrentHint("Undo");
+    }
+
+    /// <summary>
+    /// The move that just registered will complete the level. Do not show hint 2.
+    /// </summary>
+    public void CancelHintBundleBecauseLevelEnding()
+    {
+        CancelScheduledSecondHint();
+        ClearHintBundle();
+    }
+
+    private void StartHintBundle()
+    {
+        CancelScheduledSecondHint();
+        hintBundleActive = true;
+        hintBundleShown = 0;
+    }
+
+    private void ClearHintBundle()
+    {
+        CancelScheduledSecondHint();
+        hintBundleActive = false;
+        hintBundleShown = 0;
+    }
+
+    private void NoteFirstBundleHintShown()
+    {
+        if (!hintBundleActive || hintBundleShown != 0)
+        {
+            return;
+        }
+
+        hintBundleShown = 1;
+        ShowHintStatus("HINT 1/2");
+    }
+
+    private void ScheduleSecondHint()
+    {
+        if (hintBundleFollowUpCoroutine != null)
+        {
+            StopCoroutine(hintBundleFollowUpCoroutine);
+            hintBundleFollowUpCoroutine = null;
+        }
+
+        hintBundleFollowUpToken++;
+        int token = hintBundleFollowUpToken;
+        hintBundleFollowUpCoroutine = StartCoroutine(ShowSecondHintNextFrame(token));
+    }
+
+    private void CancelScheduledSecondHint()
+    {
+        hintBundleFollowUpToken++;
+        if (hintBundleFollowUpCoroutine != null)
+        {
+            StopCoroutine(hintBundleFollowUpCoroutine);
+            hintBundleFollowUpCoroutine = null;
+        }
+    }
+
+    private IEnumerator ShowSecondHintNextFrame(int token)
+    {
+        yield return null;
+        hintBundleFollowUpCoroutine = null;
+        if (token != hintBundleFollowUpToken)
+        {
+            yield break;
+        }
+
+        if (!hintBundleActive || hintBundleShown != 1)
+        {
+            yield break;
+        }
+
+        if (gameManager != null && gameManager.IsLevelCompleted)
+        {
+            ClearHintBundle();
+            yield break;
+        }
+
+        if (TryPresentSolvedHint("HINT 2/2"))
+        {
+            hintBundleShown = 2;
+            hintBundleActive = false;
+        }
+        else
+        {
+            ClearHintBundle();
+        }
+    }
+
+    private bool TryPresentSolvedHint(string status)
+    {
+        if (DailyChallengeGameplayPolicy.IsActive)
+        {
+            return false;
+        }
+
+        HintComputeResult compute = TryComputeHint("HintBundle");
+        if (compute.result != HintResult.Success)
+        {
+            return false;
+        }
+
+        ShowHintVisual(compute.vehicle, compute.direction, compute.vehicleIndex);
+        ShowHintStatus(status);
+        return true;
     }
 
     private void OnDisable()
@@ -332,7 +473,13 @@ public class HintManager : MonoBehaviour
             );
 
             pendingHintAnalyticsSource = "coins";
+            if (!compute.reusedCache)
+            {
+                StartHintBundle();
+            }
+
             ShowHintVisual(compute.vehicle, compute.direction, compute.vehicleIndex);
+            NoteFirstBundleHintShown();
         }
         finally
         {
@@ -432,7 +579,9 @@ public class HintManager : MonoBehaviour
             }
 
             pendingHintAnalyticsSource = "rewarded_ad";
+            StartHintBundle();
             ShowHintVisual(compute.vehicle, compute.direction, compute.vehicleIndex);
+            NoteFirstBundleHintShown();
         }
         finally
         {

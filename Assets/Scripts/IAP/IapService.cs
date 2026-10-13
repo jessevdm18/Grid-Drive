@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -61,6 +62,24 @@ public class IapService : MonoBehaviour
         new Dictionary<string, string>(StringComparer.Ordinal);
     private readonly HashSet<string> readyProductIds = new HashSet<string>(StringComparer.Ordinal);
     private string purchaseInProgressProductId;
+    private ProductFetchPhase productFetchPhase = ProductFetchPhase.Idle;
+    private int productFetchGeneration;
+    private bool productFetchSettleScheduled;
+    private bool pendingCoinRefetch;
+    private bool adsFreeOwnershipCheckPending;
+
+    /// <summary>
+    /// True after an ads_free query finished and the store did not return that SKU.
+    /// Stays false while the query is still loading or failed because the store was unreachable.
+    /// </summary>
+    public bool IsAdsFreeProductUnavailable { get; private set; }
+
+    private enum ProductFetchPhase
+    {
+        Idle,
+        CoinPacks,
+        AdsFree
+    }
 
 #if UNITY_ANDROID && !UNITY_EDITOR
     private CrossPlatformValidator googlePlayReceiptValidator;
@@ -229,6 +248,8 @@ public class IapService : MonoBehaviour
         {
             LogInitializeExceptionChain(ex);
             IsStoreConnected = false;
+            productFetchPhase = ProductFetchPhase.Idle;
+            IsAdsFreeProductUnavailable = false;
             ClearProductMetadata();
             IsPurchaseInProgress = false;
             NotifyStateChanged();
@@ -316,16 +337,26 @@ public class IapService : MonoBehaviour
         IsStoreConnected = true;
         NotifyStateChanged();
         OnStoreReady?.Invoke();
-        FetchCoinPackProducts();
+        BeginCoinProductFetch();
         storeController.FetchPurchases();
     }
 
     private void OnStoreDisconnected(StoreConnectionFailureDescription failure)
     {
         IsStoreConnected = false;
+        productFetchGeneration++;
+        productFetchPhase = ProductFetchPhase.Idle;
+        productFetchSettleScheduled = false;
+        pendingCoinRefetch = false;
         ClearProductMetadata();
         IsPurchaseInProgress = false;
         purchaseInProgressProductId = null;
+        if (adsFreeOwnershipCheckPending)
+        {
+            adsFreeOwnershipCheckPending = false;
+            Debug.LogWarning("[IapService] ads_free ownership verification could not complete. Store unavailable.");
+        }
+
         Debug.LogWarning("[IapService] Store disconnected: " + failure.Message);
         NotifyStateChanged();
     }
@@ -333,6 +364,7 @@ public class IapService : MonoBehaviour
     private void OnAuthAccountChanged()
     {
         // v5.4 clears product/purchase caches before this event.
+        IsAdsFreeProductUnavailable = false;
         ClearProductMetadata();
         IsPurchaseInProgress = false;
         purchaseInProgressProductId = null;
@@ -343,43 +375,187 @@ public class IapService : MonoBehaviour
             return;
         }
 
-        FetchCoinPackProducts();
+        BeginCoinProductFetch();
         storeController.FetchPurchases();
     }
 
-    private void FetchCoinPackProducts()
+    private void BeginCoinProductFetch()
     {
         if (storeController == null)
         {
             return;
         }
 
-        var defs = new List<ProductDefinition>(AllCoinPackProductIds.Length + 1);
+        if (productFetchPhase != ProductFetchPhase.Idle)
+        {
+            pendingCoinRefetch = true;
+            return;
+        }
+
+        var defs = new List<ProductDefinition>(AllCoinPackProductIds.Length);
         for (int i = 0; i < AllCoinPackProductIds.Length; i++)
         {
             defs.Add(new ProductDefinition(AllCoinPackProductIds[i], ProductType.Consumable));
         }
 
-        defs.Add(new ProductDefinition(ProductIdAdsFree, ProductType.NonConsumable));
-
+        productFetchPhase = ProductFetchPhase.CoinPacks;
         storeController.FetchProducts(defs);
+    }
+
+    private void BeginAdsFreeProductFetch()
+    {
+        if (storeController == null || !IsStoreConnected)
+        {
+            return;
+        }
+
+        if (productFetchPhase != ProductFetchPhase.Idle)
+        {
+            return;
+        }
+
+        productFetchPhase = ProductFetchPhase.AdsFree;
+        storeController.FetchProducts(new List<ProductDefinition>(1)
+        {
+            new ProductDefinition(ProductIdAdsFree, ProductType.NonConsumable)
+        });
     }
 
     private void OnProductsFetched(List<Product> products)
     {
+        if (productFetchPhase == ProductFetchPhase.AdsFree)
+        {
+            TryRegisterFetchedProduct(ProductIdAdsFree);
+            IsAdsFreeProductUnavailable = !readyProductIds.Contains(ProductIdAdsFree);
+            NotifyStateChanged();
+            ScheduleProductFetchSettle();
+            return;
+        }
+
         RefreshCoinPackMetadata();
         NotifyStateChanged();
         if (IsProductAvailable)
         {
             OnProductReady?.Invoke();
         }
+
+        ScheduleProductFetchSettle();
     }
 
     private void OnProductsFetchFailed(ProductFetchFailed failure)
     {
+        string reason = failure != null ? failure.FailureReason : "Unknown";
+        bool failedAdsFree = FailureContainsProduct(failure, ProductIdAdsFree);
+        bool failedCoinPack = FailureContainsAnyCoinPack(failure);
+
+        if (productFetchPhase == ProductFetchPhase.AdsFree || (failedAdsFree && !failedCoinPack))
+        {
+            if (IsAdsFreeMissingFromCatalog(reason))
+            {
+                readyProductIds.Remove(ProductIdAdsFree);
+                localizedPriceByProductId.Remove(ProductIdAdsFree);
+                IsAdsFreeProductUnavailable = true;
+                Debug.LogWarning("[IapService] ads_free is not available from the store: " + reason);
+            }
+            else
+            {
+                Debug.LogWarning("[IapService] ads_free product fetch could not complete: " + reason);
+            }
+
+            NotifyStateChanged();
+            ScheduleProductFetchSettle();
+            return;
+        }
+
         ClearProductMetadata();
-        Debug.LogWarning("[IapService] Product fetch failed: " + failure.FailureReason);
+        Debug.LogWarning("[IapService] Product fetch failed: " + reason);
         NotifyStateChanged();
+        ScheduleProductFetchSettle();
+    }
+
+    private void ScheduleProductFetchSettle()
+    {
+        if (productFetchSettleScheduled)
+        {
+            return;
+        }
+
+        productFetchSettleScheduled = true;
+        int generation = productFetchGeneration;
+        ProductFetchPhase phase = productFetchPhase;
+        StartCoroutine(SettleProductFetchNextFrame(generation, phase));
+    }
+
+    private IEnumerator SettleProductFetchNextFrame(int generation, ProductFetchPhase finishedPhase)
+    {
+        yield return null;
+        if (generation != productFetchGeneration)
+        {
+            yield break;
+        }
+
+        productFetchSettleScheduled = false;
+        productFetchPhase = ProductFetchPhase.Idle;
+
+        if (!IsStoreConnected || storeController == null)
+        {
+            yield break;
+        }
+
+        if (pendingCoinRefetch)
+        {
+            pendingCoinRefetch = false;
+            BeginCoinProductFetch();
+            yield break;
+        }
+
+        if (finishedPhase == ProductFetchPhase.CoinPacks)
+        {
+            BeginAdsFreeProductFetch();
+        }
+    }
+
+    private static bool FailureContainsAnyCoinPack(ProductFetchFailed failure)
+    {
+        for (int i = 0; i < AllCoinPackProductIds.Length; i++)
+        {
+            if (FailureContainsProduct(failure, AllCoinPackProductIds[i]))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static bool FailureContainsProduct(ProductFetchFailed failure, string productId)
+    {
+        if (failure == null || failure.FailedFetchProducts == null || string.IsNullOrEmpty(productId))
+        {
+            return false;
+        }
+
+        for (int i = 0; i < failure.FailedFetchProducts.Count; i++)
+        {
+            ProductDefinition definition = failure.FailedFetchProducts[i];
+            if (definition != null && definition.id == productId)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static bool IsAdsFreeMissingFromCatalog(string reason)
+    {
+        if (string.IsNullOrEmpty(reason))
+        {
+            return false;
+        }
+
+        return reason.IndexOf("could not retrieve the attached subset", StringComparison.Ordinal) >= 0
+               || reason.IndexOf("could not retrieve any products", StringComparison.Ordinal) >= 0;
     }
 
     private void ClearProductMetadata()
@@ -421,9 +597,7 @@ public class IapService : MonoBehaviour
             }
         }
 
-        int coinPacksReady = readyProductIds.Count;
-        TryRegisterFetchedProduct(ProductIdAdsFree);
-        IsProductAvailable = coinPacksReady > 0;
+        IsProductAvailable = readyProductIds.Count > 0;
         LocalizedPriceString = GetLocalizedPriceString(ProductIdCoins1000);
     }
 
@@ -457,26 +631,23 @@ public class IapService : MonoBehaviour
     {
         // Pending orders are processed via OnPurchasePending when enabled (default).
         // Confirmed non-consumables are the restore path and do not raise Pending.
-        if (OrdersContainProduct(orders, ProductIdAdsFree))
+        bool confirmed = orders != null && OrderListContainsProduct(orders.ConfirmedOrders, ProductIdAdsFree);
+        if (confirmed)
         {
             AdsFreeService.SetOwnedFromStore();
             NotifyStateChanged();
         }
-    }
 
-    private static bool OrdersContainProduct(Orders orders, string productId)
-    {
-        if (orders == null || string.IsNullOrEmpty(productId))
+        if (!adsFreeOwnershipCheckPending)
         {
-            return false;
+            return;
         }
 
-        if (OrderListContainsProduct(orders.ConfirmedOrders, productId))
+        adsFreeOwnershipCheckPending = false;
+        if (!confirmed && !AdsFreeService.IsOwned)
         {
-            return true;
+            Debug.LogWarning("[IapService] ads_free ownership was not confirmed by the store.");
         }
-
-        return OrderListContainsProduct(orders.PendingOrders, productId);
     }
 
     private static bool OrderListContainsProduct<T>(System.Collections.Generic.IReadOnlyList<T> orders, string productId)
@@ -503,6 +674,13 @@ public class IapService : MonoBehaviour
     private void OnPurchasesFetchFailed(PurchasesFetchFailureDescription failure)
     {
         Debug.LogWarning("[IapService] Purchases fetch failed: " + failure.Message);
+        if (!adsFreeOwnershipCheckPending)
+        {
+            return;
+        }
+
+        adsFreeOwnershipCheckPending = false;
+        Debug.LogWarning("[IapService] ads_free ownership verification could not complete. Store purchases could not be fetched.");
     }
 
     private void OnPurchasePending(PendingOrder order)
@@ -699,7 +877,7 @@ public class IapService : MonoBehaviour
 
         if (wasAdsFree && order != null && order.FailureReason == PurchaseFailureReason.DuplicateTransaction)
         {
-            AdsFreeService.SetOwnedFromStore();
+            RequestAdsFreeOwnershipVerification();
             NotifyStateChanged();
             return;
         }
@@ -709,6 +887,20 @@ public class IapService : MonoBehaviour
         Debug.LogWarning("[IapService] Purchase failed: " + reason + " — " + details);
         OnPurchaseFailedMessage?.Invoke("Purchase cancelled or failed.");
         NotifyStateChanged();
+    }
+
+    private void RequestAdsFreeOwnershipVerification()
+    {
+        if (storeController == null || !IsStoreConnected)
+        {
+            adsFreeOwnershipCheckPending = false;
+            Debug.LogWarning("[IapService] ads_free ownership verification could not complete. Store unavailable.");
+            return;
+        }
+
+        adsFreeOwnershipCheckPending = true;
+        Debug.Log("[IapService] ads_free reported DuplicateTransaction. Verifying ownership with the store.");
+        storeController.FetchPurchases();
     }
 
     private void OnPurchaseDeferredInternal(DeferredOrder order)
