@@ -20,5 +20,8 @@
         <action android:name="android.intent.action.BOOT_COMPLETED" />
       </intent-filter>
     </receiver>
+    <receiver
+        android:name="com.raddergames.griddrive.notifications.FreeCoinsReceiver"
+        android:exported="false" />
   </application>
 </manifest>

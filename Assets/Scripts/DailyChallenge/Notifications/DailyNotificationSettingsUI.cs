@@ -4,8 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// Settings rows for Daily Challenge (FCM) and Lives Full (local alarm).
-/// Scene owns both rows. Runtime only updates toggle state and interactivity.
+/// Settings rows for Daily Challenge (FCM), Lives Full, and Free Coins.
+/// Scene owns the rows. Runtime only updates toggle state and interactivity.
 /// Never prompts at startup — only when the user turns a toggle on.
 /// </summary>
 public class DailyNotificationSettingsUI : MonoBehaviour
@@ -25,6 +25,10 @@ public class DailyNotificationSettingsUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI livesTitleText;
     [SerializeField] private Toggle livesToggle;
 
+    [Header("Free coins")]
+    [SerializeField] private TextMeshProUGUI freeCoinsTitleText;
+    [SerializeField] private Toggle freeCoinsToggle;
+
     private bool syncingUi;
     private bool changeInFlight;
 
@@ -32,6 +36,7 @@ public class DailyNotificationSettingsUI : MonoBehaviour
     {
         // Authored in the scene. Runtime does not rewrite or create this label.
         _ = livesTitleText;
+        _ = freeCoinsTitleText;
 
         if (notificationsToggle != null)
         {
@@ -41,6 +46,11 @@ public class DailyNotificationSettingsUI : MonoBehaviour
         if (livesToggle != null)
         {
             livesToggle.onValueChanged.AddListener(OnLivesToggleChanged);
+        }
+
+        if (freeCoinsToggle != null)
+        {
+            freeCoinsToggle.onValueChanged.AddListener(OnFreeCoinsToggleChanged);
         }
 
         DailyNotificationService.Bootstrap();
@@ -57,6 +67,11 @@ public class DailyNotificationSettingsUI : MonoBehaviour
         if (livesToggle != null)
         {
             livesToggle.onValueChanged.RemoveListener(OnLivesToggleChanged);
+        }
+
+        if (freeCoinsToggle != null)
+        {
+            freeCoinsToggle.onValueChanged.RemoveListener(OnFreeCoinsToggleChanged);
         }
     }
 
@@ -102,6 +117,12 @@ public class DailyNotificationSettingsUI : MonoBehaviour
                 livesToggle.interactable = !changeInFlight;
                 livesToggle.SetIsOnWithoutNotify(LivesNotificationService.PreferredEnabled);
             }
+
+            if (freeCoinsToggle != null)
+            {
+                freeCoinsToggle.interactable = !changeInFlight;
+                freeCoinsToggle.SetIsOnWithoutNotify(FreeCoinsNotificationService.PreferredEnabled);
+            }
         }
         finally
         {
@@ -127,6 +148,16 @@ public class DailyNotificationSettingsUI : MonoBehaviour
         }
 
         _ = ApplyLivesAsync(wantEnabled);
+    }
+
+    private void OnFreeCoinsToggleChanged(bool wantEnabled)
+    {
+        if (syncingUi || changeInFlight)
+        {
+            return;
+        }
+
+        _ = ApplyFreeCoinsAsync(wantEnabled);
     }
 
     private async Task ApplyDailyAsync(bool wantEnabled)
@@ -174,6 +205,28 @@ public class DailyNotificationSettingsUI : MonoBehaviour
         }
     }
 
+    private async Task ApplyFreeCoinsAsync(bool wantEnabled)
+    {
+        changeInFlight = true;
+        SetInteractable(false);
+        try
+        {
+            NotificationOptInResult result =
+                await FreeCoinsNotificationService.SetEnabledFromUserAsync(wantEnabled);
+            if (result == NotificationOptInResult.NeedsSettings)
+            {
+                NotificationPromptCoordinator.ShowSettingsExplainer(RefreshFromService);
+            }
+
+            RefreshFromService();
+        }
+        finally
+        {
+            changeInFlight = false;
+            RefreshFromService();
+        }
+    }
+
     private void SetInteractable(bool fallback)
     {
         if (notificationsToggle != null)
@@ -186,6 +239,11 @@ public class DailyNotificationSettingsUI : MonoBehaviour
         if (livesToggle != null)
         {
             livesToggle.interactable = fallback && !changeInFlight;
+        }
+
+        if (freeCoinsToggle != null)
+        {
+            freeCoinsToggle.interactable = fallback && !changeInFlight;
         }
     }
 

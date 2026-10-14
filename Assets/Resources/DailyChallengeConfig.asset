@@ -49,4 +49,4 @@ MonoBehaviour:
   simulatedLeaderboardPlayerCount: 30
   showSimulatedLeaderboardMarkers: 0
   minimumLeaderboardPopulation: 30
-  backendMode: 0
+  backendMode: 1

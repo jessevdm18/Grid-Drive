@@ -66,6 +66,11 @@ public static class DailyChallengeIdentityService
 
     public static AccountLinkState LinkState => linkState;
 
+    public static bool IsGooglePlayLinked =>
+        linkState == AccountLinkState.LinkedGooglePlay ||
+        linkState == AccountLinkState.LinkedMultiple ||
+        linkedProviders.Contains(AccountProvider.GooglePlay);
+
     public static IReadOnlyList<AccountProvider> LinkedProviders => linkedProviders;
 
     /// <summary>Presentation-only. Never used as ownership key.</summary>
@@ -421,6 +426,16 @@ public static class DailyChallengeIdentityService
         Debug.Log("[Account] Firebase account lookup started");
         await RefreshAccountStateAsync();
         Debug.Log("[Account] Firebase account lookup completed");
+
+        try
+        {
+            await DailyFriendsLeaderboardClient.RegisterLinkedPlayerAsync();
+        }
+        catch (Exception registerEx)
+        {
+            Debug.LogWarning(
+                "[Friends] identity register failed: " + registerEx.GetType().Name);
+        }
 
         if (!HasProvider(AccountProvider.GooglePlay))
         {

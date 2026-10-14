@@ -36,6 +36,14 @@ const {
   publishDailyChallengeAndNotify,
   sendDailyChallengeDevNotificationHandler,
 } = require('./daily/notifications');
+const {
+  registerDailyNotificationTokenHandler,
+  dispatchDueResultNotifications,
+} = require('./daily/resultNotifications');
+const {
+  registerGooglePlayIdentityHandler,
+  getDailyFriendsLeaderboardHandler,
+} = require('./daily/friendsLeaderboard');
 
 admin.initializeApp();
 
@@ -143,4 +151,43 @@ exports.settleDailyChallengeWinners = onSchedule(
  */
 exports.sendDailyChallengeDevNotification = onCall(
   wrap(sendDailyChallengeDevNotificationHandler)
+);
+
+/**
+ * Stores this device's FCM token for the signed-in Firebase UID.
+ * Used for Daily Result Ready only. Does not subscribe or send.
+ */
+exports.registerDailyNotificationToken = onCall(
+  wrap(registerDailyNotificationTokenHandler)
+);
+
+/**
+ * Maps the Firebase Auth Play Games provider id onto this UID.
+ * The client does not supply the player id.
+ */
+exports.registerGooglePlayIdentity = onCall(wrap(registerGooglePlayIdentityHandler));
+
+/**
+ * Real Daily rows for the caller and Play Games friends who linked Grid Drive.
+ * Comparison only. Does not affect reward settlement.
+ */
+exports.getDailyFriendsLeaderboard = onCall(wrap(getDailyFriendsLeaderboardHandler));
+
+/**
+ * Sends queued Daily Result Ready pushes when the device offset is 09:15–09:59.
+ * Does not run at settlement (00:05 UTC).
+ */
+exports.dispatchDailyResultNotifications = onSchedule(
+  {
+    schedule: '*/15 * * * *',
+    timeZone: 'UTC',
+    region: FUNCTIONS_REGION,
+    retryCount: 2,
+    minBackoffSeconds: 30,
+    maxBackoffSeconds: 120,
+    maxRetrySeconds: 600,
+  },
+  async () => {
+    await dispatchDueResultNotifications(new Date());
+  }
 );

@@ -89,9 +89,7 @@ public static class DailyNotificationService
         if (pendingUnsubscribe)
         {
             pendingUnsubscribe = false;
-            _ = FirebaseMessagingBridge.UnsubscribeAsync(DailyNotificationTopics.ProductionNewDay);
-            _ = FirebaseMessagingBridge.UnsubscribeAsync(DailyNotificationTopics.Dev);
-            FirebaseMessagingBridge.SetTokenRegistrationOnInitEnabled(false);
+            _ = DisableMessagingAsync();
             Debug.Log("[DailyNotify] Opt-out applied after Firebase became ready.");
             return;
         }
@@ -255,6 +253,13 @@ public static class DailyNotificationService
     private static async Task DisableInternalAsync()
     {
         PersistPreference(false);
+        await DisableMessagingAsync();
+    }
+
+    private static async Task DisableMessagingAsync()
+    {
+        string token = await FirebaseMessagingBridge.GetTokenOrEmptyAsync();
+        await RegisterTokenWithServerAsync(false, token);
         await FirebaseMessagingBridge.UnsubscribeAsync(
             DailyNotificationTopics.ProductionNewDay);
         await FirebaseMessagingBridge.UnsubscribeAsync(DailyNotificationTopics.Dev);
@@ -319,6 +324,14 @@ public static class DailyNotificationService
             return false;
         }
 
+        bool registered = await RegisterTokenWithServerAsync(
+            true,
+            await FirebaseMessagingBridge.GetTokenOrEmptyAsync());
+        if (!registered)
+        {
+            Debug.LogWarning("[DailyNotify] Token registration failed — topic subscribe continues.");
+        }
+
         bool subscribed = await FirebaseMessagingBridge.SubscribeAsync(
             DailyNotificationTopics.ProductionNewDay);
         if (!subscribed)
@@ -335,6 +348,73 @@ public static class DailyNotificationService
         return true;
     }
 
+    private static async Task<bool> RegisterTokenWithServerAsync(bool enabled, string token)
+    {
+        try
+        {
+            bool signedIn = await DailyChallengeIdentityService.EnsureSignedInAsync();
+            if (!signedIn || string.IsNullOrEmpty(DailyChallengeIdentityService.IdToken))
+            {
+                Debug.LogWarning(
+                    "[DailyNotify] Token registration skipped — not signed in. enabled=" +
+                    enabled);
+                return false;
+            }
+
+            int offset = (int)TimeZoneInfo.Local.GetUtcOffset(DateTime.Now).TotalMinutes;
+            string zone = TimeZoneInfo.Local.Id ?? string.Empty;
+            string json =
+                "{\"enabled\":" + (enabled ? "true" : "false") +
+                ",\"token\":\"" + EscapeJson(token) +
+                "\",\"utcOffsetMinutes\":" + offset.ToString() +
+                ",\"timeZoneId\":\"" + EscapeJson(zone) + "\"}";
+
+            DailyChallengeFirebaseSettings settings =
+                DailyChallengeFirebaseSettings.LoadDefault();
+            if (settings == null || !settings.IsConfigured)
+            {
+                Debug.LogWarning(
+                    "[DailyNotify] Token registration skipped — Firebase settings missing.");
+                return false;
+            }
+
+            FirebaseRestClient.CallableResponse response =
+                await FirebaseRestClient.CallCallableAsync(
+                    settings.GetCallableBaseUrl(),
+                    "registerDailyNotificationToken",
+                    json,
+                    DailyChallengeIdentityService.IdToken);
+
+            Debug.Log(
+                "[DailyNotify] Token registration enabled=" + enabled +
+                " tokenPresent=" + (!string.IsNullOrEmpty(token)) +
+                " tokenLength=" + (token != null ? token.Length : 0) +
+                " ok=" + response.Ok +
+                " http=" + response.HttpStatus);
+            return response.Ok;
+        }
+        catch (Exception ex)
+        {
+            Debug.LogWarning(
+                "[DailyNotify] Token registration failed: " + ex.GetType().Name);
+            return false;
+        }
+    }
+
+    private static string EscapeJson(string value)
+    {
+        if (string.IsNullOrEmpty(value))
+        {
+            return string.Empty;
+        }
+
+        return value
+            .Replace("\\", "\\\\")
+            .Replace("\"", "\\\"")
+            .Replace("\n", "\\n")
+            .Replace("\r", "\\r");
+    }
+
     private static void EnsureHandlers()
     {
         if (handlersReady)
@@ -348,10 +428,10 @@ public static class DailyNotificationService
 
     private static void OnTokenReceived(object sender, TokenReceivedEventArgs e)
     {
-        // Intentionally no token / FID logging.
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
-        Debug.Log("[DailyNotify] FCM TokenReceived (token not logged).");
-#endif
+        int tokenLength = e != null && e.Token != null ? e.Token.Length : 0;
+        Debug.Log(
+            "[DailyNotify] FCM TokenReceived tokenPresent=" + (tokenLength > 0) +
+            " tokenLength=" + tokenLength);
         if (!PreferredEnabled || !AndroidNotificationPermission.HasPermission)
         {
             return;
@@ -366,6 +446,17 @@ public static class DailyNotificationService
         string type;
         string dayId;
         FirebaseMessagingBridge.TryReadDailyChallengePayload(e, out type, out dayId);
+
+        bool isResult = string.Equals(type, "daily_result", StringComparison.Ordinal);
+        if (isResult)
+        {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            Debug.Log(
+                "[DailyNotify] Result push received dayId=" + dayId +
+                " (seen flag unchanged; Main Menu still fetches the result)");
+#endif
+            return;
+        }
 
         bool isDaily = string.Equals(type, "daily_challenge", StringComparison.Ordinal);
         GameAnalytics.LogDailyNotificationReceived(dayId);

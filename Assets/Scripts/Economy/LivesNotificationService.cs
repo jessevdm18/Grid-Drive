@@ -26,30 +26,61 @@ public static class LivesNotificationService
             return;
         }
 
-        if (lives == null || !PreferredEnabled)
+        bool enabled = PreferredEnabled;
+        bool permission = HasNotificationPermission();
+        int currentLives = lives != null ? lives.CurrentLives : -1;
+        DateTime fullUtc = default;
+        bool hasFull = lives != null && lives.TryGetLivesFullUtc(out fullUtc);
+        string nextLife = lives != null && lives.NextLifeUtc.HasValue
+            ? FormatUtc(lives.NextLifeUtc.Value)
+            : "(none)";
+        Log(
+            "enabled=" + enabled +
+            " permission=" + permission +
+            " lives=" + currentLives +
+            " nextLifeUtc=" + nextLife +
+            " fullLivesUtc=" + (hasFull ? FormatUtc(fullUtc) : "(none)"));
+
+        if (lives == null || !enabled)
         {
-            Cancel(logInEditor: false);
+            Cancel("preference off");
             return;
         }
 
-        if (!lives.TryGetLivesFullUtc(out DateTime fullUtc) || fullUtc <= DateTime.UtcNow)
+        if (!hasFull || fullUtc <= DateTime.UtcNow)
         {
-            Cancel(logInEditor: false);
+            Cancel(hasFull ? "full time already passed" : "lives already full or no timer");
             return;
         }
 
-        if (!HasNotificationPermission())
+        DateTime deliverUtc = LocalNotificationPolicy.DelayForQuietHours(fullUtc);
+        if (deliverUtc != DateTime.SpecifyKind(fullUtc, DateTimeKind.Utc))
         {
-            Cancel(logInEditor: false);
+            Log(
+                "quiet hours moved delivery from " + FormatUtc(fullUtc) +
+                " to " + FormatUtc(deliverUtc));
+        }
+
+        if (deliverUtc <= DateTime.UtcNow)
+        {
+            Cancel("delivery time already passed");
+            return;
+        }
+
+        if (!permission)
+        {
+            Cancel("permission not granted");
             Log("Not scheduled — notification permission is not granted. fullUtc=" + FormatUtc(fullUtc));
             return;
         }
 
+        LocalNotificationPolicy.SetDueUtc(LocalNotificationPolicy.LivesDueUtcTicksKey, deliverUtc);
 #if UNITY_EDITOR
-        Log("Would schedule full lives notification for " + FormatUtc(fullUtc));
+        Log("Would schedule full lives notification for " + FormatUtc(deliverUtc));
 #else
-        Schedule(fullUtc, Title, Body, livesUnchangedTest: false);
+        Schedule(deliverUtc, Title, Body, skipRelevance: false);
 #endif
+        FreeCoinsNotificationService.Sync();
     }
 
     /// <summary>
@@ -60,7 +91,7 @@ public static class LivesNotificationService
         if (!wantEnabled)
         {
             PersistPreference(false);
-            Cancel(logInEditor: false);
+            Cancel("user disabled");
             return NotificationOptInResult.Disabled;
         }
 
@@ -73,7 +104,7 @@ public static class LivesNotificationService
             AndroidNotificationPermissionStatus.NeedsSettings)
         {
             PersistPreference(false);
-            Cancel(logInEditor: false);
+            Cancel("permission needs settings");
             return NotificationOptInResult.NeedsSettings;
         }
 
@@ -81,7 +112,7 @@ public static class LivesNotificationService
         if (!permitted)
         {
             PersistPreference(false);
-            Cancel(logInEditor: false);
+            Cancel("permission denied");
             return NotificationOptInResult.Disabled;
         }
 
@@ -109,7 +140,7 @@ public static class LivesNotificationService
         Log("Would schedule full lives notification for " + FormatUtc(fullUtc) + " (test, lives unchanged)");
 #else
         testHoldUntilUtc = DateTime.UtcNow.AddSeconds(70);
-        Schedule(fullUtc, Title, Body, livesUnchangedTest: true);
+        Schedule(fullUtc, Title, Body, skipRelevance: true);
 #endif
     }
 
@@ -169,9 +200,9 @@ public static class LivesNotificationService
         PlayerPrefs.Save();
     }
 
-    private static void Schedule(DateTime fullUtc, string title, string body, bool livesUnchangedTest)
+    private static void Schedule(DateTime fullUtc, string title, string body, bool skipRelevance)
     {
-        string suffix = livesUnchangedTest ? " (test, lives unchanged)" : string.Empty;
+        string suffix = skipRelevance ? " (test, lives unchanged)" : string.Empty;
 #if UNITY_ANDROID && !UNITY_EDITOR
         try
         {
@@ -188,10 +219,13 @@ public static class LivesNotificationService
                     return;
                 }
 
-                notifier.CallStatic("schedule", activity, epochMs, title, body);
+                string method = notifier.CallStatic<string>(
+                    "schedule", activity, epochMs, title, body, skipRelevance);
+                Log(
+                    "schedule requested method=" + (method ?? "(null)") +
+                    " alarmId=" + NotificationId +
+                    " fullUtc=" + FormatUtc(fullUtc) + suffix);
             }
-
-            Log("Scheduled full lives notification for " + FormatUtc(fullUtc) + suffix);
         }
         catch (Exception ex)
         {
@@ -202,8 +236,10 @@ public static class LivesNotificationService
 #endif
     }
 
-    private static void Cancel(bool logInEditor)
+    private static void Cancel(string reason)
     {
+        LocalNotificationPolicy.ClearDue(LocalNotificationPolicy.LivesDueUtcTicksKey);
+        Log("alarm cancelled reason=" + reason + " alarmId=" + NotificationId);
 #if UNITY_ANDROID && !UNITY_EDITOR
         try
         {
@@ -214,10 +250,12 @@ public static class LivesNotificationService
             {
                 if (activity == null)
                 {
-                    return;
+                    Log("alarm cancel skipped — no current activity");
                 }
-
-                notifier.CallStatic("cancel", activity);
+                else
+                {
+                    notifier.CallStatic("cancel", activity, reason);
+                }
             }
         }
         catch (Exception ex)
@@ -225,11 +263,9 @@ public static class LivesNotificationService
             Debug.LogWarning("[LivesNotification] Cancel failed: " + ex.GetType().Name);
         }
 #else
-        if (logInEditor)
-        {
-            Log("Would cancel pending full lives notification");
-        }
+        Log("Would cancel pending full lives notification");
 #endif
+        FreeCoinsNotificationService.Sync();
     }
 
     private static void Log(string message)

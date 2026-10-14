@@ -13,20 +13,25 @@ public class NotificationPromptCoordinator : MonoBehaviour
 {
     public const string DailyPromptShownKey = "RushOut_DailyNotificationPromptShown";
     public const string LivesPromptShownKey = "RushOut_LivesNotificationPromptShown";
+    public const string FreeCoinsPromptShownKey = "RushOut_FreeCoinNotificationPromptShown";
 
     private const float LivesSettleSeconds = 0.6f;
+    private const float FreeCoinsSettleSeconds = 0.6f;
 
     private enum PromptKind
     {
         None = 0,
         Daily = 1,
         Lives = 2,
-        Settings = 3
+        FreeCoins = 3,
+        Settings = 4
     }
 
     private static NotificationPromptCoordinator instance;
     private static bool pendingLives;
     private static float livesQueuedUnscaled;
+    private static bool pendingFreeCoins;
+    private static float freeCoinsQueuedUnscaled;
 
     private PromptKind showingKind;
     private bool choiceInFlight;
@@ -96,6 +101,30 @@ public class NotificationPromptCoordinator : MonoBehaviour
         Ensure();
     }
 
+    /// <summary>First time the player uses the last free coin video that was available.</summary>
+    public static void NotifyFreeCoinsExhausted()
+    {
+        if (FreeCoinsNotificationService.PreferredEnabled)
+        {
+            MarkShown(FreeCoinsPromptShownKey);
+            return;
+        }
+
+        if (IsShown(FreeCoinsPromptShownKey) || pendingFreeCoins)
+        {
+            return;
+        }
+
+        if (FreeCoinsRewardedUI.GetRemainingAvailable() > 0)
+        {
+            return;
+        }
+
+        pendingFreeCoins = true;
+        freeCoinsQueuedUnscaled = Time.unscaledTime;
+        Ensure();
+    }
+
     public static void ShowSettingsExplainer(Action then)
     {
         Ensure().Present(PromptKind.Settings, markShown: false, then);
@@ -124,12 +153,25 @@ public class NotificationPromptCoordinator : MonoBehaviour
         Ensure().Present(PromptKind.Lives, markShown: false, null);
     }
 
+    public static void ShowFreeCoinsPromptForDevelopment()
+    {
+        if (!Application.isPlaying)
+        {
+            Debug.LogWarning("[Notifications] Enter Play Mode to preview the Free Coins prompt.");
+            return;
+        }
+
+        Ensure().Present(PromptKind.FreeCoins, markShown: false, null);
+    }
+
     public static void ResetPromptFlags()
     {
         PlayerPrefs.DeleteKey(DailyPromptShownKey);
         PlayerPrefs.DeleteKey(LivesPromptShownKey);
+        PlayerPrefs.DeleteKey(FreeCoinsPromptShownKey);
         PlayerPrefs.Save();
         pendingLives = false;
+        pendingFreeCoins = false;
         Debug.Log(
             "[Notifications] Reset prompt-shown flags only. Enabled preferences were not changed.");
     }
@@ -158,12 +200,57 @@ public class NotificationPromptCoordinator : MonoBehaviour
 
     private void Update()
     {
-        if (!pendingLives || showingKind != PromptKind.None)
+        if (showingKind != PromptKind.None)
         {
             return;
         }
 
-        if (Time.unscaledTime - livesQueuedUnscaled < LivesSettleSeconds)
+        if (HoldForLivesPrompt())
+        {
+            return;
+        }
+
+        UpdateFreeCoinsPrompt();
+    }
+
+    /// <summary>True when a queued Lives prompt should keep the screen to itself this frame.</summary>
+    private bool HoldForLivesPrompt()
+    {
+        if (!pendingLives)
+        {
+            return false;
+        }
+
+        if (Time.unscaledTime - livesQueuedUnscaled < LivesSettleSeconds || IsBlocked())
+        {
+            return true;
+        }
+
+        LivesManager lives = LivesManager.Instance;
+        if (lives == null || lives.IsFull || lives.CurrentLives >= LivesManager.MaxLives)
+        {
+            pendingLives = false;
+            return false;
+        }
+
+        if (!IsLivesSurfaceReady())
+        {
+            return false;
+        }
+
+        pendingLives = false;
+        Present(PromptKind.Lives, markShown: true, null);
+        return true;
+    }
+
+    private void UpdateFreeCoinsPrompt()
+    {
+        if (!pendingFreeCoins || showingKind != PromptKind.None)
+        {
+            return;
+        }
+
+        if (Time.unscaledTime - freeCoinsQueuedUnscaled < FreeCoinsSettleSeconds)
         {
             return;
         }
@@ -173,20 +260,14 @@ public class NotificationPromptCoordinator : MonoBehaviour
             return;
         }
 
-        LivesManager lives = LivesManager.Instance;
-        if (lives == null || lives.IsFull || lives.CurrentLives >= LivesManager.MaxLives)
+        if (FreeCoinsRewardedUI.GetRemainingAvailable() > 0)
         {
-            pendingLives = false;
+            pendingFreeCoins = false;
             return;
         }
 
-        if (!IsLivesSurfaceReady())
-        {
-            return;
-        }
-
-        pendingLives = false;
-        Present(PromptKind.Lives, markShown: true, null);
+        pendingFreeCoins = false;
+        Present(PromptKind.FreeCoins, markShown: true, null);
     }
 
     private static bool IsLivesSurfaceReady()
@@ -271,6 +352,10 @@ public class NotificationPromptCoordinator : MonoBehaviour
             {
                 MarkShown(LivesPromptShownKey);
             }
+            else if (kind == PromptKind.FreeCoins)
+            {
+                MarkShown(FreeCoinsPromptShownKey);
+            }
         }
     }
 
@@ -289,6 +374,15 @@ public class NotificationPromptCoordinator : MonoBehaviour
         {
             titleLabel.text = "LIVES RECHARGING";
             bodyLabel.text = "Want a notification when all 5 lives are ready again?";
+            declineLabel.text = "NOT NOW";
+            acceptLabel.text = "NOTIFY ME";
+            return;
+        }
+
+        if (kind == PromptKind.FreeCoins)
+        {
+            titleLabel.text = "MORE FREE COINS LATER";
+            bodyLabel.text = "Want a notification when all 3 free coin videos are ready again?";
             declineLabel.text = "NOT NOW";
             acceptLabel.text = "NOTIFY ME";
             return;
@@ -344,6 +438,10 @@ public class NotificationPromptCoordinator : MonoBehaviour
             else if (kind == PromptKind.Lives)
             {
                 result = await LivesNotificationService.SetEnabledFromUserAsync(true);
+            }
+            else if (kind == PromptKind.FreeCoins)
+            {
+                result = await FreeCoinsNotificationService.SetEnabledFromUserAsync(true);
             }
         }
         catch (Exception ex)

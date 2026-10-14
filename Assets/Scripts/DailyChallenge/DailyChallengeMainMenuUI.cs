@@ -193,6 +193,13 @@ public class DailyChallengeMainMenuUI : MonoBehaviour
 
         if (statusText != null)
         {
+#if UNITY_EDITOR
+            if (manager.RequiresOnlineToStart)
+            {
+                statusText.text = DailyChallengeEditorGuard.Message;
+            }
+            else
+#endif
             if (needsConnect)
             {
                 statusText.text = "CONNECT TO PLAY";
@@ -248,12 +255,24 @@ public class DailyChallengeMainMenuUI : MonoBehaviour
         if (playButton != null)
         {
             // Show PLAY for available, or RETRY when Online needs connectivity.
-            playButton.gameObject.SetActive(available || needsConnect);
-            playButton.interactable = canStart || needsConnect;
+            playButton.gameObject.SetActive(
+#if UNITY_EDITOR
+                manager.RequiresOnlineToStart ||
+#endif
+                available || needsConnect);
+            playButton.interactable =
+#if UNITY_EDITOR
+                manager.RequiresOnlineToStart ? !startInFlight :
+#endif
+                (canStart || needsConnect);
             var playLabel = playButton.GetComponentInChildren<TextMeshProUGUI>(true);
             if (playLabel != null)
             {
-                playLabel.text = needsConnect ? "RETRY" : "PLAY";
+                playLabel.text =
+#if UNITY_EDITOR
+                    manager.RequiresOnlineToStart ? "PLAY" :
+#endif
+                    (needsConnect ? "RETRY" : "PLAY");
             }
         }
 
@@ -329,6 +348,22 @@ public class DailyChallengeMainMenuUI : MonoBehaviour
             return;
         }
 
+#if UNITY_EDITOR
+        if (manager.RequiresOnlineToStart)
+        {
+            if (confirmRoot != null)
+            {
+                confirmRoot.SetActive(true);
+            }
+            else
+            {
+                OnStartChallengeClicked();
+            }
+
+            return;
+        }
+#endif
+
         if (manager.NeedsConnectToPlay)
         {
             _ = SyncAuthorityOnEnableAsync();
@@ -391,7 +426,9 @@ public class DailyChallengeMainMenuUI : MonoBehaviour
         try
         {
             await manager.SyncFromAuthorityAsync();
+#if !UNITY_EDITOR
             await SyncDailyRewardsAsync();
+#endif
         }
         finally
         {

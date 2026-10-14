@@ -609,6 +609,8 @@ public static class DailyChallengeTestingMenu
     [MenuItem(BackendRoot + "Log Current Server Challenge")]
     public static async void LogCurrentServerChallenge()
     {
+        using (DailyChallengeEditorGuard.PermitReadOnlyDiagnostic())
+        {
         DailyChallengeAuthorityResult r =
             await DailyChallengeAuthority.Current.GetCurrentChallengeAsync();
         Debug.Log(
@@ -621,11 +623,14 @@ public static class DailyChallengeTestingMenu
             "ScoreVersion=" + r.Challenge.ScoreVersion + "\n" +
             "Opens=" + r.Challenge.OpensAtUtc + "\n" +
             "Closes=" + r.Challenge.ClosesAtUtc);
+        }
     }
 
     [MenuItem(BackendRoot + "Log Server Attempt State")]
     public static async void LogServerAttemptState()
     {
+        using (DailyChallengeEditorGuard.PermitReadOnlyDiagnostic())
+        {
         DailyChallengeManager manager = DailyChallengeManager.EnsureInstance();
         string dayId = manager.CurrentDayId;
         if (string.IsNullOrEmpty(dayId))
@@ -648,6 +653,7 @@ public static class DailyChallengeTestingMenu
             "Score=" + r.Attempt.Score + "\n" +
             "ScoreVersion=" + r.Attempt.ScoreVersion + "\n" +
             "LocalCacheState=" + manager.CurrentState);
+        }
     }
 
     [MenuItem(BackendRoot + "Refresh Online Leaderboard")]

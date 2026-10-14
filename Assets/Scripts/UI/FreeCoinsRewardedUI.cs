@@ -12,8 +12,8 @@ public class FreeCoinsRewardedUI : MonoBehaviour
     public const int RewardAmount = 50;
     public const int DailyMax = 3;
 
-    private const string DatePrefsKey = "GridDrive_FreeCoinsRewardedDate";
-    private const string UsedPrefsKey = "GridDrive_FreeCoinsRewardedUsed";
+    public const string DatePrefsKey = "GridDrive_FreeCoinsRewardedDate";
+    public const string UsedPrefsKey = "GridDrive_FreeCoinsRewardedUsed";
     private const string PlacementId = AdsManager.PlacementShopFreeCoins;
 
     private const string CtaWatchLabel = "WATCH AD — +50";
@@ -32,6 +32,40 @@ public class FreeCoinsRewardedUI : MonoBehaviour
 
     private bool isAdFlowActive;
     private bool rewardHandledThisFlow;
+    private bool offerPromptAfterFlow;
+
+    /// <summary>
+    /// Remaining free coin videos for the current local calendar day.
+    /// Does not write PlayerPrefs. A new local day has all <see cref="DailyMax"/> available.
+    /// </summary>
+    public static int GetRemainingAvailable()
+    {
+        string today = GetTodayLocalDateString();
+        string saved = PlayerPrefs.GetString(DatePrefsKey, string.Empty);
+        if (!string.Equals(saved, today, StringComparison.Ordinal))
+        {
+            return DailyMax;
+        }
+
+        int used = Mathf.Clamp(PlayerPrefs.GetInt(UsedPrefsKey, 0), 0, DailyMax);
+        return Mathf.Max(0, DailyMax - used);
+    }
+
+    /// <summary>
+    /// Next local midnight, when a partial day becomes 3 available again.
+    /// False while all 3 are already available.
+    /// </summary>
+    public static bool TryGetNextAllAvailableLocal(out DateTime nextLocalMidnight)
+    {
+        nextLocalMidnight = default;
+        if (GetRemainingAvailable() >= DailyMax)
+        {
+            return false;
+        }
+
+        nextLocalMidnight = DateTime.Now.Date.AddDays(1);
+        return true;
+    }
 
     private void Awake()
     {
@@ -150,6 +184,11 @@ public class FreeCoinsRewardedUI : MonoBehaviour
 
         coinManager.AddCoins(RewardAmount);
         IncrementUsedToday();
+        if (GetRemainingToday() <= 0)
+        {
+            offerPromptAfterFlow = true;
+        }
+
         audioManager?.PlayUpgrade();
         Refresh();
     }
@@ -158,6 +197,13 @@ public class FreeCoinsRewardedUI : MonoBehaviour
     {
         isAdFlowActive = false;
         Refresh();
+        if (!offerPromptAfterFlow)
+        {
+            return;
+        }
+
+        offerPromptAfterFlow = false;
+        NotificationPromptCoordinator.NotifyFreeCoinsExhausted();
     }
 
     private void EnsureDayRollover()
@@ -173,6 +219,7 @@ public class FreeCoinsRewardedUI : MonoBehaviour
         PlayerPrefs.SetString(DatePrefsKey, today);
         PlayerPrefs.SetInt(UsedPrefsKey, 0);
         PlayerPrefs.Save();
+        FreeCoinsNotificationService.Sync();
     }
 
     private int GetUsedToday()
@@ -196,6 +243,7 @@ public class FreeCoinsRewardedUI : MonoBehaviour
         PlayerPrefs.SetString(DatePrefsKey, GetTodayLocalDateString());
         PlayerPrefs.SetInt(UsedPrefsKey, used);
         PlayerPrefs.Save();
+        FreeCoinsNotificationService.Sync();
     }
 
     private static string GetTodayLocalDateString()

@@ -17,6 +17,7 @@
  */
 
 const admin = require('firebase-admin');
+const { queueDailyResultNotifications } = require('./resultNotifications');
 const { HttpsError } = require('firebase-functions/v2/https');
 const { defineBoolean } = require('firebase-functions/params');
 const { requireAuth, utcDayId } = require('./validation');
@@ -219,6 +220,10 @@ async function settleDay(dayId, options = {}) {
     if (data.finalRanksPublished !== true) {
       const existingRanking = await loadEligibleRanking(dayId);
       await publishFinalRanks(dayId, existingRanking);
+      await queueDailyResultNotifications(dayId, existingRanking);
+    } else {
+      const existingRanking = await loadEligibleRanking(dayId);
+      await queueDailyResultNotifications(dayId, existingRanking);
     }
     return {
       ok: true,
@@ -302,6 +307,7 @@ async function settleDay(dayId, options = {}) {
   // Persist server rank on real attempt docs only. Simulated rows are never loaded.
   // Reward doc creation above is unchanged (rank #1 coins only).
   await publishFinalRanks(dayId, ranking);
+  await queueDailyResultNotifications(dayId, ranking);
 
   if (outcome.rewardCreated) {
     // Structured audit log for analytics pipelines (no UID).

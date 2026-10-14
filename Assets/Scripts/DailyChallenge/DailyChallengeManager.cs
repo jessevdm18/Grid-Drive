@@ -194,6 +194,18 @@ public class DailyChallengeManager : MonoBehaviour
     /// </summary>
     public async Task<bool> TryCommitStartAndArmGameplayAsync()
     {
+#if UNITY_EDITOR
+        if (RequiresOnlineToStart && DailyChallengeEditorGuard.BlocksRealAttempts)
+        {
+            LastBackendError = DailyChallengeEditorGuard.Message;
+            Debug.LogWarning(
+                "[DailyEditorGuard] Blocked real Daily backend call: startDailyAttempt");
+            Debug.LogWarning(DailyChallengeEditorGuard.Message);
+            OnDailyStateChanged?.Invoke();
+            return false;
+        }
+#endif
+
         if (startInFlight)
         {
             return false;
@@ -286,6 +298,15 @@ public class DailyChallengeManager : MonoBehaviour
             return;
         }
 
+#if UNITY_EDITOR
+        if (DailyChallengeEditorGuard.BlocksRealAttempts)
+        {
+            Debug.LogWarning(
+                "[DailyEditorGuard] Blocked real Daily backend call: getDailyChallenge");
+            return;
+        }
+#endif
+
         LastBackendError = string.Empty;
         bool signedIn = await DailyChallengeIdentityService.EnsureSignedInAsync();
         if (!signedIn)
@@ -356,6 +377,15 @@ public class DailyChallengeManager : MonoBehaviour
 
         if (RequiresOnlineToStart)
         {
+#if UNITY_EDITOR
+            if (DailyChallengeEditorGuard.BlocksRealAttempts)
+            {
+                Debug.LogWarning(
+                    "[DailyEditorGuard] Blocked real Daily backend call: submitDailyResult");
+            }
+            else
+#endif
+            {
             // Provisional local score for immediate UI; server recalculates authoritatively.
             DailyChallengePendingSubmissionStore.Save(
                 result.DayId,
@@ -367,6 +397,7 @@ public class DailyChallengeManager : MonoBehaviour
             Debug.Log("[DailyBackend] Result pending (provisional score=" + result.Score + ")");
 #endif
             _ = SubmitCompletedResultAsync(result);
+            }
         }
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
@@ -413,7 +444,17 @@ public class DailyChallengeManager : MonoBehaviour
 
             if (RequiresOnlineToStart && !string.IsNullOrEmpty(cachedDayId))
             {
-                _ = DailyChallengeAuthority.Current.MarkAbandonedAsync(cachedDayId);
+#if UNITY_EDITOR
+                if (DailyChallengeEditorGuard.BlocksRealAttempts)
+                {
+                    Debug.LogWarning(
+                        "[DailyEditorGuard] Blocked real Daily backend call: abandonDailyAttempt");
+                }
+                else
+#endif
+                {
+                    _ = DailyChallengeAuthority.Current.MarkAbandonedAsync(cachedDayId);
+                }
             }
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
@@ -604,6 +645,15 @@ public class DailyChallengeManager : MonoBehaviour
         {
             return;
         }
+
+#if UNITY_EDITOR
+        if (DailyChallengeEditorGuard.BlocksRealAttempts)
+        {
+            Debug.LogWarning(
+                "[DailyEditorGuard] Blocked real Daily backend call: submitDailyResult");
+            return;
+        }
+#endif
 
         if (!DailyChallengePendingSubmissionStore.TryLoad(
                 out string dayId,

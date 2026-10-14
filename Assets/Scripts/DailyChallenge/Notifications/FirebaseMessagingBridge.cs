@@ -42,22 +42,28 @@ public static class FirebaseMessagingBridge
         }
     }
 
+    public static async Task<string> GetTokenOrEmptyAsync()
+    {
+        try
+        {
+            string token = await FirebaseMessaging.GetTokenAsync();
+            return token ?? string.Empty;
+        }
+        catch (Exception ex)
+        {
+            Debug.LogWarning("[DailyNotify] GetTokenAsync failed: " + ex.GetType().Name);
+            return string.Empty;
+        }
+    }
+
     /// <summary>
     /// 13.15.0-compatible registration: obtain/create FCM token (never log it).
     /// Replaces RegisterAsync() which does not exist in 13.15.0.
     /// </summary>
     public static async Task<bool> EnsureTokenAsync()
     {
-        try
-        {
-            string token = await FirebaseMessaging.GetTokenAsync();
-            return !string.IsNullOrEmpty(token);
-        }
-        catch (Exception ex)
-        {
-            Debug.LogWarning("[DailyNotify] GetTokenAsync failed: " + ex.GetType().Name);
-            return false;
-        }
+        string token = await GetTokenOrEmptyAsync();
+        return !string.IsNullOrEmpty(token);
     }
 
     public static async Task<bool> SubscribeAsync(string topic)

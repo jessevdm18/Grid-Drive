@@ -259,6 +259,18 @@ public sealed class FirebaseOnlineDailyChallengeAuthority : IDailyChallengeAutho
         string functionName,
         string dataJson)
     {
+#if UNITY_EDITOR
+        if (DailyChallengeEditorGuard.ShouldBlockCallable(functionName))
+        {
+            return new FirebaseRestClient.CallableResponse
+            {
+                Ok = false,
+                ErrorStatus = "EDITOR_BLOCKED",
+                HttpStatus = 0
+            };
+        }
+#endif
+
         if (!await EnsureReadyAsync())
         {
             return new FirebaseRestClient.CallableResponse
