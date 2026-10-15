@@ -4,7 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// Authored Daily #1 winner reward panel. Scene owns layout; this script owns values + claim.
+/// Settled Daily result panel. Every completed player sees rank, score, moves, and time.
+/// Rank #1 with an unclaimed reward also shows the coin line and CLAIM.
 /// Grant local coins only after server claim returns granted=true.
 /// </summary>
 public class DailyRewardUI : MonoBehaviour
@@ -43,7 +44,7 @@ public class DailyRewardUI : MonoBehaviour
 
         if (titleText != null)
         {
-            titleText.text = "DAILY WINNER";
+            titleText.text = "DAILY CHALLENGE RESULTS";
         }
     }
 
@@ -87,40 +88,17 @@ public class DailyRewardUI : MonoBehaviour
         claimInFlight = false;
         resultOnly = false;
 
-        if (titleText != null)
-        {
-            titleText.text = "DAILY WINNER";
-        }
-
-        if (rankText != null)
-        {
-            rankText.text = "#" + Mathf.Max(1, reward.Rank);
-        }
-
-        if (bodyText != null)
-        {
-            int amount = reward.RewardAmount > 0
-                ? reward.RewardAmount
-                : DailyRewardService.FirstPlaceCoinReward;
-            bodyText.text =
-                "YOU WON " + amount + " COINS\n\n" +
-                FormatStats(reward.Score, reward.Moves, reward.CompletionTimeMilliseconds);
-        }
-
-        SetClaimInteractable(true);
-        if (claimButtonLabel != null)
-        {
-            claimButtonLabel.text = "CLAIM";
-        }
-
-        if (panelRoot != null)
-        {
-            panelRoot.SetActive(true);
-        }
-        else
-        {
-            gameObject.SetActive(true);
-        }
+        int amount = reward.RewardAmount > 0
+            ? reward.RewardAmount
+            : DailyRewardService.FirstPlaceCoinReward;
+        ApplyPresentation(
+            reward.Rank,
+            reward.Score,
+            reward.Moves,
+            reward.CompletionTimeMilliseconds,
+            includeReward: true,
+            amount,
+            "CLAIM");
     }
 
     /// <summary>Editor/dev preview without server.</summary>
@@ -166,7 +144,26 @@ public class DailyRewardUI : MonoBehaviour
         hasReward = false;
         claimInFlight = false;
         currentReward = default;
+        ApplyPresentation(
+            settled.Rank,
+            settled.Score,
+            settled.Moves,
+            settled.CompletionTimeMilliseconds,
+            includeReward: false,
+            0,
+            "OK");
+        return IsShowing;
+    }
 
+    private void ApplyPresentation(
+        int rank,
+        int score,
+        int moves,
+        long completionTimeMs,
+        bool includeReward,
+        int rewardAmount,
+        string buttonLabel)
+    {
         if (titleText != null)
         {
             titleText.text = "DAILY CHALLENGE RESULTS";
@@ -174,21 +171,25 @@ public class DailyRewardUI : MonoBehaviour
 
         if (rankText != null)
         {
-            rankText.text = "#" + settled.Rank;
+            rankText.gameObject.SetActive(false);
         }
 
         if (bodyText != null)
         {
-            bodyText.text = FormatStats(
-                settled.Score,
-                settled.Moves,
-                settled.CompletionTimeMilliseconds);
+            bodyText.alignment = TextAlignmentOptions.Top;
+            bodyText.text = FormatResult(
+                rank,
+                score,
+                moves,
+                completionTimeMs,
+                includeReward,
+                rewardAmount);
         }
 
         SetClaimInteractable(true);
         if (claimButtonLabel != null)
         {
-            claimButtonLabel.text = "OK";
+            claimButtonLabel.text = buttonLabel;
         }
 
         if (panelRoot != null)
@@ -199,8 +200,6 @@ public class DailyRewardUI : MonoBehaviour
         {
             gameObject.SetActive(true);
         }
-
-        return IsShowing;
     }
 
     public void Hide()
@@ -230,12 +229,25 @@ public class DailyRewardUI : MonoBehaviour
         _ = ClaimAsync();
     }
 
-    private static string FormatStats(int score, int moves, long completionTimeMs)
+    private static string FormatResult(
+        int rank,
+        int score,
+        int moves,
+        long completionTimeMs,
+        bool includeReward,
+        int rewardAmount)
     {
-        return
+        string text =
+            "RANK\n#" + Mathf.Max(1, rank) + "\n\n" +
             "SCORE\n" + DailyChallengeTimeFormat.FormatScore(score) + "\n\n" +
             "MOVES\n" + moves + "\n\n" +
             "TIME\n" + DailyChallengeTimeFormat.Format(completionTimeMs);
+        if (includeReward)
+        {
+            text += "\n\nREWARD\n" + rewardAmount + " COINS";
+        }
+
+        return text;
     }
 
     private async Task ClaimAsync()

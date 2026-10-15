@@ -56,6 +56,18 @@ public class AdsManager : MonoBehaviour
     /// <summary>True while a rewarded Show is in flight (blocks overlapping shows).</summary>
     private bool rewardedShowInProgress;
 
+    private bool rewardedHintLoadInProgress;
+    private bool rewardedFreeCoinsLoadInProgress;
+    private int rewardedHintLoadGeneration;
+    private int rewardedFreeCoinsLoadGeneration;
+    private bool freeCoinsLoadMayRetry = true;
+
+    /// <summary>
+    /// Fired on the main thread when a rewarded load or show-flow changes readiness.
+    /// Shop free-coins uses this to enable the button only after the next ad can show.
+    /// </summary>
+    public event Action RewardedAvailabilityChanged;
+
     /// <summary>True while a rewarded or interstitial fullscreen is up.</summary>
     public bool IsFullScreenAdActive =>
         rewardedShowInProgress ||
@@ -270,6 +282,20 @@ public class AdsManager : MonoBehaviour
     /// </summary>
     public void LoadRewardedAdForPlacement(string placement)
     {
+        LoadRewardedAdForPlacement(placement, allowRetry: true);
+    }
+
+    /// <summary>True while a load request for this placement has not completed.</summary>
+    public bool IsRewardedLoadInProgress(string placement)
+    {
+        string slotPlacement = ResolveRewardedSlot(NormalizeAnalyticsPlacement(placement));
+        return IsShopFreeCoinsPlacement(slotPlacement)
+            ? rewardedFreeCoinsLoadInProgress
+            : rewardedHintLoadInProgress;
+    }
+
+    private void LoadRewardedAdForPlacement(string placement, bool allowRetry)
+    {
         if (!adsInitialized || !PrivacyConsentManager.CanRequestAds)
         {
             return;
@@ -277,7 +303,43 @@ public class AdsManager : MonoBehaviour
 
         string analyticsPlacement = NormalizeAnalyticsPlacement(placement);
         string slotPlacement = ResolveRewardedSlot(analyticsPlacement);
+        bool freeCoins = IsShopFreeCoinsPlacement(slotPlacement);
+        if (freeCoins ? rewardedFreeCoinsLoadInProgress : rewardedHintLoadInProgress)
+        {
+            if (freeCoins)
+            {
+                Debug.Log("[FreeCoinsAd] load already in progress");
+            }
+
+            return;
+        }
+
+        if (freeCoins && allowRetry)
+        {
+            freeCoinsLoadMayRetry = true;
+            CancelInvoke(nameof(RetryFreeCoinsLoad));
+        }
+
+        if (freeCoins)
+        {
+            rewardedFreeCoinsLoadInProgress = true;
+            rewardedFreeCoinsLoadGeneration++;
+        }
+        else
+        {
+            rewardedHintLoadInProgress = true;
+            rewardedHintLoadGeneration++;
+        }
+
+        int generation = freeCoins
+            ? rewardedFreeCoinsLoadGeneration
+            : rewardedHintLoadGeneration;
+
         DestroyRewardedAdForPlacement(slotPlacement);
+        if (freeCoins)
+        {
+            Debug.Log("[FreeCoinsAd] load requested");
+        }
 
         string adUnitId = GetRewardedAdUnitId(analyticsPlacement);
         AdRequest request = new AdRequest();
@@ -286,32 +348,75 @@ public class AdsManager : MonoBehaviour
         {
             RunOnMainThread(() =>
             {
-                if (error != null)
+                if (freeCoins)
                 {
-                    Debug.Log(
-                        "Rewarded ad failed to load placement=" + analyticsPlacement +
-                        " slot=" + slotPlacement);
-                    Debug.Log(error.ToString());
+                    if (generation != rewardedFreeCoinsLoadGeneration)
+                    {
+                        return;
+                    }
+
+                    rewardedFreeCoinsLoadInProgress = false;
+                }
+                else if (generation != rewardedHintLoadGeneration)
+                {
                     return;
                 }
+                else
+                {
+                    rewardedHintLoadInProgress = false;
+                }
 
-                if (ad == null)
+                if (error != null || ad == null)
                 {
                     Debug.Log(
                         "Rewarded ad failed to load placement=" + analyticsPlacement +
                         " slot=" + slotPlacement);
+                    if (error != null)
+                    {
+                        Debug.Log(error.ToString());
+                    }
+
+                    if (freeCoins)
+                    {
+                        Debug.Log("[FreeCoinsAd] load failed");
+                    }
+
+                    NotifyRewardedAvailabilityChanged();
+                    if (freeCoins && freeCoinsLoadMayRetry)
+                    {
+                        freeCoinsLoadMayRetry = false;
+                        Invoke(nameof(RetryFreeCoinsLoad), 3f);
+                    }
+
                     return;
                 }
 
                 SetRewardedAdForPlacement(slotPlacement, ad);
                 RegisterFullScreenCallbacks(ad, slotPlacement);
+                if (freeCoins)
+                {
+                    freeCoinsLoadMayRetry = true;
+                    Debug.Log("[FreeCoinsAd] next ad loaded");
+                }
 
                 Debug.Log(
                     "Rewarded ad loaded placement=" + analyticsPlacement +
                     " slot=" + slotPlacement +
                     " unit=" + adUnitId);
+                NotifyRewardedAvailabilityChanged();
             });
         });
+    }
+
+    private void RetryFreeCoinsLoad()
+    {
+        Debug.Log("[FreeCoinsAd] reload requested");
+        LoadRewardedAdForPlacement(PlacementShopFreeCoins, allowRetry: false);
+    }
+
+    private void NotifyRewardedAvailabilityChanged()
+    {
+        RewardedAvailabilityChanged?.Invoke();
     }
 
     /// <summary>
@@ -356,6 +461,11 @@ public class AdsManager : MonoBehaviour
             Debug.Log(
                 "Rewarded ad already in progress — rejecting placement=" +
                 analyticsPlacement);
+            if (IsShopFreeCoinsPlacement(analyticsPlacement))
+            {
+                Debug.Log("[FreeCoinsAd] show rejected already in progress");
+            }
+
             onFlowEnded?.Invoke();
             return;
         }
@@ -369,8 +479,18 @@ public class AdsManager : MonoBehaviour
         {
             Debug.Log(
                 "Rewarded ad not ready placement=" + analyticsPlacement);
+            if (IsShopFreeCoinsPlacement(analyticsPlacement))
+            {
+                Debug.Log("[FreeCoinsAd] show failed not ready");
+            }
+
             onFlowEnded?.Invoke();
             return;
+        }
+
+        if (IsShopFreeCoinsPlacement(analyticsPlacement))
+        {
+            Debug.Log("[FreeCoinsAd] show requested");
         }
 
         pendingRewardedFlowEnded = onFlowEnded;
@@ -392,6 +512,10 @@ public class AdsManager : MonoBehaviour
 
                 rewardCallbackInvoked = true;
                 Debug.Log("Reward earned placement=" + analyticsPlacement);
+                if (IsShopFreeCoinsPlacement(analyticsPlacement))
+                {
+                    Debug.Log("[FreeCoinsAd] reward earned");
+                }
                 GameAnalytics.LogRewardedAdCompleted(analyticsPlacement);
                 onRewardEarned?.Invoke();
             });
@@ -423,9 +547,14 @@ public class AdsManager : MonoBehaviour
         {
             RunOnMainThread(() =>
             {
+                if (IsShopFreeCoinsPlacement(boundSlot))
+                {
+                    Debug.Log("[FreeCoinsAd] ad closed");
+                }
+
                 DestroyRewardedAdForPlacement(boundSlot);
-                NotifyRewardedFlowEnded();
                 LoadRewardedAdForPlacement(boundSlot);
+                NotifyRewardedFlowEnded();
             });
         };
 
@@ -436,10 +565,14 @@ public class AdsManager : MonoBehaviour
                 Debug.Log(
                     "Rewarded ad failed to show placement slot=" + boundSlot +
                     ": " + error);
+                if (IsShopFreeCoinsPlacement(boundSlot))
+                {
+                    Debug.Log("[FreeCoinsAd] show failed");
+                }
 
                 DestroyRewardedAdForPlacement(boundSlot);
-                NotifyRewardedFlowEnded();
                 LoadRewardedAdForPlacement(boundSlot);
+                NotifyRewardedFlowEnded();
             });
         };
     }

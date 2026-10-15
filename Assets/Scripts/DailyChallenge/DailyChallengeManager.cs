@@ -208,6 +208,7 @@ public class DailyChallengeManager : MonoBehaviour
 
         if (startInFlight)
         {
+            Debug.Log("[DailyStart] manager ignored operationAlreadyRunning=true");
             return false;
         }
 
@@ -219,6 +220,7 @@ public class DailyChallengeManager : MonoBehaviour
             if (cachedState != DailyChallengeState.Available)
             {
                 LastBackendError = "Attempt already used.";
+                Debug.Log("[DailyStart] blocked state=" + cachedState);
                 return false;
             }
 
@@ -227,8 +229,14 @@ public class DailyChallengeManager : MonoBehaviour
                 return CommitLocalStart();
             }
 
+            Debug.Log(
+                "[DailyStart] getDailyChallenge begin firebaseReady=" + IsOnlineReady +
+                " authReady=" + DailyChallengeIdentityService.IsReady);
             DailyChallengeAuthorityResult challengeResult =
                 await DailyChallengeAuthority.Current.GetCurrentChallengeAsync();
+            Debug.Log(
+                "[DailyStart] getDailyChallenge end success=" + challengeResult.Success +
+                " error=" + challengeResult.ErrorMessage);
             if (!challengeResult.Success || !challengeResult.Challenge.IsValid)
             {
                 LastBackendError = string.IsNullOrEmpty(challengeResult.ErrorMessage)
@@ -250,9 +258,13 @@ public class DailyChallengeManager : MonoBehaviour
                 return false;
             }
 
+            Debug.Log("[DailyStart] startDailyAttempt begin");
             DailyChallengeAuthorityResult claim =
                 await DailyChallengeAuthority.Current.TryStartAttemptAsync(
                     challengeResult.Challenge);
+            Debug.Log(
+                "[DailyStart] startDailyAttempt end success=" + claim.Success +
+                " error=" + claim.ErrorMessage);
             if (!claim.Success)
             {
                 ApplyServerAttemptToLocalCache(claim.Attempt);

@@ -2661,7 +2661,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 420, y: 320}
+  m_SizeDelta: {x: 420, y: 600}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &251244669
 MonoBehaviour:
@@ -25255,7 +25255,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 100}
+  m_AnchoredPosition: {x: 0, y: 256}
   m_SizeDelta: {x: 380, y: 48}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1407395311
@@ -25278,7 +25278,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: DAILY WINNER
+  m_text: DAILY CHALLENGE RESULTS
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 2c91d7ab60b3e9e43ba878f2b7f64a83, type: 2}
   m_sharedMaterial: {fileID: -4434231809896357490, guid: 2c91d7ab60b3e9e43ba878f2b7f64a83, type: 2}
@@ -28288,7 +28288,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -100}
+  m_AnchoredPosition: {x: 0, y: -256}
   m_SizeDelta: {x: 280, y: 48}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1803999268
@@ -28990,8 +28990,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -20}
-  m_SizeDelta: {x: 380, y: 40}
+  m_AnchoredPosition: {x: 0, y: 10}
+  m_SizeDelta: {x: 380, y: 420}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1895915442
 MonoBehaviour:

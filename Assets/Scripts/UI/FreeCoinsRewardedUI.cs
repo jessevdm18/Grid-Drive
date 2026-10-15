@@ -33,6 +33,8 @@ public class FreeCoinsRewardedUI : MonoBehaviour
     private bool isAdFlowActive;
     private bool rewardHandledThisFlow;
     private bool offerPromptAfterFlow;
+    private AdsManager hookedAds;
+    private bool loadKickRequested;
 
     /// <summary>
     /// Remaining free coin videos for the current local calendar day.
@@ -86,6 +88,40 @@ public class FreeCoinsRewardedUI : MonoBehaviour
     private void OnEnable()
     {
         ResolveRefs();
+        HookAds();
+        loadKickRequested = false;
+        Refresh();
+        EnsureNextAdLoading();
+    }
+
+    private void OnDisable()
+    {
+        if (hookedAds != null)
+        {
+            hookedAds.RewardedAvailabilityChanged -= OnRewardedAvailabilityChanged;
+            hookedAds = null;
+        }
+    }
+
+    private void HookAds()
+    {
+        ResolveRefs();
+        if (adsManager == null || hookedAds == adsManager)
+        {
+            return;
+        }
+
+        if (hookedAds != null)
+        {
+            hookedAds.RewardedAvailabilityChanged -= OnRewardedAvailabilityChanged;
+        }
+
+        hookedAds = adsManager;
+        hookedAds.RewardedAvailabilityChanged += OnRewardedAvailabilityChanged;
+    }
+
+    private void OnRewardedAvailabilityChanged()
+    {
         Refresh();
     }
 
@@ -93,9 +129,13 @@ public class FreeCoinsRewardedUI : MonoBehaviour
     public void Refresh()
     {
         EnsureDayRollover();
+        HookAds();
 
         int remaining = GetRemainingToday();
-        bool canWatch = remaining > 0 && !isAdFlowActive;
+        int used = GetUsedToday();
+        bool adReady = adsManager != null && adsManager.IsRewardedAdReady(PlacementId);
+        bool loading = adsManager != null && adsManager.IsRewardedLoadInProgress(PlacementId);
+        bool canWatch = remaining > 0 && !isAdFlowActive && adReady;
 
         if (availabilityText != null)
         {
@@ -104,19 +144,78 @@ public class FreeCoinsRewardedUI : MonoBehaviour
 
         if (ctaLabelText != null)
         {
-            ctaLabelText.text = remaining > 0 ? CtaWatchLabel : CtaTomorrowLabel;
+            if (remaining <= 0)
+            {
+                ctaLabelText.text = CtaTomorrowLabel;
+            }
+            else if (!adReady && !isAdFlowActive)
+            {
+                ctaLabelText.text = "LOADING";
+            }
+            else
+            {
+                ctaLabelText.text = CtaWatchLabel;
+            }
         }
 
         if (ctaButton != null)
         {
             ctaButton.interactable = canWatch;
         }
+
+        if (adReady)
+        {
+            loadKickRequested = false;
+        }
+
+        Debug.Log(
+            "[FreeCoinsAd] UI refreshed usedToday=" + used +
+            " remaining=" + remaining +
+            " interactable=" + canWatch +
+            " adReady=" + adReady +
+            " loadInProgress=" + loading +
+            " showInProgress=" + isAdFlowActive);
+    }
+
+    /// <summary>
+    /// Starts the existing loader once when this card opens and no ad is ready.
+    /// Later refreshes do not call load again; AdsManager reloads after each show.
+    /// </summary>
+    private void EnsureNextAdLoading()
+    {
+        if (loadKickRequested || isAdFlowActive || GetRemainingToday() <= 0)
+        {
+            return;
+        }
+
+        if (adsManager == null)
+        {
+            return;
+        }
+
+        if (adsManager.IsRewardedAdReady(PlacementId) ||
+            adsManager.IsRewardedLoadInProgress(PlacementId))
+        {
+            return;
+        }
+
+        Debug.Log("[FreeCoinsAd] reload requested");
+        adsManager.LoadRewardedAdForPlacement(PlacementId);
+        loadKickRequested = adsManager.IsRewardedLoadInProgress(PlacementId);
     }
 
     private void OnWatchAdClicked()
     {
+        bool interactable = ctaButton == null || ctaButton.interactable;
+        Debug.Log(
+            "[FreeCoinsAd] button tapped usedToday=" + GetUsedToday() +
+            " remaining=" + GetRemainingToday() +
+            " interactable=" + interactable +
+            " showInProgress=" + isAdFlowActive);
+
         if (isAdFlowActive)
         {
+            Debug.Log("[FreeCoinsAd] ignored show in progress");
             return;
         }
 
@@ -129,6 +228,7 @@ public class FreeCoinsRewardedUI : MonoBehaviour
         }
 
         ResolveRefs();
+        HookAds();
 
         if (adsManager == null)
         {
@@ -144,14 +244,20 @@ public class FreeCoinsRewardedUI : MonoBehaviour
 
         if (!adsManager.IsRewardedAdReady(PlacementId))
         {
-            Debug.LogWarning("FreeCoinsRewardedUI: rewarded ad not ready.");
+            Debug.Log("[FreeCoinsAd] ignored ad not ready");
+            Refresh();
             return;
         }
 
         isAdFlowActive = true;
         rewardHandledThisFlow = false;
-        Refresh();
+        if (ctaButton != null)
+        {
+            ctaButton.interactable = false;
+        }
 
+        Refresh();
+        Debug.Log("[FreeCoinsAd] show requested");
         adsManager.ShowRewardedAd(OnRewardEarned, PlacementId, OnAdFlowEnded);
     }
 
@@ -184,6 +290,10 @@ public class FreeCoinsRewardedUI : MonoBehaviour
 
         coinManager.AddCoins(RewardAmount);
         IncrementUsedToday();
+        Debug.Log(
+            "[FreeCoinsAd] reward granted amount=" + RewardAmount +
+            " usedToday=" + GetUsedToday() +
+            " remaining=" + GetRemainingToday());
         if (GetRemainingToday() <= 0)
         {
             offerPromptAfterFlow = true;
@@ -196,6 +306,7 @@ public class FreeCoinsRewardedUI : MonoBehaviour
     private void OnAdFlowEnded()
     {
         isAdFlowActive = false;
+        Debug.Log("[FreeCoinsAd] ad closed flow ended");
         Refresh();
         if (!offerPromptAfterFlow)
         {

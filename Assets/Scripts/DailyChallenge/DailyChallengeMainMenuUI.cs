@@ -200,13 +200,19 @@ public class DailyChallengeMainMenuUI : MonoBehaviour
             }
             else
 #endif
-            if (needsConnect)
+            if (needsConnect || syncInFlight)
             {
                 statusText.text = "CONNECT TO PLAY";
             }
             else if (available && !hasEligible)
             {
                 statusText.text = "UNAVAILABLE";
+            }
+            else if (available &&
+                     !startInFlight &&
+                     !string.IsNullOrEmpty(manager.LastBackendError))
+            {
+                statusText.text = manager.LastBackendError;
             }
             else if (available)
             {
@@ -260,11 +266,14 @@ public class DailyChallengeMainMenuUI : MonoBehaviour
                 manager.RequiresOnlineToStart ||
 #endif
                 available || needsConnect);
+            // RETRY stays available after a failed sync. While a sync or start is
+            // already running the button is disabled so a tap cannot be swallowed.
             playButton.interactable =
 #if UNITY_EDITOR
                 manager.RequiresOnlineToStart ? !startInFlight :
 #endif
-                (canStart || needsConnect);
+                ((canStart && !syncInFlight) ||
+                 (needsConnect && !syncInFlight && !startInFlight));
             var playLabel = playButton.GetComponentInChildren<TextMeshProUGUI>(true);
             if (playLabel != null)
             {
@@ -300,6 +309,11 @@ public class DailyChallengeMainMenuUI : MonoBehaviour
             {
                 lbLabel.text = "LEADERBOARD";
             }
+        }
+
+        if (startChallengeButton != null)
+        {
+            startChallengeButton.interactable = canStart && !syncInFlight;
         }
 
         if (countdownLabelText != null)
@@ -364,14 +378,26 @@ public class DailyChallengeMainMenuUI : MonoBehaviour
         }
 #endif
 
+        if (syncInFlight || startInFlight)
+        {
+            Debug.Log(
+                "[DailyStart] play ignored operationAlreadyRunning=true syncInFlight=" +
+                syncInFlight + " startInFlight=" + startInFlight);
+            return;
+        }
+
         if (manager.NeedsConnectToPlay)
         {
+            Debug.Log("[DailyStart] connect retry");
             _ = SyncAuthorityOnEnableAsync();
             return;
         }
 
         if (!manager.IsAttemptAvailable)
         {
+            Debug.Log(
+                "[DailyStart] play ignored state=" + manager.CurrentState +
+                " firebaseReady=" + manager.IsOnlineReady);
             return;
         }
 
@@ -402,9 +428,24 @@ public class DailyChallengeMainMenuUI : MonoBehaviour
 
     private void OnStartChallengeClicked()
     {
-        if (manager == null || startInFlight)
+        bool buttonInteractable = startChallengeButton == null || startChallengeButton.interactable;
+        Debug.Log(
+            "[DailyStart] button tapped interactable=" + buttonInteractable +
+            " operationAlreadyRunning=" + startInFlight +
+            " syncInFlight=" + syncInFlight +
+            " firebaseReady=" + (manager != null && manager.IsOnlineReady) +
+            " authReady=" + DailyChallengeIdentityService.IsReady +
+            " state=" + (manager != null ? manager.CurrentState.ToString() : "none"));
+
+        if (manager == null || startInFlight || syncInFlight || !manager.IsAttemptAvailable)
         {
+            Debug.Log("[DailyStart] ignored");
             return;
+        }
+
+        if (startChallengeButton != null)
+        {
+            startChallengeButton.interactable = false;
         }
 
         _ = StartChallengeAsync();
@@ -423,6 +464,7 @@ public class DailyChallengeMainMenuUI : MonoBehaviour
         }
 
         syncInFlight = true;
+        RefreshPresentation();
         try
         {
             await manager.SyncFromAuthorityAsync();
@@ -437,12 +479,53 @@ public class DailyChallengeMainMenuUI : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Another modal is covering Main Menu. Do not show or acknowledge a result underneath it.
+    /// </summary>
+    private static bool IsResultPresentationBlocked()
+    {
+        if (SceneTransition.IsTransitioning)
+        {
+            return true;
+        }
+
+        if (NotificationPromptCoordinator.IsShowing)
+        {
+            return true;
+        }
+
+        if (AnalyticsConsentPopup.Instance != null && AnalyticsConsentPopup.Instance.IsVisible)
+        {
+            return true;
+        }
+
+        OutOfLivesUI outOfLives = OutOfLivesUI.FindInLoadedScenes();
+        if (outOfLives != null && outOfLives.IsOpen)
+        {
+            return true;
+        }
+
+        MainMenuSettingsUI settings = FindAnyObjectByType<MainMenuSettingsUI>();
+        if (settings != null && settings.IsOpen)
+        {
+            return true;
+        }
+
+        AdsManager ads = FindAnyObjectByType<AdsManager>();
+        return ads != null && ads.IsFullScreenAdActive;
+    }
+
     private async Task SyncDailyRewardsAsync()
     {
         try
         {
             bool hasPending = await DailyRewardService.SyncPendingAsync();
             DailyRewardUI rewardUi = DailyRewardUI.FindInScene();
+            if (IsResultPresentationBlocked())
+            {
+                return;
+            }
+
             bool showedReward = false;
             if (hasPending)
             {
@@ -504,25 +587,45 @@ public class DailyChallengeMainMenuUI : MonoBehaviour
 
         startInFlight = true;
         RefreshPresentation();
+        bool started = false;
         try
         {
             bool ok = await manager.TryCommitStartAndArmGameplayAsync();
+            if (!ok)
+            {
+                Debug.Log(
+                    "[DailyStart] start failed error=" +
+                    (manager != null ? manager.LastBackendError : "none"));
+                RefreshPresentation();
+                bool canRetryStart = manager != null &&
+                                     manager.IsAttemptAvailable &&
+                                     !manager.NeedsConnectToPlay;
+                if (!canRetryStart && confirmRoot != null)
+                {
+                    confirmRoot.SetActive(false);
+                }
+
+                return;
+            }
+
+            started = true;
             if (confirmRoot != null)
             {
                 confirmRoot.SetActive(false);
             }
 
-            if (!ok)
-            {
-                RefreshPresentation();
-                return;
-            }
-
+            Debug.Log("[DailyStart] scene load requested");
             SceneTransition.LoadScene("Gameplay");
         }
         finally
         {
             startInFlight = false;
+            if (!started)
+            {
+                RefreshPresentation();
+            }
+
+            Debug.Log("[DailyStart] operation finished success=" + started);
         }
     }
 

@@ -433,17 +433,54 @@ namespace GooglePlayGames.Android
                 AndroidTaskUtils.AddOnSuccessListener<AndroidJavaObject>(
                     task, annotatedData =>
                     {
-                        using (var playersBuffer = annotatedData.Call<AndroidJavaObject>("get"))
+                        AndroidJavaObject playersBuffer = null;
+                        var bufferReleased = false;
+                        try
                         {
-                            AndroidJavaObject metadata = playersBuffer.Call<AndroidJavaObject>("getMetadata");
+                            playersBuffer = annotatedData != null
+                                ? annotatedData.Call<AndroidJavaObject>("get")
+                                : null;
+                            if (playersBuffer == null)
+                            {
+                                // An empty community list can arrive as a null buffer.
+                                // Completing here avoids leaving the UI on LOADING FRIENDS.
+                                mFriends = new IUserProfile[0];
+                                mLastLoadFriendsStatus = LoadFriendsStatus.Completed;
+                                InvokeCallbackOnGameThread(callback, LoadFriendsStatus.Completed);
+                                return;
+                            }
+
+                            AndroidJavaObject metadata =
+                                playersBuffer.Call<AndroidJavaObject>("getMetadata");
                             var areMoreFriendsToLoad = metadata != null &&
-                                                       metadata.Call<AndroidJavaObject>("getString",
-                                                           "next_page_token") != null;
+                                                       metadata.Call<AndroidJavaObject>(
+                                                           "getString", "next_page_token") != null;
+                            // playersBufferToArray releases the buffer.
                             mFriends = AndroidJavaConverter.playersBufferToArray(playersBuffer);
+                            bufferReleased = true;
                             mLastLoadFriendsStatus = areMoreFriendsToLoad
                                 ? LoadFriendsStatus.LoadMore
                                 : LoadFriendsStatus.Completed;
                             InvokeCallbackOnGameThread(callback, mLastLoadFriendsStatus);
+                        }
+                        catch (Exception)
+                        {
+                            if (playersBuffer != null && !bufferReleased)
+                            {
+                                try
+                                {
+                                    playersBuffer.Call("release");
+                                }
+                                catch (Exception)
+                                {
+                                }
+
+                                playersBuffer.Dispose();
+                            }
+
+                            mFriends = new IUserProfile[0];
+                            mLastLoadFriendsStatus = LoadFriendsStatus.InternalError;
+                            InvokeCallbackOnGameThread(callback, LoadFriendsStatus.InternalError);
                         }
                     });
                 AndroidTaskUtils.AddOnFailureListener(task, exception =>
@@ -567,13 +604,29 @@ namespace GooglePlayGames.Android
             {
                 AndroidTaskUtils.AddOnSuccessListener<AndroidJavaObject>(task, annotatedData =>
                 {
-                    AndroidJavaObject currentPlayerInfo =
-                        annotatedData.Call<AndroidJavaObject>("get").Call<AndroidJavaObject>(
-                            "getCurrentPlayerInfo");
-                    int playerListVisibility =
-                        currentPlayerInfo.Call<int>("getFriendsListVisibilityStatus");
-                    InvokeCallbackOnGameThread(callback,
-                        AndroidJavaConverter.ToFriendsListVisibilityStatus(playerListVisibility));
+                    try
+                    {
+                        AndroidJavaObject player = annotatedData != null
+                            ? annotatedData.Call<AndroidJavaObject>("get")
+                            : null;
+                        AndroidJavaObject currentPlayerInfo = player != null
+                            ? player.Call<AndroidJavaObject>("getCurrentPlayerInfo")
+                            : null;
+                        if (currentPlayerInfo == null)
+                        {
+                            InvokeCallbackOnGameThread(callback, FriendsListVisibilityStatus.Unknown);
+                            return;
+                        }
+
+                        int playerListVisibility =
+                            currentPlayerInfo.Call<int>("getFriendsListVisibilityStatus");
+                        InvokeCallbackOnGameThread(callback,
+                            AndroidJavaConverter.ToFriendsListVisibilityStatus(playerListVisibility));
+                    }
+                    catch (Exception)
+                    {
+                        InvokeCallbackOnGameThread(callback, FriendsListVisibilityStatus.NetworkError);
+                    }
                 });
                 AndroidTaskUtils.AddOnFailureListener(task, exception =>
                 {

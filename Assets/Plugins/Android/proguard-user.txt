@@ -24,3 +24,11 @@
 -keep class com.google.android.gms.common.api.** { *; }
 -keep class com.google.android.gms.common.data.DataBufferUtils { *; }
 -keep class com.google.android.gms.nearby.** { *; }
+
+# Unity calls these by class name through AndroidJavaClass.
+# Release R8 otherwise keeps only the manifest receiver and removes the notifier.
+-keep class com.raddergames.griddrive.notifications.LivesFullNotifier { *; }
+-keep class com.raddergames.griddrive.notifications.LivesFullReceiver { *; }
+-keep class com.raddergames.griddrive.notifications.FreeCoinsNotifier { *; }
+-keep class com.raddergames.griddrive.notifications.FreeCoinsReceiver { *; }
+-keep class com.raddergames.griddrive.notifications.NotificationRelevance { *; }

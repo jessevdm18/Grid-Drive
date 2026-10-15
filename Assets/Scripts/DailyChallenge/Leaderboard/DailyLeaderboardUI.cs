@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using TMPro;
@@ -37,16 +38,23 @@ public class DailyLeaderboardUI : MonoBehaviour
     private bool showingFriends;
     private int friendsGeneration;
     private bool friendsConsentDeclined;
+    private bool friendsBusy;
     private FriendsAction friendsAction;
+    private FriendsAction friendsSecondaryAction;
     private Button friendsActionButton;
     private TextMeshProUGUI friendsActionLabel;
+    private Button friendsSecondaryButton;
+    private TextMeshProUGUI friendsSecondaryLabel;
 
     private enum FriendsAction
     {
         None = 0,
         Link = 1,
         Continue = 2,
-        Retry = 3
+        Retry = 3,
+        Refresh = 4,
+        OpenPlayGames = 5,
+        OpenPlayGamesSettings = 6
     }
 
     private void Awake()
@@ -124,10 +132,7 @@ public class DailyLeaderboardUI : MonoBehaviour
             target.SetActive(false);
         }
 
-        if (friendsComingSoonRoot != null)
-        {
-            friendsComingSoonRoot.SetActive(false);
-        }
+        HideFriendsOverlay();
     }
 
     public void Refresh()
@@ -316,6 +321,11 @@ public class DailyLeaderboardUI : MonoBehaviour
 
     private void OnFriendsTab()
     {
+        if (friendsBusy)
+        {
+            return;
+        }
+
         showingFriends = true;
         friendsGeneration++;
         _ = ShowFriendsAsync(friendsGeneration, requestConsent: false);
@@ -323,155 +333,258 @@ public class DailyLeaderboardUI : MonoBehaviour
 
     private async Task ShowFriendsAsync(int generation, bool requestConsent)
     {
-        ClearRows();
-        if (pinnedPlayerRow != null)
-        {
-            pinnedPlayerRow.gameObject.SetActive(false);
-        }
-
-        if (statusText != null)
-        {
-            statusText.text = string.Empty;
-        }
-
-        ShowFriendsOverlay("LOADING FRIENDS", null, null, FriendsAction.None);
-        await Task.Yield();
-
-#if UNITY_EDITOR
-        if (generation != friendsGeneration || !showingFriends)
+        if (friendsBusy)
         {
             return;
         }
 
-        ShowFriendsOverlay(
-            "FRIENDS COMPARISON IS AVAILABLE ON ANDROID",
-            null,
-            null,
-            FriendsAction.None);
-#else
-        if (!DailyChallengeAuthority.IsOnlineMode)
+        friendsBusy = true;
+        try
         {
-            ShowFriendsOverlay("NO FRIEND RESULTS YET", null, null, FriendsAction.None);
-            return;
-        }
+            ClearRows();
+            if (pinnedPlayerRow != null)
+            {
+                pinnedPlayerRow.gameObject.SetActive(false);
+            }
 
-        await DailyChallengeIdentityService.EnsureSignedInAsync();
-        await DailyChallengeIdentityService.RefreshAccountStateAsync();
-        if (generation != friendsGeneration || !showingFriends)
-        {
-            return;
-        }
-
-        if (!DailyChallengeIdentityService.IsGooglePlayLinked)
-        {
-            ShowFriendsOverlay(
-                "LINK GOOGLE PLAY TO COMPARE WITH FRIENDS",
-                null,
-                "LINK GOOGLE PLAY",
-                FriendsAction.Link);
-            return;
-        }
-
-        if (friendsConsentDeclined && !requestConsent)
-        {
-            ShowFriendsOverlay(
-                "FRIENDS ACCESS NOT ENABLED",
-                "You can try again from this tab.",
-                "TRY AGAIN",
-                FriendsAction.Retry);
-            return;
-        }
-
-        await DailyFriendsLeaderboardClient.RegisterLinkedPlayerAsync();
-        if (generation != friendsGeneration || !showingFriends)
-        {
-            return;
-        }
-
-        PlayGamesFriendsAccess.Result access = await PlayGamesFriendsAccess.LoadAsync(requestConsent);
-        if (generation != friendsGeneration || !showingFriends)
-        {
-            return;
-        }
-
-        if (access.Status == PlayGamesFriendsAccess.Status.ConsentRequired)
-        {
-            ShowFriendsOverlay(
-                "CONNECT WITH FRIENDS",
-                "Allow Google Play Games access to your friends to compare Daily Challenge scores.",
-                "CONTINUE",
-                FriendsAction.Continue);
-            return;
-        }
-
-        if (access.Status == PlayGamesFriendsAccess.Status.Denied ||
-            access.Status == PlayGamesFriendsAccess.Status.Unavailable)
-        {
-            friendsConsentDeclined = true;
-            ShowFriendsOverlay(
-                "FRIENDS ACCESS NOT ENABLED",
-                "You can try again from this tab.",
-                "TRY AGAIN",
-                FriendsAction.Retry);
-            return;
-        }
-
-        if (access.Status != PlayGamesFriendsAccess.Status.Loaded)
-        {
-            ShowFriendsOverlay(
-                "COULD NOT LOAD FRIEND RESULTS",
-                null,
-                "TRY AGAIN",
-                FriendsAction.Retry);
-            return;
-        }
-
-        friendsConsentDeclined = false;
-        DailyChallengeManager manager = DailyChallengeManager.EnsureInstance();
-        if (manager != null)
-        {
-            manager.EnsureDaySynced();
-        }
-
-        string dayId = manager != null ? manager.CurrentDayId : string.Empty;
-        DailyLeaderboardSnapshot snap =
-            await DailyFriendsLeaderboardClient.FetchAsync(dayId, access.PlayerIds);
-        if (generation != friendsGeneration || !showingFriends || this == null)
-        {
-            return;
-        }
-
-        if (snap == null)
-        {
-            ShowFriendsOverlay(
-                "COULD NOT LOAD FRIEND RESULTS",
-                null,
-                "TRY AGAIN",
-                FriendsAction.Retry);
-            return;
-        }
-
-        ApplyFriendsSnapshot(snap);
-#endif
-    }
-
-    private void ApplyFriendsSnapshot(DailyLeaderboardSnapshot snapshot)
-    {
-        bool hasRows = snapshot.Entries != null && snapshot.Entries.Count > 0;
-        if (!hasRows)
-        {
-            ShowFriendsOverlay("NO FRIEND RESULTS YET", null, null, FriendsAction.None);
             if (statusText != null)
             {
                 statusText.text = string.Empty;
             }
 
+#if !UNITY_EDITOR
+            if (friendsConsentDeclined && !requestConsent)
+            {
+                ShowFriendsAccessDisabled();
+                return;
+            }
+#endif
+
+            ShowFriendsOverlay("LOADING FRIENDS", null, null, FriendsAction.None);
+            await Task.Yield();
+
+#if UNITY_EDITOR
+            if (generation != friendsGeneration || !showingFriends)
+            {
+                return;
+            }
+
+            ShowFriendsOverlay(
+                "FRIENDS COMPARISON IS AVAILABLE ON ANDROID",
+                null,
+                null,
+                FriendsAction.None);
+#else
+            try
+            {
+                if (!DailyChallengeAuthority.IsOnlineMode)
+                {
+                    ShowFriendsOverlay(
+                        "NO FRIEND RESULTS YET",
+                        "None of your Play Games friends have a Daily Challenge result yet.",
+                        "REFRESH",
+                        FriendsAction.Refresh);
+                    return;
+                }
+
+                await DailyChallengeIdentityService.EnsureSignedInAsync();
+                await DailyChallengeIdentityService.RefreshAccountStateAsync();
+                if (generation != friendsGeneration || !showingFriends)
+                {
+                    return;
+                }
+
+                if (!DailyChallengeIdentityService.IsGooglePlayLinked)
+                {
+                    ShowFriendsOverlay(
+                        "LINK GOOGLE PLAY TO COMPARE WITH FRIENDS",
+                        null,
+                        "LINK GOOGLE PLAY",
+                        FriendsAction.Link);
+                    return;
+                }
+
+                await DailyFriendsLeaderboardClient.RegisterLinkedPlayerAsync();
+                if (generation != friendsGeneration || !showingFriends)
+                {
+                    return;
+                }
+
+                PlayGamesFriendsAccess.Result access =
+                    await PlayGamesFriendsAccess.LoadAsync(requestConsent);
+                if (generation != friendsGeneration || !showingFriends)
+                {
+                    return;
+                }
+
+                if (access.Status == PlayGamesFriendsAccess.Status.ConsentRequired)
+                {
+                    ShowFriendsOverlay(
+                        "CONNECT WITH FRIENDS",
+                        "Allow Google Play Games access to your gaming community to compare Daily Challenge scores.",
+                        "CONTINUE",
+                        FriendsAction.Continue);
+                    return;
+                }
+
+                if (access.Status == PlayGamesFriendsAccess.Status.Denied ||
+                    access.Status == PlayGamesFriendsAccess.Status.Unavailable ||
+                    access.Status == PlayGamesFriendsAccess.Status.NotAuthenticated)
+                {
+                    friendsConsentDeclined =
+                        access.Status != PlayGamesFriendsAccess.Status.NotAuthenticated;
+                    ShowFriendsAccessDisabled();
+                    return;
+                }
+
+                if (access.Status != PlayGamesFriendsAccess.Status.Loaded)
+                {
+                    ShowFriendsLoadError();
+                    return;
+                }
+
+                friendsConsentDeclined = false;
+                if (access.PlayerIds == null || access.PlayerIds.Count == 0)
+                {
+                    ShowFriendsOverlay(
+                        "NO FRIENDS YET",
+                        "Follow players in Google Play Games to compare Daily Challenge scores.",
+                        "OPEN PLAY GAMES",
+                        FriendsAction.OpenPlayGames,
+                        "REFRESH",
+                        FriendsAction.Refresh);
+                    return;
+                }
+
+                DailyChallengeManager manager = DailyChallengeManager.EnsureInstance();
+                if (manager != null)
+                {
+                    manager.EnsureDaySynced();
+                }
+
+                string dayId = manager != null ? manager.CurrentDayId : string.Empty;
+                DailyLeaderboardSnapshot snap =
+                    await DailyFriendsLeaderboardClient.FetchAsync(dayId, access.PlayerIds);
+                if (generation != friendsGeneration || !showingFriends || this == null)
+                {
+                    return;
+                }
+
+                if (snap == null)
+                {
+                    ShowFriendsLoadError();
+                    return;
+                }
+
+                ApplyFriendsSnapshot(snap);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarning("[Friends] load failed: " + ex.GetType().Name);
+                if (generation == friendsGeneration && showingFriends && this != null)
+                {
+                    ShowFriendsLoadError();
+                }
+            }
+#endif
+        }
+        finally
+        {
+            friendsBusy = false;
+        }
+    }
+
+    private void ShowFriendsAccessDisabled()
+    {
+        if (PlayGamesFriendsAccess.CanOpenPlayGamesSettings())
+        {
+            ShowFriendsOverlay(
+                "FRIENDS ACCESS NOT ENABLED",
+                null,
+                "TRY AGAIN",
+                FriendsAction.Retry,
+                "OPEN PLAY GAMES SETTINGS",
+                FriendsAction.OpenPlayGamesSettings);
+            return;
+        }
+
+        ShowFriendsOverlay(
+            "FRIENDS ACCESS NOT ENABLED",
+            null,
+            "TRY AGAIN",
+            FriendsAction.Retry);
+    }
+
+    private void ShowFriendsLoadError()
+    {
+        ShowFriendsOverlay(
+            "COULD NOT LOAD FRIEND RESULTS",
+            null,
+            "RETRY",
+            FriendsAction.Retry);
+    }
+
+    private void ApplyFriendsSnapshot(DailyLeaderboardSnapshot snapshot)
+    {
+        int otherResults = 0;
+        if (snapshot != null && snapshot.Entries != null)
+        {
+            for (int i = 0; i < snapshot.Entries.Count; i++)
+            {
+                if (!snapshot.Entries[i].IsCurrentPlayer)
+                {
+                    otherResults++;
+                }
+            }
+        }
+
+        const string noResultsBody =
+            "None of your Play Games friends have a Daily Challenge result yet.";
+        bool hasPlayer = snapshot != null && snapshot.HasCurrentPlayer;
+        if (otherResults == 0)
+        {
+            if (hasPlayer)
+            {
+                if (friendsComingSoonRoot != null)
+                {
+                    friendsComingSoonRoot.SetActive(false);
+                }
+
+                RenderFriendsRows(snapshot);
+                if (statusText != null)
+                {
+                    statusText.text = "NO FRIEND RESULTS YET\n" + noResultsBody;
+                }
+
+                ShowFriendsButtons(
+                    "REFRESH",
+                    FriendsAction.Refresh,
+                    null,
+                    FriendsAction.None,
+                    parentToPanel: true);
+                return;
+            }
+
+            ShowFriendsOverlay(
+                "NO FRIEND RESULTS YET",
+                noResultsBody,
+                "REFRESH",
+                FriendsAction.Refresh);
             return;
         }
 
         HideFriendsOverlay();
+        RenderFriendsRows(snapshot);
+        if (statusText != null)
+        {
+            statusText.text = snapshot.StatusMessage ?? string.Empty;
+        }
+    }
+
+    private void RenderFriendsRows(DailyLeaderboardSnapshot snapshot)
+    {
         ClearRows();
-        if (rowPrefab != null && contentRoot != null)
+        if (snapshot != null && snapshot.Entries != null && rowPrefab != null && contentRoot != null)
         {
             for (int i = 0; i < snapshot.Entries.Count; i++)
             {
@@ -482,15 +595,11 @@ public class DailyLeaderboardUI : MonoBehaviour
             }
         }
 
-        if (statusText != null)
-        {
-            statusText.text = snapshot.StatusMessage ?? string.Empty;
-        }
-
         if (pinnedPlayerRow != null)
         {
-            pinnedPlayerRow.gameObject.SetActive(snapshot.HasCurrentPlayer);
-            if (snapshot.HasCurrentPlayer)
+            bool showPinned = snapshot != null && snapshot.HasCurrentPlayer;
+            pinnedPlayerRow.gameObject.SetActive(showPinned);
+            if (showPinned)
             {
                 pinnedPlayerRow.Bind(snapshot.CurrentPlayerEntry, showSimulatedMarker: false);
             }
@@ -502,27 +611,65 @@ public class DailyLeaderboardUI : MonoBehaviour
         }
     }
 
-    private async Task OnFriendsActionAsync()
+    private async Task OnFriendsActionAsync(FriendsAction action)
     {
-        FriendsAction action = friendsAction;
+        if (action == FriendsAction.OpenPlayGames)
+        {
+            PlayGamesFriendsAccess.OpenPlayGames();
+            return;
+        }
+
+        if (action == FriendsAction.OpenPlayGamesSettings)
+        {
+            PlayGamesFriendsAccess.OpenPlayGamesSettings();
+            return;
+        }
+
+        if (action == FriendsAction.None || friendsBusy)
+        {
+            return;
+        }
+
         if (action == FriendsAction.Link)
         {
-            ShowFriendsOverlay("LOADING FRIENDS", null, null, FriendsAction.None);
-            AccountLinkOutcome outcome = await DailyChallengeIdentityService.LinkGooglePlayAsync();
-            if (!showingFriends)
+            friendsBusy = true;
+            try
             {
+                ShowFriendsOverlay("LOADING FRIENDS", null, null, FriendsAction.None);
+                AccountLinkOutcome outcome = await DailyChallengeIdentityService.LinkGooglePlayAsync();
+                if (!showingFriends)
+                {
+                    return;
+                }
+
+                if (outcome.Result != AccountLinkResult.Success &&
+                    outcome.Result != AccountLinkResult.AlreadyLinked)
+                {
+                    ShowFriendsOverlay(
+                        "LINK GOOGLE PLAY TO COMPARE WITH FRIENDS",
+                        string.IsNullOrEmpty(outcome.Message) ? null : outcome.Message,
+                        "LINK GOOGLE PLAY",
+                        FriendsAction.Link);
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarning("[Friends] link failed: " + ex.GetType().Name);
+                if (showingFriends)
+                {
+                    ShowFriendsOverlay(
+                        "LINK GOOGLE PLAY TO COMPARE WITH FRIENDS",
+                        null,
+                        "LINK GOOGLE PLAY",
+                        FriendsAction.Link);
+                }
+
                 return;
             }
-
-            if (outcome.Result != AccountLinkResult.Success &&
-                outcome.Result != AccountLinkResult.AlreadyLinked)
+            finally
             {
-                ShowFriendsOverlay(
-                    "LINK GOOGLE PLAY TO COMPARE WITH FRIENDS",
-                    string.IsNullOrEmpty(outcome.Message) ? null : outcome.Message,
-                    "LINK GOOGLE PLAY",
-                    FriendsAction.Link);
-                return;
+                friendsBusy = false;
             }
         }
         else if (action == FriendsAction.Retry)
@@ -539,9 +686,10 @@ public class DailyLeaderboardUI : MonoBehaviour
         string title,
         string body,
         string buttonText,
-        FriendsAction action)
+        FriendsAction action,
+        string secondaryText = null,
+        FriendsAction secondaryAction = FriendsAction.None)
     {
-        friendsAction = action;
         if (friendsComingSoonRoot != null)
         {
             friendsComingSoonRoot.SetActive(true);
@@ -558,21 +706,41 @@ public class DailyLeaderboardUI : MonoBehaviour
             statusText.text = string.IsNullOrEmpty(body) ? title : title + "\n" + body;
         }
 
-        EnsureFriendsActionButton();
-        bool showButton = !string.IsNullOrEmpty(buttonText);
-        if (friendsActionButton != null)
-        {
-            friendsActionButton.gameObject.SetActive(showButton);
-            if (friendsActionLabel != null)
-            {
-                friendsActionLabel.text = buttonText ?? string.Empty;
-            }
-        }
+        ShowFriendsButtons(buttonText, action, secondaryText, secondaryAction, parentToPanel: false);
+    }
+
+    private void ShowFriendsButtons(
+        string buttonText,
+        FriendsAction action,
+        string secondaryText,
+        FriendsAction secondaryAction,
+        bool parentToPanel)
+    {
+        friendsAction = action;
+        friendsSecondaryAction = secondaryAction;
+        EnsureFriendsActionButtons();
+        Transform parent = parentToPanel
+            ? (root != null ? root.transform : transform)
+            : (friendsComingSoonRoot != null ? friendsComingSoonRoot.transform : transform);
+        bool showSecondary = !string.IsNullOrEmpty(secondaryText);
+        PlaceFriendsButton(
+            friendsActionButton,
+            friendsActionLabel,
+            parent,
+            buttonText,
+            showSecondary ? 156f : 72f);
+        PlaceFriendsButton(
+            friendsSecondaryButton,
+            friendsSecondaryLabel,
+            parent,
+            secondaryText,
+            72f);
     }
 
     private void HideFriendsOverlay()
     {
         friendsAction = FriendsAction.None;
+        friendsSecondaryAction = FriendsAction.None;
         if (friendsComingSoonRoot != null)
         {
             friendsComingSoonRoot.SetActive(false);
@@ -582,34 +750,52 @@ public class DailyLeaderboardUI : MonoBehaviour
         {
             friendsActionButton.gameObject.SetActive(false);
         }
+
+        if (friendsSecondaryButton != null)
+        {
+            friendsSecondaryButton.gameObject.SetActive(false);
+        }
     }
 
-    private void EnsureFriendsActionButton()
+    private void EnsureFriendsActionButtons()
     {
-        if (friendsActionButton != null || friendsComingSoonRoot == null)
+        if (friendsActionButton == null)
         {
-            return;
+            friendsActionButton = CreateFriendsButton("FriendsActionButton", out friendsActionLabel);
+            friendsActionButton.onClick.AddListener(() =>
+            {
+                _ = OnFriendsActionAsync(friendsAction);
+            });
         }
 
+        if (friendsSecondaryButton == null)
+        {
+            friendsSecondaryButton = CreateFriendsButton(
+                "FriendsSecondaryButton",
+                out friendsSecondaryLabel);
+            friendsSecondaryButton.onClick.AddListener(() =>
+            {
+                _ = OnFriendsActionAsync(friendsSecondaryAction);
+            });
+        }
+    }
+
+    private Button CreateFriendsButton(string objectName, out TextMeshProUGUI label)
+    {
         var buttonObject = new GameObject(
-            "FriendsActionButton",
+            objectName,
             typeof(RectTransform),
             typeof(CanvasRenderer),
             typeof(Image),
             typeof(Button));
-        buttonObject.transform.SetParent(friendsComingSoonRoot.transform, false);
-        var rect = buttonObject.GetComponent<RectTransform>();
-        rect.anchorMin = new Vector2(0.5f, 0f);
-        rect.anchorMax = new Vector2(0.5f, 0f);
-        rect.pivot = new Vector2(0.5f, 0f);
-        rect.anchoredPosition = new Vector2(0f, 72f);
-        rect.sizeDelta = new Vector2(460f, 68f);
-
+        Transform parent = friendsComingSoonRoot != null
+            ? friendsComingSoonRoot.transform
+            : transform;
+        buttonObject.transform.SetParent(parent, false);
         Image image = buttonObject.GetComponent<Image>();
         image.color = new Color(0.18f, 0.55f, 0.28f, 1f);
-        friendsActionButton = buttonObject.GetComponent<Button>();
-        friendsActionButton.targetGraphic = image;
-        friendsActionButton.onClick.AddListener(() => { _ = OnFriendsActionAsync(); });
+        Button button = buttonObject.GetComponent<Button>();
+        button.targetGraphic = image;
 
         var labelObject = new GameObject(
             "Label",
@@ -622,15 +808,49 @@ public class DailyLeaderboardUI : MonoBehaviour
         labelRect.anchorMax = Vector2.one;
         labelRect.offsetMin = Vector2.zero;
         labelRect.offsetMax = Vector2.zero;
-        friendsActionLabel = labelObject.GetComponent<TextMeshProUGUI>();
-        friendsActionLabel.alignment = TextAlignmentOptions.Center;
-        friendsActionLabel.fontSize = 28f;
-        friendsActionLabel.color = Color.white;
-        friendsActionLabel.raycastTarget = false;
+        label = labelObject.GetComponent<TextMeshProUGUI>();
+        label.alignment = TextAlignmentOptions.Center;
+        label.fontSize = 24f;
+        label.color = Color.white;
+        label.raycastTarget = false;
         TextMeshProUGUI existing = FindFriendsMessageLabel();
         if (existing != null && existing.font != null)
         {
-            friendsActionLabel.font = existing.font;
+            label.font = existing.font;
+        }
+
+        return button;
+    }
+
+    private static void PlaceFriendsButton(
+        Button button,
+        TextMeshProUGUI label,
+        Transform parent,
+        string text,
+        float y)
+    {
+        if (button == null)
+        {
+            return;
+        }
+
+        bool show = !string.IsNullOrEmpty(text);
+        button.gameObject.SetActive(show);
+        if (!show)
+        {
+            return;
+        }
+
+        button.transform.SetParent(parent, false);
+        var rect = button.GetComponent<RectTransform>();
+        rect.anchorMin = new Vector2(0.5f, 0f);
+        rect.anchorMax = new Vector2(0.5f, 0f);
+        rect.pivot = new Vector2(0.5f, 0f);
+        rect.anchoredPosition = new Vector2(0f, y);
+        rect.sizeDelta = new Vector2(520f, 68f);
+        if (label != null)
+        {
+            label.text = text;
         }
     }
 
@@ -645,7 +865,9 @@ public class DailyLeaderboardUI : MonoBehaviour
         for (int i = 0; i < overlay.childCount; i++)
         {
             Transform child = overlay.GetChild(i);
-            if (child == null || child.name == "FriendsActionButton")
+            if (child == null ||
+                child.name == "FriendsActionButton" ||
+                child.name == "FriendsSecondaryButton")
             {
                 continue;
             }
@@ -662,6 +884,6 @@ public class DailyLeaderboardUI : MonoBehaviour
 
     public static DailyLeaderboardUI FindInScene()
     {
-        return Object.FindAnyObjectByType<DailyLeaderboardUI>(FindObjectsInactive.Include);
+        return UnityEngine.Object.FindAnyObjectByType<DailyLeaderboardUI>(FindObjectsInactive.Include);
     }
 }

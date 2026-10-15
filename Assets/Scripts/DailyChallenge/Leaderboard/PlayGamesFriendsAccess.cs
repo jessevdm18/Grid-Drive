@@ -40,6 +40,98 @@ public static class PlayGamesFriendsAccess
 #endif
     }
 
+    /// <summary>
+    /// Opens Google Play Games via the public https://play.google.com/games link.
+    /// The system chooses the installed Play Games app or the browser.
+    /// This is not an add-friends flow.
+    /// </summary>
+    public static void OpenPlayGames()
+    {
+#if UNITY_ANDROID && !UNITY_EDITOR
+        try
+        {
+            using (var unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
+            using (var activity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity"))
+            using (var intent = new AndroidJavaObject(
+                "android.content.Intent", "android.intent.action.VIEW"))
+            using (var uriClass = new AndroidJavaClass("android.net.Uri"))
+            using (var uri = uriClass.CallStatic<AndroidJavaObject>(
+                "parse", "https://play.google.com/games"))
+            {
+                intent.Call<AndroidJavaObject>("setData", uri);
+                activity.Call("startActivity", intent);
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.LogWarning("[Friends] Open Play Games failed: " + ex.GetType().Name);
+        }
+#endif
+    }
+
+    /// <summary>
+    /// True when the current Play Games app is installed, so its Android app
+    /// details screen can be opened. Does not use the older Games package.
+    /// </summary>
+    public static bool CanOpenPlayGamesSettings()
+    {
+#if UNITY_ANDROID && !UNITY_EDITOR
+        return IsPackageInstalled("com.google.android.play.games");
+#else
+        return false;
+#endif
+    }
+
+    public static void OpenPlayGamesSettings()
+    {
+#if UNITY_ANDROID && !UNITY_EDITOR
+        if (!CanOpenPlayGamesSettings())
+        {
+            return;
+        }
+
+        try
+        {
+            using (var unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
+            using (var activity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity"))
+            using (var intent = new AndroidJavaObject(
+                "android.content.Intent",
+                "android.settings.APPLICATION_DETAILS_SETTINGS"))
+            using (var uriClass = new AndroidJavaClass("android.net.Uri"))
+            using (var uri = uriClass.CallStatic<AndroidJavaObject>(
+                "parse", "package:com.google.android.play.games"))
+            {
+                intent.Call<AndroidJavaObject>("setData", uri);
+                activity.Call("startActivity", intent);
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.LogWarning("[Friends] Open Play Games settings failed: " + ex.GetType().Name);
+        }
+#endif
+    }
+
+#if UNITY_ANDROID && !UNITY_EDITOR
+    private static bool IsPackageInstalled(string packageName)
+    {
+        try
+        {
+            using (var unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
+            using (var activity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity"))
+            using (var packageManager = activity.Call<AndroidJavaObject>("getPackageManager"))
+            {
+                packageManager.Call<AndroidJavaObject>("getPackageInfo", packageName, 0);
+                return true;
+            }
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+    }
+#endif
+
 #if UNITY_ANDROID && !UNITY_EDITOR
     private const int PageSize = 200;
     private const int MaxPages = 10;
@@ -109,6 +201,11 @@ public static class PlayGamesFriendsAccess
                 if (last == LoadFriendsStatus.ResolutionRequired)
                 {
                     return new Result { Status = Status.ConsentRequired };
+                }
+
+                if (last == LoadFriendsStatus.NotAuthorized)
+                {
+                    return new Result { Status = Status.Denied };
                 }
 
                 return new Result { Status = Status.Failed };

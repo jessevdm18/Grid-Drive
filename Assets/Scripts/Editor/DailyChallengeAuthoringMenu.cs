@@ -341,20 +341,21 @@ public static class DailyChallengeAuthoringMenu
         Image panelImg = panel.AddComponent<Image>();
         panelImg.color = new Color(0.12f, 0.14f, 0.18f, 0.98f);
         RectTransform panelRt = panel.GetComponent<RectTransform>();
-        SetRect(panelRt, Vector2.zero, new Vector2(420f, 320f));
+        SetRect(panelRt, Vector2.zero, new Vector2(420f, 600f));
 
-        TextMeshProUGUI title = CreateTmp("Title", panel.transform, "DAILY WINNER", 40f);
-        SetRect(title.rectTransform, new Vector2(0f, 100f), new Vector2(380f, 48f));
+        TextMeshProUGUI title = CreateTmp("Title", panel.transform, "DAILY CHALLENGE RESULTS", 40f);
+        SetRect(title.rectTransform, new Vector2(0f, 256f), new Vector2(380f, 48f));
         title.fontStyle = FontStyles.Bold;
 
         TextMeshProUGUI rank = CreateTmp("Rank", panel.transform, "#1", 48f);
         SetRect(rank.rectTransform, new Vector2(0f, 40f), new Vector2(380f, 56f));
         rank.fontStyle = FontStyles.Bold;
 
-        TextMeshProUGUI body = CreateTmp("Body", panel.transform, "YOU WON 1000 COINS", 28f);
-        SetRect(body.rectTransform, new Vector2(0f, -20f), new Vector2(380f, 40f));
+        TextMeshProUGUI body = CreateTmp("Body", panel.transform, "RANK\n#1", 28f);
+        SetRect(body.rectTransform, new Vector2(0f, 10f), new Vector2(380f, 420f));
+        body.alignment = TextAlignmentOptions.Top;
 
-        Button claim = CreateButton("ClaimButton", panel.transform, "CLAIM", new Vector2(0f, -100f));
+        Button claim = CreateButton("ClaimButton", panel.transform, "CLAIM", new Vector2(0f, -256f));
         TextMeshProUGUI claimLabel = claim.GetComponentInChildren<TextMeshProUGUI>();
 
         DailyRewardUI rewardUi = root.AddComponent<DailyRewardUI>();
