@@ -21,6 +21,7 @@ public class DailyChallengeManager : MonoBehaviour
     private LevelData cachedLevel;
     private DailyChallengeDescriptor cachedOnlineChallenge;
     private bool startInFlight;
+    private Task authoritySyncTask;
 
     public event Action OnDailyStateChanged;
 
@@ -128,8 +129,15 @@ public class DailyChallengeManager : MonoBehaviour
     {
         // Phase 1: no resume. If we land on MainMenu while InProgress without an
         // active Gameplay session, the attempt was abandoned / force-closed.
+        if (scene.name == "Gameplay" &&
+            (DailyChallengeContext.HasPending || DailyChallengeContext.IsActiveSession))
+        {
+            DailyPerf.Mark("gameplay scene loaded");
+        }
+
         if (scene.name == "MainMenu")
         {
+            DailyPerf.Mark("Main Menu awake/start");
             RecoverStaleInProgressIfNeeded();
             EnsureDaySynced(forceNotify: true);
         }
@@ -229,27 +237,38 @@ public class DailyChallengeManager : MonoBehaviour
                 return CommitLocalStart();
             }
 
-            Debug.Log(
-                "[DailyStart] getDailyChallenge begin firebaseReady=" + IsOnlineReady +
-                " authReady=" + DailyChallengeIdentityService.IsReady);
-            DailyChallengeAuthorityResult challengeResult =
-                await DailyChallengeAuthority.Current.GetCurrentChallengeAsync();
-            Debug.Log(
-                "[DailyStart] getDailyChallenge end success=" + challengeResult.Success +
-                " error=" + challengeResult.ErrorMessage);
-            if (!challengeResult.Success || !challengeResult.Challenge.IsValid)
+            DailyChallengeDescriptor challenge = cachedOnlineChallenge;
+            if (!HasFreshOnlineChallenge())
             {
-                LastBackendError = string.IsNullOrEmpty(challengeResult.ErrorMessage)
-                    ? "CONNECT TO PLAY"
-                    : challengeResult.ErrorMessage;
-                IsOnlineReady = false;
-                OnDailyStateChanged?.Invoke();
-                return false;
-            }
+                Debug.Log(
+                    "[DailyStart] getDailyChallenge begin firebaseReady=" + IsOnlineReady +
+                    " authReady=" + DailyChallengeIdentityService.IsReady);
+                DailyChallengeAuthorityResult challengeResult =
+                    await DailyChallengeAuthority.Current.GetCurrentChallengeAsync();
+                Debug.Log(
+                    "[DailyStart] getDailyChallenge end success=" + challengeResult.Success +
+                    " error=" + challengeResult.ErrorMessage);
+                if (!challengeResult.Success || !challengeResult.Challenge.IsValid)
+                {
+                    LastBackendError = string.IsNullOrEmpty(challengeResult.ErrorMessage)
+                        ? "CONNECT TO PLAY"
+                        : challengeResult.ErrorMessage;
+                    IsOnlineReady = false;
+                    OnDailyStateChanged?.Invoke();
+                    return false;
+                }
 
-            cachedOnlineChallenge = challengeResult.Challenge;
-            cachedDayId = challengeResult.Challenge.DayId;
-            ApplyOnlineLevel(challengeResult.Challenge.LevelId);
+                cachedOnlineChallenge = challengeResult.Challenge;
+                cachedDayId = challengeResult.Challenge.DayId;
+                ApplyOnlineLevel(challengeResult.Challenge.LevelId);
+                DailyPerf.Mark("local challenge parse level=" + cachedLevelAssetName);
+                challenge = challengeResult.Challenge;
+            }
+            else
+            {
+                DailyPerf.Mark(
+                    "getDailyChallenge skipped fresh cache day=" + cachedOnlineChallenge.DayId);
+            }
 
             if (cachedLevel == null ||
                 !DailyChallengeLevelEligibility.IsEligible(cachedLevel))
@@ -260,8 +279,7 @@ public class DailyChallengeManager : MonoBehaviour
 
             Debug.Log("[DailyStart] startDailyAttempt begin");
             DailyChallengeAuthorityResult claim =
-                await DailyChallengeAuthority.Current.TryStartAttemptAsync(
-                    challengeResult.Challenge);
+                await DailyChallengeAuthority.Current.TryStartAttemptAsync(challenge);
             Debug.Log(
                 "[DailyStart] startDailyAttempt end success=" + claim.Success +
                 " error=" + claim.ErrorMessage);
@@ -271,6 +289,27 @@ public class DailyChallengeManager : MonoBehaviour
                 LastBackendError = string.IsNullOrEmpty(claim.ErrorMessage)
                     ? "Attempt already used."
                     : claim.ErrorMessage;
+                OnDailyStateChanged?.Invoke();
+                return false;
+            }
+
+            if (claim.Challenge.IsValid &&
+                !string.Equals(
+                    claim.Challenge.LevelId,
+                    cachedLevelAssetName,
+                    StringComparison.Ordinal))
+            {
+                cachedOnlineChallenge = claim.Challenge;
+                cachedDayId = claim.Challenge.DayId;
+                ApplyOnlineLevel(claim.Challenge.LevelId);
+            }
+
+            if (cachedLevel == null ||
+                !DailyChallengeLevelEligibility.IsEligible(cachedLevel))
+            {
+                cachedState = DailyChallengeState.InProgress;
+                Persist();
+                LastBackendError = "Daily level invalid on this client build.";
                 OnDailyStateChanged?.Invoke();
                 return false;
             }
@@ -301,7 +340,18 @@ public class DailyChallengeManager : MonoBehaviour
     }
 
     /// <summary>Sync local presentation cache from Online authority (MainMenu).</summary>
-    public async Task SyncFromAuthorityAsync()
+    public Task SyncFromAuthorityAsync()
+    {
+        if (authoritySyncTask != null && !authoritySyncTask.IsCompleted)
+        {
+            return authoritySyncTask;
+        }
+
+        authoritySyncTask = SyncFromAuthorityCoreAsync();
+        return authoritySyncTask;
+    }
+
+    private async Task SyncFromAuthorityCoreAsync()
     {
         if (!RequiresOnlineToStart)
         {
@@ -320,7 +370,9 @@ public class DailyChallengeManager : MonoBehaviour
 #endif
 
         LastBackendError = string.Empty;
+        DailyPerf.Mark("Firebase ready begin");
         bool signedIn = await DailyChallengeIdentityService.EnsureSignedInAsync();
+        DailyPerf.Mark("auth ready signedIn=" + signedIn);
         if (!signedIn)
         {
             IsOnlineReady = false;
@@ -331,9 +383,10 @@ public class DailyChallengeManager : MonoBehaviour
 
         DailyChallengeAuthorityResult challengeResult =
             await DailyChallengeAuthority.Current.GetCurrentChallengeAsync();
-        if (!challengeResult.Success)
+        if (!challengeResult.Success || !challengeResult.Challenge.IsValid)
         {
             IsOnlineReady = false;
+            cachedOnlineChallenge = default;
             LastBackendError = "CONNECT TO PLAY";
             OnDailyStateChanged?.Invoke();
             return;
@@ -342,13 +395,8 @@ public class DailyChallengeManager : MonoBehaviour
         cachedOnlineChallenge = challengeResult.Challenge;
         cachedDayId = challengeResult.Challenge.DayId;
         ApplyOnlineLevel(challengeResult.Challenge.LevelId);
-
-        DailyChallengeAuthorityResult attemptResult =
-            await DailyChallengeAuthority.Current.GetAttemptStateAsync(cachedDayId);
-        if (attemptResult.Success)
-        {
-            ApplyServerAttemptToLocalCache(attemptResult.Attempt);
-        }
+        DailyPerf.Mark("local challenge parse level=" + cachedLevelAssetName);
+        ApplyServerAttemptToLocalCache(challengeResult.Attempt);
 
         IsOnlineReady = true;
         await RetryPendingSubmissionAsync();
@@ -835,8 +883,22 @@ public class DailyChallengeManager : MonoBehaviour
 #endif
     }
 
+    private bool HasFreshOnlineChallenge()
+    {
+        string today = DailyChallengeClock.GetCurrentUtcDayId();
+        return RequiresOnlineToStart &&
+               IsOnlineReady &&
+               cachedOnlineChallenge.IsValid &&
+               string.Equals(cachedOnlineChallenge.DayId, today, StringComparison.Ordinal) &&
+               string.Equals(cachedDayId, today, StringComparison.Ordinal) &&
+               cachedLevel != null &&
+               DailyChallengeLevelEligibility.IsEligible(cachedLevel);
+    }
+
     private void BeginNewDay(string dayId)
     {
+        cachedOnlineChallenge = default;
+        IsOnlineReady = false;
         cachedDayId = dayId;
         cachedState = DailyChallengeState.Available;
         cachedLevelAssetName = string.Empty;

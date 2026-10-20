@@ -118,6 +118,13 @@ public sealed class LocalSimulatedDailyChallengeAuthority : IDailyChallengeAutho
         return Task.FromResult((IReadOnlyList<DailyLeaderboardEntry>)list);
     }
 
+    public Task<IReadOnlyList<DailyLeaderboardEntry>> GetOfficialSimulatedEntriesAsync(
+        string dayId)
+    {
+        return Task.FromResult((IReadOnlyList<DailyLeaderboardEntry>)
+            new List<DailyLeaderboardEntry>());
+    }
+
     private static DailyChallengeServerAttemptState MapState(DailyChallengeState state)
     {
         switch (state)

@@ -3,6 +3,7 @@
 const admin = require('firebase-admin');
 const { getLevels, SCORE_VERSION } = require('./config');
 const { selectLevelIndexForDay } = require('./hash');
+const { ensureOfficialSimulatedEntries } = require('./simulatedEntries');
 const { utcDayId, dayOpenIso, nextUtcMidnightIso } = require('./validation');
 
 function db() {
@@ -59,6 +60,27 @@ async function resolveChallengeForNow(serverNow = new Date()) {
     tx.set(ref, created);
     return { ...created, created: true };
   });
+
+  // Freeze today's official bots for the Global board and later settlement.
+  // A failure here does not block play; settlement retries the same freeze.
+  try {
+    const ensured = await ensureOfficialSimulatedEntries(result.dayId);
+    if (!ensured.ok) {
+      console.error(
+        '[DailySim] ensure failed dayId=' +
+          result.dayId +
+          ' code=' +
+          (ensured.errorCode || 'unknown')
+      );
+    }
+  } catch (err) {
+    console.error(
+      '[DailySim] ensure threw dayId=' +
+        result.dayId +
+        ' message=' +
+        (err && err.message ? err.message : String(err))
+    );
+  }
 
   return result;
 }

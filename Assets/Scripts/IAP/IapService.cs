@@ -131,6 +131,11 @@ public class IapService : MonoBehaviour
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void BootstrapAfterSceneLoad()
     {
+        if (PlayableAdSession.ShouldSuppressProductionServices())
+        {
+            return;
+        }
+
         EnsureInstance();
     }
 

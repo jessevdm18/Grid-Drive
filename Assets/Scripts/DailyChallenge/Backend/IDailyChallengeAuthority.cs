@@ -29,4 +29,11 @@ public interface IDailyChallengeAuthority
     Task<IReadOnlyList<DailyLeaderboardEntry>> GetCompletedLeaderboardAsync(
         string dayId,
         int maxEntries);
+
+    /// <summary>
+    /// Official simulated rows for this Daily day. Empty when the server has
+    /// not frozen them yet. Never accepts client-supplied bot scores.
+    /// </summary>
+    Task<IReadOnlyList<DailyLeaderboardEntry>> GetOfficialSimulatedEntriesAsync(
+        string dayId);
 }

@@ -1,6 +1,6 @@
 /// <summary>
 /// Server-authoritative final Daily placement after the UTC day has settled.
-/// Not a reward. Rank #1 coins stay on <see cref="DailyRewardRecord"/>.
+/// Prize coins stay on <see cref="DailyRewardRecord"/>. Ranks outside #1–#3 have no reward.
 /// </summary>
 public readonly struct DailySettledResult
 {

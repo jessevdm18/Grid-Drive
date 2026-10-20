@@ -4,7 +4,7 @@ using UnityEngine;
 /// <summary>
 /// Facade for Daily leaderboard snapshots. UI talks to this, not PlayerPrefs / bot gen.
 /// SimulatedLocal → SimulatedDailyLeaderboardProvider.
-/// Online → HybridDailyLeaderboardProvider (real + simulated fillers).
+/// Online → HybridDailyLeaderboardProvider (real attempts + official simulated entries).
 /// </summary>
 public static class DailyLeaderboardService
 {

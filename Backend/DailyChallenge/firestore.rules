@@ -30,6 +30,13 @@ service cloud.firestore {
         // Phase 4.3: pending/claim via getPendingDailyRewards / claimDailyReward only.
         allow read, write: if false;
       }
+
+      match /simulatedEntries/{entryId} {
+        // Official Daily bots for the Global board. Admin SDK writes them once.
+        // Clients may read. They never receive rewards.
+        allow read: if isSignedIn();
+        allow create, update, delete: if false;
+      }
     }
 
     match /{document=**} {

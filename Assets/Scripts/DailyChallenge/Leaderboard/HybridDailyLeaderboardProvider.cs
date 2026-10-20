@@ -1,11 +1,12 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using UnityEngine;
 
 /// <summary>
-/// Combines real online Completed results with client-only simulated fillers
-/// until minimum population is reached. Simulated rows are NEVER uploaded and
-/// are NEVER eligible for Phase 4.3 Daily #1 rewards (server settlement only).
+/// Global Daily board: real Completed + scoreTrusted attempts, plus the day's
+/// official simulated entries. Online mode reads those entries from the server.
+/// The full bot list stays on the board; bots are not removed as real players join.
+/// Friends is a separate provider and is not consulted here.
 /// </summary>
 public sealed class HybridDailyLeaderboardProvider : IDailyLeaderboardProvider
 {
@@ -29,12 +30,8 @@ public sealed class HybridDailyLeaderboardProvider : IDailyLeaderboardProvider
 
     public async Task<DailyLeaderboardSnapshot> RefreshAsync(DailyLeaderboardRequest request)
     {
-        int minPop = request.Config != null
-            ? Mathf.Max(0, request.Config.MinimumLeaderboardPopulation)
-            : 30;
-
         IReadOnlyList<DailyLeaderboardEntry> real =
-            await online.FetchRealEntriesAsync(request.DayId, Mathf.Max(minPop, 50));
+            await online.FetchRealEntriesAsync(request.DayId, 500);
 
         var combined = new List<DailyLeaderboardEntry>();
         var usedIds = new HashSet<string>();
@@ -44,6 +41,11 @@ public sealed class HybridDailyLeaderboardProvider : IDailyLeaderboardProvider
             for (int i = 0; i < real.Count; i++)
             {
                 DailyLeaderboardEntry e = real[i];
+                if (e.IsSimulated)
+                {
+                    continue;
+                }
+
                 e.IsSimulated = false;
                 if (e.Source == default ||
                     e.Source == DailyLeaderboardEntrySource.FutureRemotePlayer)
@@ -58,13 +60,21 @@ public sealed class HybridDailyLeaderboardProvider : IDailyLeaderboardProvider
             }
         }
 
-        // Ensure local YOU is present if completed locally but not yet in remote list.
+        // Own completed attempt, if the server list does not contain it yet.
+        // This is the real player only — never a client-authored bot score.
         if (request.HasLocalPlayerResult && request.LocalPlayerResult.Completed)
         {
+            string selfId = DailyChallengeIdentityService.UserId;
+            if (string.IsNullOrEmpty(selfId))
+            {
+                selfId = "local_player";
+            }
+
             bool hasYou = false;
             for (int i = 0; i < combined.Count; i++)
             {
-                if (combined[i].IsCurrentPlayer)
+                if (combined[i].IsCurrentPlayer ||
+                    string.Equals(combined[i].PlayerId, selfId, StringComparison.Ordinal))
                 {
                     hasYou = true;
                     break;
@@ -75,7 +85,7 @@ public sealed class HybridDailyLeaderboardProvider : IDailyLeaderboardProvider
             {
                 combined.Add(new DailyLeaderboardEntry
                 {
-                    PlayerId = "local_player",
+                    PlayerId = selfId,
                     DisplayName = "YOU",
                     Score = request.LocalPlayerResult.Score,
                     Moves = request.LocalPlayerResult.Moves,
@@ -86,23 +96,42 @@ public sealed class HybridDailyLeaderboardProvider : IDailyLeaderboardProvider
                     Source = DailyLeaderboardEntrySource.LocalPlayer,
                     Rank = 0
                 });
-                usedIds.Add("local_player");
+                usedIds.Add(selfId);
             }
         }
 
-        int needSim = Mathf.Max(0, minPop - combined.Count);
-        if (needSim > 0)
+        IReadOnlyList<DailyLeaderboardEntry> officialBots =
+            await DailyChallengeAuthority.Current.GetOfficialSimulatedEntriesAsync(
+                request.DayId);
+        bool usedServerBots = officialBots != null && officialBots.Count > 0;
+        if (usedServerBots)
         {
-            // Temporarily build simulated snapshot then take non-YOU rows.
-            DailyChallengeConfig cfg = request.Config;
-            int previousCount = cfg != null ? cfg.SimulatedLeaderboardPlayerCount : 30;
-            // Use provider with request; filter out its YOU (we already handled local).
+            for (int i = 0; i < officialBots.Count; i++)
+            {
+                DailyLeaderboardEntry e = officialBots[i];
+                if (!e.IsSimulated || usedIds.Contains(e.PlayerId))
+                {
+                    continue;
+                }
+
+                e.IsCurrentPlayer = false;
+                e.IsSimulated = true;
+                e.Source = DailyLeaderboardEntrySource.Simulated;
+                combined.Add(e);
+                usedIds.Add(e.PlayerId);
+            }
+        }
+        else
+        {
+            // Same generator as the server, full set, not trimmed.
+            // Used only until the frozen server list is readable.
+            // These rows are display-only and are never submitted.
             var simRequest = request;
             simRequest.HasLocalPlayerResult = false;
             DailyLeaderboardSnapshot simSnap = simulated.GetLeaderboard(simRequest);
             if (simSnap.Entries != null)
             {
-                for (int i = 0; i < simSnap.Entries.Count && needSim > 0; i++)
+                for (int i = 0; i < simSnap.Entries.Count; i++)
                 {
                     DailyLeaderboardEntry e = simSnap.Entries[i];
                     if (!e.IsSimulated || usedIds.Contains(e.PlayerId))
@@ -115,12 +144,8 @@ public sealed class HybridDailyLeaderboardProvider : IDailyLeaderboardProvider
                     e.IsSimulated = true;
                     combined.Add(e);
                     usedIds.Add(e.PlayerId);
-                    needSim--;
                 }
             }
-
-            // previousCount unused — silence if analyzer complains via reference
-            _ = previousCount;
         }
 
         SimulatedDailyLeaderboardProvider.SortEntries(combined);

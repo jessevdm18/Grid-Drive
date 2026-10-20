@@ -336,7 +336,7 @@ public class GameManager : MonoBehaviour
         effectiveGlobalMoveLimit = 0;
         movesCardLimitDenominator = 0;
 
-        if (levelData == null)
+        if (levelData == null || PlayableAdSession.IsActive)
         {
             RefreshMovesHud();
             return;
@@ -564,6 +564,14 @@ public class GameManager : MonoBehaviour
         if (hintManager != null)
         {
             hintManager.CancelHintBundleBecauseLevelEnding();
+        }
+
+        if (PlayableAdSession.IsActive)
+        {
+            ClearUndoHistory();
+            PlayLevelCompleteFeedback();
+            PlayableAdSession.NotifyLevelCompleted();
+            return;
         }
 
         // Daily: freeze stopwatch at authoritative solve moment (before win UI / FX).
@@ -861,6 +869,11 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public bool FailLevel(string failReason = "mission_failed")
     {
+        if (PlayableAdSession.IsActive)
+        {
+            return false;
+        }
+
         if (levelCompleted || levelFailed || targetExitInProgress)
         {
             return false;

@@ -648,6 +648,18 @@ public static class FirebaseRestClient
         return !string.IsNullOrEmpty(json);
     }
 
+    public static async Task<string> ListDocumentsAsync(
+        string projectId,
+        string collectionPath,
+        string idToken)
+    {
+        string url =
+            "https://firestore.googleapis.com/v1/projects/" + projectId +
+            "/databases/(default)/documents/" + collectionPath +
+            "?pageSize=60";
+        return await GetJsonAsync(url, idToken);
+    }
+
     public static async Task<string> RunQueryAsync(
         string projectId,
         string parentCollectionPath,
@@ -926,6 +938,53 @@ public static class FirebaseRestClient
         int start = i + pattern.Length;
         int end = json.IndexOf('"', start);
         return end > start ? json.Substring(start, end - start) : string.Empty;
+    }
+
+    public static bool TryExtractFirestoreBoolField(
+        string json,
+        string fieldName,
+        out bool value)
+    {
+        value = false;
+        if (string.IsNullOrEmpty(json) || string.IsNullOrEmpty(fieldName))
+        {
+            return false;
+        }
+
+        string pattern = "\"" + fieldName + "\":{\"booleanValue\":";
+        int i = json.IndexOf(pattern, StringComparison.Ordinal);
+        if (i < 0)
+        {
+            pattern = "\"" + fieldName + "\": {\"booleanValue\":";
+            i = json.IndexOf(pattern, StringComparison.Ordinal);
+        }
+
+        if (i < 0)
+        {
+            return false;
+        }
+
+        int start = i + pattern.Length;
+        while (start < json.Length && char.IsWhiteSpace(json[start]))
+        {
+            start++;
+        }
+
+        if (start + 4 <= json.Length &&
+            string.CompareOrdinal(json, start, "true", 0, 4) == 0)
+        {
+            value = true;
+            return true;
+        }
+
+        if (start + 5 <= json.Length &&
+            string.CompareOrdinal(json, start, "false", 0, 5) == 0)
+        {
+            value = false;
+            return true;
+        }
+
+        return false;
     }
 
     public static long ExtractFirestoreLongField(string json, string fieldName)

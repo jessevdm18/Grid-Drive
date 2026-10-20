@@ -157,6 +157,11 @@ public class LivesManager : MonoBehaviour
             return;
         }
 
+        if (PlayableAdSession.ShouldSuppressProductionServices())
+        {
+            return;
+        }
+
         EnsureInstance();
     }
 

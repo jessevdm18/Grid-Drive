@@ -44,6 +44,7 @@ public class DailyChallengeMainMenuUI : MonoBehaviour
     private bool viewLogged;
     private bool startInFlight;
     private bool syncInFlight;
+    private Task rewardPresentationTask;
 
     private void Awake()
     {
@@ -97,8 +98,15 @@ public class DailyChallengeMainMenuUI : MonoBehaviour
             resultCloseButton.onClick.AddListener(OnResultCloseClicked);
         }
 
+        DailyPerf.Mark("menu/card opened");
         RefreshPresentation();
         _ = SyncAuthorityOnEnableAsync();
+#if !UNITY_EDITOR
+        if (rewardPresentationTask == null || rewardPresentationTask.IsCompleted)
+        {
+            rewardPresentationTask = PresentDailyResultWhenReadyAsync();
+        }
+#endif
         if (!viewLogged && manager != null)
         {
             viewLogged = true;
@@ -314,6 +322,12 @@ public class DailyChallengeMainMenuUI : MonoBehaviour
         if (startChallengeButton != null)
         {
             startChallengeButton.interactable = canStart && !syncInFlight;
+            TextMeshProUGUI startLabel =
+                startChallengeButton.GetComponentInChildren<TextMeshProUGUI>(true);
+            if (startLabel != null)
+            {
+                startLabel.text = startInFlight ? "STARTING..." : "START";
+            }
         }
 
         if (countdownLabelText != null)
@@ -411,6 +425,7 @@ public class DailyChallengeMainMenuUI : MonoBehaviour
         if (confirmRoot != null)
         {
             confirmRoot.SetActive(true);
+            DailyPerf.Mark("confirm popup ready");
         }
         else
         {
@@ -437,17 +452,26 @@ public class DailyChallengeMainMenuUI : MonoBehaviour
             " authReady=" + DailyChallengeIdentityService.IsReady +
             " state=" + (manager != null ? manager.CurrentState.ToString() : "none"));
 
-        if (manager == null || startInFlight || syncInFlight || !manager.IsAttemptAvailable)
+        if (manager == null || startInFlight)
         {
             Debug.Log("[DailyStart] ignored");
             return;
         }
 
+        if (!syncInFlight && !manager.IsAttemptAvailable)
+        {
+            Debug.Log("[DailyStart] ignored");
+            return;
+        }
+
+        startInFlight = true;
+        DailyPerf.Mark("START tapped");
         if (startChallengeButton != null)
         {
             startChallengeButton.interactable = false;
         }
 
+        RefreshPresentation();
         _ = StartChallengeAsync();
     }
 
@@ -468,9 +492,6 @@ public class DailyChallengeMainMenuUI : MonoBehaviour
         try
         {
             await manager.SyncFromAuthorityAsync();
-#if !UNITY_EDITOR
-            await SyncDailyRewardsAsync();
-#endif
         }
         finally
         {
@@ -515,61 +536,111 @@ public class DailyChallengeMainMenuUI : MonoBehaviour
         return ads != null && ads.IsFullScreenAdActive;
     }
 
-    private async Task SyncDailyRewardsAsync()
+    private async Task PresentDailyResultWhenReadyAsync()
     {
+        if (manager == null || !manager.RequiresOnlineToStart)
+        {
+            return;
+        }
+
         try
         {
-            bool hasPending = await DailyRewardService.SyncPendingAsync();
-            DailyRewardUI rewardUi = DailyRewardUI.FindInScene();
-            if (IsResultPresentationBlocked())
+            Task<bool> pendingTask = DailyRewardService.SyncPendingAsync();
+            Task<(bool success, DailySettledResult result)> settledTask =
+                DailyRewardService.TryFetchLatestSettledResultAsync();
+
+            bool pendingOk = false;
+            (bool success, DailySettledResult result) settled =
+                (false, DailySettledResult.None);
+            try
+            {
+                await Task.WhenAll(pendingTask, settledTask);
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogWarning(
+                    "[DailyPerf] result fetch failed " + ex.GetType().Name);
+            }
+
+            if (this == null)
             {
                 return;
             }
 
-            bool showedReward = false;
-            if (hasPending)
+            if (pendingTask.Status == TaskStatus.RanToCompletion)
             {
-                if (rewardUi != null)
+                pendingOk = pendingTask.Result;
+            }
+            else if (pendingTask.IsFaulted)
+            {
+                Debug.LogWarning("[DailyPerf] getPendingDailyRewards failed");
+            }
+
+            if (settledTask.Status == TaskStatus.RanToCompletion)
+            {
+                settled = settledTask.Result;
+            }
+            else if (settledTask.IsFaulted)
+            {
+                Debug.LogWarning("[DailyPerf] getSettledDailyResult failed");
+            }
+
+            DailyPerf.Mark(
+                "result parsed pending=" + pendingOk + " settledOk=" + settled.success);
+
+            bool wantReward = pendingOk && DailyRewardService.HasPendingReward;
+            bool wantSettled = !wantReward &&
+                               settled.success &&
+                               settled.result.Found &&
+                               !DailyRewardService.IsResultSeen(settled.result.DayId);
+            if (!wantReward && !wantSettled)
+            {
+                return;
+            }
+
+            DailyPerf.Mark("result panel eligible reward=" + wantReward);
+            bool loggedBlock = false;
+            while (IsResultPresentationBlocked())
+            {
+                if (!loggedBlock)
                 {
-                    rewardUi.PresentPendingIfAny();
-                    if (rewardUi.IsShowing &&
-                        DailyRewardService.TryGetFirstPending(out DailyRewardRecord reward))
-                    {
-                        // Claim panel is the result for this day. Do not also pop a result-only card.
-                        DailyRewardService.MarkResultSeen(reward.DayId);
-                        showedReward = true;
-                    }
+                    DailyPerf.Mark("blocking modal wait");
+                    loggedBlock = true;
                 }
-                else
+
+                await Task.Delay(250);
+                if (this == null || !isActiveAndEnabled)
                 {
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                    return;
+                }
+            }
+
+            DailyRewardUI rewardUi = DailyRewardUI.FindInScene();
+            if (wantReward)
+            {
+                if (rewardUi == null)
+                {
                     Debug.LogWarning(
                         "[DailyReward] Pending reward exists but DailyRewardUI missing — " +
                         "run Rush Out → UI → Create Daily Reward UI (MainMenu).");
-#endif
+                    return;
                 }
-            }
 
-            if (showedReward || rewardUi == null)
-            {
+                rewardUi.PresentPendingIfAny();
+                if (rewardUi.IsShowing &&
+                    DailyRewardService.TryGetFirstPending(out DailyRewardRecord reward))
+                {
+                    DailyRewardService.MarkResultSeen(reward.DayId);
+                    DailyPerf.Mark("panel shown reward");
+                }
+
                 return;
             }
 
-            (bool fetched, DailySettledResult settled) =
-                await DailyRewardService.TryFetchLatestSettledResultAsync();
-            if (!fetched || !settled.Found)
+            if (rewardUi != null && rewardUi.ShowSettledResult(settled.result))
             {
-                return;
-            }
-
-            if (DailyRewardService.IsResultSeen(settled.DayId))
-            {
-                return;
-            }
-
-            if (rewardUi.ShowSettledResult(settled))
-            {
-                DailyRewardService.MarkResultSeen(settled.DayId);
+                DailyRewardService.MarkResultSeen(settled.result.DayId);
+                DailyPerf.Mark("panel shown result");
             }
         }
         catch (System.Exception ex)
@@ -580,16 +651,29 @@ public class DailyChallengeMainMenuUI : MonoBehaviour
 
     private async Task StartChallengeAsync()
     {
-        if (manager == null || startInFlight)
-        {
-            return;
-        }
-
-        startInFlight = true;
-        RefreshPresentation();
         bool started = false;
         try
         {
+            if (manager == null)
+            {
+                return;
+            }
+
+            if (syncInFlight)
+            {
+                await manager.SyncFromAuthorityAsync();
+            }
+
+            if (manager == null ||
+                !manager.IsAttemptAvailable ||
+                !manager.HasEligibleDailyLevel())
+            {
+                Debug.Log(
+                    "[DailyStart] start failed error=" +
+                    (manager != null ? manager.LastBackendError : "none"));
+                return;
+            }
+
             bool ok = await manager.TryCommitStartAndArmGameplayAsync();
             if (!ok)
             {
@@ -614,6 +698,7 @@ public class DailyChallengeMainMenuUI : MonoBehaviour
                 confirmRoot.SetActive(false);
             }
 
+            DailyPerf.Mark("gameplay scene load requested");
             Debug.Log("[DailyStart] scene load requested");
             SceneTransition.LoadScene("Gameplay");
         }

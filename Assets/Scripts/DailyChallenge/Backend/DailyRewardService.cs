@@ -13,12 +13,39 @@ using UnityEngine;
 public static class DailyRewardService
 {
     public const int FirstPlaceCoinReward = 1000;
+    public const int SecondPlaceCoinReward = 500;
+    public const int ThirdPlaceCoinReward = 250;
+
+    /// <summary>
+    /// Display fallback when a reward payload omits the amount.
+    /// The server amount is used whenever it is present.
+    /// </summary>
+    public static int CoinsForRank(int rank)
+    {
+        if (rank == 1)
+        {
+            return FirstPlaceCoinReward;
+        }
+
+        if (rank == 2)
+        {
+            return SecondPlaceCoinReward;
+        }
+
+        if (rank == 3)
+        {
+            return ThirdPlaceCoinReward;
+        }
+
+        return 0;
+    }
     /// <summary>Server dayId for createDevDailyReward smoke tests (not a real UTC day).</summary>
     public const string DevRewardDayId = "dev-reward-smoke-test";
     private const string CreatedAnalyticsPrefsPrefix = "RushOut_DailyRewardCreatedLogged_";
 
     private static readonly List<DailyRewardRecord> cachedPending = new List<DailyRewardRecord>();
-    private static bool syncInFlight;
+    private static Task<bool> pendingSyncTask;
+    private static Task<(bool success, DailySettledResult result)> settledFetchTask;
     private static bool claimInFlight;
 
     public static IReadOnlyList<DailyRewardRecord> CachedPending => cachedPending;
@@ -57,24 +84,34 @@ public static class DailyRewardService
     /// <summary>
     /// Sync pending rewards from server. No-op when offline / not signed in.
     /// </summary>
-    public static async Task<bool> SyncPendingAsync()
+    public static Task<bool> SyncPendingAsync()
     {
-        if (syncInFlight)
+        if (pendingSyncTask != null && !pendingSyncTask.IsCompleted)
         {
-            return HasPendingReward;
+            return pendingSyncTask;
         }
 
-        syncInFlight = true;
+        pendingSyncTask = SyncPendingCoreAsync();
+        return pendingSyncTask;
+    }
+
+    private static async Task<bool> SyncPendingCoreAsync()
+    {
+        System.Diagnostics.Stopwatch watch = System.Diagnostics.Stopwatch.StartNew();
+        DailyPerf.Mark("getPendingDailyRewards begin");
         try
         {
             if (!await DailyChallengeIdentityService.EnsureSignedInAsync())
             {
+                DailyPerf.Mark("getPendingDailyRewards end ms=" + watch.ElapsedMilliseconds + " ok=false");
                 return false;
             }
 
             DailyChallengeFirebaseSettings settings = DailyChallengeFirebaseSettings.LoadDefault();
             if (settings == null || !settings.IsConfigured)
             {
+                DailyPerf.Mark(
+                    "getPendingDailyRewards end ms=" + watch.ElapsedMilliseconds + " ok=false");
                 return false;
             }
 
@@ -83,6 +120,8 @@ public static class DailyRewardService
                 "{}");
             if (!response.Ok || string.IsNullOrEmpty(response.ResultJson))
             {
+                DailyPerf.Mark(
+                    "getPendingDailyRewards end ms=" + watch.ElapsedMilliseconds + " ok=false");
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
                 Debug.LogWarning(
                     "[DailyReward] getPendingDailyRewards failed status=" +
@@ -99,11 +138,15 @@ public static class DailyRewardService
                 MaybeLogCreatedAnalytics(cachedPending[i]);
             }
 
-            return HasPendingReward;
+            bool hasPending = HasPendingReward;
+            DailyPerf.Mark(
+                "getPendingDailyRewards end ms=" + watch.ElapsedMilliseconds +
+                " ok=true pending=" + hasPending);
+            return hasPending;
         }
         finally
         {
-            syncInFlight = false;
+            pendingSyncTask = null;
         }
     }
 
@@ -244,8 +287,21 @@ public static class DailyRewardService
     /// success is false when the call did not succeed (offline / unsigned). Does not mark seen.
     /// success is true with <see cref="DailySettledResult.None"/> when the server has nothing to show.
     /// </summary>
-    public static async Task<(bool success, DailySettledResult result)> TryFetchLatestSettledResultAsync()
+    public static Task<(bool success, DailySettledResult result)> TryFetchLatestSettledResultAsync()
     {
+        if (settledFetchTask != null && !settledFetchTask.IsCompleted)
+        {
+            return settledFetchTask;
+        }
+
+        settledFetchTask = FetchSettledCoreAsync();
+        return settledFetchTask;
+    }
+
+    private static async Task<(bool success, DailySettledResult result)> FetchSettledCoreAsync()
+    {
+        System.Diagnostics.Stopwatch watch = System.Diagnostics.Stopwatch.StartNew();
+        DailyPerf.Mark("getSettledDailyResult begin");
         try
         {
             if (!await DailyChallengeIdentityService.EnsureSignedInAsync())
@@ -292,6 +348,11 @@ public static class DailyRewardService
             Debug.LogWarning("[DailyReward] getSettledDailyResult failed: " + ex.GetType().Name);
 #endif
             return (false, DailySettledResult.None);
+        }
+        finally
+        {
+            DailyPerf.Mark("getSettledDailyResult end ms=" + watch.ElapsedMilliseconds);
+            settledFetchTask = null;
         }
     }
 
@@ -493,7 +554,7 @@ public static class DailyRewardService
             dayId,
             (int)ExtractLong(json, "rank", 1),
             FirebaseRestClient.ExtractJsonString(json, "rewardType"),
-            (int)ExtractLong(json, "rewardAmount", FirstPlaceCoinReward),
+            (int)ExtractLong(json, "rewardAmount", 0),
             ExtractBool(json, "claimed"),
             source,
             (int)ExtractLong(json, "score", 0),
@@ -533,7 +594,7 @@ public static class DailyRewardService
             alreadyClaimed: alreadyClaimed,
             dayId: dayId,
             rewardType: FirebaseRestClient.ExtractJsonString(json, "rewardType"),
-            rewardAmount: (int)ExtractLong(json, "rewardAmount", FirstPlaceCoinReward),
+            rewardAmount: (int)ExtractLong(json, "rewardAmount", 0),
             rank: (int)ExtractLong(json, "rank", 1),
             errorCode: errorCode,
             errorMessage: FirebaseRestClient.ExtractJsonString(json, "errorMessage"),

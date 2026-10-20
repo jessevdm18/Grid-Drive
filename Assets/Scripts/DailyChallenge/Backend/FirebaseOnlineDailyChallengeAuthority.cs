@@ -14,18 +14,45 @@ using UnityEngine;
 /// </summary>
 public sealed class FirebaseOnlineDailyChallengeAuthority : IDailyChallengeAuthority
 {
-    public async Task<DailyChallengeAuthorityResult> GetCurrentChallengeAsync()
+    private static Task<DailyChallengeAuthorityResult> challengeInFlight;
+
+    public Task<DailyChallengeAuthorityResult> GetCurrentChallengeAsync()
     {
-        FirebaseRestClient.CallableResponse response =
-            await CallWithAuthRetryAsync("getDailyChallenge", "{}");
-        if (!response.Ok)
+        if (challengeInFlight != null && !challengeInFlight.IsCompleted)
         {
-            return DailyChallengeAuthorityResult.Fail(
-                MapTransportError(response),
-                "CONNECT TO PLAY");
+            DailyPerf.Mark("getDailyChallenge join in-flight");
+            return challengeInFlight;
         }
 
-        return ParseEnvelope(response.ResultJson, logLabel: "Server challenge");
+        challengeInFlight = FetchCurrentChallengeAsync();
+        return challengeInFlight;
+    }
+
+    private async Task<DailyChallengeAuthorityResult> FetchCurrentChallengeAsync()
+    {
+        System.Diagnostics.Stopwatch watch = System.Diagnostics.Stopwatch.StartNew();
+        DailyPerf.Mark(
+            "getDailyChallenge begin authReady=" + DailyChallengeIdentityService.IsReady);
+        try
+        {
+            FirebaseRestClient.CallableResponse response =
+                await CallWithAuthRetryAsync("getDailyChallenge", "{}");
+            DailyPerf.Mark(
+                "getDailyChallenge end ms=" + watch.ElapsedMilliseconds +
+                " ok=" + response.Ok);
+            if (!response.Ok)
+            {
+                return DailyChallengeAuthorityResult.Fail(
+                    MapTransportError(response),
+                    "CONNECT TO PLAY");
+            }
+
+            return ParseEnvelope(response.ResultJson, logLabel: "Server challenge");
+        }
+        finally
+        {
+            challengeInFlight = null;
+        }
     }
 
     public async Task<DailyChallengeAuthorityResult> GetAttemptStateAsync(string dayId)
@@ -55,8 +82,13 @@ public sealed class FirebaseOnlineDailyChallengeAuthority : IDailyChallengeAutho
         DailyChallengeDescriptor challenge)
     {
         // Server ignores client challenge fields for day/level authority.
+        System.Diagnostics.Stopwatch watch = System.Diagnostics.Stopwatch.StartNew();
+        DailyPerf.Mark("startDailyAttempt begin");
         FirebaseRestClient.CallableResponse response =
             await CallWithAuthRetryAsync("startDailyAttempt", "{}");
+        DailyPerf.Mark(
+            "startDailyAttempt end ms=" + watch.ElapsedMilliseconds +
+            " ok=" + response.Ok);
         if (!response.Ok)
         {
             GameAnalytics.LogDailyBackendStartError(
@@ -188,7 +220,7 @@ public sealed class FirebaseOnlineDailyChallengeAuthority : IDailyChallengeAutho
         }
 
         DailyChallengeFirebaseSettings settings = DailyChallengeFirebaseSettings.LoadDefault();
-        int limit = Mathf.Clamp(maxEntries, 1, 100);
+        int limit = Mathf.Clamp(maxEntries, 1, 500);
         string query =
             "{\"structuredQuery\":{" +
             "\"from\":[{\"collectionId\":\"attempts\"}]," +
@@ -231,6 +263,15 @@ public sealed class FirebaseOnlineDailyChallengeAuthority : IDailyChallengeAutho
                 continue;
             }
 
+            if (!FirebaseRestClient.TryExtractFirestoreBoolField(
+                    chunk,
+                    "scoreTrusted",
+                    out bool scoreTrusted) ||
+                !scoreTrusted)
+            {
+                continue;
+            }
+
             int score = (int)FirebaseRestClient.ExtractFirestoreLongField(chunk, "score");
             int moves = (int)FirebaseRestClient.ExtractFirestoreLongField(chunk, "moves");
             long ms = FirebaseRestClient.ExtractFirestoreLongField(chunk, "completionTimeMs");
@@ -248,6 +289,64 @@ public sealed class FirebaseOnlineDailyChallengeAuthority : IDailyChallengeAutho
                 Source = isYou
                     ? DailyLeaderboardEntrySource.LocalPlayer
                     : DailyLeaderboardEntrySource.Online,
+                Rank = 0
+            });
+        }
+
+        return list;
+    }
+
+    public async Task<IReadOnlyList<DailyLeaderboardEntry>> GetOfficialSimulatedEntriesAsync(
+        string dayId)
+    {
+        var list = new List<DailyLeaderboardEntry>();
+        if (!await EnsureReadyAsync() || string.IsNullOrEmpty(dayId))
+        {
+            return list;
+        }
+
+        DailyChallengeFirebaseSettings settings = DailyChallengeFirebaseSettings.LoadDefault();
+        string json = await FirebaseRestClient.ListDocumentsAsync(
+            settings.ProjectId,
+            "dailyChallenges/" + dayId + "/simulatedEntries",
+            DailyChallengeIdentityService.IdToken);
+        if (string.IsNullOrEmpty(json))
+        {
+            return list;
+        }
+
+        string[] parts = json.Split(new[] { "\"fields\":" }, StringSplitOptions.None);
+        for (int i = 1; i < parts.Length; i++)
+        {
+            string chunk = parts[i];
+            if (!FirebaseRestClient.TryExtractFirestoreBoolField(
+                    chunk,
+                    "isSimulated",
+                    out bool simulated) ||
+                !simulated)
+            {
+                continue;
+            }
+
+            string entryId = FirebaseRestClient.ExtractFirestoreStringField(chunk, "entryId");
+            if (string.IsNullOrEmpty(entryId))
+            {
+                continue;
+            }
+
+            string displayName =
+                FirebaseRestClient.ExtractFirestoreStringField(chunk, "displayName");
+            list.Add(new DailyLeaderboardEntry
+            {
+                PlayerId = entryId,
+                DisplayName = string.IsNullOrEmpty(displayName) ? "Player" : displayName,
+                Score = (int)FirebaseRestClient.ExtractFirestoreLongField(chunk, "score"),
+                Moves = (int)FirebaseRestClient.ExtractFirestoreLongField(chunk, "moves"),
+                CompletionTimeMilliseconds =
+                    FirebaseRestClient.ExtractFirestoreLongField(chunk, "completionTimeMs"),
+                IsCurrentPlayer = false,
+                IsSimulated = true,
+                Source = DailyLeaderboardEntrySource.Simulated,
                 Rank = 0
             });
         }

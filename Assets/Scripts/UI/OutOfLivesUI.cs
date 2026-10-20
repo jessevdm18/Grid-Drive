@@ -57,7 +57,7 @@ public class OutOfLivesUI : MonoBehaviour
     /// <summary>Finds authored OutOfLivesUI. Does not create visuals.</summary>
     public static OutOfLivesUI FindInLoadedScenes()
     {
-        return FindAnyObjectByType<OutOfLivesUI>();
+        return FindAnyObjectByType<OutOfLivesUI>(FindObjectsInactive.Include);
     }
 
     private void Awake()

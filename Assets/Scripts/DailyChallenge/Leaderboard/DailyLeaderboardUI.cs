@@ -723,18 +723,22 @@ public class DailyLeaderboardUI : MonoBehaviour
             ? (root != null ? root.transform : transform)
             : (friendsComingSoonRoot != null ? friendsComingSoonRoot.transform : transform);
         bool showSecondary = !string.IsNullOrEmpty(secondaryText);
+        // CLOSE occupies y 22–100. Keep REFRESH 28px above it, OPEN PLAY GAMES 20px above REFRESH.
+        const float refreshBottom = 128f;
+        const float buttonHeight = 68f;
+        const float buttonGap = 20f;
         PlaceFriendsButton(
             friendsActionButton,
             friendsActionLabel,
             parent,
             buttonText,
-            showSecondary ? 156f : 72f);
+            showSecondary ? refreshBottom + buttonHeight + buttonGap : refreshBottom);
         PlaceFriendsButton(
             friendsSecondaryButton,
             friendsSecondaryLabel,
             parent,
             secondaryText,
-            72f);
+            refreshBottom);
     }
 
     private void HideFriendsOverlay()
@@ -842,12 +846,13 @@ public class DailyLeaderboardUI : MonoBehaviour
         }
 
         button.transform.SetParent(parent, false);
+        button.transform.SetAsLastSibling();
         var rect = button.GetComponent<RectTransform>();
-        rect.anchorMin = new Vector2(0.5f, 0f);
-        rect.anchorMax = new Vector2(0.5f, 0f);
+        rect.anchorMin = new Vector2(0.12f, 0f);
+        rect.anchorMax = new Vector2(0.88f, 0f);
         rect.pivot = new Vector2(0.5f, 0f);
         rect.anchoredPosition = new Vector2(0f, y);
-        rect.sizeDelta = new Vector2(520f, 68f);
+        rect.sizeDelta = new Vector2(0f, 68f);
         if (label != null)
         {
             label.text = text;

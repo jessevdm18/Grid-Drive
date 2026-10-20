@@ -2,10 +2,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Phase 3 provider: deterministic simulated placeholder players + optional local YOU.
-/// Simulated entries are display-fill only — never authoritative for prizes/rewards.
-/// Phase 4.3 settlement reads ONLY Firestore Completed+scoreTrusted attempts;
-/// no isSimulated row can ever enter reward settlement.
+/// Deterministic simulated players + optional local YOU.
+/// Online Global settlement does not trust this device copy. The server ports
+/// this same model into dailyChallenges/{dayId}/simulatedEntries and freezes it.
+/// Offline / editor boards still use this generator directly.
 /// Scores always go through <see cref="DailyChallengeScoreCalculator"/>.
 /// </summary>
 public sealed class SimulatedDailyLeaderboardProvider : IDailyLeaderboardProvider

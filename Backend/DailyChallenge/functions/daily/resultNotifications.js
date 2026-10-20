@@ -29,9 +29,49 @@ function tokenDocId(token) {
 }
 
 function resultCopy(rank) {
+  const place = Number(rank);
+  if (place === 1 || place === 2 || place === 3) {
+    return {
+      title: TITLE,
+      body: 'You finished #' + place + '! Your reward is waiting.',
+    };
+  }
   return {
     title: TITLE,
-    body: rank === 1 ? BODY_WINNER : BODY_RANKED,
+    body: BODY_RANKED,
+  };
+}
+
+function isPrizeRank(rank) {
+  const place = Number(rank);
+  return place === 1 || place === 2 || place === 3;
+}
+
+/** Same path as rewards.js rewardRef. Kept local to avoid a require cycle. */
+function rewardDocRef(dayId, uid) {
+  return db().collection('dailyChallenges').doc(dayId).collection('rewards').doc(uid);
+}
+
+/**
+ * Send a queued result only when it is still current.
+ * A claimed prize cancels the whole notification, including generic copy.
+ * Rank > 3 does not consult the reward doc.
+ */
+function shouldDeliverQueuedResult(queueData, rewardData) {
+  const queue = queueData || {};
+  if (queue.cancelledAt) {
+    return false;
+  }
+  if (isPrizeRank(queue.rank) && rewardData && rewardData.claimed === true) {
+    return false;
+  }
+  return true;
+}
+
+function resultCancelFields() {
+  return {
+    cancelledAt: admin.firestore.FieldValue.serverTimestamp(),
+    cancelReason: 'reward_claimed',
   };
 }
 
@@ -172,15 +212,19 @@ async function registerDailyNotificationTokenHandler(request) {
 }
 
 /**
- * Queue one result notification doc per eligible ranked player.
- * Does not send. Existing docs are left unchanged.
+ * Queue one result notification doc per real ranked player.
+ * Bots are skipped. Does not send. Existing docs are left unchanged.
  */
 async function queueDailyResultNotifications(dayId, ranking) {
   const rows = Array.isArray(ranking) ? ranking : [];
   let queued = 0;
   for (let i = 0; i < rows.length; i++) {
     const row = rows[i];
-    if (!row || !row.uid) {
+    if (!row || row.isSimulated || !row.uid) {
+      continue;
+    }
+    const rank = Number(row.rank != null ? row.rank : i + 1);
+    if (!Number.isInteger(rank) || rank < 1) {
       continue;
     }
     const ref = resultRef(dayId, row.uid);
@@ -191,16 +235,16 @@ async function queueDailyResultNotifications(dayId, ranking) {
     await ref.set({
       dayId,
       uid: row.uid,
-      rank: i + 1,
+      rank,
       queuedAt: admin.firestore.FieldValue.serverTimestamp(),
     });
     queued += 1;
   }
-  if (rows.length > 0) {
+  if (queued > 0 || rows.length > 0) {
     console.log(
       '[DailyResult] queued dayId=' +
         dayId +
-        ' eligible=' +
+        ' rankedRows=' +
         rows.length +
         ' newDocs=' +
         queued
@@ -240,10 +284,24 @@ async function sendOneToken(dayId, uid, rank, tokenDoc, now) {
     return 'waiting';
   }
 
-  const deliveryRef = resultRef(dayId, uid).collection('deliveries').doc(tokenDoc.id);
+  const queueRef = resultRef(dayId, uid);
+  const deliveryRef = queueRef.collection('deliveries').doc(tokenDoc.id);
+  const prize = isPrizeRank(rank);
+  const rewardRef = prize ? rewardDocRef(dayId, uid) : null;
   const claim = await db().runTransaction(async (tx) => {
+    const queueSnap = await tx.get(queueRef);
+    const queue = queueSnap.exists ? queueSnap.data() || {} : {};
+    const rewardSnap = rewardRef ? await tx.get(rewardRef) : null;
+    const reward = rewardSnap && rewardSnap.exists ? rewardSnap.data() || {} : null;
     const snap = await tx.get(deliveryRef);
     const existing = snap.exists ? snap.data() || {} : {};
+
+    if (!shouldDeliverQueuedResult(Object.assign({ rank }, queue), reward)) {
+      if (prize && reward && reward.claimed === true && !queue.cancelledAt) {
+        tx.set(queueRef, resultCancelFields(), { merge: true });
+      }
+      return { proceed: false };
+    }
     if (existing.sentAt) {
       return { proceed: false };
     }
@@ -261,6 +319,30 @@ async function sendOneToken(dayId, uid, rank, tokenDoc, now) {
   });
   if (!claim.proceed) {
     return 'already';
+  }
+
+  if (prize) {
+    const stillDue = await db().runTransaction(async (tx) => {
+      const queueSnap = await tx.get(queueRef);
+      const queue = queueSnap.exists ? queueSnap.data() || {} : {};
+      const rewardSnap = await tx.get(rewardRef);
+      const reward = rewardSnap.exists ? rewardSnap.data() || {} : null;
+      const deliverySnap = await tx.get(deliveryRef);
+      const delivery = deliverySnap.exists ? deliverySnap.data() || {} : {};
+      if (shouldDeliverQueuedResult(Object.assign({ rank }, queue), reward)) {
+        return true;
+      }
+      if (reward && reward.claimed === true && !queue.cancelledAt) {
+        tx.set(queueRef, resultCancelFields(), { merge: true });
+      }
+      if (deliverySnap.exists && !delivery.sentAt) {
+        tx.delete(deliveryRef);
+      }
+      return false;
+    });
+    if (!stillDue) {
+      return 'cancelled';
+    }
   }
 
   try {
@@ -328,6 +410,9 @@ async function dispatchDueResultNotifications(serverNow = new Date()) {
       .get();
     for (const doc of queued.docs) {
       const row = doc.data() || {};
+      if (row.cancelledAt) {
+        continue;
+      }
       const uid = doc.id;
       const rank = Number(row.rank);
       if (!Number.isInteger(rank) || rank < 1) {
@@ -352,6 +437,9 @@ module.exports = {
   BODY_WINNER,
   tokenDocId,
   resultCopy,
+  isPrizeRank,
+  shouldDeliverQueuedResult,
+  resultNotificationRef: resultRef,
   clampOffsetMinutes,
   isLocalDeliveryWindow,
   isInvalidTokenError,

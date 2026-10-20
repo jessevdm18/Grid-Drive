@@ -838,6 +838,11 @@ public class LevelObjectiveController : MonoBehaviour
 
     private void MaybeBeginObjectiveTutorialGate(LevelObjectiveType objectiveType)
     {
+        if (PlayableAdSession.IsActive)
+        {
+            return;
+        }
+
         if (ObjectiveTutorialPrefs.HasSeenTutorial(objectiveType))
         {
             return;

@@ -1,32 +1,62 @@
 'use strict';
 
 /**
- * Phase 4.3 — Daily #1 winner reward settlement + claim.
+ * Daily prize settlement + claim.
  *
- * Settlement reads ONLY Firestore attempt documents under
- * dailyChallenges/{dayId}/attempts. Simulated / hybrid client leaderboard
- * rows are never consulted and can never receive rewards.
+ * Reward settlement version 1 (historical, already settled):
+ *   real Completed + scoreTrusted attempts only. Rank #1 gets 1000 coins.
+ *   Those days are never re-ranked with bots.
  *
- * Ranking (strict sequential #1, no shared first place):
+ * Reward settlement version 2 (new / still unsettled days):
+ *   the same real attempts plus the day's frozen simulated entries.
+ *   Prize positions are #1 / #2 / #3 on that full hybrid list.
+ *   A bot occupies the position and receives nothing. The next real player
+ *   is not promoted into that slot.
+ *
+ * Hybrid order:
  *   1. score DESC
  *   2. moves ASC
  *   3. completionTimeMs ASC
- *   4. Firebase UID ASC
+ *   4. tieBreakId ASC (real UID, or the stable simulated entry id)
  *
- * TRUST BOUNDARY: moves and completionTimeMs remain client-reported.
+ * Friends ranking does not use this hybrid list and never creates rewards.
+ *
+ * TRUST BOUNDARY: real moves and completionTimeMs remain client-reported.
+ * Simulated scores are server-generated and stored. Client bot positions
+ * are ignored.
  */
 
 const admin = require('firebase-admin');
-const { queueDailyResultNotifications } = require('./resultNotifications');
+const {
+  queueDailyResultNotifications,
+  resultNotificationRef,
+} = require('./resultNotifications');
+const {
+  ensureOfficialSimulatedEntries,
+  loadStoredSimulatedEntries,
+} = require('./simulatedEntries');
 const { HttpsError } = require('firebase-functions/v2/https');
 const { defineBoolean } = require('firebase-functions/params');
 const { requireAuth, utcDayId } = require('./validation');
 
-const REWARD_SETTLEMENT_VERSION = 1;
+/** Historical real-only settlement. Do not rewrite those days. */
+const LEGACY_REWARD_SETTLEMENT_VERSION = 1;
+/** Hybrid real + official simulated settlement. New unsettled days only. */
+const REWARD_SETTLEMENT_VERSION = 2;
 const FIRST_PLACE_RANK = 1;
 const REWARD_TYPE_COINS = 'coins';
 const REWARD_AMOUNT_COINS = 1000;
+const PRIZE_AMOUNT_BY_RANK = {
+  1: 1000,
+  2: 500,
+  3: 250,
+};
 const REWARD_SOURCE = 'daily_first_place';
+const REWARD_SOURCE_BY_RANK = {
+  1: 'daily_first_place',
+  2: 'daily_second_place',
+  3: 'daily_third_place',
+};
 /** Fake dayId for Editor/dev claim smoke tests — never a real UTC day. */
 const DEV_REWARD_DAY_ID = 'dev-reward-smoke-test';
 const REWARD_SOURCE_DEV = 'daily_first_place_dev';
@@ -170,9 +200,94 @@ function compareRankRows(a, b) {
 }
 
 /**
- * Load eligible attempts for a day and return sorted ranking (best first).
+ * Hybrid order. tieBreakId is the real UID or the stable simulated entry id.
+ * Friends ranking keeps compareRankRows and never calls this.
  */
-async function loadEligibleRanking(dayId) {
+function compareHybridRows(a, b) {
+  if (b.score !== a.score) {
+    return b.score - a.score;
+  }
+  if (a.moves !== b.moves) {
+    return a.moves - b.moves;
+  }
+  if (a.completionTimeMs !== b.completionTimeMs) {
+    return a.completionTimeMs - b.completionTimeMs;
+  }
+  const at = a.tieBreakId || a.uid || '';
+  const bt = b.tieBreakId || b.uid || '';
+  if (at < bt) {
+    return -1;
+  }
+  if (at > bt) {
+    return 1;
+  }
+  return 0;
+}
+
+function rankHybrid(rows) {
+  const copy = (Array.isArray(rows) ? rows : []).map((row) => ({ ...row }));
+  copy.sort(compareHybridRows);
+  for (let i = 0; i < copy.length; i++) {
+    copy[i].rank = i + 1;
+  }
+  return copy;
+}
+
+function prizeAmountForRank(rank) {
+  return Object.prototype.hasOwnProperty.call(PRIZE_AMOUNT_BY_RANK, rank)
+    ? PRIZE_AMOUNT_BY_RANK[rank]
+    : 0;
+}
+
+/**
+ * Prize slots on an already-sorted hybrid list.
+ * A bot consumes the slot and creates no reward. Nobody is promoted.
+ */
+function prizesForRanking(ranking) {
+  const prizes = [];
+  for (let rank = 1; rank <= 3; rank++) {
+    const row = ranking && ranking[rank - 1];
+    if (!row || row.isSimulated || !row.uid) {
+      prizes.push({
+        rank,
+        rewarded: false,
+        amount: 0,
+        uid: null,
+      });
+      continue;
+    }
+    prizes.push({
+      rank,
+      rewarded: true,
+      amount: prizeAmountForRank(rank),
+      uid: row.uid,
+      score: row.score,
+      moves: row.moves,
+      completionTimeMs: row.completionTimeMs,
+      source: REWARD_SOURCE_BY_RANK[rank] || REWARD_SOURCE,
+    });
+  }
+  return prizes;
+}
+
+function daySettlementVersion(dayData) {
+  if (!dayData || typeof dayData !== 'object') {
+    return 0;
+  }
+  const version = Number(dayData.rewardSettlementVersion);
+  if (version === REWARD_SETTLEMENT_VERSION) {
+    return REWARD_SETTLEMENT_VERSION;
+  }
+  if (version === LEGACY_REWARD_SETTLEMENT_VERSION || dayData.rewardSettledAt) {
+    return LEGACY_REWARD_SETTLEMENT_VERSION;
+  }
+  return 0;
+}
+
+/**
+ * Real eligible attempts only. Friends and version-1 settlement use this.
+ */
+async function loadRealRanking(dayId) {
   const snap = await attemptsCol(dayId).where('state', '==', 'Completed').get();
   const rows = [];
   snap.forEach((doc) => {
@@ -181,10 +296,60 @@ async function loadEligibleRanking(dayId) {
     if (!isEligibleAttempt(data, uid)) {
       return;
     }
-    rows.push(toRankRow(uid, data));
+    const row = toRankRow(uid, data);
+    rows.push({
+      isSimulated: false,
+      uid: row.uid,
+      tieBreakId: row.uid,
+      score: row.score,
+      moves: row.moves,
+      completionTimeMs: row.completionTimeMs,
+    });
   });
-  rows.sort(compareRankRows);
-  return rows;
+  return rankHybrid(rows);
+}
+
+/** @deprecated name kept for callers. Real attempts only — not the hybrid board. */
+async function loadEligibleRanking(dayId) {
+  return loadRealRanking(dayId);
+}
+
+async function loadHybridRanking(dayId) {
+  const reals = await loadRealRanking(dayId);
+  const bots = await loadStoredSimulatedEntries(dayId);
+  const rows = [];
+  for (let i = 0; i < reals.length; i++) {
+    rows.push(reals[i]);
+  }
+  for (let i = 0; i < bots.length; i++) {
+    const bot = bots[i];
+    rows.push({
+      isSimulated: true,
+      uid: '',
+      entryId: bot.entryId,
+      tieBreakId: bot.tieBreakId,
+      displayName: bot.displayName,
+      score: bot.score,
+      moves: bot.moves,
+      completionTimeMs: bot.completionTimeMs,
+    });
+  }
+  return rankHybrid(rows);
+}
+
+async function loadSettlementRanking(dayId, version) {
+  if (version === REWARD_SETTLEMENT_VERSION) {
+    const bots = await loadStoredSimulatedEntries(dayId);
+    if (!bots.length) {
+      const err = new Error(
+        'Hybrid settlement is missing official simulated entries for ' + dayId
+      );
+      err.code = 'sim_entries_missing';
+      throw err;
+    }
+    return loadHybridRanking(dayId);
+  }
+  return loadRealRanking(dayId);
 }
 
 function isDaySettled(dayData) {
@@ -217,124 +382,158 @@ async function settleDay(dayId, options = {}) {
   const existingDay = await dayDocumentRef.get();
   if (existingDay.exists && isDaySettled(existingDay.data())) {
     const data = existingDay.data() || {};
+    const version = daySettlementVersion(data);
     if (data.finalRanksPublished !== true) {
-      const existingRanking = await loadEligibleRanking(dayId);
-      await publishFinalRanks(dayId, existingRanking);
+      const existingRanking = await loadSettlementRanking(dayId, version);
+      await publishFinalRanks(dayId, existingRanking, version);
       await queueDailyResultNotifications(dayId, existingRanking);
     } else {
-      const existingRanking = await loadEligibleRanking(dayId);
+      const existingRanking = await loadSettlementRanking(dayId, version);
       await queueDailyResultNotifications(dayId, existingRanking);
     }
     return {
       ok: true,
       dayId,
       alreadySettled: true,
+      settlementVersion: version,
       firstPlaceUid: data.firstPlaceUid || null,
       rewardCreated: false,
       eligibleCount: null,
     };
   }
 
-  const ranking = await loadEligibleRanking(dayId);
-  const winner = ranking.length > 0 ? ranking[0] : null;
+  const ensured = await ensureOfficialSimulatedEntries(dayId);
+  if (!ensured.ok) {
+    const err = new Error(
+      'Official simulated entries were not frozen for ' + dayId
+    );
+    err.code = ensured.errorCode || 'sim_entries';
+    throw err;
+  }
+
+  const ranking = await loadSettlementRanking(dayId, REWARD_SETTLEMENT_VERSION);
+  const prizes = prizesForRanking(ranking);
+  const rewarded = prizes.filter((prize) => prize.rewarded);
+  const firstPrize = rewarded.find((prize) => prize.rank === FIRST_PLACE_RANK) || null;
 
   const outcome = await db().runTransaction(async (tx) => {
     // All reads before writes (Firestore transaction requirement).
     const daySnap = await tx.get(dayDocumentRef);
     const dayData = daySnap.exists ? daySnap.data() || {} : {};
-    const rRef = winner ? rewardRef(dayId, winner.uid) : null;
-    const rewardSnap = rRef ? await tx.get(rRef) : null;
+    const rewardSnaps = [];
+    for (let i = 0; i < rewarded.length; i++) {
+      rewardSnaps.push({
+        prize: rewarded[i],
+        snap: await tx.get(rewardRef(dayId, rewarded[i].uid)),
+      });
+    }
 
     if (isDaySettled(dayData)) {
       return {
         alreadySettled: true,
         firstPlaceUid: dayData.firstPlaceUid || null,
-        rewardCreated: false,
+        created: [],
       };
     }
 
-    const settlementPatch = {
-      dayId,
-      rewardSettlementVersion: REWARD_SETTLEMENT_VERSION,
-      rewardSettledAt: admin.firestore.FieldValue.serverTimestamp(),
-      firstPlaceUid: winner ? winner.uid : null,
-      firstPlaceRank: winner ? FIRST_PLACE_RANK : null,
-      firstPlaceRewardType: winner ? REWARD_TYPE_COINS : null,
-      firstPlaceRewardAmount: winner ? REWARD_AMOUNT_COINS : null,
+    const slotUid = (rank) => {
+      const prize = prizes[rank - 1];
+      return prize && prize.rewarded ? prize.uid : null;
     };
 
-    tx.set(dayDocumentRef, settlementPatch, { merge: true });
+    tx.set(
+      dayDocumentRef,
+      {
+        dayId,
+        rankingVersion: REWARD_SETTLEMENT_VERSION,
+        rewardSettlementVersion: REWARD_SETTLEMENT_VERSION,
+        rewardSettledAt: admin.firestore.FieldValue.serverTimestamp(),
+        firstPlaceUid: slotUid(1),
+        firstPlaceRank: slotUid(1) ? FIRST_PLACE_RANK : null,
+        firstPlaceRewardType: slotUid(1) ? REWARD_TYPE_COINS : null,
+        firstPlaceRewardAmount: slotUid(1) ? PRIZE_AMOUNT_BY_RANK[1] : null,
+        secondPlaceUid: slotUid(2),
+        secondPlaceRewardAmount: slotUid(2) ? PRIZE_AMOUNT_BY_RANK[2] : null,
+        thirdPlaceUid: slotUid(3),
+        thirdPlaceRewardAmount: slotUid(3) ? PRIZE_AMOUNT_BY_RANK[3] : null,
+      },
+      { merge: true }
+    );
 
-    if (!winner) {
-      return {
-        alreadySettled: false,
-        firstPlaceUid: null,
-        rewardCreated: false,
-      };
+    const created = [];
+    for (let i = 0; i < rewardSnaps.length; i++) {
+      const item = rewardSnaps[i];
+      if (item.snap.exists) {
+        continue;
+      }
+      const prize = item.prize;
+      tx.set(rewardRef(dayId, prize.uid), {
+        dayId,
+        uid: prize.uid,
+        rank: prize.rank,
+        finalRank: prize.rank,
+        rewardType: REWARD_TYPE_COINS,
+        rewardAmount: prize.amount,
+        amount: prize.amount,
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        claimed: false,
+        claimedAt: null,
+        source: prize.source,
+        score: prize.score,
+        moves: prize.moves,
+        completionTimeMilliseconds: prize.completionTimeMs,
+        rewardSettlementVersion: REWARD_SETTLEMENT_VERSION,
+      });
+      created.push({
+        rank: prize.rank,
+        amount: prize.amount,
+        source: prize.source,
+      });
     }
-
-    if (rewardSnap && rewardSnap.exists) {
-      // Day was not marked settled but reward exists — finish settlement, no duplicate.
-      return {
-        alreadySettled: false,
-        firstPlaceUid: winner.uid,
-        rewardCreated: false,
-      };
-    }
-
-    tx.set(rRef, {
-      dayId,
-      uid: winner.uid,
-      rank: FIRST_PLACE_RANK,
-      rewardType: REWARD_TYPE_COINS,
-      rewardAmount: REWARD_AMOUNT_COINS,
-      createdAt: admin.firestore.FieldValue.serverTimestamp(),
-      claimed: false,
-      claimedAt: null,
-      source: REWARD_SOURCE,
-      score: winner.score,
-      moves: winner.moves,
-      completionTimeMilliseconds: winner.completionTimeMs,
-    });
 
     return {
       alreadySettled: false,
-      firstPlaceUid: winner.uid,
-      rewardCreated: true,
+      firstPlaceUid: firstPrize ? firstPrize.uid : null,
+      created,
     };
   });
 
-  // Persist server rank on real attempt docs only. Simulated rows are never loaded.
-  // Reward doc creation above is unchanged (rank #1 coins only).
-  await publishFinalRanks(dayId, ranking);
-  await queueDailyResultNotifications(dayId, ranking);
+  if (!outcome.alreadySettled) {
+    await publishFinalRanks(dayId, ranking, REWARD_SETTLEMENT_VERSION);
+    await queueDailyResultNotifications(dayId, ranking);
+  }
 
-  if (outcome.rewardCreated) {
-    // Structured audit log for analytics pipelines (no UID).
+  const created = Array.isArray(outcome.created) ? outcome.created : [];
+  for (let i = 0; i < created.length; i++) {
+    const prize = created[i];
     console.log(
       JSON.stringify({
         event: 'daily_reward_created',
-        rank: FIRST_PLACE_RANK,
+        rank: prize.rank,
         reward_type: REWARD_TYPE_COINS,
-        reward_amount: REWARD_AMOUNT_COINS,
+        reward_amount: prize.amount,
         day_id: dayId,
-        source: REWARD_SOURCE,
+        source: prize.source,
       })
     );
   }
 
+  const realCount = ranking.filter((row) => row && !row.isSimulated && row.uid).length;
   return {
     ok: true,
     dayId,
     alreadySettled: !!outcome.alreadySettled,
+    settlementVersion: REWARD_SETTLEMENT_VERSION,
     firstPlaceUid: outcome.firstPlaceUid || null,
-    rewardCreated: !!outcome.rewardCreated,
-    eligibleCount: ranking.length,
-    winnerPreview: winner
+    rewardCreated: created.length > 0,
+    prizesCreated: created.length,
+    eligibleCount: realCount,
+    hybridCount: ranking.length,
+    winnerPreview: firstPrize
       ? {
-          score: winner.score,
-          moves: winner.moves,
-          completionTimeMs: winner.completionTimeMs,
+          score: firstPrize.score,
+          moves: firstPrize.moves,
+          completionTimeMs: firstPrize.completionTimeMs,
         }
       : null,
   };
@@ -356,7 +555,11 @@ async function settlePreviousUtcDay(serverNow = new Date()) {
       result.eligibleCount +
       ' rewardCreated=' +
       result.rewardCreated +
-      ' hasWinner=' +
+      ' prizesCreated=' +
+      (result.prizesCreated != null ? result.prizesCreated : 0) +
+      ' settlementVersion=' +
+      (result.settlementVersion != null ? result.settlementVersion : '') +
+      ' hasFirstPlaceReward=' +
       !!result.firstPlaceUid
   );
   return result;
@@ -366,17 +569,19 @@ const SETTLED_RESULT_LOOKBACK_DAYS = 14;
 const FINAL_RANK_BATCH = 400;
 
 /**
- * 1-based rank in an already-sorted eligible ranking. 0 if uid is absent.
- * Simulated leaderboard rows are never in this list.
+ * 1-based rank in an already-sorted hybrid or real-only list.
+ * Simulated rows have no uid and are never returned.
  */
 function findPlayerRank(ranking, uid) {
   if (!uid || !Array.isArray(ranking)) {
     return 0;
   }
   for (let i = 0; i < ranking.length; i++) {
-    if (ranking[i] && ranking[i].uid === uid) {
-      return i + 1;
+    const row = ranking[i];
+    if (!row || row.isSimulated || row.uid !== uid) {
+      continue;
     }
+    return row.rank != null ? Number(row.rank) : i + 1;
   }
   return 0;
 }
@@ -395,25 +600,29 @@ function utcDayIdDaysAgo(serverNow, daysAgo) {
 }
 
 /**
- * Write finalRank onto eligible attempt docs after settlement.
- * Does not create reward docs and does not change #1 coin rules.
+ * Write finalRank onto real attempt docs only.
+ * The rank is the position in the list that was settled (hybrid for version 2).
+ * Bots have no attempt document.
  */
-async function publishFinalRanks(dayId, ranking) {
-  const rows = Array.isArray(ranking) ? ranking : [];
+async function publishFinalRanks(dayId, ranking, version) {
+  const stamp =
+    version === REWARD_SETTLEMENT_VERSION
+      ? REWARD_SETTLEMENT_VERSION
+      : LEGACY_REWARD_SETTLEMENT_VERSION;
+  const rows = (Array.isArray(ranking) ? ranking : []).filter(
+    (row) => row && !row.isSimulated && row.uid && Number.isInteger(Number(row.rank)) && Number(row.rank) > 0
+  );
   for (let i = 0; i < rows.length; i += FINAL_RANK_BATCH) {
     const batch = db().batch();
     const slice = rows.slice(i, i + FINAL_RANK_BATCH);
     let writes = 0;
     for (let j = 0; j < slice.length; j++) {
       const row = slice[j];
-      if (!row || !row.uid) {
-        continue;
-      }
       batch.set(
         attemptsCol(dayId).doc(row.uid),
         {
-          finalRank: i + j + 1,
-          finalRankSettlementVersion: REWARD_SETTLEMENT_VERSION,
+          finalRank: Number(row.rank),
+          finalRankSettlementVersion: stamp,
         },
         { merge: true }
       );
@@ -432,13 +641,41 @@ async function publishFinalRanks(dayId, ranking) {
   );
 }
 
+function storedRewardRank(data) {
+  const finalRank = Number(data && data.finalRank);
+  if (Number.isInteger(finalRank) && finalRank > 0) {
+    return finalRank;
+  }
+  const rank = Number(data && data.rank);
+  if (Number.isInteger(rank) && rank > 0) {
+    return rank;
+  }
+  return FIRST_PLACE_RANK;
+}
+
+function storedRewardAmount(data) {
+  const amount = Number(data && data.amount);
+  if (Number.isFinite(amount)) {
+    return amount;
+  }
+  const rewardAmount = Number(data && data.rewardAmount);
+  if (Number.isFinite(rewardAmount)) {
+    return rewardAmount;
+  }
+  const ranked = prizeAmountForRank(storedRewardRank(data));
+  return ranked > 0 ? ranked : REWARD_AMOUNT_COINS;
+}
+
 function rewardToClient(data) {
+  const rank = storedRewardRank(data);
+  const amount = storedRewardAmount(data);
   return {
     dayId: data.dayId || '',
-    rank: data.rank != null ? Number(data.rank) : FIRST_PLACE_RANK,
+    rank,
+    finalRank: rank,
     rewardType: data.rewardType || REWARD_TYPE_COINS,
-    rewardAmount:
-      data.rewardAmount != null ? Number(data.rewardAmount) : REWARD_AMOUNT_COINS,
+    rewardAmount: amount,
+    amount,
     claimed: data.claimed === true,
     source: data.source || REWARD_SOURCE,
     isDevelopmentTest: data.isDevelopmentTest === true,
@@ -584,8 +821,28 @@ async function getPendingDailyRewardsHandler(request) {
 }
 
 /**
+ * Claim proves the result panel was shown. Cancel the unsent result push.
+ * Does not modify delivery sentAt records.
+ */
+function cancelQueuedResultInTransaction(tx, noteRef, note, dayId, uid) {
+  if (note && note.cancelledAt) {
+    return;
+  }
+  const patch = {
+    cancelledAt: admin.firestore.FieldValue.serverTimestamp(),
+    cancelReason: 'reward_claimed',
+  };
+  if (!note) {
+    patch.dayId = dayId;
+    patch.uid = uid;
+  }
+  tx.set(noteRef, patch, { merge: true });
+}
+
+/**
  * Callable: claim one reward for request.auth.uid.
  * Idempotent: AlreadyClaimed does not return a second spendable grant.
+ * A successful or already-claimed reward cancels that day's result notification.
  */
 async function claimDailyRewardHandler(request) {
   const uid = requireAuth(request);
@@ -603,8 +860,10 @@ async function claimDailyRewardHandler(request) {
   }
 
   const rRef = rewardRef(dayId, uid);
+  const noteRef = resultNotificationRef(dayId, uid);
   const outcome = await db().runTransaction(async (tx) => {
     const snap = await tx.get(rRef);
+    const noteSnap = await tx.get(noteRef);
     if (!snap.exists) {
       return { status: 'not_found' };
     }
@@ -614,7 +873,9 @@ async function claimDailyRewardHandler(request) {
       return { status: 'denied' };
     }
 
+    const note = noteSnap.exists ? noteSnap.data() || {} : null;
     if (reward.claimed === true) {
+      cancelQueuedResultInTransaction(tx, noteRef, note, dayId, uid);
       return { status: 'already_claimed', reward };
     }
 
@@ -622,6 +883,7 @@ async function claimDailyRewardHandler(request) {
       claimed: true,
       claimedAt: admin.firestore.FieldValue.serverTimestamp(),
     });
+    cancelQueuedResultInTransaction(tx, noteRef, note, dayId, uid);
 
     return { status: 'claimed', reward };
   });
@@ -695,26 +957,38 @@ function parseAcknowledgedDayIds(data) {
 
 /**
  * Server rank for one real eligible attempt.
- * Uses the rank written at settlement when present; otherwise recomputes
- * from attempt documents only (never simulated leaderboard rows).
+ * A stored version 1 or version 2 rank is trusted and is not recomputed.
+ * A missing rank is filled with the algorithm that settled that day.
+ * Version 1 stays real-only. Version 2 uses the frozen hybrid board.
  */
-async function resolveFinalRank(dayId, uid, attemptData) {
+async function resolveFinalRank(dayId, uid, attemptData, dayData) {
   const stored = Number(attemptData && attemptData.finalRank);
+  const storedVersion = Number(attemptData && attemptData.finalRankSettlementVersion);
   if (
     Number.isInteger(stored) &&
     stored > 0 &&
-    attemptData.finalRankSettlementVersion === REWARD_SETTLEMENT_VERSION
+    (storedVersion === LEGACY_REWARD_SETTLEMENT_VERSION ||
+      storedVersion === REWARD_SETTLEMENT_VERSION)
   ) {
     return stored;
   }
 
-  const ranking = await loadEligibleRanking(dayId);
+  const version = daySettlementVersion(dayData);
+  const ranking = await loadSettlementRanking(
+    dayId,
+    version === REWARD_SETTLEMENT_VERSION
+      ? REWARD_SETTLEMENT_VERSION
+      : LEGACY_REWARD_SETTLEMENT_VERSION
+  );
   const rank = findPlayerRank(ranking, uid);
   if (rank > 0) {
     await attemptsCol(dayId).doc(uid).set(
       {
         finalRank: rank,
-        finalRankSettlementVersion: REWARD_SETTLEMENT_VERSION,
+        finalRankSettlementVersion:
+          version === REWARD_SETTLEMENT_VERSION
+            ? REWARD_SETTLEMENT_VERSION
+            : LEGACY_REWARD_SETTLEMENT_VERSION,
       },
       { merge: true }
     );
@@ -753,22 +1027,19 @@ async function getSettledDailyResultHandler(request) {
       continue;
     }
 
-    const rank = await resolveFinalRank(dayId, uid, attempt);
+    const rank = await resolveFinalRank(dayId, uid, attempt, daySnap.data());
     if (rank <= 0) {
       continue;
     }
 
     let hasUnclaimedReward = false;
     let rewardAmount = 0;
-    if (rank === FIRST_PLACE_RANK) {
+    if (rank >= 1 && rank <= 3) {
       const rewardSnap = await rewardRef(dayId, uid).get();
       if (rewardSnap.exists) {
         const reward = rewardSnap.data() || {};
         hasUnclaimedReward = reward.claimed !== true;
-        rewardAmount =
-          reward.rewardAmount != null
-            ? Number(reward.rewardAmount)
-            : REWARD_AMOUNT_COINS;
+        rewardAmount = storedRewardAmount(reward);
       }
     }
 
@@ -778,11 +1049,12 @@ async function getSettledDailyResultHandler(request) {
       settled: true,
       dayId,
       rank,
+      finalRank: rank,
       score: Number(attempt.score),
       moves: Number(attempt.moves),
       completionTimeMs: Number(attempt.completionTimeMs),
       hasUnclaimedReward,
-      rewardAmount: rank === FIRST_PLACE_RANK ? rewardAmount : 0,
+      rewardAmount,
     };
   }
 
@@ -794,16 +1066,21 @@ async function getSettledDailyResultHandler(request) {
 }
 
 module.exports = {
+  LEGACY_REWARD_SETTLEMENT_VERSION,
   REWARD_SETTLEMENT_VERSION,
   FIRST_PLACE_RANK,
   REWARD_TYPE_COINS,
   REWARD_AMOUNT_COINS,
+  PRIZE_AMOUNT_BY_RANK,
   REWARD_SOURCE,
   DEV_REWARD_DAY_ID,
   REWARD_SOURCE_DEV,
   previousUtcDayId,
   isEligibleAttempt,
   compareRankRows,
+  compareHybridRows,
+  rankHybrid,
+  prizesForRanking,
   findPlayerRank,
   loadEligibleRanking,
   settleDay,

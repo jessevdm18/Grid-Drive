@@ -27,6 +27,11 @@ public static class FirebaseRuntimeBootstrap
 #endif
         // Reset again: reliable with Disable Domain Reload (Unity 6).
         TryInvokeFirebaseManager("ResetStaticsForPlayMode");
+        if (PlayableAdSession.ShouldSuppressProductionServices())
+        {
+            return;
+        }
+
         TryInvokeFirebaseManager("EnsureInstance");
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
@@ -47,6 +52,11 @@ public static class FirebaseRuntimeBootstrap
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void OnAfterSceneLoad()
     {
+        if (PlayableAdSession.ShouldSuppressProductionServices())
+        {
+            return;
+        }
+
         if (!Application.isPlaying)
         {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD

@@ -65,6 +65,9 @@ public class LevelManager : MonoBehaviour
     // Daily Challenge session: direct LevelData; never writes campaign progression.
     private LevelData dailyChallengeLevel;
 
+    // Marketing playable: one authored level, no campaign save.
+    private LevelData playableAdLevel;
+
     private SkinManager skinManager;
 
     /// <summary>
@@ -106,8 +109,11 @@ public class LevelManager : MonoBehaviour
     /// <summary>
     /// Non-campaign session (V1 playtest or Daily Challenge).
     /// </summary>
+    public bool IsPlayableAdSession =>
+        playableAdLevel != null || PlayableAdSession.IsActive;
+
     public bool IsNonCampaignSession =>
-        editorPlaytestLevel != null || dailyChallengeLevel != null;
+        editorPlaytestLevel != null || dailyChallengeLevel != null || IsPlayableAdSession;
 
     /// <summary>
     /// Central zero-lives gate. V1 / Daily Challenge bypass. Does not consume a life.
@@ -116,6 +122,7 @@ public class LevelManager : MonoBehaviour
     {
         bool bypass = IsV1CandidatePlaytest ||
             IsDailyChallengeSession ||
+            IsPlayableAdSession ||
             DailyChallengeContext.HasPending ||
             DailyChallengeContext.IsActiveSession;
         LivesManager livesManager = LivesManager.EnsureInstance();
@@ -216,6 +223,11 @@ public class LevelManager : MonoBehaviour
 
     private void Start()
     {
+        if (TryStartPlayableAdLevel())
+        {
+            return;
+        }
+
         int serializedSnapshot = currentLevelIndex;
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
@@ -621,8 +633,29 @@ public class LevelManager : MonoBehaviour
         LoadLevel(authorizedAttempt: false);
     }
 
+    private bool TryStartPlayableAdLevel()
+    {
+        if (!PlayableAdSession.IsActive || PlayableAdSession.Level == null)
+        {
+            return false;
+        }
+
+        playableAdLevel = PlayableAdSession.Level;
+        editorPlaytestLevel = null;
+        dailyChallengeLevel = null;
+        currentLevelIndex = -1;
+        LoadLevelData(playableAdLevel, authorizedAttempt: true);
+        return true;
+    }
+
     private void LoadLevel(bool authorizedAttempt)
     {
+        if (playableAdLevel != null)
+        {
+            LoadLevelData(playableAdLevel, authorizedAttempt: true);
+            return;
+        }
+
         if (editorPlaytestLevel != null)
         {
             LoadLevelData(editorPlaytestLevel, authorizedAttempt);
@@ -820,7 +853,7 @@ public class LevelManager : MonoBehaviour
 
     private void ReportLevelLoadTelemetry(LevelData levelData)
     {
-        if (levelData == null)
+        if (levelData == null || PlayableAdSession.IsActive)
         {
             return;
         }
@@ -1078,6 +1111,11 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     private VehicleSpriteLibrary ResolveActiveSpriteLibrary()
     {
+        if (PlayableAdSession.IsActive)
+        {
+            return vehicleSpriteLibrary;
+        }
+
         ResolveSkinManager();
         if (skinManager != null)
         {

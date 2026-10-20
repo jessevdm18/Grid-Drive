@@ -95,7 +95,7 @@ exports.getPendingDailyRewards = onCall(wrap(getPendingDailyRewardsHandler));
 
 /**
  * Settled final placement for the authenticated player (any rank).
- * Does not grant coins. Rank #1 rewards stay on getPendingDailyRewards / claimDailyReward.
+ * Does not grant coins. Prize rewards stay on getPendingDailyRewards / claimDailyReward.
  */
 exports.getSettledDailyResult = onCall(wrap(getSettledDailyResultHandler));
 
@@ -128,8 +128,10 @@ exports.publishDailyChallengeAndNotify = onSchedule(
 );
 
 /**
- * Phase 4.3 — settle previous UTC day's #1 winner shortly after midnight.
- * Idempotent. Simulated leaderboard entries are never eligible.
+ * Settle the previous UTC day shortly after midnight.
+ * Version 2 ranks real players and the day's frozen simulated entries together.
+ * Bots can occupy prize positions but never receive coins.
+ * Already-settled version 1 days stay real-only.
  */
 exports.settleDailyChallengeWinners = onSchedule(
   {

@@ -90,7 +90,7 @@ public class DailyRewardUI : MonoBehaviour
 
         int amount = reward.RewardAmount > 0
             ? reward.RewardAmount
-            : DailyRewardService.FirstPlaceCoinReward;
+            : DailyRewardService.CoinsForRank(reward.Rank);
         ApplyPresentation(
             reward.Rank,
             reward.Score,
@@ -125,7 +125,7 @@ public class DailyRewardUI : MonoBehaviour
         {
             int amount = settled.RewardAmount > 0
                 ? settled.RewardAmount
-                : DailyRewardService.FirstPlaceCoinReward;
+                : DailyRewardService.CoinsForRank(settled.Rank);
             Show(new DailyRewardRecord(
                 settled.DayId,
                 settled.Rank,
@@ -171,20 +171,26 @@ public class DailyRewardUI : MonoBehaviour
 
         if (rankText != null)
         {
-            rankText.gameObject.SetActive(false);
+            rankText.gameObject.SetActive(true);
+            rankText.alignment = TextAlignmentOptions.Top;
+            rankText.text =
+                "<size=32>FINAL RANK</size>\n<size=68>#" + Mathf.Max(1, rank) + "</size>";
         }
 
         if (bodyText != null)
         {
-            bodyText.alignment = TextAlignmentOptions.Top;
+            bodyText.alignment = TextAlignmentOptions.TopLeft;
             bodyText.text = FormatResult(
                 rank,
                 score,
                 moves,
                 completionTimeMs,
                 includeReward,
-                rewardAmount);
+                rewardAmount,
+                rankText != null);
         }
+
+        PlaceResultBlock(includeReward);
 
         SetClaimInteractable(true);
         if (claimButtonLabel != null)
@@ -235,19 +241,77 @@ public class DailyRewardUI : MonoBehaviour
         int moves,
         long completionTimeMs,
         bool includeReward,
-        int rewardAmount)
+        int rewardAmount,
+        bool rankIsSeparate)
     {
-        string text =
-            "RANK\n#" + Mathf.Max(1, rank) + "\n\n" +
-            "SCORE\n" + DailyChallengeTimeFormat.FormatScore(score) + "\n\n" +
-            "MOVES\n" + moves + "\n\n" +
-            "TIME\n" + DailyChallengeTimeFormat.Format(completionTimeMs);
+        string scoreText = DailyChallengeTimeFormat.FormatScore(score);
+        string timeText = DailyChallengeTimeFormat.Format(completionTimeMs);
+        string stats =
+            "<size=26>SCORE<pos=33%>MOVES<pos=66%>TIME</size>\n" +
+            "<size=40><b>" + scoreText + "<pos=33%>" + moves + "<pos=66%>" + timeText + "</b></size>";
+
+        string text = rankIsSeparate
+            ? stats
+            : "<size=32>FINAL RANK</size>\n<size=68>#" + Mathf.Max(1, rank) + "</size>\n" + stats;
+
         if (includeReward)
         {
-            text += "\n\nREWARD\n" + rewardAmount + " COINS";
+            text +=
+                "\n<align=center><size=28>REWARD</size>\n<size=44><b>" +
+                rewardAmount + " COINS</b></size></align>";
         }
 
         return text;
+    }
+
+    /// <summary>
+    /// Keeps title, rank, and stats stacked tightly in the upper-middle of the large card.
+    /// Reward grows the body downward. No reward leaves no empty placeholder.
+    /// </summary>
+    private void PlaceResultBlock(bool includeReward)
+    {
+        if (titleText == null || bodyText == null)
+        {
+            return;
+        }
+
+        float top = includeReward ? 48f : 120f;
+        const float titleHeight = 100f;
+        const float rankHeight = 176f;
+        const float gap = 12f;
+        float bodyHeight = includeReward ? 250f : 120f;
+
+        PlaceTop(titleText.rectTransform, top, titleHeight);
+        float cursor = top + titleHeight + gap;
+        if (rankText != null)
+        {
+            PlaceTop(rankText.rectTransform, cursor, rankHeight);
+            cursor += rankHeight + gap;
+        }
+
+        PlaceTop(bodyText.rectTransform, cursor, bodyHeight);
+    }
+
+    private static void PlaceTop(RectTransform rect, float top, float height)
+    {
+        if (rect == null)
+        {
+            return;
+        }
+
+        float xMin = rect.anchorMin.x;
+        float xMax = rect.anchorMax.x;
+        if (xMax - xMin < 0.5f)
+        {
+            xMin = 0.05f;
+            xMax = 0.95f;
+        }
+
+        rect.anchorMin = new Vector2(xMin, 1f);
+        rect.anchorMax = new Vector2(xMax, 1f);
+        rect.pivot = new Vector2(0.5f, 1f);
+        rect.anchoredPosition = new Vector2(0f, -top);
+        rect.sizeDelta = new Vector2(0f, height);
     }
 
     private async Task ClaimAsync()
@@ -303,8 +367,11 @@ public class DailyRewardUI : MonoBehaviour
                 {
                     int amount = result.RewardAmount > 0
                         ? result.RewardAmount
-                        : DailyRewardService.FirstPlaceCoinReward;
-                    coins.AddCoins(amount);
+                        : DailyRewardService.CoinsForRank(result.Rank);
+                    if (amount > 0)
+                    {
+                        coins.AddCoins(amount);
+                    }
                 }
 
                 AudioManager.TryPlayRewardReceived();
