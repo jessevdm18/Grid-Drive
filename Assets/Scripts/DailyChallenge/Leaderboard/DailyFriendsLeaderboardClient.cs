@@ -7,17 +7,48 @@ using UnityEngine;
 
 /// <summary>
 /// Registers the linked Play Games player from Firebase Auth and loads
-/// friend Daily rows. Does not send display names or Firebase UIDs.
+/// friend Daily rows. May send this player's own public display name.
+/// Never sends email, auth tokens, or another player's Play Games id.
 /// </summary>
 public static class DailyFriendsLeaderboardClient
 {
-    public static async Task<bool> RegisterLinkedPlayerAsync()
+    private static bool publishedOwnName;
+
+    public static async Task PublishOwnDisplayNameIfAuthenticatedAsync()
+    {
+        if (publishedOwnName)
+        {
+            return;
+        }
+
+        string name = GooglePlayGamesAccountProvider.TryReadAuthenticatedDisplayName();
+        if (string.IsNullOrEmpty(name))
+        {
+            return;
+        }
+
+        publishedOwnName = await RegisterLinkedPlayerAsync(name);
+    }
+
+    public static Task<bool> RegisterLinkedPlayerAsync()
+    {
+        return RegisterLinkedPlayerAsync(null);
+    }
+
+    public static async Task<bool> RegisterLinkedPlayerAsync(string publicDisplayName)
     {
         try
         {
+            string dataJson = "{}";
+            if (!string.IsNullOrEmpty(publicDisplayName))
+            {
+                dataJson =
+                    "{\"displayName\":\"" + EscapeJson(publicDisplayName) + "\"}";
+            }
+
             FirebaseRestClient.CallableResponse response = await CallAsync(
                 "registerGooglePlayIdentity",
-                "{}");
+                dataJson);
             Debug.Log(
                 "[Friends] identity register ok=" + response.Ok +
                 " http=" + response.HttpStatus);

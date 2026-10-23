@@ -82,9 +82,11 @@ public class AccountLinkUI : MonoBehaviour
     {
         if (linkInFlight)
         {
+            Debug.Log("[GPG-Link] duplicate tap ignored inflight=yes");
             return;
         }
 
+        Debug.Log("[GPG-Link] start auth inflight=no");
         Debug.Log("[GooglePlayLink] button pressed");
         Debug.Log("[Account] Link button pressed");
         _ = LinkGooglePlayAsync();

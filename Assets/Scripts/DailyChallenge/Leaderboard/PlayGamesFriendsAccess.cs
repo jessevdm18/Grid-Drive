@@ -144,10 +144,16 @@ public static class PlayGamesFriendsAccess
             if (!PlayGamesPlatform.Instance.IsAuthenticated())
             {
                 SignInStatus silent = await SilentAuthenticateAsync();
+                Debug.Log(
+                    "[Friends] silent auth=" + silent +
+                    " authenticated=" + PlayGamesPlatform.Instance.IsAuthenticated());
                 if (silent != SignInStatus.Success &&
                     !PlayGamesPlatform.Instance.IsAuthenticated())
                 {
                     SignInStatus manual = await ManualAuthenticateAsync();
+                    Debug.Log(
+                        "[Friends] manual auth=" + manual +
+                        " authenticated=" + PlayGamesPlatform.Instance.IsAuthenticated());
                     if (manual != SignInStatus.Success &&
                         !PlayGamesPlatform.Instance.IsAuthenticated())
                     {
@@ -155,8 +161,19 @@ public static class PlayGamesFriendsAccess
                     }
                 }
             }
+            else
+            {
+                Debug.Log("[Friends] silent auth=already authenticated");
+            }
 
-            FriendsListVisibilityStatus visibility = await GetVisibilityAsync(forceReload: true);
+            FriendsListVisibilityStatus visibility = await GetVisibilityAsync(forceReload: false);
+            Debug.Log("[Friends] visibility=" + visibility);
+            if (visibility == FriendsListVisibilityStatus.Unknown)
+            {
+                visibility = await GetVisibilityAsync(forceReload: true);
+                Debug.Log("[Friends] visibility refreshed=" + visibility);
+            }
+
             if (visibility == FriendsListVisibilityStatus.NetworkError)
             {
                 return new Result { Status = Status.Failed };
@@ -172,47 +189,49 @@ public static class PlayGamesFriendsAccess
                 return new Result { Status = Status.Unavailable };
             }
 
-            if (visibility != FriendsListVisibilityStatus.Visible)
+            // Load before any consent UI. A granted list succeeds here, including
+            // when visibility is still Unknown. AskForLoadFriendsResolution runs
+            // only after loadFriends explicitly returns ResolutionRequired.
+            Result withoutUi = await TryLoadFriendsAsync();
+            if (withoutUi != null)
             {
-                if (!showConsentUi)
-                {
-                    return new Result { Status = Status.ConsentRequired };
-                }
-
-                UIStatus ui = await AskForConsentAsync();
-                if (ui == UIStatus.UserClosedUI)
-                {
-                    return new Result { Status = Status.Denied };
-                }
-
-                if (ui != UIStatus.Valid)
-                {
-                    return new Result
-                    {
-                        Status = ui == UIStatus.NetworkError ? Status.Failed : Status.Denied
-                    };
-                }
+                return withoutUi;
             }
 
-            List<string> ids = await LoadAllFriendIdsAsync();
-            if (ids == null)
+            LoadFriendsStatus beforeConsent = PlayGamesPlatform.Instance.GetLastLoadFriendsStatus();
+            Debug.Log("[Friends] loadFriends status=" + beforeConsent);
+            if (beforeConsent != LoadFriendsStatus.ResolutionRequired)
             {
-                LoadFriendsStatus last = PlayGamesPlatform.Instance.GetLastLoadFriendsStatus();
-                if (last == LoadFriendsStatus.ResolutionRequired)
-                {
-                    return new Result { Status = Status.ConsentRequired };
-                }
-
-                if (last == LoadFriendsStatus.NotAuthorized)
-                {
-                    return new Result { Status = Status.Denied };
-                }
-
-                return new Result { Status = Status.Failed };
+                return ResolutionOrFailure();
             }
 
-            Debug.Log("[Friends] Play friends loaded count=" + ids.Count);
-            return new Result { Status = Status.Loaded, PlayerIds = ids };
+            if (!showConsentUi)
+            {
+                return new Result { Status = Status.ConsentRequired };
+            }
+
+            UIStatus ui = await AskForConsentAsync();
+            Debug.Log("[Friends] resolution ui=" + ui);
+            if (ui == UIStatus.UserClosedUI)
+            {
+                return new Result { Status = Status.Denied };
+            }
+
+            if (ui != UIStatus.Valid)
+            {
+                return new Result
+                {
+                    Status = ui == UIStatus.NetworkError ? Status.Failed : Status.Denied
+                };
+            }
+
+            Result afterConsent = await TryLoadFriendsAsync();
+            if (afterConsent != null)
+            {
+                return afterConsent;
+            }
+
+            return ResolutionOrFailure();
         }
         catch (Exception ex)
         {
@@ -284,6 +303,34 @@ public static class PlayGamesFriendsAccess
         return tcs.Task;
     }
 
+    private static async Task<Result> TryLoadFriendsAsync()
+    {
+        List<string> ids = await LoadAllFriendIdsAsync();
+        if (ids == null)
+        {
+            return null;
+        }
+
+        Debug.Log("[Friends] Play friends loaded count=" + ids.Count);
+        return new Result { Status = Status.Loaded, PlayerIds = ids };
+    }
+
+    private static Result ResolutionOrFailure()
+    {
+        LoadFriendsStatus last = PlayGamesPlatform.Instance.GetLastLoadFriendsStatus();
+        if (last == LoadFriendsStatus.ResolutionRequired)
+        {
+            return new Result { Status = Status.ConsentRequired };
+        }
+
+        if (last == LoadFriendsStatus.NotAuthorized)
+        {
+            return new Result { Status = Status.Denied };
+        }
+
+        return new Result { Status = Status.Failed };
+    }
+
     private static async Task<List<string>> LoadAllFriendIdsAsync()
     {
         var ids = new List<string>();
@@ -334,7 +381,7 @@ public static class PlayGamesFriendsAccess
         {
             PlayGamesPlatform.Instance.LoadFriends(
                 PageSize,
-                true,
+                false,
                 status => tcs.TrySetResult(status));
         }
         catch (Exception)

@@ -160,6 +160,7 @@ public class CoinManager : MonoBehaviour
         coins -= amount;
         SaveCoins();
         NotifyCoinsChanged();
+        GameAnalytics.LogCoinSpend(amount);
         return true;
     }
 

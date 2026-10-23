@@ -6,6 +6,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private UIManager uiManager;
     [SerializeField] private CoinManager coinManager;
     [SerializeField] private AdsManager adsManager;
+    [SerializeField] private int minimumNormalLevelsCompletedBeforeInterstitials = 5;
     [SerializeField] private GameplayUI gameplayUI;
     [SerializeField] private LevelManager levelManager;
     [SerializeField] private SaveManager saveManager;
@@ -608,7 +609,7 @@ public class GameManager : MonoBehaviour
             ". Stars = " + LastEarnedStars
         );
 
-        ReportLevelCompleteTelemetry(parMoves);
+        ReportLevelCompleteTelemetry(parMoves, dailySolved);
 
         LastThreeStarCoinRewardGranted = false;
         LastEarnedCoins = 0;
@@ -978,7 +979,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void ReportLevelCompleteTelemetry(int parMoves)
+    private void ReportLevelCompleteTelemetry(int parMoves, bool dailySession)
     {
         if (levelManager == null)
         {
@@ -1001,7 +1002,8 @@ public class GameManager : MonoBehaviour
             currentMoves,
             parMoves,
             LastEarnedStars,
-            asset
+            asset,
+            dailySession ? "daily" : "campaign"
         );
     }
 
@@ -1065,6 +1067,11 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public bool ShouldShowInterstitial()
     {
+        if (!HasCompletedEnoughLevelsForInterstitials())
+        {
+            return false;
+        }
+
         return campaignAttemptsSinceAd >= CampaignAttemptsPerInterstitial;
     }
 
@@ -1074,7 +1081,27 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public bool NextEndingWouldTriggerInterstitial()
     {
+        if (!HasCompletedEnoughLevelsForInterstitials())
+        {
+            return false;
+        }
+
         return campaignAttemptsSinceAd + 1 >= CampaignAttemptsPerInterstitial;
+    }
+
+    private bool HasCompletedEnoughLevelsForInterstitials()
+    {
+        int required = Mathf.Max(0, minimumNormalLevelsCompletedBeforeInterstitials);
+        if (required <= 0)
+        {
+            return true;
+        }
+
+        SaveManager progress = saveManager != null
+            ? saveManager
+            : FindAnyObjectByType<SaveManager>();
+        int completed = progress != null ? progress.CountCompletedNormalLevels() : 0;
+        return completed >= required;
     }
 
     /// <summary>

@@ -351,6 +351,15 @@ namespace GooglePlayGames
         }
 
         /// <summary>
+        /// Last Play Games sign-in status code observed by the Android client.
+        /// 0 means none. Never stores an auth code or token.
+        /// </summary>
+        public static int LastSignInStatusCode;
+
+        /// <summary>Short stage name for the last sign-in observation. Not a credential.</summary>
+        public static string LastSignInStage = string.Empty;
+
+        /// <summary>
         /// Requests server-side access to Player Games Services for the currently signed in player.
         /// </summary>
         /// When requested an authorization code is returned that can be used by your game-server to

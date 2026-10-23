@@ -31,6 +31,7 @@ public class DailyLeaderboardUI : MonoBehaviour
 
     [Header("DEV")]
     [SerializeField] private bool showSimulatedMarkersInEditor = true;
+    [SerializeField] private DailyChallengeResultSettings podiumSettings;
 
     private readonly List<DailyLeaderboardRowUI> spawnedRows = new List<DailyLeaderboardRowUI>();
     private bool buttonsBound;
@@ -174,7 +175,7 @@ public class DailyLeaderboardUI : MonoBehaviour
             {
                 DailyLeaderboardRowUI row = Instantiate(rowPrefab, contentRoot);
                 row.gameObject.SetActive(true);
-                row.Bind(snapshot.Entries[i], showSimMarker);
+                row.Bind(snapshot.Entries[i], showSimMarker, Podium());
                 spawnedRows.Add(row);
             }
         }
@@ -190,7 +191,7 @@ public class DailyLeaderboardUI : MonoBehaviour
             pinnedPlayerRow.gameObject.SetActive(showPinned);
             if (showPinned)
             {
-                pinnedPlayerRow.Bind(snapshot.CurrentPlayerEntry, showSimulatedMarker: false);
+                pinnedPlayerRow.Bind(snapshot.CurrentPlayerEntry, false, Podium());
             }
         }
 
@@ -213,6 +214,16 @@ public class DailyLeaderboardUI : MonoBehaviour
         {
             friendsTabLabel.text = "FRIENDS";
         }
+    }
+
+    private DailyChallengeResultSettings Podium()
+    {
+        if (podiumSettings == null)
+        {
+            podiumSettings = DailyChallengeResultSettings.LoadDefault();
+        }
+
+        return podiumSettings;
     }
 
     private bool ResolveShowSimulatedMarkers()
@@ -590,7 +601,7 @@ public class DailyLeaderboardUI : MonoBehaviour
             {
                 DailyLeaderboardRowUI row = Instantiate(rowPrefab, contentRoot);
                 row.gameObject.SetActive(true);
-                row.Bind(snapshot.Entries[i], showSimulatedMarker: false);
+                row.Bind(snapshot.Entries[i], false, Podium());
                 spawnedRows.Add(row);
             }
         }
@@ -601,7 +612,7 @@ public class DailyLeaderboardUI : MonoBehaviour
             pinnedPlayerRow.gameObject.SetActive(showPinned);
             if (showPinned)
             {
-                pinnedPlayerRow.Bind(snapshot.CurrentPlayerEntry, showSimulatedMarker: false);
+                pinnedPlayerRow.Bind(snapshot.CurrentPlayerEntry, false, Podium());
             }
         }
 

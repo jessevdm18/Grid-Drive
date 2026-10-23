@@ -229,6 +229,7 @@ public class FirebaseManager : MonoBehaviour
 
                     IsReady = true;
                     LogInit("Ready", "AppName=" + app.Name);
+                    GameAnalytics.FlushPending();
 
                     // Phase 4.4: dependencies are Available. Re-subscribe if the user opted in.
                     // Does NOT request notification permission.

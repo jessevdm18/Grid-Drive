@@ -39,6 +39,12 @@ service cloud.firestore {
       }
     }
 
+    match /publicProfiles/{userId} {
+      // Public leaderboard name only. No email, token, or private id.
+      allow read: if isSignedIn();
+      allow write: if false;
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }

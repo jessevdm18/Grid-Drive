@@ -289,6 +289,7 @@ public class FreeCoinsRewardedUI : MonoBehaviour
         }
 
         coinManager.AddCoins(RewardAmount);
+        GameAnalytics.LogCoinReward(RewardAmount, "rewarded_ad");
         IncrementUsedToday();
         Debug.Log(
             "[FreeCoinsAd] reward granted amount=" + RewardAmount +

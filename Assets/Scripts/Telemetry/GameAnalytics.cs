@@ -5,7 +5,7 @@ using UnityEngine;
 
 /// <summary>
 /// Sole analytics façade. Other scripts must not call FirebaseAnalytics directly.
-/// All methods no-op when FirebaseManager.IsReady is false.
+/// Events requested before Firebase is ready are queued and sent from FlushPending.
 /// </summary>
 public static class GameAnalytics
 {
@@ -15,6 +15,13 @@ public static class GameAnalytics
     private static float levelStartUnscaledTime;
     private static int rewardedShowSerial;
     private static int rewardedCompletedSerial = -1;
+    private static readonly List<PendingEvent> pendingEvents = new List<PendingEvent>();
+
+    private struct PendingEvent
+    {
+        public string Name;
+        public Parameter[] Parameters;
+    }
 
     public static void LogLevelStart(
         int levelNumber,
@@ -36,11 +43,6 @@ public static class GameAnalytics
 
         startLoggedSerial = levelLoadSerial;
 
-        if (!FirebaseManager.IsReady)
-        {
-            return;
-        }
-
         try
         {
             var parameters = new List<Parameter>
@@ -58,7 +60,7 @@ public static class GameAnalytics
                 parameters.Add(new Parameter("level_asset", levelAsset));
             }
 
-            FirebaseAnalytics.LogEvent("level_start", parameters.ToArray());
+            Emit("level_start", parameters.ToArray());
         }
         catch (Exception ex)
         {
@@ -73,7 +75,8 @@ public static class GameAnalytics
         int movesUsed,
         int par,
         int stars,
-        string levelAsset = null)
+        string levelAsset = null,
+        string sessionType = "campaign")
     {
         if (completeLoggedSerial == levelLoadSerial && levelLoadSerial > 0)
         {
@@ -81,11 +84,6 @@ public static class GameAnalytics
         }
 
         completeLoggedSerial = levelLoadSerial;
-
-        if (!FirebaseManager.IsReady)
-        {
-            return;
-        }
 
         try
         {
@@ -102,15 +100,31 @@ public static class GameAnalytics
                 new Parameter("moves_used", movesUsed),
                 new Parameter("par", par),
                 new Parameter("stars", stars),
-                new Parameter("duration_seconds", durationSeconds)
+                new Parameter("duration_seconds", durationSeconds),
+                new Parameter("session_type", Safe(sessionType))
             };
 
+            string levelName = string.IsNullOrEmpty(levelAsset)
+                ? "level_" + levelNumber
+                : levelAsset;
+            parameters.Add(new Parameter("level_name", levelName));
+            parameters.Add(new Parameter("success", 1));
             if (!string.IsNullOrEmpty(levelAsset))
             {
                 parameters.Add(new Parameter("level_asset", levelAsset));
             }
 
-            FirebaseAnalytics.LogEvent("level_complete", parameters.ToArray());
+            Emit("level_complete", parameters.ToArray());
+            Emit(
+                "level_end",
+                new Parameter("level_name", levelName),
+                new Parameter("success", 1),
+                new Parameter("level_number", levelNumber),
+                new Parameter("difficulty", Safe(difficulty)),
+                new Parameter("moves_used", movesUsed),
+                new Parameter("minimum_moves", par),
+                new Parameter("stars", stars),
+                new Parameter("session_type", Safe(sessionType)));
         }
         catch (Exception ex)
         {
@@ -125,14 +139,9 @@ public static class GameAnalytics
         string failReason,
         int movesUsed)
     {
-        if (!FirebaseManager.IsReady)
-        {
-            return;
-        }
-
         try
         {
-            FirebaseAnalytics.LogEvent(
+            Emit(
                 "level_fail",
                 new Parameter("level_number", levelNumber),
                 new Parameter("difficulty", Safe(difficulty)),
@@ -154,14 +163,9 @@ public static class GameAnalytics
         int restartCost = 0,
         string restartType = "unspecified")
     {
-        if (!FirebaseManager.IsReady)
-        {
-            return;
-        }
-
         try
         {
-            FirebaseAnalytics.LogEvent(
+            Emit(
                 "level_restart",
                 new Parameter("level_number", levelNumber),
                 new Parameter("difficulty", Safe(difficulty)),
@@ -181,14 +185,9 @@ public static class GameAnalytics
         string difficulty,
         string source)
     {
-        if (!FirebaseManager.IsReady)
-        {
-            return;
-        }
-
         try
         {
-            FirebaseAnalytics.LogEvent(
+            Emit(
                 "hint_used",
                 new Parameter("level_number", levelNumber),
                 new Parameter("difficulty", Safe(difficulty)),
@@ -206,14 +205,9 @@ public static class GameAnalytics
         rewardedShowSerial++;
         rewardedCompletedSerial = -1;
 
-        if (!FirebaseManager.IsReady)
-        {
-            return;
-        }
-
         try
         {
-            FirebaseAnalytics.LogEvent(
+            Emit(
                 "rewarded_ad_started",
                 new Parameter("placement", Safe(placement))
             );
@@ -233,14 +227,9 @@ public static class GameAnalytics
 
         rewardedCompletedSerial = rewardedShowSerial;
 
-        if (!FirebaseManager.IsReady)
-        {
-            return;
-        }
-
         try
         {
-            FirebaseAnalytics.LogEvent(
+            Emit(
                 "rewarded_ad_completed",
                 new Parameter("placement", Safe(placement))
             );
@@ -253,14 +242,9 @@ public static class GameAnalytics
 
     public static void LogDifficultyUnlocked(string difficulty)
     {
-        if (!FirebaseManager.IsReady)
-        {
-            return;
-        }
-
         try
         {
-            FirebaseAnalytics.LogEvent(
+            Emit(
                 "difficulty_unlocked",
                 new Parameter("difficulty", Safe(difficulty))
             );
@@ -273,14 +257,9 @@ public static class GameAnalytics
 
     public static void LogDifficultySelected(string difficulty)
     {
-        if (!FirebaseManager.IsReady)
-        {
-            return;
-        }
-
         try
         {
-            FirebaseAnalytics.LogEvent(
+            Emit(
                 "difficulty_selected",
                 new Parameter("difficulty", Safe(difficulty))
             );
@@ -293,16 +272,17 @@ public static class GameAnalytics
 
     public static void LogCoinReward(int amount, string source)
     {
-        if (!FirebaseManager.IsReady)
-        {
-            return;
-        }
-
         try
         {
-            FirebaseAnalytics.LogEvent(
+            Emit(
                 "coin_reward",
                 new Parameter("amount", amount),
+                new Parameter("source", Safe(source))
+            );
+            Emit(
+                "earn_virtual_currency",
+                new Parameter("virtual_currency_name", "coins"),
+                new Parameter("value", amount),
                 new Parameter("source", Safe(source))
             );
         }
@@ -321,14 +301,9 @@ public static class GameAnalytics
         int livesBefore,
         int livesAfter)
     {
-        if (!FirebaseManager.IsReady)
-        {
-            return;
-        }
-
         try
         {
-            FirebaseAnalytics.LogEvent(
+            Emit(
                 "life_purchase",
                 new Parameter("currency", Safe(currency)),
                 new Parameter("cost", cost),
@@ -347,14 +322,9 @@ public static class GameAnalytics
     /// </summary>
     public static void LogLifeRewardedAd(int livesBefore, int livesAfter)
     {
-        if (!FirebaseManager.IsReady)
-        {
-            return;
-        }
-
         try
         {
-            FirebaseAnalytics.LogEvent(
+            Emit(
                 "life_rewarded_ad",
                 new Parameter("lives_before", livesBefore),
                 new Parameter("lives_after", livesAfter)
@@ -372,14 +342,9 @@ public static class GameAnalytics
         string objective,
         string reason)
     {
-        if (!FirebaseManager.IsReady)
-        {
-            return;
-        }
-
         try
         {
-            FirebaseAnalytics.LogEvent(
+            Emit(
                 "objective_failed",
                 new Parameter("level_number", levelNumber),
                 new Parameter("difficulty", Safe(difficulty)),
@@ -408,7 +373,7 @@ public static class GameAnalytics
 
         try
         {
-            FirebaseAnalytics.LogEvent(
+            Emit(
                 "firebase_test_event",
                 new Parameter("source", "editor_menu")
             );
@@ -428,14 +393,9 @@ public static class GameAnalytics
 
     public static void LogDailyChallengeStart(string dayId, string levelAsset, int poolIndex)
     {
-        if (!FirebaseManager.IsReady)
-        {
-            return;
-        }
-
         try
         {
-            FirebaseAnalytics.LogEvent(
+            Emit(
                 "daily_challenge_start",
                 new Parameter("day_id", Safe(dayId)),
                 new Parameter("level_asset", Safe(levelAsset)),
@@ -454,20 +414,19 @@ public static class GameAnalytics
         long completionTimeMs = 0,
         int score = 0)
     {
-        if (!FirebaseManager.IsReady)
-        {
-            return;
-        }
-
         try
         {
-            FirebaseAnalytics.LogEvent(
+            Emit(
                 "daily_challenge_complete",
                 new Parameter("day_id", Safe(dayId)),
                 new Parameter("level_id", Safe(levelAsset)),
                 new Parameter("moves", moves),
                 new Parameter("completion_time_ms", completionTimeMs),
                 new Parameter("score", score));
+            Emit(
+                "post_score",
+                new Parameter("score", score),
+                new Parameter("level_name", Safe(levelAsset)));
         }
         catch (Exception ex)
         {
@@ -492,14 +451,9 @@ public static class GameAnalytics
         int playerRank,
         int entryCount)
     {
-        if (!FirebaseManager.IsReady)
-        {
-            return;
-        }
-
         try
         {
-            FirebaseAnalytics.LogEvent(
+            Emit(
                 "daily_leaderboard_view",
                 new Parameter("day_id", Safe(dayId)),
                 new Parameter("player_has_result", playerHasResult ? 1L : 0L),
@@ -520,14 +474,9 @@ public static class GameAnalytics
     {
         LogDailySimple("daily_leaderboard_online_view", dayId, null, null);
         // Also emit structured fields when Firebase ready.
-        if (!FirebaseManager.IsReady)
-        {
-            return;
-        }
-
         try
         {
-            FirebaseAnalytics.LogEvent(
+            Emit(
                 "daily_leaderboard_online_view",
                 new Parameter("day_id", Safe(dayId)),
                 new Parameter("player_has_result", playerHasResult ? 1L : 0L),
@@ -592,11 +541,6 @@ public static class GameAnalytics
 
     private static void LogDailyNotificationSimple(string eventName, string source, string dayId)
     {
-        if (!FirebaseManager.IsReady)
-        {
-            return;
-        }
-
         try
         {
             var parameters = new List<Parameter>
@@ -608,7 +552,7 @@ public static class GameAnalytics
                 parameters.Add(new Parameter("day_id", Safe(dayId)));
             }
 
-            FirebaseAnalytics.LogEvent(eventName, parameters.ToArray());
+            Emit(eventName, parameters.ToArray());
         }
         catch (Exception ex)
         {
@@ -632,14 +576,9 @@ public static class GameAnalytics
         string rewardType,
         int rewardAmount)
     {
-        if (!FirebaseManager.IsReady)
-        {
-            return;
-        }
-
         try
         {
-            FirebaseAnalytics.LogEvent(
+            Emit(
                 eventName,
                 new Parameter("rank", (long)rank),
                 new Parameter("reward_type", Safe(rewardType)),
@@ -659,6 +598,34 @@ public static class GameAnalytics
     public static void LogAccountLinkSuccess(string provider)
     {
         LogAccountLink("account_link_success", provider, null);
+        try
+        {
+            Emit("login", new Parameter("method", Safe(provider)));
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError("GameAnalytics.login failed — " + ex.Message);
+        }
+    }
+
+    public static void LogCoinSpend(int amount)
+    {
+        if (amount <= 0)
+        {
+            return;
+        }
+
+        try
+        {
+            Emit(
+                "spend_virtual_currency",
+                new Parameter("virtual_currency_name", "coins"),
+                new Parameter("value", amount));
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError("GameAnalytics.LogCoinSpend failed — " + ex.Message);
+        }
     }
 
     public static void LogAccountLinkFailed(string provider, string reason)
@@ -668,11 +635,6 @@ public static class GameAnalytics
 
     private static void LogAccountLink(string eventName, string provider, string reason)
     {
-        if (!FirebaseManager.IsReady)
-        {
-            return;
-        }
-
         try
         {
             var parameters = new List<Parameter>
@@ -684,7 +646,7 @@ public static class GameAnalytics
                 parameters.Add(new Parameter("reason", Safe(reason)));
             }
 
-            FirebaseAnalytics.LogEvent(eventName, parameters.ToArray());
+            Emit(eventName, parameters.ToArray());
         }
         catch (Exception ex)
         {
@@ -698,11 +660,6 @@ public static class GameAnalytics
         string levelAsset,
         string extraReason)
     {
-        if (!FirebaseManager.IsReady)
-        {
-            return;
-        }
-
         try
         {
             var parameters = new List<Parameter>
@@ -719,12 +676,65 @@ public static class GameAnalytics
                 parameters.Add(new Parameter("fail_reason", Safe(extraReason)));
             }
 
-            FirebaseAnalytics.LogEvent(eventName, parameters.ToArray());
+            Emit(eventName, parameters.ToArray());
         }
         catch (Exception ex)
         {
             Debug.LogError("GameAnalytics." + eventName + " failed — " + ex.Message);
         }
+    }
+
+    public static void FlushPending()
+    {
+        if (!FirebaseManager.IsReady || pendingEvents.Count == 0)
+        {
+            return;
+        }
+
+        PendingEvent[] queued = pendingEvents.ToArray();
+        pendingEvents.Clear();
+        for (int i = 0; i < queued.Length; i++)
+        {
+            Emit(queued[i].Name, queued[i].Parameters);
+        }
+    }
+
+    private static void Emit(string eventName, params Parameter[] parameters)
+    {
+        Trace(
+            eventName + " requested ready=" + (FirebaseManager.IsReady ? "yes" : "no") +
+            " collection=" + FirebaseManager.GetAnalyticsCollectionEnabledOrUnknown());
+        if (!FirebaseManager.IsReady)
+        {
+            pendingEvents.Add(new PendingEvent
+            {
+                Name = eventName,
+                Parameters = parameters
+            });
+            Trace(eventName + " queued");
+            return;
+        }
+
+        try
+        {
+            FirebaseAnalytics.LogEvent(eventName, parameters ?? new Parameter[0]);
+            string collection = FirebaseManager.GetAnalyticsCollectionEnabledOrUnknown();
+            Trace(
+                string.Equals(collection, "True", StringComparison.Ordinal)
+                    ? eventName + " sent"
+                    : eventName + " sent while collection=" + collection);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError("GameAnalytics." + eventName + " failed — " + ex.Message);
+        }
+    }
+
+    private static void Trace(string message)
+    {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        Debug.Log("[Analytics] " + message);
+#endif
     }
 
     private static string Safe(string value)

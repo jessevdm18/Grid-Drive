@@ -24,6 +24,20 @@ public class DailyRewardUI : MonoBehaviour
 
     [Header("Refs (optional)")]
     [SerializeField] private CoinManager coinManager;
+    [SerializeField] private DailyChallengeResultSettings presentation;
+
+    private DailyChallengeResultSettings Presentation
+    {
+        get
+        {
+            if (presentation == null)
+            {
+                presentation = DailyChallengeResultSettings.LoadDefault();
+            }
+
+            return presentation;
+        }
+    }
 
     private DailyRewardRecord currentReward;
     private bool hasReward;
@@ -44,7 +58,7 @@ public class DailyRewardUI : MonoBehaviour
 
         if (titleText != null)
         {
-            titleText.text = "DAILY CHALLENGE RESULTS";
+            titleText.text = Presentation.resultTitle;
         }
     }
 
@@ -98,7 +112,7 @@ public class DailyRewardUI : MonoBehaviour
             reward.CompletionTimeMilliseconds,
             includeReward: true,
             amount,
-            "CLAIM");
+            Presentation.claimButtonLabel);
     }
 
     /// <summary>Editor/dev preview without server.</summary>
@@ -151,7 +165,7 @@ public class DailyRewardUI : MonoBehaviour
             settled.CompletionTimeMilliseconds,
             includeReward: false,
             0,
-            "OK");
+            Presentation.okButtonLabel);
         return IsShowing;
     }
 
@@ -166,7 +180,7 @@ public class DailyRewardUI : MonoBehaviour
     {
         if (titleText != null)
         {
-            titleText.text = "DAILY CHALLENGE RESULTS";
+            titleText.text = Presentation.resultTitle;
         }
 
         if (rankText != null)
@@ -174,7 +188,8 @@ public class DailyRewardUI : MonoBehaviour
             rankText.gameObject.SetActive(true);
             rankText.alignment = TextAlignmentOptions.Top;
             rankText.text =
-                "<size=32>FINAL RANK</size>\n<size=68>#" + Mathf.Max(1, rank) + "</size>";
+                "<size=32>" + Presentation.rankLabel + "</size>\n<size=68>#" +
+                Mathf.Max(1, rank) + "</size>";
         }
 
         if (bodyText != null)
@@ -235,7 +250,7 @@ public class DailyRewardUI : MonoBehaviour
         _ = ClaimAsync();
     }
 
-    private static string FormatResult(
+    private string FormatResult(
         int rank,
         int score,
         int moves,
@@ -246,19 +261,22 @@ public class DailyRewardUI : MonoBehaviour
     {
         string scoreText = DailyChallengeTimeFormat.FormatScore(score);
         string timeText = DailyChallengeTimeFormat.Format(completionTimeMs);
+        DailyChallengeResultSettings copy = Presentation;
         string stats =
-            "<size=26>SCORE<pos=33%>MOVES<pos=66%>TIME</size>\n" +
+            "<size=26>" + copy.scoreLabel + "<pos=33%>" + copy.movesLabel +
+            "<pos=66%>" + copy.timeLabel + "</size>\n" +
             "<size=40><b>" + scoreText + "<pos=33%>" + moves + "<pos=66%>" + timeText + "</b></size>";
 
         string text = rankIsSeparate
             ? stats
-            : "<size=32>FINAL RANK</size>\n<size=68>#" + Mathf.Max(1, rank) + "</size>\n" + stats;
+            : "<size=32>" + copy.rankLabel + "</size>\n<size=68>#" +
+              Mathf.Max(1, rank) + "</size>\n" + stats;
 
         if (includeReward)
         {
             text +=
-                "\n<align=center><size=28>REWARD</size>\n<size=44><b>" +
-                rewardAmount + " COINS</b></size></align>";
+                "\n<align=center><size=28>" + copy.rewardLabel + "</size>\n<size=44><b>" +
+                rewardAmount + " " + copy.coinsSuffix + "</b></size></align>";
         }
 
         return text;
@@ -325,7 +343,7 @@ public class DailyRewardUI : MonoBehaviour
         SetClaimInteractable(false);
         if (claimButtonLabel != null)
         {
-            claimButtonLabel.text = "CLAIMING...";
+            claimButtonLabel.text = Presentation.claimingButtonLabel;
         }
 
         string dayId = currentReward.DayId;
@@ -344,7 +362,7 @@ public class DailyRewardUI : MonoBehaviour
             {
                 if (claimButtonLabel != null)
                 {
-                    claimButtonLabel.text = "CLAIM";
+                    claimButtonLabel.text = Presentation.claimButtonLabel;
                 }
 
                 SetClaimInteractable(true);
@@ -371,6 +389,7 @@ public class DailyRewardUI : MonoBehaviour
                     if (amount > 0)
                     {
                         coins.AddCoins(amount);
+                        GameAnalytics.LogCoinReward(amount, "daily_reward");
                     }
                 }
 

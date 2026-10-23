@@ -9,6 +9,11 @@ const {
   challengeToClient,
 } = require('./challenge');
 const { requireAuth } = require('./validation');
+const {
+  hasDisplayNameSnapshot,
+  profileRef,
+  nameFromProfileSnap,
+} = require('./displayNameSnapshot');
 
 /**
  * Atomically claim today's attempt for request.auth.uid.
@@ -28,8 +33,17 @@ async function startDailyAttemptHandler(request) {
 
   const outcome = await admin.firestore().runTransaction(async (tx) => {
     const snap = await tx.get(attemptRef);
+    const existingData = snap.exists ? snap.data() || {} : null;
+    const needsSnapshot = !existingData || !hasDisplayNameSnapshot(existingData);
+    const profileSnap = needsSnapshot ? await tx.get(profileRef(uid)) : null;
+    const displayNameSnapshot = needsSnapshot
+      ? nameFromProfileSnap(uid, profileSnap)
+      : existingData.displayNameSnapshot;
     if (snap.exists) {
-      const data = snap.data() || {};
+      const data = existingData;
+      if (needsSnapshot) {
+        tx.update(attemptRef, { displayNameSnapshot });
+      }
       return {
         claimed: false,
         attempt: {
@@ -61,6 +75,7 @@ async function startDailyAttemptHandler(request) {
       completionTimeMs: 0,
       score: 0,
       scoreTrusted: false,
+      displayNameSnapshot,
       startedAt: admin.firestore.FieldValue.serverTimestamp(),
     };
     tx.set(attemptRef, created);

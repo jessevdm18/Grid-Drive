@@ -550,6 +550,39 @@ public static class FirebaseRestClient
         return await GetJsonAsync(url, idToken);
     }
 
+    public static async Task<string> BatchGetDocumentsAsync(
+        string projectId,
+        IReadOnlyList<string> relativeDocPaths,
+        string idToken)
+    {
+        if (relativeDocPaths == null || relativeDocPaths.Count == 0)
+        {
+            return string.Empty;
+        }
+
+        var body = new StringBuilder();
+        body.Append("{\"documents\":[");
+        for (int i = 0; i < relativeDocPaths.Count; i++)
+        {
+            if (i > 0)
+            {
+                body.Append(',');
+            }
+
+            body.Append("\"projects/");
+            body.Append(projectId);
+            body.Append("/databases/(default)/documents/");
+            body.Append(relativeDocPaths[i]);
+            body.Append('"');
+        }
+
+        body.Append("]}");
+        string url =
+            "https://firestore.googleapis.com/v1/projects/" + projectId +
+            "/databases/(default)/documents:batchGet";
+        return await PostJsonAsync(url, body.ToString(), idToken);
+    }
+
     /// <summary>
     /// Creates a document only if it does not exist (atomic claim).
     /// Returns true on create, false if already exists or error.
@@ -928,16 +961,38 @@ public static class FirebaseRestClient
 
     public static string ExtractFirestoreStringField(string json, string fieldName)
     {
-        string pattern = "\"" + fieldName + "\":{\"stringValue\":\"";
-        int i = json.IndexOf(pattern, StringComparison.Ordinal);
-        if (i < 0)
+        if (!TryReadFirestoreTypedValue(json, fieldName, "stringValue", out int valueAt))
         {
             return string.Empty;
         }
 
-        int start = i + pattern.Length;
-        int end = json.IndexOf('"', start);
-        return end > start ? json.Substring(start, end - start) : string.Empty;
+        valueAt = SkipFirestoreWhitespace(json, valueAt);
+        if (valueAt >= json.Length || json[valueAt] != '"')
+        {
+            return string.Empty;
+        }
+
+        int start = valueAt + 1;
+        int end = start;
+        while (end < json.Length)
+        {
+            if (json[end] == '\\')
+            {
+                end += 2;
+                continue;
+            }
+
+            if (json[end] == '"')
+            {
+                break;
+            }
+
+            end++;
+        }
+
+        return end > start && end <= json.Length
+            ? json.Substring(start, end - start)
+            : string.Empty;
     }
 
     public static bool TryExtractFirestoreBoolField(
@@ -946,39 +1001,21 @@ public static class FirebaseRestClient
         out bool value)
     {
         value = false;
-        if (string.IsNullOrEmpty(json) || string.IsNullOrEmpty(fieldName))
+        if (!TryReadFirestoreTypedValue(json, fieldName, "booleanValue", out int valueAt))
         {
             return false;
         }
 
-        string pattern = "\"" + fieldName + "\":{\"booleanValue\":";
-        int i = json.IndexOf(pattern, StringComparison.Ordinal);
-        if (i < 0)
-        {
-            pattern = "\"" + fieldName + "\": {\"booleanValue\":";
-            i = json.IndexOf(pattern, StringComparison.Ordinal);
-        }
-
-        if (i < 0)
-        {
-            return false;
-        }
-
-        int start = i + pattern.Length;
-        while (start < json.Length && char.IsWhiteSpace(json[start]))
-        {
-            start++;
-        }
-
-        if (start + 4 <= json.Length &&
-            string.CompareOrdinal(json, start, "true", 0, 4) == 0)
+        valueAt = SkipFirestoreWhitespace(json, valueAt);
+        if (valueAt + 4 <= json.Length &&
+            string.CompareOrdinal(json, valueAt, "true", 0, 4) == 0)
         {
             value = true;
             return true;
         }
 
-        if (start + 5 <= json.Length &&
-            string.CompareOrdinal(json, start, "false", 0, 5) == 0)
+        if (valueAt + 5 <= json.Length &&
+            string.CompareOrdinal(json, valueAt, "false", 0, 5) == 0)
         {
             value = false;
             return true;
@@ -989,32 +1026,154 @@ public static class FirebaseRestClient
 
     public static long ExtractFirestoreLongField(string json, string fieldName)
     {
-        string pattern = "\"" + fieldName + "\":{\"integerValue\":\"";
-        int i = json.IndexOf(pattern, StringComparison.Ordinal);
-        if (i < 0)
+        if (TryReadFirestoreTypedValue(json, fieldName, "integerValue", out int valueAt) ||
+            TryReadFirestoreTypedValue(json, fieldName, "doubleValue", out valueAt))
         {
-            pattern = "\"" + fieldName + "\":{\"integerValue\":";
-            i = json.IndexOf(pattern, StringComparison.Ordinal);
-            if (i < 0)
-            {
-                return 0;
-            }
-
-            int start = i + pattern.Length;
-            int end = start;
-            while (end < json.Length && (char.IsDigit(json[end]) || json[end] == '-'))
-            {
-                end++;
-            }
-
-            long.TryParse(json.Substring(start, end - start), out long bare);
-            return bare;
+            return ParseFirestoreNumber(json, valueAt);
         }
 
-        int s = i + pattern.Length;
-        int e = json.IndexOf('"', s);
-        long.TryParse(json.Substring(s, e - s), out long v);
-        return v;
+        return 0;
+    }
+
+    /// <summary>
+    /// Firestore runQuery pretty-prints by default, so field objects contain
+    /// newlines between the name, type, and value. Compact JSON still matches.
+    /// </summary>
+    private static bool TryReadFirestoreTypedValue(
+        string json,
+        string fieldName,
+        string typeName,
+        out int valueAt)
+    {
+        valueAt = 0;
+        if (!TryLocateFirestoreField(json, fieldName, out int afterColon))
+        {
+            return false;
+        }
+
+        int i = SkipFirestoreWhitespace(json, afterColon);
+        if (i >= json.Length || json[i] != '{')
+        {
+            return false;
+        }
+
+        i = SkipFirestoreWhitespace(json, i + 1);
+        string typeToken = "\"" + typeName + "\"";
+        if (i + typeToken.Length > json.Length ||
+            string.CompareOrdinal(json, i, typeToken, 0, typeToken.Length) != 0)
+        {
+            return false;
+        }
+
+        i = SkipFirestoreWhitespace(json, i + typeToken.Length);
+        if (i >= json.Length || json[i] != ':')
+        {
+            return false;
+        }
+
+        valueAt = i + 1;
+        return true;
+    }
+
+    private static bool TryLocateFirestoreField(string json, string fieldName, out int afterColon)
+    {
+        afterColon = 0;
+        if (string.IsNullOrEmpty(json) || string.IsNullOrEmpty(fieldName))
+        {
+            return false;
+        }
+
+        string key = "\"" + fieldName + "\"";
+        int search = 0;
+        while (search < json.Length)
+        {
+            int found = json.IndexOf(key, search, StringComparison.Ordinal);
+            if (found < 0)
+            {
+                return false;
+            }
+
+            int i = SkipFirestoreWhitespace(json, found + key.Length);
+            if (i < json.Length && json[i] == ':')
+            {
+                afterColon = i + 1;
+                return true;
+            }
+
+            search = found + key.Length;
+        }
+
+        return false;
+    }
+
+    private static int SkipFirestoreWhitespace(string json, int index)
+    {
+        while (index < json.Length && char.IsWhiteSpace(json[index]))
+        {
+            index++;
+        }
+
+        return index;
+    }
+
+    private static long ParseFirestoreNumber(string json, int index)
+    {
+        index = SkipFirestoreWhitespace(json, index);
+        if (index >= json.Length)
+        {
+            return 0;
+        }
+
+        bool quoted = json[index] == '"';
+        if (quoted)
+        {
+            index++;
+        }
+
+        int start = index;
+        while (index < json.Length)
+        {
+            char c = json[index];
+            if (c == '"')
+            {
+                break;
+            }
+
+            if (!quoted &&
+                !char.IsDigit(c) &&
+                c != '-' &&
+                c != '+' &&
+                c != '.' &&
+                c != 'e' &&
+                c != 'E')
+            {
+                break;
+            }
+
+            index++;
+        }
+
+        if (index <= start)
+        {
+            return 0;
+        }
+
+        string token = json.Substring(start, index - start);
+        if (long.TryParse(token, out long whole))
+        {
+            return whole;
+        }
+
+        if (double.TryParse(
+                token,
+                System.Globalization.NumberStyles.Float,
+                System.Globalization.CultureInfo.InvariantCulture,
+                out double real))
+        {
+            return (long)real;
+        }
+
+        return 0;
     }
 
     private static bool ApplyAuthJson(string json)

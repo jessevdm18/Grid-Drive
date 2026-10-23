@@ -47,7 +47,7 @@ public sealed class GooglePlayGamesAccountProvider : IGooglePlayAccountProvider
             OverallProviderTimeoutMs,
             ExternalAccountAuthResult.Fail(
                 AccountLinkResult.NetworkError,
-                "Could not connect. Try again."));
+                "Couldn't connect to Google Play Games. Check your internet connection and try again."));
 #else
         return Task.FromResult(
             ExternalAccountAuthResult.Fail(
@@ -79,8 +79,17 @@ public sealed class GooglePlayGamesAccountProvider : IGooglePlayAccountProvider
         }
 
         string stage = "init";
+        void OnFocus(bool focused)
+        {
+            Debug.Log("[GPG-Link] app " + (focused ? "resume" : "pause"));
+        }
+
+        Application.focusChanged += OnFocus;
         try
         {
+            PlayGamesPlatform.LastSignInStatusCode = 0;
+            PlayGamesPlatform.LastSignInStage = "start";
+            Debug.Log("[GPG-Link] start auth inflight=yes");
             stage = "PlayGamesPlatform.Activate";
             Debug.Log("[Account] PlayGamesPlatform.Activate starting");
             PlayGamesPlatform.Activate();
@@ -94,12 +103,27 @@ public sealed class GooglePlayGamesAccountProvider : IGooglePlayAccountProvider
             // Silent status check (isAuthenticated). Does NOT show sign-in UI.
             // Syncs plugin AuthState with PGS v2 platform auto-auth if already signed in.
             stage = "Silent Authenticate";
+            Debug.Log("[GPG-Link] start silent auth");
             Debug.Log("[Account] Silent Authenticate starting");
+            bool silentTimedOut = false;
             SignInStatus silent = await WithTimeoutAsync(
                 SilentAuthenticateAsync(),
                 AuthenticateTimeoutMs,
-                SignInStatus.InternalError);
+                SignInStatus.InternalError,
+                () => silentTimedOut = true);
+            Debug.Log(
+                "[GPG-Link] auth callback status=" + silent +
+                " stage=" + PlayGamesPlatform.LastSignInStage +
+                " statusCode=" + PlayGamesPlatform.LastSignInStatusCode +
+                " isAuthenticated=" + PlayGamesPlatform.Instance.IsAuthenticated() +
+                " timedOut=" + silentTimedOut);
             Debug.Log("[Account] Silent Authenticate callback=" + silent);
+            if (silentTimedOut)
+            {
+            return ExternalAccountAuthResult.Fail(
+                AccountLinkResult.NetworkError,
+                "Couldn't connect to Google Play Games. Check your internet connection and try again.");
+            }
 
             bool alreadyAuthenticated =
                 silent == SignInStatus.Success ||
@@ -112,23 +136,32 @@ public sealed class GooglePlayGamesAccountProvider : IGooglePlayAccountProvider
             if (!alreadyAuthenticated)
             {
                 stage = "Manual Authenticate";
+                Debug.Log("[GPG-Link] start manual auth");
                 Debug.Log("[Account] Manual Authenticate starting");
+                bool manualTimedOut = false;
                 SignInStatus status = await WithTimeoutAsync(
                     ManuallyAuthenticateAsync(),
                     AuthenticateTimeoutMs,
-                    SignInStatus.InternalError);
+                    SignInStatus.InternalError,
+                    () => manualTimedOut = true);
+                Debug.Log(
+                    "[GPG-Link] auth callback status=" + status +
+                    " stage=" + PlayGamesPlatform.LastSignInStage +
+                    " statusCode=" + PlayGamesPlatform.LastSignInStatusCode +
+                    " isAuthenticated=" + PlayGamesPlatform.Instance.IsAuthenticated() +
+                    " timedOut=" + manualTimedOut);
                 Debug.Log("[Account] Manual Authenticate callback=" + status);
 
-                if (status == SignInStatus.Canceled)
+                if (manualTimedOut)
                 {
-                    return ExternalAccountAuthResult.Fail(AccountLinkResult.Cancelled);
+            return ExternalAccountAuthResult.Fail(
+                AccountLinkResult.NetworkError,
+                "Couldn't connect to Google Play Games. Check your internet connection and try again.");
                 }
 
                 if (status != SignInStatus.Success)
                 {
-                    return ExternalAccountAuthResult.Fail(
-                        AccountLinkResult.AuthenticationError,
-                        "Google Play sign-in was not completed.");
+                    return SignInFailure(status);
                 }
             }
             else
@@ -138,6 +171,20 @@ public sealed class GooglePlayGamesAccountProvider : IGooglePlayAccountProvider
             }
 
             stage = "RequestServerSideAccess";
+            string playerId = null;
+            try
+            {
+                playerId = PlayGamesPlatform.Instance.GetUserId();
+            }
+            catch (Exception)
+            {
+                playerId = null;
+            }
+
+            Debug.Log(
+                "[GPG-Link] isAuthenticated=" + PlayGamesPlatform.Instance.IsAuthenticated() +
+                " playerId present=" + (string.IsNullOrEmpty(playerId) ? "no" : "yes"));
+            Debug.Log("[GPG-Link] link server auth code request start");
             Debug.Log("[Account] RequestServerSideAccess started");
             string authCode = await WithTimeoutAsync(
                 RequestServerAuthCodeAsync(forceRefreshToken: true),
@@ -155,9 +202,10 @@ public sealed class GooglePlayGamesAccountProvider : IGooglePlayAccountProvider
 
             if (!codePresent)
             {
+                Debug.Log("[GPG-Link] server auth code unavailable");
                 return ExternalAccountAuthResult.Fail(
                     AccountLinkResult.AuthenticationError,
-                    "Could not connect to Google Play. Please try again.");
+                    "Google Play Games sign-in failed. Make sure you're signed in to Google Play Games and try again.");
             }
 
             stage = "GetUserDisplayName";
@@ -183,7 +231,7 @@ public sealed class GooglePlayGamesAccountProvider : IGooglePlayAccountProvider
                 Provider = AccountProvider.GooglePlay,
                 FirebaseProviderId = FirebasePlayGamesProviderId,
                 IdpPostBody = postBody,
-                DisplayNameHint = displayName
+                DisplayNameHint = SanitizePublicName(displayName)
             };
 
             return ExternalAccountAuthResult.Ok(credential);
@@ -193,8 +241,62 @@ public sealed class GooglePlayGamesAccountProvider : IGooglePlayAccountProvider
             LogAndroidAuthException(stage, ex);
             return ExternalAccountAuthResult.Fail(
                 AccountLinkResult.AuthenticationError,
-                "Could not connect. Try again.");
+                "Google Play Games sign-in failed. Make sure you're signed in to Google Play Games and try again.");
         }
+        finally
+        {
+            Application.focusChanged -= OnFocus;
+        }
+    }
+
+    private static ExternalAccountAuthResult SignInFailure(SignInStatus status)
+    {
+        int code = PlayGamesPlatform.LastSignInStatusCode;
+        Debug.Log(
+            "[GPG-Link] sign-in failed status=" + status +
+            " stage=" + PlayGamesPlatform.LastSignInStage +
+            " statusCode=" + code);
+        if (status == SignInStatus.Canceled || code == 16 || code == 12501)
+        {
+            Debug.Log("[GPG-Link] player cancelled sign-in");
+            return ExternalAccountAuthResult.Fail(
+                AccountLinkResult.Cancelled,
+                "Google Play Games sign-in was cancelled.");
+        }
+
+        if (code == 7)
+        {
+            Debug.Log("[GPG-Link] network statusCode=7");
+            return ExternalAccountAuthResult.Fail(
+                AccountLinkResult.NetworkError,
+                "Couldn't connect to Google Play Games. Check your internet connection and try again.");
+        }
+
+        if (code == 10)
+        {
+            Debug.Log(
+                "[GPG-Link] developer error statusCode=10. " +
+                "Signing certificate for this install may not be registered.");
+            return ExternalAccountAuthResult.Fail(
+                AccountLinkResult.AuthenticationError,
+                "Google Play Games sign-in is temporarily unavailable. Please try again later.");
+        }
+
+        if (string.Equals(PlayGamesPlatform.LastSignInStage, "isAuthenticatedFalse", StringComparison.Ordinal))
+        {
+            Debug.Log(
+                "[GPG-Link] isAuthenticated=false after sign-in UI. " +
+                "Server auth code was not requested. Firebase REST was not reached. " +
+                "Possible causes: user dismissed the flow, or this install's certificate is not registered.");
+            return ExternalAccountAuthResult.Fail(
+                AccountLinkResult.AuthenticationError,
+                "Google Play Games sign-in is temporarily unavailable. Please try again later.");
+        }
+
+        Debug.Log("[GPG-Link] authentication failed without a more specific status");
+        return ExternalAccountAuthResult.Fail(
+            AccountLinkResult.AuthenticationError,
+            "Google Play Games sign-in failed. Make sure you're signed in to Google Play Games and try again.");
     }
 
     /// <summary>
@@ -260,7 +362,8 @@ public sealed class GooglePlayGamesAccountProvider : IGooglePlayAccountProvider
     private static async Task<T> WithTimeoutAsync<T>(
         Task<T> task,
         int timeoutMs,
-        T timeoutValue)
+        T timeoutValue,
+        Action onTimeout = null)
     {
         if (task == null)
         {
@@ -271,8 +374,12 @@ public sealed class GooglePlayGamesAccountProvider : IGooglePlayAccountProvider
         Task completed = await Task.WhenAny(task, delay);
         if (completed != task)
         {
-            Debug.LogWarning(
-                "[Account] Operation timed out after " + timeoutMs + "ms");
+            Debug.LogWarning("[GPG-Link] timed out after " + timeoutMs + "ms");
+            if (onTimeout != null)
+            {
+                onTimeout();
+            }
+
             return timeoutValue;
         }
 
@@ -332,4 +439,54 @@ public sealed class GooglePlayGamesAccountProvider : IGooglePlayAccountProvider
         }
     }
 #endif
+
+    /// <summary>
+    /// Own public Play Games name when this device is already authenticated.
+    /// Does not start a sign-in UI and does not read other players.
+    /// </summary>
+    public static string TryReadAuthenticatedDisplayName()
+    {
+#if UNITY_ANDROID && !UNITY_EDITOR
+        try
+        {
+            PlayGamesPlatform platform = PlayGamesPlatform.Instance;
+            if (platform == null || !platform.IsAuthenticated())
+            {
+                return string.Empty;
+            }
+
+            string name = platform.GetUserDisplayName();
+            return SanitizePublicName(name);
+        }
+        catch (Exception ex)
+        {
+            Debug.Log("[GPG-Link] own display name unavailable type=" + ex.GetType().Name);
+            return string.Empty;
+        }
+#else
+        return string.Empty;
+#endif
+    }
+
+    public static string SanitizePublicName(string value)
+    {
+        if (string.IsNullOrEmpty(value))
+        {
+            return string.Empty;
+        }
+
+        var builder = new System.Text.StringBuilder(value.Length);
+        for (int i = 0; i < value.Length && builder.Length < 24; i++)
+        {
+            char c = value[i];
+            if (c < ' ' || c == '@')
+            {
+                continue;
+            }
+
+            builder.Append(c);
+        }
+
+        return builder.ToString().Trim();
+    }
 }

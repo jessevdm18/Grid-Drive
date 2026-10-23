@@ -44,6 +44,9 @@ const {
   registerGooglePlayIdentityHandler,
   getDailyFriendsLeaderboardHandler,
 } = require('./daily/friendsLeaderboard');
+const {
+  freezeDailyDisplayNameSnapshotsHandler,
+} = require('./daily/displayNameSnapshot');
 
 admin.initializeApp();
 
@@ -174,6 +177,14 @@ exports.registerGooglePlayIdentity = onCall(wrap(registerGooglePlayIdentityHandl
  * Comparison only. Does not affect reward settlement.
  */
 exports.getDailyFriendsLeaderboard = onCall(wrap(getDailyFriendsLeaderboardHandler));
+
+/**
+ * Writes displayNameSnapshot on attempts that do not have one yet.
+ * Does not overwrite a snapshot already stored for that day.
+ */
+exports.freezeDailyDisplayNameSnapshots = onCall(
+  wrap(freezeDailyDisplayNameSnapshotsHandler)
+);
 
 /**
  * Sends queued Daily Result Ready pushes when the device offset is 09:15–09:59.

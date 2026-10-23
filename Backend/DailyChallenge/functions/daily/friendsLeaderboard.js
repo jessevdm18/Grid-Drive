@@ -50,6 +50,14 @@ function cleanDisplayName(value) {
   return value.replace(/[\u0000-\u001F]/g, '').trim().slice(0, 32);
 }
 
+function cleanPublicDisplayName(value) {
+  const cleaned = cleanDisplayName(value).slice(0, 24);
+  if (!cleaned || cleaned.indexOf('@') >= 0) {
+    return '';
+  }
+  return cleaned;
+}
+
 function fallbackDisplayName(uid) {
   const hex = (stableHash32(uid) & 0xffff).toString(16).toUpperCase().padStart(4, '0');
   return 'Player ' + hex;
@@ -159,6 +167,19 @@ async function registerGooglePlayIdentityHandler(request) {
     },
     { merge: true }
   );
+  const requested = cleanPublicDisplayName(
+    request.data && request.data.displayName
+  );
+  const publicName = requested || cleanPublicDisplayName(identity.displayName);
+  if (publicName) {
+    await db().collection('publicProfiles').doc(uid).set(
+      {
+        displayName: publicName,
+        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+      },
+      { merge: true }
+    );
+  }
   console.log('[Friends] register mapped uidLength=' + uid.length);
   return { success: true, mapped: true };
 }

@@ -113,8 +113,10 @@ namespace GooglePlayGames.Android
 
                 AndroidTaskUtils.AddOnFailureListener(task, exception =>
                 {
-                    OurUtils.Logger.e("Authentication failed - " + exception.Call<string>("toString"));
-                    callback(SignInStatus.InternalError);
+                    int statusCode = ReadStatusCode(exception);
+                    TraceSignIn(isAutoSignIn ? "silentTaskFailed" : "manualTaskFailed", statusCode);
+                    bool canceled = statusCode == 16 || statusCode == 12501;
+                    callback(canceled ? SignInStatus.Canceled : SignInStatus.InternalError);
                 });
             }
         }
@@ -150,6 +152,12 @@ namespace GooglePlayGames.Android
                                     }
 
                                     mAuthState = AuthState.Authenticated;
+                                    TraceSignIn(
+                                        "authenticated",
+                                        0);
+                                    Debug.Log(
+                                        "[GPG-Link] isAuthenticated=yes playerId present=" +
+                                        (mUser != null && !string.IsNullOrEmpty(mUser.id) ? "yes" : "no"));
                                     InvokeCallbackOnGameThread(callback, SignInStatus.Success);
                                     OurUtils.Logger.d("Authentication succeeded");
                                     LoadAchievements(ignore => { });
@@ -158,14 +166,15 @@ namespace GooglePlayGames.Android
                                 {
                                     if (completeTask.Call<bool>("isCanceled"))
                                     {
+                                        TraceSignIn("getCurrentPlayerCanceled", 16);
                                         InvokeCallbackOnGameThread(callback, SignInStatus.Canceled);
                                         return;
                                     }
 
                                     using (var exception = completeTask.Call<AndroidJavaObject>("getException"))
                                     {
-                                        OurUtils.Logger.e(
-                                            "Authentication failed - " + exception.Call<string>("toString"));
+                                        int statusCode = exception != null ? ReadStatusCode(exception) : 0;
+                                        TraceSignIn("getCurrentPlayerFailed", statusCode);
                                         InvokeCallbackOnGameThread(callback, SignInStatus.InternalError);
                                     }
                                 }
@@ -178,8 +187,8 @@ namespace GooglePlayGames.Android
             {
                 lock (AuthStateLock)
                 {
-                    OurUtils.Logger.e("Returning an error code.");
-                    InvokeCallbackOnGameThread(callback, SignInStatus.Canceled);
+                    TraceSignIn("isAuthenticatedFalse", -1);
+                    InvokeCallbackOnGameThread(callback, SignInStatus.InternalError);
                 }
             }
         }
@@ -201,13 +210,21 @@ namespace GooglePlayGames.Android
             {
                 AndroidTaskUtils.AddOnSuccessListener<string>(
                     task,
-                    authCode => callback(authCode)
+                    authCode =>
+                    {
+                        Debug.Log(
+                            "[GPG-Link] server auth code present=" +
+                            (string.IsNullOrEmpty(authCode) ? "no" : "yes") +
+                            " length=" + (authCode == null ? 0 : authCode.Length));
+                        callback(authCode);
+                    }
                 );
 
                 AndroidTaskUtils.AddOnFailureListener(task, exception =>
                 {
-                    OurUtils.Logger.e("Requesting server side access task failed - " +
-                                      exception.Call<string>("toString"));
+                    int statusCode = ReadStatusCode(exception);
+                    TraceSignIn("serverAuthCodeFailed", statusCode);
+                    Debug.Log("[GPG-Link] server auth code present=no length=0");
                     callback(null);
                 });
             }
@@ -521,6 +538,34 @@ namespace GooglePlayGames.Android
             }
         }
 
+        private static void TraceSignIn(string stage, int statusCode)
+        {
+            PlayGamesPlatform.LastSignInStage = stage ?? string.Empty;
+            PlayGamesPlatform.LastSignInStatusCode = statusCode;
+            Debug.Log("[GPG-Link] " + stage + " statusCode=" + statusCode);
+        }
+
+        private static int ReadStatusCode(AndroidJavaObject exception)
+        {
+            if (exception == null)
+            {
+                return 0;
+            }
+
+            try
+            {
+                if (IsApiException(exception))
+                {
+                    return exception.Call<int>("getStatusCode");
+                }
+            }
+            catch (Exception)
+            {
+            }
+
+            return 0;
+        }
+
         private static bool IsApiException(AndroidJavaObject exception)
         {
             var exceptionClassName = exception.Call<AndroidJavaObject>("getClass")
@@ -546,7 +591,11 @@ namespace GooglePlayGames.Android
                         /* forceReload= */ false))
                 {
                     AndroidTaskUtils.AddOnSuccessListener<AndroidJavaObject>(
-                        task, annotatedData => { InvokeCallbackOnGameThread(callback, UIStatus.Valid); });
+                        task, annotatedData =>
+                        {
+                            mFriendsResolutionException = null;
+                            InvokeCallbackOnGameThread(callback, UIStatus.Valid);
+                        });
                     AndroidTaskUtils.AddOnFailureListener(task, exception =>
                     {
                         AndroidHelperFragment.IsResolutionRequired(exception, resolutionRequired =>
@@ -556,7 +605,16 @@ namespace GooglePlayGames.Android
                                 mFriendsResolutionException =
                                     exception.Call<AndroidJavaObject>("getResolution");
                                 AndroidHelperFragment.AskForLoadFriendsResolution(
-                                    mFriendsResolutionException, AsOnGameThreadCallback(callback));
+                                    mFriendsResolutionException,
+                                    AsOnGameThreadCallback<UIStatus>(status =>
+                                    {
+                                        if (status == UIStatus.Valid)
+                                        {
+                                            mFriendsResolutionException = null;
+                                        }
+
+                                        callback(status);
+                                    }));
                                 return;
                             }
 
@@ -580,8 +638,17 @@ namespace GooglePlayGames.Android
             }
             else
             {
-                AndroidHelperFragment.AskForLoadFriendsResolution(mFriendsResolutionException,
-                    AsOnGameThreadCallback(callback));
+                AndroidHelperFragment.AskForLoadFriendsResolution(
+                    mFriendsResolutionException,
+                    AsOnGameThreadCallback<UIStatus>(status =>
+                    {
+                        if (status == UIStatus.Valid)
+                        {
+                            mFriendsResolutionException = null;
+                        }
+
+                        callback(status);
+                    }));
             }
         }
 

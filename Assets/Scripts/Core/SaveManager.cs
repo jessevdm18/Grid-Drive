@@ -547,6 +547,21 @@ public class SaveManager : MonoBehaviour
     /// <summary>
     /// Geeft opgeslagen sterren voor een level (default 0 als nooit gespeeld).
     /// </summary>
+    public int CountCompletedNormalLevels()
+    {
+        int maxIndex = PlayerPrefs.GetInt(StarsMaxIndexKey, -1);
+        int completed = 0;
+        for (int i = 0; i <= maxIndex; i++)
+        {
+            if (GetStarsForLevel(i) > 0)
+            {
+                completed++;
+            }
+        }
+
+        return completed;
+    }
+
     public int GetStarsForLevel(int levelIndex)
     {
         return Mathf.Clamp(

@@ -15,9 +15,18 @@ public class DailyLeaderboardRowUI : MonoBehaviour
 
     public void Bind(DailyLeaderboardEntry entry, bool showSimulatedMarker)
     {
+        Bind(entry, showSimulatedMarker, null);
+    }
+
+    public void Bind(
+        DailyLeaderboardEntry entry,
+        bool showSimulatedMarker,
+        DailyChallengeResultSettings podium)
+    {
         if (rankText != null)
         {
             rankText.text = "#" + entry.Rank;
+            rankText.color = ColorForRank(entry.Rank, podium);
         }
 
         if (nameText != null)
@@ -46,5 +55,27 @@ public class DailyLeaderboardRowUI : MonoBehaviour
         {
             simulatedMarkerRoot.SetActive(showSimulatedMarker && entry.IsSimulated);
         }
+    }
+
+    private static Color ColorForRank(int rank, DailyChallengeResultSettings podium)
+    {
+        DailyChallengeResultSettings colors =
+            podium != null ? podium : DailyChallengeResultSettings.LoadDefault();
+        if (rank == 1)
+        {
+            return colors.firstPlaceColor;
+        }
+
+        if (rank == 2)
+        {
+            return colors.secondPlaceColor;
+        }
+
+        if (rank == 3)
+        {
+            return colors.thirdPlaceColor;
+        }
+
+        return colors.normalColor;
     }
 }

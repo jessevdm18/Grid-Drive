@@ -31,15 +31,15 @@ public readonly struct AccountLinkOutcome
             case AccountLinkResult.AlreadyLinkedToAnotherAccount:
                 return "This Google Play account is already linked to another Rush Out account.";
             case AccountLinkResult.Cancelled:
-                return "Google Play sign-in was not completed.";
+                return "Google Play Games sign-in was cancelled.";
             case AccountLinkResult.ProviderUnavailable:
                 return "Google Play Games is unavailable on this device.";
             case AccountLinkResult.ProviderBackendUnavailable:
-                return "Could not link your Google Play account. Please try again.";
+                return "Google Play Games sign-in is temporarily unavailable. Please try again later.";
             case AccountLinkResult.NetworkError:
-                return "Could not connect. Try again.";
+                return "Couldn't connect to Google Play Games. Check your internet connection and try again.";
             case AccountLinkResult.AuthenticationError:
-                return "Could not connect. Try again.";
+                return "Google Play Games sign-in failed. Make sure you're signed in to Google Play Games and try again.";
             case AccountLinkResult.IdentityContinuityError:
                 return "Account link failed. Your progress was not moved.";
             default:

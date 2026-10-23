@@ -344,6 +344,7 @@ public static class DailyChallengeIdentityService
         }
 
         DailyChallengeFirebaseSettings settings = DailyChallengeFirebaseSettings.LoadDefault();
+        Debug.Log("[GPG-Link] link REST request start");
         Debug.Log("[GooglePlayLink] starting LinkWithCredential");
         Debug.Log("[Account] Firebase REST link started");
         FirebaseRestClient.FirebaseLinkIdpResult link =
@@ -363,6 +364,9 @@ public static class DailyChallengeIdentityService
         }
 
         Debug.Log(
+            "[GPG-Link] link REST result=" + link.Result +
+            " error=" + (string.IsNullOrEmpty(link.ErrorCode) ? "none" : link.ErrorCode));
+        Debug.Log(
             "[Account] Firebase REST link response received result=" + link.Result +
             (string.IsNullOrEmpty(link.ErrorCode) ? string.Empty : (" err=" + link.ErrorCode)));
         if (link.Result != AccountLinkResult.Success)
@@ -379,8 +383,16 @@ public static class DailyChallengeIdentityService
                 ? AccountLinkState.GuestAnonymous
                 : previousState;
             string failMessage = null;
-            if (link.Result != AccountLinkResult.AlreadyLinkedToAnotherAccount &&
-                link.Result != AccountLinkResult.NetworkError)
+            if (string.Equals(link.ErrorCode, "INVALID_CREDENTIAL_OR_PROVIDER_ID", StringComparison.Ordinal))
+            {
+                Debug.Log(
+                    "[GPG-Link] Firebase rejected the Play Games credential. " +
+                    "Check the Web client and the signing certificate registered for this package.");
+                failMessage =
+                    "Google Play Games sign-in is temporarily unavailable. Please try again later.";
+            }
+            else if (link.Result != AccountLinkResult.AlreadyLinkedToAnotherAccount &&
+                     link.Result != AccountLinkResult.NetworkError)
             {
                 failMessage = "Could not link your Google Play account. Please try again.";
             }
@@ -429,7 +441,8 @@ public static class DailyChallengeIdentityService
 
         try
         {
-            await DailyFriendsLeaderboardClient.RegisterLinkedPlayerAsync();
+            await DailyFriendsLeaderboardClient.RegisterLinkedPlayerAsync(
+                auth.Credential.DisplayNameHint);
         }
         catch (Exception registerEx)
         {

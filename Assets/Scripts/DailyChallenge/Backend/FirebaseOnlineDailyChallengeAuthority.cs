@@ -220,6 +220,7 @@ public sealed class FirebaseOnlineDailyChallengeAuthority : IDailyChallengeAutho
         }
 
         DailyChallengeFirebaseSettings settings = DailyChallengeFirebaseSettings.LoadDefault();
+        await DailyFriendsLeaderboardClient.PublishOwnDisplayNameIfAuthenticatedAsync();
         int limit = Mathf.Clamp(maxEntries, 1, 500);
         string query =
             "{\"structuredQuery\":{" +
@@ -241,11 +242,14 @@ public sealed class FirebaseOnlineDailyChallengeAuthority : IDailyChallengeAutho
 
         if (string.IsNullOrEmpty(json))
         {
+            Debug.LogWarning("[DailyBoard] leaderboard query returned no body day=" + dayId);
             return list;
         }
 
         string[] parts = json.Split(new[] { "\"document\":" }, StringSplitOptions.None);
         string myUid = DailyChallengeIdentityService.UserId;
+        var missingSnapshots = new List<string>();
+        var seenMissing = new HashSet<string>();
         for (int i = 1; i < parts.Length; i++)
         {
             string chunk = parts[i];
@@ -276,11 +280,23 @@ public sealed class FirebaseOnlineDailyChallengeAuthority : IDailyChallengeAutho
             int moves = (int)FirebaseRestClient.ExtractFirestoreLongField(chunk, "moves");
             long ms = FirebaseRestClient.ExtractFirestoreLongField(chunk, "completionTimeMs");
             bool isYou = string.Equals(uid, myUid, StringComparison.Ordinal);
+            string snapshot = GooglePlayGamesAccountProvider.SanitizePublicName(
+                FirebaseRestClient.ExtractFirestoreStringField(chunk, "displayNameSnapshot"));
+            if (string.IsNullOrEmpty(snapshot) &&
+                !string.IsNullOrEmpty(uid) &&
+                seenMissing.Add(uid))
+            {
+                missingSnapshots.Add(uid);
+            }
 
             list.Add(new DailyLeaderboardEntry
             {
                 PlayerId = uid,
-                DisplayName = isYou ? "YOU" : DailyChallengeDisplayName.FromUserId(uid),
+                DisplayName = isYou
+                    ? "YOU"
+                    : (string.IsNullOrEmpty(snapshot)
+                        ? DailyChallengeDisplayName.FromUserId(uid)
+                        : snapshot),
                 Score = score,
                 Moves = moves,
                 CompletionTimeMilliseconds = ms,
@@ -293,7 +309,129 @@ public sealed class FirebaseOnlineDailyChallengeAuthority : IDailyChallengeAutho
             });
         }
 
+        Debug.Log(
+            "[DailyBoard] parsed trusted=" + list.Count +
+            " documents=" + (parts.Length > 0 ? parts.Length - 1 : 0) +
+            " day=" + dayId);
+        await FreezeMissingDisplayNameSnapshotsAsync(dayId, list, missingSnapshots);
         return list;
+    }
+
+    /// <summary>
+    /// Attempts created before displayNameSnapshot existed are frozen once.
+    /// Later Global opens read that field from the attempt and do not query publicProfiles.
+    /// </summary>
+    private async Task FreezeMissingDisplayNameSnapshotsAsync(
+        string dayId,
+        List<DailyLeaderboardEntry> list,
+        List<string> missing)
+    {
+        if (list == null || missing == null || missing.Count == 0 || string.IsNullOrEmpty(dayId))
+        {
+            return;
+        }
+
+        var names = new Dictionary<string, string>();
+        for (int offset = 0; offset < missing.Count && offset < 500; offset += 100)
+        {
+            int count = Math.Min(100, missing.Count - offset);
+            var chunk = new List<string>(count);
+            for (int i = 0; i < count; i++)
+            {
+                chunk.Add(missing[offset + i]);
+            }
+
+            Dictionary<string, string> frozen = await RequestSnapshotFreezeAsync(dayId, chunk);
+            if (frozen == null)
+            {
+                continue;
+            }
+
+            foreach (KeyValuePair<string, string> pair in frozen)
+            {
+                names[pair.Key] = pair.Value;
+            }
+        }
+
+        if (names.Count == 0)
+        {
+            return;
+        }
+
+        for (int i = 0; i < list.Count; i++)
+        {
+            DailyLeaderboardEntry entry = list[i];
+            if (entry.IsCurrentPlayer ||
+                !names.TryGetValue(entry.PlayerId, out string displayName))
+            {
+                continue;
+            }
+
+            entry.DisplayName = displayName;
+            list[i] = entry;
+        }
+    }
+
+    private async Task<Dictionary<string, string>> RequestSnapshotFreezeAsync(
+        string dayId,
+        List<string> uids)
+    {
+        var result = new Dictionary<string, string>();
+        if (uids == null || uids.Count == 0)
+        {
+            return result;
+        }
+
+        var json = new StringBuilder();
+        json.Append("{\"dayId\":\"");
+        json.Append(dayId);
+        json.Append("\",\"uids\":[");
+        for (int i = 0; i < uids.Count; i++)
+        {
+            if (i > 0)
+            {
+                json.Append(',');
+            }
+
+            json.Append('"');
+            json.Append(uids[i]);
+            json.Append('"');
+        }
+
+        json.Append("]}");
+        FirebaseRestClient.CallableResponse response =
+            await CallWithAuthRetryAsync("freezeDailyDisplayNameSnapshots", json.ToString());
+        if (!response.Ok || string.IsNullOrEmpty(response.ResultJson))
+        {
+            Debug.LogWarning(
+                "[DailyBoard] snapshot freeze failed day=" + dayId +
+                " missing=" + uids.Count);
+            return result;
+        }
+
+        string body = response.ResultJson;
+        int cursor = 0;
+        while (cursor < body.Length)
+        {
+            int uidKey = body.IndexOf("\"uid\":\"", cursor, StringComparison.Ordinal);
+            if (uidKey < 0)
+            {
+                break;
+            }
+
+            string slice = body.Substring(uidKey);
+            string uid = FirebaseRestClient.ExtractJsonString(slice, "uid");
+            string displayName = GooglePlayGamesAccountProvider.SanitizePublicName(
+                FirebaseRestClient.ExtractJsonString(slice, "displayName"));
+            if (!string.IsNullOrEmpty(uid) && !string.IsNullOrEmpty(displayName))
+            {
+                result[uid] = displayName;
+            }
+
+            cursor = uidKey + 6;
+        }
+
+        return result;
     }
 
     public async Task<IReadOnlyList<DailyLeaderboardEntry>> GetOfficialSimulatedEntriesAsync(

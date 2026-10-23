@@ -749,6 +749,7 @@ public class IapService : MonoBehaviour
         {
             OnPurchaseFulfilled?.Invoke(productId, coinAmount);
             AudioManager.TryPlayRewardReceived();
+            GameAnalytics.LogCoinReward(coinAmount, "iap");
         }
 
         // Confirm/consume only after durable fulfillment (or prior fulfillment).
